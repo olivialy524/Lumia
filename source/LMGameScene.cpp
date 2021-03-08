@@ -150,6 +150,7 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define DEBUG_OPACITY   192
 
 
+
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -183,6 +184,7 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
+    _jsonr = cugl::JsonReader::alloc("json/level.json");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 

@@ -29,6 +29,7 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    std::shared_ptr<cugl::JsonReader> _jsonr;
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     LumiaInput _input;
