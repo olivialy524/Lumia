@@ -185,6 +185,11 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _jsonr = cugl::JsonReader::alloc("json/level.json");
+    std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
+    std::shared_ptr<cugl::JsonValue> lv = jv->get("level");
+    int h = lv->getInt("height");
+    cout << h;
+    
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
