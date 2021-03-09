@@ -18,28 +18,28 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFApp.h">
+    <ClInclude Include="..\..\source\LMSpinner.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFBullet.h">
+    <ClInclude Include="..\..\source\LMApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFDudeModel.h">
+    <ClInclude Include="..\..\source\LMBullet.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFGameScene.h">
+    <ClInclude Include="..\..\source\LMDudeModel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFInput.h">
+    <ClInclude Include="..\..\source\LMGameScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFLoadingScene.h">
+    <ClInclude Include="..\..\source\LMInput.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFRopeBridge.h">
+    <ClInclude Include="..\..\source\LMLoadingScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PFSpinner.h">
+    <ClInclude Include="..\..\source\LMRopeBridge.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,39 +47,39 @@
     <ClCompile Include="..\..\source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFApp.cpp">
+    <ClCompile Include="..\..\source\LMApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFBullet.cpp">
+    <ClCompile Include="..\..\source\LMBullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFDudeModel.cpp">
+    <ClCompile Include="..\..\source\LMDudeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFGameScene.cpp">
+    <ClCompile Include="..\..\source\LMGameScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFInput.cpp">
+    <ClCompile Include="..\..\source\LMInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFLoadingScene.cpp">
+    <ClCompile Include="..\..\source\LMLoadingScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFRopeBridge.cpp">
+    <ClCompile Include="..\..\source\LMRopeBridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PFSpinner.cpp">
+    <ClCompile Include="..\..\source\LMSpinner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="PlatformDemo.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Lumia.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
