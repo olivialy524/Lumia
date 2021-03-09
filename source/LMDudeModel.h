@@ -40,7 +40,7 @@
 * experience, using a rectangular shape for a character will regularly snag
 * on a platform.  The round shapes on the end caps lead to smoother movement.
 */
-class DudeModel : public cugl::physics2::CapsuleObstacle {
+class DudeModel : public cugl::physics2::WheelObstacle {
 private:
 	/** This macro disables the copy constructor (not allowed on physics objects) */
 	CU_DISALLOW_COPY_AND_ASSIGN(DudeModel);
@@ -90,7 +90,7 @@ public:
      * This constructor does not initialize any of the dude values beyond
      * the defaults.  To use a DudeModel, you must call init().
      */
-    DudeModel() : CapsuleObstacle(), _sensorName(SENSOR_NAME) { }
+    DudeModel() : cugl::physics2::WheelObstacle() { }
     
     /**
      * Destroys this DudeModel, releasing all resources.
