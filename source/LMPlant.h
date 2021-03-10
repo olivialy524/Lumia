@@ -116,5 +116,9 @@ public:
     void lightUp() {
         _isLit = true;
     }
+    
+    void lightDown() {
+        _isLit = false;
+    }
 };
 #endif /* LMPlant_h */

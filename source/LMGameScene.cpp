@@ -188,10 +188,7 @@ GameScene::GameScene() : Scene2(),
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _jsonr = cugl::JsonReader::alloc("json/level.json");
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
-    std::shared_ptr<cugl::JsonValue> lv = jv->get("level");
-    int h = lv->getInt("height");
-    cout << h;
-    
+    _leveljson = jv->get("level");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -349,6 +346,10 @@ void GameScene::reset() {
     _goalDoor = nullptr;
     _spinner = nullptr;
     _ropebridge = nullptr;
+    for (const std::shared_ptr<Plant> &p : _plants) {
+        p->dispose();
+    }
+    _plants.clear();
       
     setFailure(false);
     setComplete(false);
@@ -459,7 +460,14 @@ void GameScene::populate() {
 	_spinner->setBodyType(b2_staticBody);
 	_spinner->setDebugColor(DEBUG_COLOR);
 	addObstacle(_spinner, node, 2, false);
-    createPlant();
+    int np = _leveljson->getInt("numplants");
+    for (int i = 1; i <= np; i++) {
+        std::string ps = ("plant " + to_string(i));
+        std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
+        int px = plant->getInt("posx");
+        int py = plant->getInt("posy");
+        createPlant(px, py, i);
+    }
 
 #pragma mark : Rope Bridge
 	Vec2 bridgeStart = BRIDGE_POS;
@@ -546,7 +554,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  */
 void GameScene::update(float dt) {
 	_input.update(dt);
-
+    checkWin();
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -682,16 +690,17 @@ void GameScene::createBullet() {
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
 }
 
-void GameScene::createPlant() {
+void GameScene::createPlant(int posx, int posy, int nplant) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = 0.5f*image->getSize().width/_scale;
 
-    std::shared_ptr<Plant> p = Plant::alloc(Vec2(4,4), radius);
+    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
     p->setBodyType(b2_staticBody);
+    p->lightDown();
     p->setFriction(0.0f);
     p->setRestitution(0.0f);
-    p->setName(PLANT_NAME);
+    p->setName(PLANT_NAME + to_string(nplant));
     p->setDensity(0);
     p->setBullet(false);
     p->setGravityScale(0);
@@ -704,6 +713,15 @@ void GameScene::createPlant() {
     p->setVX(0);
     addObstacle(p, sprite, 0);
     _plants.push_front(p);
+}
+
+void GameScene::checkWin() {
+    for (auto const& i : _plants) {
+        if (!(i->getIsLit())) {
+            return;
+        }
+    }
+    setComplete(true);
 }
 
 /**
@@ -755,10 +773,13 @@ void GameScene::beginContact(b2Contact* contact) {
 	} else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {
 		removeBullet((Bullet*)bd2);
 	}
-    if (bd1->getName() == PLANT_NAME && bd2 == _avatar.get()) {
+    if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
         ((Plant*)bd1)->lightUp();
     }
-
+    else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
+        ((Plant*)bd2)->lightUp();
+    }
+ 
 	// See if we have landed on the ground.
 	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||
 		(_avatar->getSensorName() == fd1 && _avatar.get() != bd2)) {

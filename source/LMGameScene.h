@@ -31,6 +31,8 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     
     std::shared_ptr<cugl::JsonReader> _jsonr;
+    
+    std::shared_ptr<cugl::JsonValue> _leveljson;
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     LumiaInput _input;
@@ -300,7 +302,9 @@ public:
     */
     void createBullet();
 
-    void createPlant();
+    void createPlant(int posx, int posy, int nplant);
+    
+    void checkWin();
     /**
     * Removes the input Bullet from the world.
     *

@@ -7,6 +7,15 @@
             "posx": 500,
             "posy": 20,
             "size": 40
+        },
+        "numplants": 2,
+        "plant 1": {
+            "posx": 4,
+            "posy": 4
+        },
+        "plant 2": {
+            "posx": 6,
+            "posy": 6
         }
     }
 }
