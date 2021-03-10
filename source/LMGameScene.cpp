@@ -469,13 +469,13 @@ void GameScene::populate() {
 	Vec2 dudePos = DUDE_POS;
 	node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = image->getSize().width/_scale;
-	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
+//    float radius = image->getSize().width/_scale;
+	_avatar = LumiaModel::alloc(dudePos,0.3f,_scale);
     _avatar-> setTextures(image, DUDE_POS);
-	_avatar->setDebugColor(DEBUG_COLOR);
+	_avatar-> setDebugColor(DEBUG_COLOR);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
-	// Play the background music on a loop.
+    
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }

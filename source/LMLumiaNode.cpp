@@ -15,9 +15,10 @@
 void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     
-//    CULog("here");
-    cugl::Mat4 translation_mat = transform.getInverse() * cugl::Mat4::createScale(2.0f) * transform;
+//    CULog(std::to_string(_scale));
+    std::cout << _scale << "\n";
+    cugl::Mat4 translation_mat = cugl::Mat4::createScale(_scale);
     
-    AnimationNode::draw(batch,transform * translation_mat, tint);
+    AnimationNode::draw(batch,translation_mat * transform, tint);
     
 }
