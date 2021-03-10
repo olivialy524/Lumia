@@ -679,15 +679,6 @@ void GameScene::createBullet() {
 	std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
     
-//    node = scene2::SceneNode::alloc();
-//    image = _assets->get<Texture>(BULLET_TEXTURE);
-//    float radius = image->getSize().width/_scale;
-//    _avatar = LumiaModel::alloc(dudePos,radius,_scale);
-//    sprite = scene2::PolygonNode::allocWithTexture(image);
-//    _avatar->setSceneNode(sprite);
-//    _avatar->setDebugColor(DEBUG_COLOR);
-//    addObstacle(_avatar,sprite, 4); // Put this at the very front
-//    _lumiaList.push_back(_avatar.get());
 }
 
 /**
@@ -699,35 +690,13 @@ void GameScene::createLumia() {
     std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = _avatar->getRadius();
     
-//    _avatar = LumiaModel::alloc(dudePos,radius,_scale);
-
-    
-    std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius);
-    auto sprite = scene2::PolygonNode::allocWithTexture(image);
-    lumia->setSceneNode(sprite);
+    std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
+    lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia->setSplitForce(Vec2(-6.0f, 0.0f));
-    addObstacle(lumia,sprite, 5); // Put this at the very front
+    addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
     
     _lumiaList.push_back(lumia.get());
-//    bullet->setName(BULLET_NAME);
-//    bullet->setDensity(HEAVY_DENSITY);
-//    bullet->setBullet(true);
-//    bullet->setGravityScale(0);
-//    bullet->setDebugColor(DEBUG_COLOR);
-//    bullet->setDrawScale(_scale);
-//
-//    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
-//    bullet->setSceneNode(sprite);
-//
-//    // Compute position and velocity
-//    float speed  = (_avatar->isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-//    bullet->setVX(speed);
-//    addObstacle(bullet, sprite, 5);
-//
-//    std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
-//    AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
-    
  
 }
 /**
