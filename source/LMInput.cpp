@@ -89,7 +89,9 @@ _hasJumped(false) {
 void LumiaInput::dispose() {
     if (_active) {
 #ifndef CU_TOUCH_SCREEN
-        Input::deactivate<Keyboard>();
+        Mouse* mouse = Input::get<Mouse>();
+        mouse->removePressListener(LISTENER_KEY);
+        mouse->removeReleaseListener(LISTENER_KEY);
 #else
         Touchscreen* touch = Input::get<Touchscreen>();
         touch->removeBeginListener(LISTENER_KEY);
@@ -121,7 +123,14 @@ bool LumiaInput::init(const Rect bounds) {
     clearTouchInstance(_mtouch);
     
 #ifndef CU_TOUCH_SCREEN
-    success = Input::activate<Keyboard>();
+    //success = Input::activate<Keyboard>();
+    Mouse* mouse = Input::get<Mouse>();
+    mouse->addPressListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
+        this->mousePressedCB(event, clicks, focus);
+    });
+    mouse->addReleaseListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
+        this->mouseReleasedCB(event, clicks, focus);
+    });
 #else
     Touchscreen* touch = Input::get<Touchscreen>();
     touch->addBeginListener(LISTENER_KEY,[=](const TouchEvent& event, bool focus) {
@@ -329,6 +338,44 @@ int LumiaInput::processSwipe(const Vec2 start, const Vec2 stop, Timestamp curren
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
+
+/**
+ * Callback for the beginning of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void LumiaInput::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+    // Update the touch location for later gestures
+    _dclick.set(event.position);
+}
+
+/**
+ * Callback for the end of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+    // Check for a double tap.
+    //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
+    _timestamp = event.timestamp;
+
+    // If we reset, do not record the thrust
+    /*if (_keyReset) {
+        return;
+    }*/
+
+    // Move the ship in this direction
+    Vec2 finishDrag = event.position - _dclick;
+   /* finishTouch.x = RANGE_CLAMP(finishTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+    finishTouch.y = RANGE_CLAMP(finishTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);*/
+
+    // Go ahead and apply to thrust now.
+    /*_inputThrust.x = finishTouch.x / X_ADJUST_FACTOR;
+    _inputThrust.y = finishTouch.y / -Y_ADJUST_FACTOR; */ // Touch coords
+}
+
 /**
  * Callback for the beginning of a touch event
  *

@@ -49,6 +49,12 @@ private:
     bool  _keyLeft;
     /** Whether the right arrow key is down */
     bool  _keyRight;
+
+    // MOUSE SUPPORT
+    /** The initial click location for the current click-and-drag */
+    cugl::Vec2 _dclick;
+    /** The timestamp for the beginning of the current click-and-drag */
+    cugl::Timestamp _timestamp;
   
 protected:
     // INPUT RESULTS
@@ -308,6 +314,25 @@ public:
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
+    /**
+     * Callback for the beginning of a mouse event
+     *
+     * @param event The associated event
+     * @param clicks The number of recent clicks, including this one
+     * @param focus	Whether the listener currently has focus
+     * f
+     */
+    void mousePressedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
+
+    /**
+     * Callback for the end of a mouse event
+     *
+     * @param event The associated event
+     * @param clicks The number of recent clicks, including this one
+     * @param focus	Whether the listener currently has focus
+     */
+    void mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
+
     /**
      * Callback for the beginning of a touch event
      *
