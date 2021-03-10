@@ -12,6 +12,7 @@
 #include "LMSpinner.h"
 #include "LMRopeBridge.h"
 #include "LMBullet.h"
+#include "LMPlant.h"
 
 #include <ctime>
 #include <string>
@@ -109,6 +110,7 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define BULLET_TEXTURE  "bullet"
 /** The name of a bullet (for object identification) */
 #define BULLET_NAME     "bullet"
+#define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
 #define WALL_NAME       "wall"
 /** The name of a platform (for object identification) */
@@ -457,6 +459,7 @@ void GameScene::populate() {
 	_spinner->setBodyType(b2_staticBody);
 	_spinner->setDebugColor(DEBUG_COLOR);
 	addObstacle(_spinner, node, 2, false);
+    createPlant();
 
 #pragma mark : Rope Bridge
 	Vec2 bridgeStart = BRIDGE_POS;
@@ -679,6 +682,30 @@ void GameScene::createBullet() {
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
 }
 
+void GameScene::createPlant() {
+
+    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
+    float radius = 0.5f*image->getSize().width/_scale;
+
+    std::shared_ptr<Plant> p = Plant::alloc(Vec2(4,4), radius);
+    p->setBodyType(b2_staticBody);
+    p->setFriction(0.0f);
+    p->setRestitution(0.0f);
+    p->setName(PLANT_NAME);
+    p->setDensity(0);
+    p->setBullet(false);
+    p->setGravityScale(0);
+    p->setDebugColor(DEBUG_COLOR);
+    p->setDrawScale(_scale);
+
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+    p->setSceneNode(sprite);
+
+    p->setVX(0);
+    addObstacle(p, sprite, 0);
+    _plants.push_front(p);
+}
+
 /**
  * Removes a new bullet from the world.
  *
@@ -728,6 +755,9 @@ void GameScene::beginContact(b2Contact* contact) {
 	} else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {
 		removeBullet((Bullet*)bd2);
 	}
+    if (bd1->getName() == PLANT_NAME && bd2 == _avatar.get()) {
+        ((Plant*)bd1)->lightUp();
+    }
 
 	// See if we have landed on the ground.
 	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||

@@ -16,6 +16,7 @@
 #include "LMDudeModel.h"
 #include "LMRopeBridge.h"
 #include "LMSpinner.h"
+#include "LMPlant.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -56,6 +57,8 @@ protected:
     // Physics objects for the game
     /** Reference to the goalDoor (for collision detection) */
     std::shared_ptr<cugl::physics2::BoxObstacle>    _goalDoor;
+    
+    std::list<std::shared_ptr<Plant>> _plants;
     /** Reference to the player avatar */
     std::shared_ptr<DudeModel>			  _avatar;
     /** Reference to the spinning barrier */
@@ -297,6 +300,7 @@ public:
     */
     void createBullet();
 
+    void createPlant();
     /**
     * Removes the input Bullet from the world.
     *
