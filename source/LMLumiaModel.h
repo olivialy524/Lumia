@@ -62,6 +62,8 @@ protected:
 	/** Whether we are actively shooting */
 	bool _isShooting;
     
+    bool _isSplitting;
+    
     float _radius;
 	/** Ground sensor to represent our feet */
 	b2Fixture*  _sensorFixture;
@@ -74,6 +76,8 @@ protected:
 	std::shared_ptr<cugl::scene2::SceneNode> _node;
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
+    
+    Vec2 _splitForce;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -104,6 +108,7 @@ public:
      * the defaults.  To use a DudeModel, you must call init().
      */
     LumiaModel() : cugl::physics2::WheelObstacle() { }
+    
     
     /**
      * Destroys this DudeModel, releasing all resources.
@@ -301,6 +306,8 @@ public:
         _node = node;
         _node->setPosition(getPosition() * _drawScale);
     }
+    
+    void split();
 
     
 #pragma mark -
@@ -344,6 +351,7 @@ public:
      */
     bool isJumping() const { return _isJumping && _jumpCooldown <= 0; }
     
+    void setSplitForce(Vec2 sForce){ _splitForce = sForce;}
     /**
      * Sets whether the dude is actively jumping.
      *
@@ -351,6 +359,14 @@ public:
      */
     void setJumping(bool value) { _isJumping = value; }
     
+    /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    void setSplitting(bool value) { _isSplitting = value; }
+    
+    bool isSplitting() const {return _isSplitting;};
     /**
      * Returns true if the dude is on the ground.
      *

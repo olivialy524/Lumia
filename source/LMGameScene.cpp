@@ -334,10 +334,9 @@ void GameScene::dispose() {
  */
 void GameScene::reset() {
     _world->clear();
-//    CULog("here");
-//    _avatar->deactivatePhysics(*_world->_world);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
+    _lumiaList.clear();
     _avatar = nullptr;
     _goalDoor = nullptr;
     _spinner = nullptr;
@@ -477,6 +476,7 @@ void GameScene::populate() {
 	_avatar->setSceneNode(sprite);
 	_avatar->setDebugColor(DEBUG_COLOR);
 	addObstacle(_avatar,sprite, 4); // Put this at the very front
+    _lumiaList.push_back(_avatar.get());
 
 	// Play the background music on a loop.
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
@@ -570,12 +570,20 @@ void GameScene::update(float dt) {
 	_avatar->setMovement(_input.getHorizontal()*_avatar->getForce());
 	_avatar->setJumping( _input.didJump());
 	_avatar->applyForce();
+    _avatar->setSplitting(_input.didSplit());
 
 	if (_avatar->isJumping() && _avatar->isGrounded()) {
 		std::shared_ptr<Sound> source = _assets->get<Sound>(JUMP_EFFECT);
 		AudioEngine::get()->play(JUMP_EFFECT,source,false,EFFECT_VOLUME);
 	}
 
+    if (_avatar->isSplitting()){
+        // resize this lumia, create one smaller lumia
+//        CULog("here");
+        _avatar->setSplitForce(Vec2(6.0f, 0.0f));
+        _avatar->split();
+        createLumia();
+    }
 	// Turn the physics engine crank.
 	_world->update(dt);
 
@@ -673,8 +681,58 @@ void GameScene::createBullet() {
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
+    
+//    node = scene2::SceneNode::alloc();
+//    image = _assets->get<Texture>(BULLET_TEXTURE);
+//    float radius = image->getSize().width/_scale;
+//    _avatar = LumiaModel::alloc(dudePos,radius,_scale);
+//    sprite = scene2::PolygonNode::allocWithTexture(image);
+//    _avatar->setSceneNode(sprite);
+//    _avatar->setDebugColor(DEBUG_COLOR);
+//    addObstacle(_avatar,sprite, 4); // Put this at the very front
+//    _lumiaList.push_back(_avatar.get());
 }
 
+/**
+ * Add a new bullet to the world and send it in the right direction.
+ */
+void GameScene::createLumia() {
+    Vec2 pos = _avatar->getPosition();
+    pos.x -= 0.5f;
+    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
+    float radius = _avatar->getRadius();
+    
+//    _avatar = LumiaModel::alloc(dudePos,radius,_scale);
+
+    
+    std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius);
+    auto sprite = scene2::PolygonNode::allocWithTexture(image);
+    lumia->setSceneNode(sprite);
+    lumia->setDebugColor(DEBUG_COLOR);
+    lumia->setSplitForce(Vec2(-6.0f, 0.0f));
+    addObstacle(lumia,sprite, 5); // Put this at the very front
+    
+    _lumiaList.push_back(lumia.get());
+//    bullet->setName(BULLET_NAME);
+//    bullet->setDensity(HEAVY_DENSITY);
+//    bullet->setBullet(true);
+//    bullet->setGravityScale(0);
+//    bullet->setDebugColor(DEBUG_COLOR);
+//    bullet->setDrawScale(_scale);
+//
+//    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+//    bullet->setSceneNode(sprite);
+//
+//    // Compute position and velocity
+//    float speed  = (_avatar->isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
+//    bullet->setVX(speed);
+//    addObstacle(bullet, sprite, 5);
+//
+//    std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
+//    AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
+    
+ 
+}
 /**
  * Removes a new bullet from the world.
  *
@@ -691,6 +749,19 @@ void GameScene::removeBullet(Bullet* bullet) {
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
 	AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
+}
+
+void GameScene::removeLumia(LumiaModel* lumia) {
+  // do not attempt to remove a bullet that has already been removed
+//    if (bullet->isRemoved()) {
+//        return;
+//    }
+//    _worldnode->removeChild(bullet->getSceneNode());
+//    bullet->setDebugScene(nullptr);
+//    bullet->markRemoved(true);
+//
+//    std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
+//    AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
 }
 
 

@@ -57,6 +57,8 @@ protected:
     std::shared_ptr<cugl::physics2::BoxObstacle>    _goalDoor;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel>			  _avatar;
+    /** Reference to the player avatar */
+    std::vector<LumiaModel*>              _lumiaList;
     /** Reference to the spinning barrier */
     std::shared_ptr<Spinner>			  _spinner;
     /** Reference to the rope bridge */
@@ -302,6 +304,18 @@ public:
     * @param  bullet   the bullet to remove
     */
     void removeBullet(Bullet* bullet);
+
+    /**
+    * Adds a new bullet to the world and sends it in the right direction.
+    */
+    void createLumia();
+
+    /**
+    * Removes the input Bullet from the world.
+    *
+    * @param  bullet   the bullet to remove
+    */
+    void removeLumia(LumiaModel* lumia);
 
   };
 

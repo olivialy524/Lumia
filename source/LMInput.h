@@ -49,6 +49,10 @@ private:
     bool  _keyLeft;
     /** Whether the right arrow key is down */
     bool  _keyRight;
+    
+    bool  _keySplit;
+    
+    bool  _keyMerge;
   
 protected:
     // INPUT RESULTS
@@ -62,6 +66,11 @@ protected:
     bool _firePressed;
     /** Whether the jump action was chosen. */
     bool _jumpPressed;
+    
+    /** Whether the jump action was chosen. */
+    bool _splitPressed;
+    /** Whether the jump action was chosen. */
+    bool _mergePressed;
     /** How much did we move horizontally? */
     float _horizontal;
 
@@ -264,6 +273,7 @@ public:
      */
 	float didJump() const { return _jumpPressed; }
 
+    float didSplit() const { return _splitPressed; }
     /**
      * Returns true if the fire button was pressed.
      *

@@ -139,6 +139,8 @@ void LumiaModel::setMovement(float value) {
 
 #pragma mark -
 #pragma mark Physics Methods
+
+
 /**
  * Create new fixtures for this body, defining the shape
  *
@@ -162,6 +164,12 @@ void LumiaModel::createFixtures() {
     _sensorFixture->SetUserData(getSensorName());
 }
 
+
+void LumiaModel::split(){
+    _radius /= 2.0f;
+    WheelObstacle::setRadius(_radius);
+    CULog("%f/n", _radius);
+}
 /**
  * Release the fixtures for this body, reseting the shape
  *
@@ -226,7 +234,12 @@ void LumiaModel::applyForce() {
         b2Vec2 force(0, DUDE_JUMP);
         _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
     }
+    if (isSplitting()){
+        b2Vec2 force(_splitForce.x, _splitForce.y);
+        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
+    }
 }
+
 
 /**
  * Updates the object's physics state (NOT GAME LOGIC).
@@ -279,7 +292,6 @@ void LumiaModel::resetDebug() {
     _sensorNode->setPosition(Vec2(_debug->getContentSize().width/2.0f, 0.0f));
     _debug->addChild(_sensorNode);
 }
-
 
 
 
