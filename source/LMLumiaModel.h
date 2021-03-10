@@ -71,7 +71,9 @@ protected:
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
 	/** The scene graph node for the Dude. */
-	std::shared_ptr<LumiaNode> _node;
+	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
+    std::shared_ptr<LumiaNode> _node;
+
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
 
@@ -86,12 +88,8 @@ protected:
     
     
     
-    /**
-     * Sets the textures for this lumia.
-     *
-     * @param lumia      The texture for the lumia filmstrip
-     */
-    void setTextures(const std::shared_ptr<cugl::Texture>& lumia);
+
+    
 
 
 public:
@@ -184,6 +182,13 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
     virtual bool init(const cugl::Vec2& pos, float radius, float scale);
+    
+    /**
+     * Sets the textures for this lumia.
+     *
+     * @param lumia      The texture for the lumia filmstrip
+     */
+    void setTextures(const std::shared_ptr<cugl::Texture>& lumia, Vec2 initPos);
 
     
 #pragma mark -
@@ -277,7 +282,7 @@ public:
      *
      * @return the scene graph node representing this DudeModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _node; }
+	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
 
     /**
      * Sets the scene graph node representing this DudeModel.
@@ -298,8 +303,8 @@ public:
      * @param node  The scene graph node representing this DudeModel, which has been added to the world node already.
      */
 	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _node = node;
-        _node->setPosition(getPosition() * _drawScale);
+        _sceneNode = node;
+        _sceneNode->setPosition(getPosition() * _drawScale);
     }
 
     

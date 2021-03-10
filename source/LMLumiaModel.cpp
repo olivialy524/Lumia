@@ -46,28 +46,28 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
-   
-   _sceneNode = scene2::SceneNode::allocWithPosition(_pos);
-   _node = LumiaNode::alloc(lumia, LUMIA_ROWS, LUMIA_COLS, LUMIA_FRAMES);
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
+//    auto sprite2 = LumiaNode::alloc(lumia, 1, 1, 1);
+    _sceneNode = scene2::SceneNode::allocWithPosition(initPos);
+   _node = LumiaNode::alloc(lumia, 1, 1, 1);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
    _node->setFrame(0);
 //   _node->setAngle(M_PI*_ang/180.0f);
    _node->setPosition(0.0f,0.0f);
-//   _node->setColor(_tint);
-   _node->addChild(_shadowNode);
-   
-   for (int ii = 0; ii< 8; ii++){
-       auto shadow = ShadowNode::alloc(ship, SHIP_ROWS, SHIP_COLS, SHIP_FRAMES);
-       shadow->setAnchor(Vec2::ANCHOR_CENTER);
-       shadow->setFrame(SHIP_IMG_FLAT);
-       shadow->setAngle(M_PI*_ang/180.0f);
-       shadow->setPosition(dir[ii].x,dir[ii].y);
-       shadow->setColor(_tint);
-       _sceneNode->addChild(shadow);
-       _shadows[ii] = shadow.get();
-   }
-   // This order determines the draw order
+////   _node->setColor(_tint);
+   _sceneNode->addChild(_node);
+//
+//   for (int ii = 0; ii< 8; ii++){
+//       auto shadow = ShadowNode::alloc(ship, SHIP_ROWS, SHIP_COLS, SHIP_FRAMES);
+//       shadow->setAnchor(Vec2::ANCHOR_CENTER);
+//       shadow->setFrame(SHIP_IMG_FLAT);
+//       shadow->setAngle(M_PI*_ang/180.0f);
+//       shadow->setPosition(dir[ii].x,dir[ii].y);
+//       shadow->setColor(_tint);
+//       _sceneNode->addChild(shadow);
+//       _shadows[ii] = shadow.get();
+//   }
+//   // This order determines the draw order
 }
 
 #pragma mark Constructors
@@ -253,9 +253,9 @@ void LumiaModel::update(float dt) {
     
     WheelObstacle::update(dt);
     
-    if (_node != nullptr) {
-        _node->setPosition(getPosition()*_drawScale);
-        _node->setAngle(getAngle());
+    if (_sceneNode != nullptr) {
+        _sceneNode->setPosition(getPosition()*_drawScale);
+        _sceneNode->setAngle(getAngle());
     }
 }
 

@@ -471,10 +471,9 @@ void GameScene::populate() {
     image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = image->getSize().width/_scale;
 	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
-	sprite = scene2::AnimationNode::allocWithTexture(image);
-	_avatar->setSceneNode(sprite);
+    _avatar-> setTextures(image, DUDE_POS);
 	_avatar->setDebugColor(DEBUG_COLOR);
-	addObstacle(_avatar,sprite, 4); // Put this at the very front
+	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
 	// Play the background music on a loop.
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
