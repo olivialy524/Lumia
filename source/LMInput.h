@@ -70,6 +70,8 @@ protected:
     bool _jumpPressed;
     /** How much did we move horizontally? */
     float _horizontal;
+    /** The launch velocity produced by player input */
+    cugl::Vec2 _inputLaunch;
 
 #pragma mark Internal Touch Management   
 	// The screen is divided into four zones: Left, Bottom, Right and Main/
@@ -254,6 +256,15 @@ public:
     
 #pragma mark -
 #pragma mark Input Results
+    /**
+     * Returns the current input launch.
+     *
+     * The launch is determined by the angle and length of the player's drag-and-release.
+     *
+     * @return The input launch
+     */
+    const cugl::Vec2& getLaunch() { return _inputLaunch; }
+
     /**
      * Returns the amount of sideways movement.
      *

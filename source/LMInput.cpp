@@ -89,6 +89,7 @@ _hasJumped(false) {
 void LumiaInput::dispose() {
     if (_active) {
 #ifndef CU_TOUCH_SCREEN
+        Input::deactivate<Keyboard>();
         Mouse* mouse = Input::get<Mouse>();
         mouse->removePressListener(LISTENER_KEY);
         mouse->removeReleaseListener(LISTENER_KEY);
@@ -123,7 +124,7 @@ bool LumiaInput::init(const Rect bounds) {
     clearTouchInstance(_mtouch);
     
 #ifndef CU_TOUCH_SCREEN
-    //success = Input::activate<Keyboard>();
+    success = Input::activate<Keyboard>();
     Mouse* mouse = Input::get<Mouse>();
     mouse->addPressListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
         this->mousePressedCB(event, clicks, focus);
@@ -209,7 +210,10 @@ void LumiaInput::clear() {
     _exitPressed  = false;
     _jumpPressed = false;
     _firePressed = false;
-    
+
+    _inputLaunch = Vec2::ZERO;
+    _dclick = Vec2::ZERO;
+    _timestamp.mark();
 }
 
 #pragma mark -
@@ -368,6 +372,10 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
 
     // Move the ship in this direction
     Vec2 finishDrag = event.position - _dclick;
+    char print[64];
+    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+    CULog(print);
+    _inputLaunch = finishDrag;
    /* finishTouch.x = RANGE_CLAMP(finishTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
     finishTouch.y = RANGE_CLAMP(finishTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);*/
 
