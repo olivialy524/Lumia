@@ -13,7 +13,7 @@
 #include <vector>
 #include "LMInput.h"
 #include "LMBullet.h"
-#include "LMDudeModel.h"
+#include "LMLumiaModel.h"
 #include "LMRopeBridge.h"
 #include "LMSpinner.h"
 
@@ -56,7 +56,7 @@ protected:
     /** Reference to the goalDoor (for collision detection) */
     std::shared_ptr<cugl::physics2::BoxObstacle>    _goalDoor;
     /** Reference to the player avatar */
-    std::shared_ptr<DudeModel>			  _avatar;
+    std::shared_ptr<LumiaModel>			  _avatar;
     /** Reference to the spinning barrier */
     std::shared_ptr<Spinner>			  _spinner;
     /** Reference to the rope bridge */

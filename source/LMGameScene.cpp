@@ -8,7 +8,7 @@
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
-#include "LMDudeModel.h"
+#include "LMLumiaModel.h"
 #include "LMSpinner.h"
 #include "LMRopeBridge.h"
 #include "LMBullet.h"
@@ -468,9 +468,10 @@ void GameScene::populate() {
 #pragma mark : Dude
 	Vec2 dudePos = DUDE_POS;
 	node = scene2::SceneNode::alloc();
-    image = _assets->get<Texture>(DUDE_TEXTURE);
-	_avatar = DudeModel::alloc(dudePos,image->getSize()/_scale,_scale);
-	sprite = scene2::PolygonNode::allocWithTexture(image);
+    image = _assets->get<Texture>(BULLET_TEXTURE);
+    float radius = image->getSize().width/_scale;
+	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
+	sprite = scene2::AnimationNode::allocWithTexture(image);
 	_avatar->setSceneNode(sprite);
 	_avatar->setDebugColor(DEBUG_COLOR);
 	addObstacle(_avatar,sprite, 4); // Put this at the very front

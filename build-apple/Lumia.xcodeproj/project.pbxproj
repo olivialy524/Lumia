@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -35,7 +38,7 @@
 		EB5D20A723FC77C8007D16CD /* LMLoadingScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5502040912400238092 /* LMLoadingScene.cpp */; };
 		EB5D20A823FC77C8007D16CD /* LMGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5532040912400238092 /* LMGameScene.cpp */; };
 		EB5D20A923FC77C8007D16CD /* LMInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5512040912400238092 /* LMInput.cpp */; };
-		EB5D20AA23FC77C8007D16CD /* LMDudeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMDudeModel.cpp */; };
+		EB5D20AA23FC77C8007D16CD /* LMLumiaModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMLumiaModel.cpp */; };
 		EB5D20AB23FC77C8007D16CD /* LMBullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54D2040912400238092 /* LMBullet.cpp */; };
 		EB5D20AC23FC77C8007D16CD /* LMRopeBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54A2040912400238092 /* LMRopeBridge.cpp */; };
 		EB5D20AD23FC77C8007D16CD /* LMSpinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5472040912400238092 /* LMSpinner.cpp */; };
@@ -46,7 +49,7 @@
 		EBB4B5582040912400238092 /* LMApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5492040912400238092 /* LMApp.cpp */; };
 		EBB4B5592040912400238092 /* LMRopeBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54A2040912400238092 /* LMRopeBridge.cpp */; };
 		EBB4B55A2040912400238092 /* LMBullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54D2040912400238092 /* LMBullet.cpp */; };
-		EBB4B55B2040912400238092 /* LMDudeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMDudeModel.cpp */; };
+		EBB4B55B2040912400238092 /* LMLumiaModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMLumiaModel.cpp */; };
 		EBB4B55C2040912400238092 /* LMLoadingScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5502040912400238092 /* LMLoadingScene.cpp */; };
 		EBB4B55D2040912400238092 /* LMInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5512040912400238092 /* LMInput.cpp */; };
 		EBB4B55E2040912400238092 /* LMGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5532040912400238092 /* LMGameScene.cpp */; };
@@ -54,7 +57,7 @@
 		EBB4B5602040A2F800238092 /* LMLoadingScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5502040912400238092 /* LMLoadingScene.cpp */; };
 		EBB4B5612040A2FB00238092 /* LMGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5532040912400238092 /* LMGameScene.cpp */; };
 		EBB4B5622040A2FE00238092 /* LMInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5512040912400238092 /* LMInput.cpp */; };
-		EBB4B5632040A30100238092 /* LMDudeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMDudeModel.cpp */; };
+		EBB4B5632040A30100238092 /* LMLumiaModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54E2040912400238092 /* LMLumiaModel.cpp */; };
 		EBB4B5642040A30400238092 /* LMBullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54D2040912400238092 /* LMBullet.cpp */; };
 		EBB4B5652040A30700238092 /* LMRopeBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B54A2040912400238092 /* LMRopeBridge.cpp */; };
 		EBB4B5662040A30A00238092 /* LMSpinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5472040912400238092 /* LMSpinner.cpp */; };
@@ -128,6 +131,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C70BAC9E25F83F1700626819 /* LMLumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMLumiaNode.h; sourceTree = "<group>"; };
+		C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaNode.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -145,13 +150,13 @@
 		EBB1AC3C1DF8C8B600C353B0 /* Mac.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Mac.xcassets; sourceTree = "<group>"; };
 		EBB1AC3D1DF8C8B600C353B0 /* Portrait.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Portrait.storyboard; sourceTree = "<group>"; };
 		EBB4B5472040912400238092 /* LMSpinner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMSpinner.cpp; sourceTree = "<group>"; };
-		EBB4B5482040912400238092 /* LMDudeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMDudeModel.h; sourceTree = "<group>"; };
+		EBB4B5482040912400238092 /* LMLumiaModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMLumiaModel.h; sourceTree = "<group>"; };
 		EBB4B5492040912400238092 /* LMApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMApp.cpp; sourceTree = "<group>"; };
 		EBB4B54A2040912400238092 /* LMRopeBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMRopeBridge.cpp; sourceTree = "<group>"; };
 		EBB4B54B2040912400238092 /* LMInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMInput.h; sourceTree = "<group>"; };
 		EBB4B54C2040912400238092 /* LMApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMApp.h; sourceTree = "<group>"; };
 		EBB4B54D2040912400238092 /* LMBullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMBullet.cpp; sourceTree = "<group>"; };
-		EBB4B54E2040912400238092 /* LMDudeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMDudeModel.cpp; sourceTree = "<group>"; };
+		EBB4B54E2040912400238092 /* LMLumiaModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaModel.cpp; sourceTree = "<group>"; };
 		EBB4B54F2040912400238092 /* LMGameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMGameScene.h; sourceTree = "<group>"; };
 		EBB4B5502040912400238092 /* LMLoadingScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMLoadingScene.cpp; sourceTree = "<group>"; };
 		EBB4B5512040912400238092 /* LMInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMInput.cpp; sourceTree = "<group>"; };
@@ -305,14 +310,16 @@
 				EBB4B5532040912400238092 /* LMGameScene.cpp */,
 				EBB4B54B2040912400238092 /* LMInput.h */,
 				EBB4B5512040912400238092 /* LMInput.cpp */,
-				EBB4B5482040912400238092 /* LMDudeModel.h */,
-				EBB4B54E2040912400238092 /* LMDudeModel.cpp */,
+				EBB4B5482040912400238092 /* LMLumiaModel.h */,
+				EBB4B54E2040912400238092 /* LMLumiaModel.cpp */,
 				EBB4B5522040912400238092 /* LMBullet.h */,
 				EBB4B54D2040912400238092 /* LMBullet.cpp */,
 				EBB4B5552040912400238092 /* LMRopeBridge.h */,
 				EBB4B54A2040912400238092 /* LMRopeBridge.cpp */,
 				EBB4B5562040912400238092 /* LMSpinner.h */,
 				EBB4B5472040912400238092 /* LMSpinner.cpp */,
+				C70BAC9E25F83F1700626819 /* LMLumiaNode.h */,
+				C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -580,7 +587,8 @@
 				EBB4B5652040A30700238092 /* LMRopeBridge.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LMApp.cpp in Sources */,
 				EBB4B5642040A30400238092 /* LMBullet.cpp in Sources */,
-				EBB4B5632040A30100238092 /* LMDudeModel.cpp in Sources */,
+				C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */,
+				EBB4B5632040A30100238092 /* LMLumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* LMGameScene.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LMLoadingScene.cpp in Sources */,
 				EBB4B5662040A30A00238092 /* LMSpinner.cpp in Sources */,
@@ -596,7 +604,8 @@
 				EB5D20AC23FC77C8007D16CD /* LMRopeBridge.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LMApp.cpp in Sources */,
 				EB5D20AB23FC77C8007D16CD /* LMBullet.cpp in Sources */,
-				EB5D20AA23FC77C8007D16CD /* LMDudeModel.cpp in Sources */,
+				C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */,
+				EB5D20AA23FC77C8007D16CD /* LMLumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* LMGameScene.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LMLoadingScene.cpp in Sources */,
 				EB5D20AD23FC77C8007D16CD /* LMSpinner.cpp in Sources */,
@@ -607,11 +616,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBB4B55B2040912400238092 /* LMDudeModel.cpp in Sources */,
+				EBB4B55B2040912400238092 /* LMLumiaModel.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
 				EBB4B55D2040912400238092 /* LMInput.cpp in Sources */,
 				EBB4B5582040912400238092 /* LMApp.cpp in Sources */,
 				EBB4B55A2040912400238092 /* LMBullet.cpp in Sources */,
+				C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */,
 				EBB4B5592040912400238092 /* LMRopeBridge.cpp in Sources */,
 				EBB4B55E2040912400238092 /* LMGameScene.cpp in Sources */,
 				EBB4B5572040912400238092 /* LMSpinner.cpp in Sources */,
