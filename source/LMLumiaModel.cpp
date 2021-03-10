@@ -46,29 +46,29 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
-   
-   _sceneNode = scene2::SceneNode::allocWithPosition(_pos);
-   _node = LumiaNode::alloc(lumia, LUMIA_ROWS, LUMIA_COLS, LUMIA_FRAMES);
-   _node->setAnchor(Vec2::ANCHOR_CENTER);
-   _node->setFrame(0);
-//   _node->setAngle(M_PI*_ang/180.0f);
-   _node->setPosition(0.0f,0.0f);
-//   _node->setColor(_tint);
-   _node->addChild(_shadowNode);
-   
-   for (int ii = 0; ii< 8; ii++){
-       auto shadow = ShadowNode::alloc(ship, SHIP_ROWS, SHIP_COLS, SHIP_FRAMES);
-       shadow->setAnchor(Vec2::ANCHOR_CENTER);
-       shadow->setFrame(SHIP_IMG_FLAT);
-       shadow->setAngle(M_PI*_ang/180.0f);
-       shadow->setPosition(dir[ii].x,dir[ii].y);
-       shadow->setColor(_tint);
-       _sceneNode->addChild(shadow);
-       _shadows[ii] = shadow.get();
-   }
-   // This order determines the draw order
-}
+//void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
+//
+//   _sceneNode = scene2::SceneNode::allocWithPosition(_pos);
+//   _node = LumiaNode::alloc(lumia, LUMIA_ROWS, LUMIA_COLS, LUMIA_FRAMES);
+//   _node->setAnchor(Vec2::ANCHOR_CENTER);
+//   _node->setFrame(0);
+////   _node->setAngle(M_PI*_ang/180.0f);
+//   _node->setPosition(0.0f,0.0f);
+////   _node->setColor(_tint);
+//   _node->addChild(_shadowNode);
+//
+//   for (int ii = 0; ii< 8; ii++){
+//       auto shadow = ShadowNode::alloc(ship, SHIP_ROWS, SHIP_COLS, SHIP_FRAMES);
+//       shadow->setAnchor(Vec2::ANCHOR_CENTER);
+//       shadow->setFrame(SHIP_IMG_FLAT);
+//       shadow->setAngle(M_PI*_ang/180.0f);
+//       shadow->setPosition(dir[ii].x,dir[ii].y);
+//       shadow->setColor(_tint);
+//       _sceneNode->addChild(shadow);
+//       _shadows[ii] = shadow.get();
+//   }
+//   // This order determines the draw order
+//}
 
 #pragma mark Constructors
 
@@ -148,16 +148,15 @@ void LumiaModel::createFixtures() {
     if (_body == nullptr) {
         return;
     }
-
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
     sensorDef.density = DUDE_DENSITY;
     sensorDef.isSensor = true;
-    
+
     b2CircleShape sensorShape;
     sensorShape.m_radius = _radius;
-    
+
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
     _sensorFixture->SetUserData(getSensorName());
@@ -170,9 +169,9 @@ void LumiaModel::createFixtures() {
  */
 void LumiaModel::releaseFixtures() {
     if (_body != nullptr) {
+        WheelObstacle::releaseFixtures();
         return;
     }
-    
     WheelObstacle::releaseFixtures();
     if (_sensorFixture != nullptr) {
         _body->DestroyFixture(_sensorFixture);

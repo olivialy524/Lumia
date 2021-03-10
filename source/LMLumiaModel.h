@@ -71,7 +71,7 @@ protected:
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
 	/** The scene graph node for the Dude. */
-	std::shared_ptr<LumiaNode> _node;
+	std::shared_ptr<cugl::scene2::SceneNode> _node;
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
 

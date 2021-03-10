@@ -334,6 +334,8 @@ void GameScene::dispose() {
  */
 void GameScene::reset() {
     _world->clear();
+//    CULog("here");
+//    _avatar->deactivatePhysics(*_world->_world);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     _avatar = nullptr;
@@ -471,7 +473,7 @@ void GameScene::populate() {
     image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = image->getSize().width/_scale;
 	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
-	sprite = scene2::AnimationNode::allocWithTexture(image);
+	sprite = scene2::PolygonNode::allocWithTexture(image);
 	_avatar->setSceneNode(sprite);
 	_avatar->setDebugColor(DEBUG_COLOR);
 	addObstacle(_avatar,sprite, 4); // Put this at the very front
