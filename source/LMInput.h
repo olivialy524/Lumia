@@ -51,6 +51,8 @@ private:
     bool  _keyRight;
 
     // MOUSE SUPPORT
+    /** Whether the mouse was drag and released */
+    bool _launchInputted;
     /** The initial click location for the current click-and-drag */
     cugl::Vec2 _dclick;
     /** The timestamp for the beginning of the current click-and-drag */
@@ -68,6 +70,8 @@ protected:
     bool _firePressed;
     /** Whether the jump action was chosen. */
     bool _jumpPressed;
+    /** Whether Lumia was launched */
+    bool _launched;
     /** How much did we move horizontally? */
     float _horizontal;
     /** The launch velocity produced by player input */
@@ -280,6 +284,13 @@ public:
      * @return if the jump button was pressed.
      */
 	float didJump() const { return _jumpPressed; }
+
+    /**
+     * Returns true if the player had drag and released.
+     *
+     * @return true if the player had drag and released.
+     */
+    float didLaunch() const { return _launched; }
 
     /**
      * Returns true if the fire button was pressed.

@@ -27,6 +27,8 @@
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
 #define DUDE_DENSITY    1.0f
+/** The restitution of the character */
+#define DUDE_RESTITUTION 0.5f
 /** The impulse for the character jump */
 #define DUDE_JUMP       5.5f
 /** Debug color for the sensor */
@@ -62,6 +64,8 @@ bool DudeModel::init(const cugl::Vec2& pos, const cugl::Size& size, float scale)
     
     if (CapsuleObstacle::init(pos,nsize)) {
         setDensity(DUDE_DENSITY);
+        // add bounciness to Lumia
+        setRestitution(DUDE_RESTITUTION);
         setFriction(0.0f);      // HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
@@ -83,26 +87,26 @@ bool DudeModel::init(const cugl::Vec2& pos, const cugl::Size& size, float scale)
 #pragma mark Attribute Properties
 
 /**
- * Sets left/right movement of this character.
- *
- * This is the result of input times dude force.
- *
- * @param value left/right movement of this character.
- */
-void DudeModel::setMovement(float value) {
-    _movement = value;
-    bool face = _movement > 0;
-    if (_movement == 0 || _faceRight == face) {
-        return;
-    }
-    
-    // Change facing
-    scene2::TexturedNode* image = dynamic_cast<scene2::TexturedNode*>(_node.get());
-    if (image != nullptr) {
-        image->flipHorizontal(!image->isFlipHorizontal());
-    }
-    _faceRight = face;
-}
+* Sets velocity of Lumia.
+*
+* This is the result of drag-and-release input.
+*
+* @param value velocity of Lumia.
+*/
+//void DudeModel::setVelocity(cugl::Vec2 value) {
+//    _velocity = value;
+//    /*bool face = _movement > 0;
+//    if (_movement == 0 || _faceRight == face) {
+//        return;
+//    }*/
+//    
+//    // Change facing
+//    /*scene2::TexturedNode* image = dynamic_cast<scene2::TexturedNode*>(_node.get());
+//    if (image != nullptr) {
+//        image->flipHorizontal(!image->isFlipHorizontal());
+//    }
+//    _faceRight = face;*/
+//}
 
 
 #pragma mark -
@@ -180,33 +184,46 @@ void DudeModel::applyForce() {
         return;
     }
     
+    // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
+    if (isLaunching() && isGrounded()) {
+        b2Vec2 force(getVelocity().x, getVelocity().y);
+        _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
+    }
+
+    
+    if (!isLaunching() && isGrounded()) {
+        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
+        b2Vec2 forceX(-getDamping() * getVX(), 0);
+        _body->ApplyForce(forceX, _body->GetPosition(), true);
+    }
+
     // Don't want to be moving. Damp out player motion
-    if (getMovement() == 0.0f) {
-        if (isGrounded()) {
-            // Instant friction on the ground
-            b2Vec2 vel = _body->GetLinearVelocity();
-            vel.x = 0; // If you set y, you will stop a jump in place
-            _body->SetLinearVelocity(vel);
-        } else {
-            // Damping factor in the air
-            b2Vec2 force(-getDamping()*getVX(),0);
-            _body->ApplyForce(force,_body->GetPosition(),true);
-        }
-    }
-    
-    // Velocity too high, clamp it
-    if (fabs(getVX()) >= getMaxSpeed()) {
-        setVX(SIGNUM(getVX())*getMaxSpeed());
-    } else {
-        b2Vec2 force(getMovement(),0);
-        _body->ApplyForce(force,_body->GetPosition(),true);
-    }
-    
-    // Jump!
-    if (isJumping() && isGrounded()) {
-        b2Vec2 force(0, DUDE_JUMP);
-        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    }
+    //if (getVelocity().x != 0.0f) {
+    //    if (isGrounded()) {
+    //        // Instant friction on the ground
+    //        b2Vec2 vel = _body->GetLinearVelocity();
+    //        vel.x = 0; // If you set y, you will stop a jump in place
+    //        _body->SetLinearVelocity(vel);
+    //    } else {
+    //        // Damping factor in the air
+    //        b2Vec2 force(-getDamping()*getVX(),0);
+    //        _body->ApplyForce(force,_body->GetPosition(),true);
+    //    }
+    //}
+    //
+    //// Velocity too high, clamp it
+    //if (fabs(getVX()) >= getMaxSpeed()) {
+    //    setVX(SIGNUM(getVX())*getMaxSpeed());
+    //} else {
+    //    b2Vec2 force(getVelocity().x,0);
+    //    _body->ApplyForce(force,_body->GetPosition(),true);
+    //}
+    //
+    //// Jump!
+    //if (isJumping() && isGrounded()) {
+    //    b2Vec2 force(0, DUDE_JUMP);
+    //    _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
+    //}
 }
 
 /**

@@ -303,6 +303,16 @@ public:
     */
     void removeBullet(Bullet* bullet);
 
+    /**
+     * Calculates trajectory point one timestep into future
+     *
+     * @param startingPosition the position model is located before launching
+     * @param startingVelocity the velocity model will be launched at during aiming
+     * @param n timestep
+     */
+    Vec2 getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity, 
+                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world);
+
   };
 
 #endif /* __PF_GAME_SCENE_H__ */

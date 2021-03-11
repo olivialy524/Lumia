@@ -8,8 +8,12 @@
 
 using namespace cugl;
 
+#define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
+
 #pragma mark Input Constants
 
+/** Maximum allowed Lumia launch velocity */
+#define MAXIMUM_LAUNCH_VELOCITY 70.0f
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
@@ -77,7 +81,8 @@ _keyLeft(false),
 _keyRight(false),
 _horizontal(0.0f),
 _joystick(false),
-_hasJumped(false) {
+_hasJumped(false),
+_launched(false) {
 }
 
 /**
@@ -182,6 +187,9 @@ void LumiaInput::update(float dt) {
 	_firePressed  = _keyFire;
 	_jumpPressed  = _keyJump;
 
+    _launched = _launchInputted;
+    _launchInputted = false;
+
 	// Directional controls
 	_horizontal = 0.0f;
 	if (_keyRight) {
@@ -198,6 +206,7 @@ void LumiaInput::update(float dt) {
     _keyDebug = false;
     _keyJump  = false;
     _keyFire  = false;
+    _launchInputted = false;
 #endif
 }
 
@@ -210,6 +219,7 @@ void LumiaInput::clear() {
     _exitPressed  = false;
     _jumpPressed = false;
     _firePressed = false;
+    _launched = false;
 
     _inputLaunch = Vec2::ZERO;
     _dclick = Vec2::ZERO;
@@ -372,12 +382,18 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
 
     // Move the ship in this direction
     Vec2 finishDrag = event.position - _dclick;
+
+    finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+    finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+
+    finishDrag.x = finishDrag.x / 20.0f;
+    finishDrag.y = finishDrag.y / 10.0f;
+
     char print[64];
     snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
     CULog(print);
     _inputLaunch = finishDrag;
-   /* finishTouch.x = RANGE_CLAMP(finishTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-    finishTouch.y = RANGE_CLAMP(finishTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);*/
+    _launchInputted = true;
 
     // Go ahead and apply to thrust now.
     /*_inputThrust.x = finishTouch.x / X_ADJUST_FACTOR;

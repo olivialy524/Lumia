@@ -26,7 +26,7 @@
 /** The factor to multiply by the input */
 #define DUDE_FORCE      20.0f
 /** The amount to slow the character down */
-#define DUDE_DAMPING    10.0f
+#define DUDE_DAMPING    3.0f
 /** The maximum character speed */
 #define DUDE_MAXSPEED   5.0f
 
@@ -46,14 +46,18 @@ private:
 	CU_DISALLOW_COPY_AND_ASSIGN(DudeModel);
 
 protected:
-	/** The current horizontal movement of the character */
-	float _movement;
+	/** The current velocity of Lumia */
+	cugl::Vec2 _velocity;
+    /** The planned velocity of Lumia */
+    cugl::Vec2 _plannedVelocity;
 	/** Which direction is the character facing */
 	bool _faceRight;
 	/** How long until we can jump again */
 	int  _jumpCooldown;
 	/** Whether we are actively jumping */
 	bool _isJumping;
+    /** Whether we are actively launching */
+    bool _isLaunching;
 	/** How long until we can shoot again */
 	int  _shootCooldown;
 	/** Whether our feet are on the ground */
@@ -293,22 +297,38 @@ public:
 #pragma mark -
 #pragma mark Attribute Properties
     /**
-     * Returns left/right movement of this character.
+     * Returns current velocity of Lumia.
      *
-     * This is the result of input times dude force.
+     * This is the result of drag-and-release input.
      *
-     * @return left/right movement of this character.
+     * @return velocity of Lumia.
      */
-    float getMovement() const { return _movement; }
+    cugl::Vec2 getVelocity() const { return _velocity; }
+
+    /**
+     * Returns current position of Lumia.
+     *
+     * @return position of Lumia.
+     */
+    b2Vec2 getPos() const { return _body->GetPosition(); }
     
     /**
-     * Sets left/right movement of this character.
+     * Sets velocity of Lumia.
      *
-     * This is the result of input times dude force.
+     * This is the result of drag-and-release input.
      *
-     * @param value left/right movement of this character.
+     * @param value velocity of Lumia.
      */
-    void setMovement(float value);
+    void setVelocity(cugl::Vec2 value) { _velocity = value; }
+
+    /**
+     * Sets velocity of Lumia.
+     *
+     * This is the result of drag-and-release input.
+     *
+     * @param value velocity of Lumia.
+     */
+    void setPlannedVelocity(cugl::Vec2 value) { _plannedVelocity = value; }
     
     /**
      * Returns true if the dude is actively firing.
@@ -330,6 +350,13 @@ public:
      * @return true if the dude is actively jumping.
      */
     bool isJumping() const { return _isJumping && _jumpCooldown <= 0; }
+
+    /**
+     * Returns true if the dude is actively jumping.
+     *
+     * @return true if the dude is actively jumping.
+     */
+    bool isLaunching() const { return _isLaunching; }
     
     /**
      * Sets whether the dude is actively jumping.
@@ -337,6 +364,13 @@ public:
      * @param value whether the dude is actively jumping.
      */
     void setJumping(bool value) { _isJumping = value; }
+
+    /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    void setLaunching(bool value) { _isLaunching = value; }
     
     /**
      * Returns true if the dude is on the ground.
@@ -429,9 +463,6 @@ public:
      * This method should be called after the force attribute is set.
      */
     void applyForce();
-
-
-	
 };
 
 #endif /* __PF_DUDE_MODEL_H__ */
