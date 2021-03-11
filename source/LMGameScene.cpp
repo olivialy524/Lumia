@@ -587,7 +587,6 @@ void GameScene::update(float dt) {
     } else if(_avatar->isMerging()){
      // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
-//        CULog("here");
         
     }
     
