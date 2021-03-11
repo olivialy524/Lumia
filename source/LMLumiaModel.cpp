@@ -34,7 +34,7 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define DUDE_DENSITY    1.0f
+#define DUDE_DENSITY    0.2f
 /** The impulse for the character jump */
 #define DUDE_JUMP       5.5f
 /** Debug color for the sensor */
@@ -53,7 +53,7 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
     auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
-   _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+   _node->setPosition(Vec2(0, 0));
    _node->setFrame(0);
    _sceneNode->addChild(_node);
 }

@@ -15,10 +15,13 @@
             "file":      "textures/ropebridge.png"
         },
         "bullet": {
-            "file":      "textures/bullet.png"
+            "file":      "textures/lumia.png"
         },
         "goal": {
             "file":      "textures/goaldoor.png"
+        },
+        "background":{
+            "file": "textures/background.png"
         },
         "dpad": {
             "file":     "textures/dpad.png",
@@ -73,5 +76,27 @@
 			"size":     64
 		}
 
-	}
+	},
+    "scene2s" : {
+        "game" : {
+            "comment"   : "We do not have an asset loader for filmstrips yet, so we do not add the ships",
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "background",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                }
+            }
+        }
+    }
 }

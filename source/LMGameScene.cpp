@@ -144,6 +144,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 /** The image for the right dpad/joystick */
 #define RIGHT_IMAGE     "dpad_right"
 
+#define BACKGROUND_IMAGE "background"
+
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -232,7 +234,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+//    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("game");
+//    scene->setContentSize(dimen);
+//    scene->doLayout(); // Repositions the HUD;
+//    addChild(scene);
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
