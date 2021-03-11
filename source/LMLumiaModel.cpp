@@ -157,7 +157,7 @@ void LumiaModel::split(){
     _radius /= 1.4f;
     WheelObstacle::setRadius(_radius);
     _node->setScale(_node->getScale()/1.4f);
-    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+//    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
 
     
 }
