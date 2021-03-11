@@ -738,7 +738,7 @@ void GameScene::createBullet() {
 void GameScene::createPlant(float posx, float posy, int nplant) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = 0.5f*image->getSize().width/_scale;
+    float radius = 0.5*image->getSize().width/(_scale);
 
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
     p->setBodyType(b2_staticBody);
