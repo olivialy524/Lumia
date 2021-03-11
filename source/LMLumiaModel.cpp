@@ -155,7 +155,8 @@ void LumiaModel::createFixtures() {
 
 void LumiaModel::split(){
     _radius /= 2.0f;
-    WheelObstacle::setRadius(_radius);
+    setRadius(_radius);
+    _node->setScale(_node->getScale()/2);
     CULog("%f/n", _radius);
 }
 /**

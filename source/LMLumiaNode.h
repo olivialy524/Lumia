@@ -29,6 +29,10 @@ public:
         _scale = scale;
     }
     
+    float getScale(){
+        return _scale;
+    }
+    
     static std::shared_ptr<LumiaNode> alloc(const std::shared_ptr<Texture>& texture,
                                                 int rows, int cols, int size) {
         std::shared_ptr<LumiaNode> node = std::make_shared<LumiaNode>();
