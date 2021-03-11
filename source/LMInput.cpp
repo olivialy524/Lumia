@@ -10,6 +10,9 @@ using namespace cugl;
 
 #define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
 
+#define X_ADJUST_FACTOR 20.0f
+#define Y_ADJUST_FACTOR 10.0f
+
 #pragma mark Input Constants
 
 /** Maximum allowed Lumia launch velocity */
@@ -380,24 +383,19 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
         return;
     }*/
 
-    // Move the ship in this direction
     Vec2 finishDrag = event.position - _dclick;
 
     finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
     finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
 
-    finishDrag.x = finishDrag.x / 20.0f;
-    finishDrag.y = finishDrag.y / 10.0f;
+    finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
+    finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
     char print[64];
     snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
     CULog(print);
     _inputLaunch = finishDrag;
     _launchInputted = true;
-
-    // Go ahead and apply to thrust now.
-    /*_inputThrust.x = finishTouch.x / X_ADJUST_FACTOR;
-    _inputThrust.y = finishTouch.y / -Y_ADJUST_FACTOR; */ // Touch coords
 }
 
 /**

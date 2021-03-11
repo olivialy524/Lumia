@@ -306,7 +306,7 @@ public:
     cugl::Vec2 getVelocity() const { return _velocity; }
 
     /**
-     * Returns current position of Lumia.
+     * Returns current position of Lumia (used for trajectory prediction).
      *
      * @return position of Lumia.
      */
@@ -322,11 +322,11 @@ public:
     void setVelocity(cugl::Vec2 value) { _velocity = value; }
 
     /**
-     * Sets velocity of Lumia.
+     * Sets planned velocity of Lumia.
      *
-     * This is the result of drag-and-release input.
+     * This is what the player is currently aiming Lumia towards before the launch.
      *
-     * @param value velocity of Lumia.
+     * @param value planned velocity of Lumia.
      */
     void setPlannedVelocity(cugl::Vec2 value) { _plannedVelocity = value; }
     
@@ -352,9 +352,9 @@ public:
     bool isJumping() const { return _isJumping && _jumpCooldown <= 0; }
 
     /**
-     * Returns true if the dude is actively jumping.
+     * Returns true if the dude is actively launching.
      *
-     * @return true if the dude is actively jumping.
+     * @return true if the dude is actively launching.
      */
     bool isLaunching() const { return _isLaunching; }
     
@@ -366,9 +366,9 @@ public:
     void setJumping(bool value) { _isJumping = value; }
 
     /**
-     * Sets whether the dude is actively jumping.
+     * Sets whether the dude is actively launching.
      *
-     * @param value whether the dude is actively jumping.
+     * @param value whether the dude is actively launching.
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
