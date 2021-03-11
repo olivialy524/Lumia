@@ -457,7 +457,7 @@ void GameScene::populate() {
     */
     int numplats = _leveljson->getInt("numplatforms");
     for (int i = 1; i <= numplats; i++) {
-        std::string platstring = "plat " + to_string(i);
+        std::string platstring = "plat_" + to_string(i);
         std::shared_ptr<cugl::JsonValue> platfor = _leveljson->get(platstring);
         float vox = platfor->getFloat("v1x");
         float voy = platfor->getFloat("v1y");
@@ -508,7 +508,7 @@ void GameScene::populate() {
     */
     int np = _leveljson->getInt("numplants");
     for (int i = 1; i <= np; i++) {
-        std::string ps = ("plant " + to_string(i));
+        std::string ps = ("plant_" + to_string(i));
         std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
         float px = plant->getFloat("posx");
         float py = plant->getFloat("posy");
