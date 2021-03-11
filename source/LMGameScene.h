@@ -309,6 +309,8 @@ public:
     * Adds a new bullet to the world and sends it in the right direction.
     */
     void createLumia();
+    
+    void mergeLumiasNearby();
 
     /**
     * Removes the input Bullet from the world.

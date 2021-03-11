@@ -568,6 +568,7 @@ void GameScene::update(float dt) {
 	_avatar->setJumping( _input.didJump());
 	_avatar->applyForce();
     _avatar->setSplitting(_input.didSplit());
+    _avatar->setMerging(_input.didMerge());
 
 	if (_avatar->isJumping() && _avatar->isGrounded()) {
 		std::shared_ptr<Sound> source = _assets->get<Sound>(JUMP_EFFECT);
@@ -575,12 +576,16 @@ void GameScene::update(float dt) {
 	}
 
     if (_avatar->isSplitting()){
-        // resize this lumia, create one smaller lumia
-//        CULog("here");
         _avatar->setSplitForce(Vec2(6.0f, 0.0f));
         _avatar->split();
         createLumia();
+    } else if(_avatar->isMerging()){
+     // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
+        mergeLumiasNearby();
+//        CULog("here");
+        
     }
+    
 	// Turn the physics engine crank.
 	_world->update(dt);
 
@@ -715,6 +720,22 @@ void GameScene::removeBullet(Bullet* bullet) {
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
 	AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
+}
+
+void GameScene::mergeLumiasNearby(){
+    for (LumiaModel* lumia : _lumiaList){
+        if (lumia==_avatar.get()){
+            continue;
+        }
+        Vec2 avatarPos = _avatar->getPosition();
+        Vec2 lumiaPos = lumia->getPosition();
+        if (avatarPos.distance(lumiaPos)< 10.0f){
+            //set lumia velocity
+            lumia->setLinearVelocity(avatarPos-lumiaPos);
+            
+        }
+        
+    }
 }
 
 void GameScene::removeLumia(LumiaModel* lumia) {

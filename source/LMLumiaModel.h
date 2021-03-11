@@ -64,6 +64,8 @@ protected:
     
     bool _isSplitting;
     
+    bool _isMerging;
+    
     float _radius;
 	/** Ground sensor to represent our feet */
 	b2Fixture*  _sensorFixture;
@@ -371,7 +373,15 @@ public:
      */
     void setSplitting(bool value) { _isSplitting = value; }
     
-    bool isSplitting() const {return _isSplitting;};
+    bool isSplitting() const {return _isSplitting;}
+    /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    void setMerging(bool value) { _isMerging = value; }
+    
+    bool isMerging() const {return _isMerging;}
     /**
      * Returns true if the dude is on the ground.
      *

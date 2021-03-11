@@ -274,6 +274,8 @@ public:
 	float didJump() const { return _jumpPressed; }
 
     float didSplit() const { return _splitPressed; }
+    
+    float didMerge() const { return _mergePressed; }
     /**
      * Returns true if the fire button was pressed.
      *
