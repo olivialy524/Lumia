@@ -610,26 +610,38 @@ void GameScene::update(float dt) {
 	}
 
 	// Process the movement
-    if (_input.withJoystick()) {
-        if (_input.getHorizontal() < 0) {
-            _leftnode->setVisible(true);
-            _rightnode->setVisible(false);
-        } else if (_input.getHorizontal() > 0) {
-            _leftnode->setVisible(false);
-            _rightnode->setVisible(true);
-        } else {
-            _leftnode->setVisible(false);
-            _rightnode->setVisible(false);
-        }
-        _leftnode->setPosition(_input.getJoystick());
-        _rightnode->setPosition(_input.getJoystick());
-    } else {
-        _leftnode->setVisible(false);
-        _rightnode->setVisible(false);
-    }
+    //if (_input.withJoystick()) {
+    //    if (_input.getHorizontal() < 0) {
+    //        _leftnode->setVisible(true);
+    //        _rightnode->setVisible(false);
+    //    } else if (_input.getHorizontal() > 0) {
+    //        _leftnode->setVisible(false);
+    //        _rightnode->setVisible(true);
+    //    } else {
+    //        _leftnode->setVisible(false);
+    //        _rightnode->setVisible(false);
+    //    }
+    //    _leftnode->setPosition(_input.getJoystick());
+    //    _rightnode->setPosition(_input.getJoystick());
+    //} else {
+    //    _leftnode->setVisible(false);
+    //    _rightnode->setVisible(false);
+    //}
     
-	_avatar->setMovement(_input.getHorizontal()*_avatar->getForce());
+	_avatar->setVelocity(_input.getLaunch());
+	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
+	if (_avatar->isGrounded()) {
+		_avatar->setPlannedVelocity(_input.getLaunch());
+		//glColor3f(1, 1, 0);
+		//glBegin(GL_LINES);
+		//for (int i = 0; i < 180; i++) { // three seconds at 60fps
+		//	Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPos(), _input.getLaunch(), i, _world);
+		//	glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
+		//}
+		//glEnd();
+	}
 	_avatar->setJumping( _input.didJump());
+	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
 
 	if (_avatar->isJumping() && _avatar->isGrounded()) {
@@ -789,6 +801,22 @@ void GameScene::removeBullet(Bullet* bullet) {
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
 	AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
+}
+
+/**
+* Calculates trajectory point one timestep into future
+*
+* @param startingPosition the position model is located before launching
+* @param startingVelocity the velocity model will be launched at during aiming
+* @param n timestep
+*/
+Vec2 getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity,
+						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world) {
+	//velocity and gravity are given per second but we want time step values here
+	float t = 1 / 60.0f; // seconds per time step (at 60fps)
+	Vec2 stepVelocity = t * startingVelocity; // m/s
+	Vec2 stepGravity = t * t * _world->getGravity(); // m/s/s
+	return Vec2(startingPosition.x + n * stepVelocity.x, startingPosition.y + n * stepVelocity.y) + 0.5f * (n * n + n) * stepGravity;
 }
 
 
