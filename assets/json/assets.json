@@ -1,7 +1,7 @@
 {
 	"textures": {
 		"earth": {
-			"file":     "textures/earthtile.png",
+			"file":     "textures/tile.png",
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
@@ -79,7 +79,7 @@
 	},
     "scene2s" : {
         "game" : {
-            "comment"   : "We do not have an asset loader for filmstrips yet, so we do not add the ships",
+            "comment"   : "??",
             "type"      : "Node",
             "format"    : {
                 "type" : "Anchored"
