@@ -369,6 +369,10 @@ void GameScene::reset() {
  */
 void GameScene::populate() {
 #pragma mark : Goal door
+    std::shared_ptr<Texture> image;
+    std::shared_ptr<scene2::PolygonNode> sprite;
+    std::shared_ptr<scene2::WireNode> draw;
+    /**
 	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
 	std::shared_ptr<scene2::PolygonNode> sprite;
 	std::shared_ptr<scene2::WireNode> draw;
@@ -390,10 +394,10 @@ void GameScene::populate() {
 	sprite = scene2::PolygonNode::allocWithTexture(image);
 	_goalDoor->setDebugColor(DEBUG_COLOR);
 	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
-
+    */
 #pragma mark : Walls
 	// All walls and platforms share the same texture
-	image  = _assets->get<Texture>(EARTH_TEXTURE);
+    image  = _assets->get<Texture>(EARTH_TEXTURE);
 	std::string wname = "wall";
 	for (int ii = 0; ii < WALL_COUNT; ii++) {
 		std::shared_ptr<physics2::PolygonObstacle> wallobj;
@@ -424,6 +428,7 @@ void GameScene::populate() {
 	}
 
 #pragma mark : Platforms
+    /**
 	for (int ii = 0; ii < PLATFORM_COUNT; ii++) {
 		std::shared_ptr<physics2::PolygonObstacle> platobj;
 		Poly2 platform(PLATFORMS[ii],8);
@@ -449,8 +454,48 @@ void GameScene::populate() {
 		sprite = scene2::PolygonNode::allocWithTexture(image,platform);
 		addObstacle(platobj,sprite,1);
 	}
+    */
+    int numplats = _leveljson->getInt("numplatforms");
+    for (int i = 1; i <= numplats; i++) {
+        std::string platstring = "plat " + to_string(i);
+        std::shared_ptr<cugl::JsonValue> platfor = _leveljson->get(platstring);
+        float vox = platfor->getFloat("v1x");
+        float voy = platfor->getFloat("v1y");
+        float vtwx = platfor->getFloat("v2x");
+        float vtwy = platfor->getFloat("v2y");
+        float vthx = platfor->getFloat("v3x");
+        float vthy = platfor->getFloat("v3y");
+        float vfx = platfor->getFloat("v4x");
+        float vfy = platfor->getFloat("v4y");
+        float platvec[] = {(vox),voy,vtwx,vtwy,vthx,
+            vthy,vfx,vfy};
+        std::shared_ptr<physics2::PolygonObstacle> platobj;
+        Poly2 platform(platvec,8);
+
+        SimpleTriangulator triangulator;
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+
+        platobj = physics2::PolygonObstacle::alloc(platform);
+        // You cannot add constant "".  Must stringify
+        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(i));
+
+        // Set the physics attributes
+        platobj->setBodyType(b2_staticBody);
+        platobj->setDensity(BASIC_DENSITY);
+        platobj->setFriction(BASIC_FRICTION);
+        platobj->setRestitution(BASIC_RESTITUTION);
+        platobj->setDebugColor(DEBUG_COLOR);
+
+        platform *= _scale;
+        sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+        addObstacle(platobj,sprite,1);
+    }
 
 #pragma mark : Spinner
+    /**
 	Vec2 spinPos = SPIN_POS;
     image = _assets->get<Texture>(SPINNER_TEXTURE);
 	_spinner = Spinner::alloc(spinPos,image->getSize()/_scale,_scale);
@@ -460,16 +505,17 @@ void GameScene::populate() {
 	_spinner->setBodyType(b2_staticBody);
 	_spinner->setDebugColor(DEBUG_COLOR);
 	addObstacle(_spinner, node, 2, false);
+    */
     int np = _leveljson->getInt("numplants");
     for (int i = 1; i <= np; i++) {
         std::string ps = ("plant " + to_string(i));
         std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
-        int px = plant->getInt("posx");
-        int py = plant->getInt("posy");
+        float px = plant->getFloat("posx");
+        float py = plant->getFloat("posy");
         createPlant(px, py, i);
     }
-
 #pragma mark : Rope Bridge
+    /**
 	Vec2 bridgeStart = BRIDGE_POS;
 	Vec2 bridgeEnd   = bridgeStart;
 	bridgeEnd.x += BRIDGE_WIDTH;
@@ -482,17 +528,16 @@ void GameScene::populate() {
 	_ropebridge->setBodyType(b2_staticBody);
 	_ropebridge->setDebugColor(DEBUG_COLOR);
 	addObstacle(_ropebridge, node, 3, false);
-
+     */
 #pragma mark : Dude
 	Vec2 dudePos = DUDE_POS;
-	node = scene2::SceneNode::alloc();
+    std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(DUDE_TEXTURE);
 	_avatar = DudeModel::alloc(dudePos,image->getSize()/_scale,_scale);
 	sprite = scene2::PolygonNode::allocWithTexture(image);
 	_avatar->setSceneNode(sprite);
 	_avatar->setDebugColor(DEBUG_COLOR);
 	addObstacle(_avatar,sprite, 4); // Put this at the very front
-
 	// Play the background music on a loop.
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
@@ -690,7 +735,7 @@ void GameScene::createBullet() {
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
 }
 
-void GameScene::createPlant(int posx, int posy, int nplant) {
+void GameScene::createPlant(float posx, float posy, int nplant) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = 0.5f*image->getSize().width/_scale;
@@ -704,6 +749,7 @@ void GameScene::createPlant(int posx, int posy, int nplant) {
     p->setDensity(0);
     p->setBullet(false);
     p->setGravityScale(0);
+    p->setSensor(true);
     p->setDebugColor(DEBUG_COLOR);
     p->setDrawScale(_scale);
 

@@ -302,7 +302,7 @@ public:
     */
     void createBullet();
 
-    void createPlant(int posx, int posy, int nplant);
+    void createPlant(float posx, float posy, int nplant);
     
     void checkWin();
     /**
