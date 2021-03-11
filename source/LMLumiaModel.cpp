@@ -48,7 +48,7 @@ using namespace cugl;
 
 void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
     _sceneNode = scene2::SceneNode::allocWithPosition(initPos);
-   
+    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
    _node = LumiaNode::alloc(lumia, 1, 1, 1);
     auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
    _node->setScale(scale);
@@ -157,6 +157,7 @@ void LumiaModel::split(){
     _radius /= 1.4f;
     WheelObstacle::setRadius(_radius);
     _node->setScale(_node->getScale()/1.4f);
+    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
     CULog("%f/n", _radius);
 
     
