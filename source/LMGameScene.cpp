@@ -146,6 +146,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 /** The image for the right dpad/joystick */
 #define RIGHT_IMAGE     "dpad_right"
 
+#define BACKGROUND_IMAGE "background"
+
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -234,11 +236,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+   
+   
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
     
+    
+    std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    scene->setContentSize(dimen);
+    scene->doLayout(); // Repositions the HUD;
+   
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
@@ -289,12 +297,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rightnode->setScale(0.35f);
     _rightnode->setVisible(false);
 
-    addChild(_worldnode,0);
-    addChild(_debugnode,1);
+    addChild(scene, 0);
+    addChild(_worldnode, 1);
+    addChild(_debugnode,2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     addChild(_leftnode, 5);
     addChild(_rightnode,6);
+   
 
     populate();
     _active = true;
@@ -383,6 +393,9 @@ void GameScene::populate() {
 	sprite = scene2::PolygonNode::allocWithTexture(image);
 	_goalDoor->setDebugColor(DEBUG_COLOR);
 	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
+    
+    
+    
 
 #pragma mark : Walls
 	// All walls and platforms share the same texture
@@ -472,7 +485,7 @@ void GameScene::populate() {
 	Vec2 dudePos = DUDE_POS;
 	node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = 0.3f;// change to value from json
+    float radius = 1.0f;// change to value from json
 	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
     _avatar-> setTextures(image, DUDE_POS);
     _avatar-> setName(LUMIA_NAME);
