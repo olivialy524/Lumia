@@ -512,7 +512,8 @@ void GameScene::populate() {
         std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
         float px = plant->getFloat("posx");
         float py = plant->getFloat("posy");
-        createPlant(px, py, i);
+        float pa = (plant->getFloat("angle"))*M_PI/180;
+        createPlant(px, py, i,pa);
     }
 #pragma mark : Rope Bridge
     /**
@@ -735,13 +736,14 @@ void GameScene::createBullet() {
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
 }
 
-void GameScene::createPlant(float posx, float posy, int nplant) {
+void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     float radius = 0.5*image->getSize().width/(_scale);
 
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
     p->setBodyType(b2_staticBody);
+    p->setAngle(ang);
     p->lightDown();
     p->setFriction(0.0f);
     p->setRestitution(0.0f);
@@ -820,9 +822,11 @@ void GameScene::beginContact(b2Contact* contact) {
 		removeBullet((Bullet*)bd2);
 	}
     if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
+        cout << bd1->getAngle();
         ((Plant*)bd1)->lightUp();
     }
     else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
+        cout << bd1->getAngle();
         ((Plant*)bd2)->lightUp();
     }
  

@@ -112,7 +112,6 @@ public:
     bool getIsLit() {
         return _isLit;
     }
-    
     void lightUp() {
         _isLit = true;
     }
