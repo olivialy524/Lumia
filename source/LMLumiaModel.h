@@ -290,6 +290,9 @@ public:
      * @return the scene graph node representing this DudeModel.
      */
 	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
+    
+    
+    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
 
     /**
      * Sets the scene graph node representing this DudeModel.

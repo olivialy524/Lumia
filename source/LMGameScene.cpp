@@ -483,7 +483,7 @@ void GameScene::populate() {
 	Vec2 dudePos = DUDE_POS;
 	node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = 0.8f;// change to value from json
+    float radius = 1.0f;// change to value from json
 	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
     _avatar-> setTextures(image, DUDE_POS);
 	_avatar-> setDebugColor(DEBUG_COLOR);
