@@ -81,7 +81,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
-        setFriction(0.1f);      // HE WILL STICK TO WALLS IF YOU FORGET
+        setFriction(0.2f);      // HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
@@ -158,6 +158,18 @@ void LumiaModel::split(){
     WheelObstacle::setRadius(_radius);
     _node->setScale(_node->getScale()/1.4f);
     _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+    _isSplitting = false;
+
+    
+}
+
+void LumiaModel::merge(float addRadius){
+    float newRadius = 0.4f * addRadius + _radius;
+    float scale = newRadius / _radius;
+    _radius = newRadius;
+    WheelObstacle::setRadius(_radius);
+    _node->setScale(_node->getScale()*scale);
+    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
 
     
 }
@@ -225,7 +237,9 @@ void LumiaModel::applyForce() {
         b2Vec2 force(0, DUDE_JUMP);
         _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
     }
+//    CULog("splitting %d", isSplitting());
     if (isSplitting()){
+//        CULog("forcex %f", _splitForce.x);
         b2Vec2 force(_splitForce.x, _splitForce.y);
         _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
     }

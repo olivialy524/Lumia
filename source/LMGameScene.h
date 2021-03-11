@@ -58,7 +58,7 @@ protected:
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel>			  _avatar;
     /** Reference to the player avatar */
-    std::vector<LumiaModel*>              _lumiaList;
+    std::set<LumiaModel*>                 _lumiaSet;
     /** Reference to the spinning barrier */
     std::shared_ptr<Spinner>			  _spinner;
     /** Reference to the rope bridge */

@@ -315,6 +315,8 @@ public:
     }
     
     void split();
+    
+    void merge(float addRadius);
 
     
 #pragma mark -
