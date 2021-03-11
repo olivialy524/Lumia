@@ -822,11 +822,9 @@ void GameScene::beginContact(b2Contact* contact) {
 		removeBullet((Bullet*)bd2);
 	}
     if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
-        cout << bd1->getAngle();
         ((Plant*)bd1)->lightUp();
     }
     else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
-        cout << bd1->getAngle();
         ((Plant*)bd2)->lightUp();
     }
  
