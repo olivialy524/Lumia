@@ -731,7 +731,12 @@ void GameScene::mergeLumiasNearby(){
         Vec2 lumiaPos = lumia->getPosition();
         if (avatarPos.distance(lumiaPos)< 10.0f){
             //set lumia velocity
-            lumia->setLinearVelocity(avatarPos-lumiaPos);
+            Vec2 distance = avatarPos-lumiaPos;
+//            if (distance.length() < 1.0f){
+//                CULog("close enough");
+//                continue;
+//            }
+            lumia->setLinearVelocity(distance.normalize().scale(3.0f));
             
         }
         

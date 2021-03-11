@@ -165,7 +165,7 @@ void LumiaInput::update(float dt) {
     _keyExit   = keys->keyPressed(EXIT_KEY);
     _keyFire   = keys->keyPressed(FIRE_KEY);
     _keyJump   = keys->keyPressed(JUMP_KEY);
-    _keyMerge   = keys->keyPressed(MERGE_KEY);
+    _keyMerge   = keys->keyDown(MERGE_KEY);
     _keySplit   = keys->keyPressed(SPLIT_KEY);
 
     _keyLeft = keys->keyDown(KeyCode::ARROW_LEFT);

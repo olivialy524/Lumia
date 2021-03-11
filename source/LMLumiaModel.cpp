@@ -81,7 +81,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
-        setFriction(0.0f);      // HE WILL STICK TO WALLS IF YOU FORGET
+        setFriction(0.1f);      // HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
