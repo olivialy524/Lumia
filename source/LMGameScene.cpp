@@ -756,6 +756,7 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     p->setDrawScale(_scale);
 
     std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+    sprite->setAngle(ang);
     p->setSceneNode(sprite);
 
     p->setVX(0);
