@@ -81,7 +81,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
-        setFriction(0.0f);      // HE WILL STICK TO WALLS IF YOU FORGET
+        setFriction(0.3f);      // HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
@@ -154,10 +154,12 @@ void LumiaModel::createFixtures() {
 
 
 void LumiaModel::split(){
-    _radius /= 2.0f;
-    setRadius(_radius);
-    _node->setScale(_node->getScale()/2);
+    _radius /= 1.4f;
+    WheelObstacle::setRadius(_radius);
+    _node->setScale(_node->getScale()/1.4f);
     CULog("%f/n", _radius);
+
+    
 }
 /**
  * Release the fixtures for this body, reseting the shape
