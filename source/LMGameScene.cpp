@@ -111,6 +111,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define BULLET_NAME     "bullet"
 /** The name of a wall (for object identification) */
 #define WALL_NAME       "wall"
+
+#define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 /** The font for victory/failure messages */
@@ -346,7 +348,7 @@ void GameScene::reset() {
     _world->clear();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
-    _lumiaList.clear();
+    _lumiaSet.clear();
     _avatar = nullptr;
     _goalDoor = nullptr;
     _spinner = nullptr;
@@ -486,7 +488,9 @@ void GameScene::populate() {
     float radius = 1.0f;// change to value from json
 	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
     _avatar-> setTextures(image, DUDE_POS);
+    _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
+    _lumiaSet.insert(_avatar.get());
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
@@ -589,13 +593,13 @@ void GameScene::update(float dt) {
 	}
 
     if (_avatar->isSplitting()){
+        CULog("gamescene spliting? %d", _avatar->isSplitting());
         _avatar->setSplitForce(Vec2(6.0f, 0.0f));
         _avatar->split();
         createLumia();
     } else if(_avatar->isMerging()){
      // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
-//        CULog("here");
         
     }
     
@@ -617,6 +621,8 @@ void GameScene::update(float dt) {
 		setFailure(true);
 	}
 
+//    _avatar->setSplitting(false);
+    
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
 		_countdown--;
@@ -711,10 +717,11 @@ void GameScene::createLumia() {
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
+    lumia-> setName(LUMIA_NAME);
     lumia->setSplitForce(Vec2(-6.0f, 0.0f));
     addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
     
-    _lumiaList.push_back(lumia.get());
+    _lumiaSet.insert(lumia.get());
  
 }
 /**
@@ -736,21 +743,21 @@ void GameScene::removeBullet(Bullet* bullet) {
 }
 
 void GameScene::mergeLumiasNearby(){
-    for (LumiaModel* lumia : _lumiaList){
+    for (LumiaModel* lumia : _lumiaSet){
         if (lumia==_avatar.get()){
             continue;
         }
         Vec2 avatarPos = _avatar->getPosition();
         Vec2 lumiaPos = lumia->getPosition();
-        if (avatarPos.distance(lumiaPos)< 10.0f){
-            //set lumia velocity
+        float dist = avatarPos.distance(lumiaPos);
+        if (dist <= lumia->getRadius() + _avatar->getRadius()){
+            _avatar->merge(lumia->getRadius());
+            removeLumia(lumia);
+            break;
+        } else if (dist < 10.0f){
+            //set lumia velocity to move toward avatar
             Vec2 distance = avatarPos-lumiaPos;
-//            if (distance.length() < 1.0f){
-//                CULog("close enough");
-//                continue;
-//            }
-            lumia->setLinearVelocity(distance.normalize().scale(3.0f));
-            
+            lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
         
     }
@@ -758,15 +765,14 @@ void GameScene::mergeLumiasNearby(){
 
 void GameScene::removeLumia(LumiaModel* lumia) {
   // do not attempt to remove a bullet that has already been removed
-//    if (bullet->isRemoved()) {
-//        return;
-//    }
-//    _worldnode->removeChild(bullet->getSceneNode());
-//    bullet->setDebugScene(nullptr);
-//    bullet->markRemoved(true);
-//
-//    std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
-//    AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
+    if (lumia->isRemoved()) {
+        return;
+    }
+    _worldnode->removeChild(lumia->getSceneNode());
+    _lumiaSet.erase(lumia);
+    lumia->setDebugScene(nullptr);
+    lumia->markRemoved(true);
+
 }
 
 
@@ -795,11 +801,32 @@ void GameScene::beginContact(b2Contact* contact) {
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
 	// Test bullet collision with world
-	if (bd1->getName() == BULLET_NAME && bd2 != _avatar.get()) {
-		removeBullet((Bullet*)bd1);
-	} else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {
-		removeBullet((Bullet*)bd2);
-	}
+//	if (bd1->getName() == LUMIA_NAME && bd2->getName() == LUMIA_NAME) {
+//        if( _avatar.get() == bd1){
+//            LumiaModel* lumia = (LumiaModel *) bd2;
+////            CULog("split %d", lumia->isSplitting()); // 1
+//            if (!lumia->isSplitting() && !_avatar->isSplitting()){
+//                // prioritize resizing avatar
+//                _avatar->merge(lumia->getRadius());
+//                removeLumia(lumia);
+//            }
+//        }else if (_avatar.get()==bd2){
+//            LumiaModel* lumia = (LumiaModel *) bd1;
+//
+////            CULog("split %d", lumia->isSplitting());
+//            if (!lumia->isSplitting() && !_avatar->isSplitting()){
+//                // prioritize resizing avatar
+//                _avatar->merge(lumia->getRadius());
+//                removeLumia(lumia);
+//            }
+//        }else{
+//
+//        }
+////        CULog("lumiaaasssssss");
+//	}
+//    else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {
+//		removeBullet((Bullet*)bd2);
+//	}
 
 	// See if we have landed on the ground.
 	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||
