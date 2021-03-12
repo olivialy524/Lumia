@@ -13,6 +13,7 @@
 #include "LMRopeBridge.h"
 #include "LMBullet.h"
 #include "LMPlant.h"
+#include "LMPlantNode.h"
 
 #include <ctime>
 #include <string>
@@ -63,10 +64,6 @@ float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
 	{26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
 	{29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
 	{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-	{29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-	{23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-	{19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-	{ 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
 };
 
 /** The goal door position */
@@ -412,33 +409,33 @@ void GameScene::populate() {
 	// All walls and platforms share the same texture
     image  = _assets->get<Texture>(EARTH_TEXTURE);
 	std::string wname = "wall";
-	for (int ii = 0; ii < WALL_COUNT; ii++) {
-		std::shared_ptr<physics2::PolygonObstacle> wallobj;
-
-		Poly2 wall(WALL[ii],WALL_VERTS);
-		// Call this on a polygon to get a solid shape
-		SimpleTriangulator triangulator;
-		triangulator.set(wall);
-		triangulator.calculate();
-		wall.setIndices(triangulator.getTriangulation());
-		wall.setGeometry(Geometry::SOLID);
-
-		wallobj = physics2::PolygonObstacle::alloc(wall);
-		// You cannot add constant "".  Must stringify
-		wallobj->setName(std::string(WALL_NAME)+cugl::strtool::to_string(ii));
-		wallobj->setName(wname);
-
-		// Set the physics attributes
-		wallobj->setBodyType(b2_staticBody);
-		wallobj->setDensity(BASIC_DENSITY);
-		wallobj->setFriction(BASIC_FRICTION);
-		wallobj->setRestitution(BASIC_RESTITUTION);
-		wallobj->setDebugColor(DEBUG_COLOR);
-
-		wall *= _scale;
-		sprite = scene2::PolygonNode::allocWithTexture(image,wall);
-		addObstacle(wallobj,sprite,1);  // All walls share the same texture
-	}
+//	for (int ii = 0; ii < WALL_COUNT; ii++) {
+//		std::shared_ptr<physics2::PolygonObstacle> wallobj;
+//
+//		Poly2 wall(WALL[ii],WALL_VERTS);
+//		// Call this on a polygon to get a solid shape
+//		SimpleTriangulator triangulator;
+//		triangulator.set(wall);
+//		triangulator.calculate();
+//		wall.setIndices(triangulator.getTriangulation());
+//		wall.setGeometry(Geometry::SOLID);
+//
+//		wallobj = physics2::PolygonObstacle::alloc(wall);
+//		// You cannot add constant "".  Must stringify
+//		wallobj->setName(std::string(WALL_NAME)+cugl::strtool::to_string(ii));
+//		wallobj->setName(wname);
+//
+//		// Set the physics attributes
+//		wallobj->setBodyType(b2_staticBody);
+//		wallobj->setDensity(BASIC_DENSITY);
+//		wallobj->setFriction(BASIC_FRICTION);
+//		wallobj->setRestitution(BASIC_RESTITUTION);
+//		wallobj->setDebugColor(DEBUG_COLOR);
+//
+//		wall *= _scale;
+//		sprite = scene2::PolygonNode::allocWithTexture(image,wall);
+//		addObstacle(wallobj,sprite,1);  // All walls share the same texture
+//	}
 
 #pragma mark : Platforms
     /**
@@ -781,8 +778,8 @@ void GameScene::createBullet() {
 
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
-    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = 0.5*image->getSize().width/(_scale);
+    std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
+    float radius = 0.3*image->getSize().width/(_scale);
 
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
     p->setBodyType(b2_staticBody);
@@ -798,7 +795,7 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     p->setDebugColor(DEBUG_COLOR);
     p->setDrawScale(_scale);
 
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+    std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
     sprite->setAngle(ang);
     p->setSceneNode(sprite);
 

@@ -51,7 +51,7 @@ int main(int argc, char * argv[]) {
     app.setHighDPI(true);
 
     //app.setFullscreen(true);
-    app.setSize(1024, 576);
+    app.setSize(1200, 700);
     app.setFPS(60.0f);
 #if CU_PLATFORM == CU_PLATFORM_MACOS || CU_PLATFORM == CU_PLATFORM_WINDOWS
     app.setMultiSampled(true);
