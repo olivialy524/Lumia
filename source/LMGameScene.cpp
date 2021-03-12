@@ -148,6 +148,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 /** The image for the right dpad/joystick */
 #define RIGHT_IMAGE     "dpad_right"
 
+#define BACKGROUND_IMAGE "background"
+
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -240,11 +242,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+   
+   
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
     
+    
+    std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    scene->setContentSize(dimen);
+    scene->doLayout(); // Repositions the HUD;
+   
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
@@ -295,12 +303,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rightnode->setScale(0.35f);
     _rightnode->setVisible(false);
 
-    addChild(_worldnode,0);
-    addChild(_debugnode,1);
+    addChild(scene, 0);
+    addChild(_worldnode, 1);
+    addChild(_debugnode,2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     addChild(_leftnode, 5);
     addChild(_rightnode,6);
+   
 
     populate();
     _active = true;
@@ -375,29 +385,29 @@ void GameScene::populate() {
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
     std::shared_ptr<scene2::WireNode> draw;
-    /**
-	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
-	std::shared_ptr<scene2::PolygonNode> sprite;
-	std::shared_ptr<scene2::WireNode> draw;
-
-	// Create obstacle
-	Vec2 goalPos = GOAL_POS;
-	Size goalSize(image->getSize().width/_scale,
-	image->getSize().height/_scale);
-	_goalDoor = physics2::BoxObstacle::alloc(goalPos,goalSize);
-	
-	// Set the physics attributes
-	_goalDoor->setBodyType(b2_staticBody);
-	_goalDoor->setDensity(0.0f);
-	_goalDoor->setFriction(0.0f);
-	_goalDoor->setRestitution(0.0f);
-	_goalDoor->setSensor(true);
-
-	// Add the scene graph nodes to this object
-	sprite = scene2::PolygonNode::allocWithTexture(image);
-	_goalDoor->setDebugColor(DEBUG_COLOR);
-	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
-    */
+    
+//	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
+//	std::shared_ptr<scene2::PolygonNode> sprite;
+//	std::shared_ptr<scene2::WireNode> draw;
+//
+//	// Create obstacle
+//	Vec2 goalPos = GOAL_POS;
+//	Size goalSize(image->getSize().width/_scale,
+//	image->getSize().height/_scale);
+//	_goalDoor = physics2::BoxObstacle::alloc(goalPos,goalSize);
+//
+//	// Set the physics attributes
+//	_goalDoor->setBodyType(b2_staticBody);
+//	_goalDoor->setDensity(0.0f);
+//	_goalDoor->setFriction(0.0f);
+//	_goalDoor->setRestitution(0.0f);
+//	_goalDoor->setSensor(true);
+//
+//	// Add the scene graph nodes to this object
+//	sprite = scene2::PolygonNode::allocWithTexture(image);
+//	_goalDoor->setDebugColor(DEBUG_COLOR);
+//	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
+    
 #pragma mark : Walls
 	// All walls and platforms share the same texture
     image  = _assets->get<Texture>(EARTH_TEXTURE);
@@ -497,7 +507,7 @@ void GameScene::populate() {
         addObstacle(platobj,sprite,1);
     }
 
-#pragma mark : Spinner
+#pragma mark : Plant
     /**
 	Vec2 spinPos = SPIN_POS;
     image = _assets->get<Texture>(SPINNER_TEXTURE);
@@ -533,12 +543,12 @@ void GameScene::populate() {
 	_ropebridge->setDebugColor(DEBUG_COLOR);
 	addObstacle(_ropebridge, node, 3, false);
      */
-#pragma mark : Dude
-	Vec2 dudePos = DUDE_POS;
+#pragma mark : Lumia
+	Vec2 lumiaPos = DUDE_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = 0.3f;// change to value from json
-	_avatar = LumiaModel::alloc(dudePos,radius,_scale);
+    float radius = 1.0f;// change to value from json
+	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
     _avatar-> setTextures(image, DUDE_POS);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
@@ -664,7 +674,6 @@ void GameScene::update(float dt) {
     } else if(_avatar->isMerging()){
      // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
-//        CULog("here");
         
     }
     

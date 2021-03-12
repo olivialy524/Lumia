@@ -34,9 +34,12 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define DUDE_DENSITY    0.5f
+#define DUDE_DENSITY    0.1f
 /** The restitution of the character */
 #define DUDE_RESTITUTION 0.5f
+
+
+
 /** The impulse for the character jump */
 #define DUDE_JUMP       5.0f
 /** Debug color for the sensor */
@@ -49,15 +52,15 @@ using namespace cugl;
 
 
 void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
-    _sceneNode = scene2::SceneNode::allocWithPosition(initPos);
-    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _sceneNode = scene2::SceneNode::alloc();
    _node = LumiaNode::alloc(lumia, 1, 1, 1);
     auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
-   _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+  
    _node->setFrame(0);
    _sceneNode->addChild(_node);
+   _node->setPosition(0, 0);
 }
 
 #pragma mark Constructors
@@ -165,8 +168,9 @@ void LumiaModel::split(){
     
 //    CULog("mass post split %f", _body->GetMass());
     _node->setScale(_node->getScale()/1.4f);
-    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
-    _isSplitting = false;
+
+//    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+
     
 }
 
