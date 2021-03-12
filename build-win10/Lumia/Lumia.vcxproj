@@ -186,25 +186,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\LMApp.h" />
-    <ClInclude Include="..\..\source\LMBullet.h" />
-    <ClInclude Include="..\..\source\LMDudeModel.h" />
     <ClInclude Include="..\..\source\LMGameScene.h" />
     <ClInclude Include="..\..\source\LMInput.h" />
     <ClInclude Include="..\..\source\LMLoadingScene.h" />
-    <ClInclude Include="..\..\source\LMRopeBridge.h" />
-    <ClInclude Include="..\..\source\LMSpinner.h" />
+    <ClInclude Include="..\..\source\LMLumiaModel.h" />
+    <ClInclude Include="..\..\source\LMLumiaNode.h" />
+    <ClInclude Include="..\..\source\LMPlant.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\LMLumiaModel.cpp" />
+    <ClCompile Include="..\..\source\LMLumiaNode.cpp" />
+    <ClCompile Include="..\..\source\LMPlant.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\LMApp.cpp" />
-    <ClCompile Include="..\..\source\LMBullet.cpp" />
-    <ClCompile Include="..\..\source\LMDudeModel.cpp" />
     <ClCompile Include="..\..\source\LMGameScene.cpp" />
     <ClCompile Include="..\..\source\LMInput.cpp" />
     <ClCompile Include="..\..\source\LMLoadingScene.cpp" />
-    <ClCompile Include="..\..\source\LMRopeBridge.cpp" />
-    <ClCompile Include="..\..\source\LMSpinner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Lumia.rc" />

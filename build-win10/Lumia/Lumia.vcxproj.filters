@@ -18,16 +18,7 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\LMSpinner.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\LMApp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\LMBullet.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\LMDudeModel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\LMGameScene.h">
@@ -39,7 +30,13 @@
     <ClInclude Include="..\..\source\LMLoadingScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\LMRopeBridge.h">
+    <ClInclude Include="..\..\source\LMLumiaModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LMPlant.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LMLumiaNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,12 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\LMApp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\LMBullet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\LMDudeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\LMGameScene.cpp">
@@ -65,10 +56,13 @@
     <ClCompile Include="..\..\source\LMLoadingScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\LMRopeBridge.cpp">
+    <ClCompile Include="..\..\source\LMLumiaModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\LMSpinner.cpp">
+    <ClCompile Include="..\..\source\LMLumiaNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LMPlant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
