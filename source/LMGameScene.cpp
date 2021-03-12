@@ -1006,14 +1006,18 @@ void GameScene::endContact(b2Contact* contact) {
 	void* bd1 = body1->GetUserData();
 	void* bd2 = body2->GetUserData();
 
+    
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
 
-	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||
-		(_avatar->getSensorName() == fd1 && _avatar.get() != bd2)) {
-		_sensorFixtures.erase(_avatar.get() == bd1 ? fix2 : fix1);
-		if (_sensorFixtures.empty()) {
-			_avatar->setGrounded(false);
-		}
-	}
+        
+        if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
+            _sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
+            if (_sensorFixtures.empty()) {
+                lumia->setGrounded(false);
+            }
+        }
+    }
 }
 
 /**
