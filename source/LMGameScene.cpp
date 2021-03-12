@@ -667,10 +667,12 @@ void GameScene::update(float dt) {
 	}
 
     if (_avatar->isSplitting()){
-        CULog("gamescene spliting? %d", _avatar->isSplitting());
-        _avatar->setSplitForce(Vec2(6.0f, 0.0f));
-        _avatar->split();
-        createLumia();
+        float radius = _avatar->getRadius() / 1.4f;
+        Vec2 pos = _avatar->getPosition();
+        auto temp = _avatar;
+        _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
+        createLumia(radius, pos-Vec2(0.5f, 0.0f));
+        removeLumia(temp.get());
     } else if(_avatar->isMerging()){
      // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
@@ -819,20 +821,16 @@ void GameScene::checkWin() {
 /**
  * Add a new bullet to the world and send it in the right direction.
  */
-void GameScene::createLumia() {
-    Vec2 pos = _avatar->getPosition();
-    pos.x -= 0.5f;
-    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = _avatar->getRadius();
-    
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-    lumia->setSplitForce(Vec2(-6.0f, 0.0f));
+//    lumia->setSplitForce(Vec2(-6.0f, 0.0f));
     addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
     
     _lumiaSet.insert(lumia.get());
+    return lumia;
  
 }
 /**
@@ -862,7 +860,11 @@ void GameScene::mergeLumiasNearby(){
         Vec2 lumiaPos = lumia->getPosition();
         float dist = avatarPos.distance(lumiaPos);
         if (dist <= lumia->getRadius() + _avatar->getRadius()){
-            _avatar->merge(lumia->getRadius());
+            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.3f;
+            Vec2 pos = _avatar->getPosition();
+            auto temp = _avatar;
+            _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
+            removeLumia(temp.get());
             removeLumia(lumia);
             break;
         } else if (dist < 10.0f){

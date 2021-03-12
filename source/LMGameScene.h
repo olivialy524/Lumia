@@ -317,7 +317,7 @@ public:
     /**
     * Adds a new bullet to the world and sends it in the right direction.
     */
-    void createLumia();
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos);
     
     void mergeLumiasNearby();
 
