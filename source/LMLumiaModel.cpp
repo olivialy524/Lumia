@@ -34,7 +34,7 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define DUDE_DENSITY    0.1f
+#define DUDE_DENSITY    0.13f
 /** The restitution of the character */
 #define DUDE_RESTITUTION 0.5f
 
@@ -86,7 +86,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
-        setFriction(0.2f);
+        setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(DUDE_RESTITUTION);
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE

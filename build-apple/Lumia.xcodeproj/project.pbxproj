@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
-		C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
-		C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		3A534AFC25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A534AFB25FB256F00CDAE69 /* LMPlantNode.cpp */; };
+		3A534AFD25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A534AFB25FB256F00CDAE69 /* LMPlantNode.cpp */; };
+		3A534AFE25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A534AFB25FB256F00CDAE69 /* LMPlantNode.cpp */; };
 		613C1CB725FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
 		613C1CB825FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
 		613C1CB925FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
+		C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -134,10 +137,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C70BAC9E25F83F1700626819 /* LMLumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMLumiaNode.h; sourceTree = "<group>"; };
-		C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaNode.cpp; sourceTree = "<group>"; };
+		3A534AFB25FB256F00CDAE69 /* LMPlantNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMPlantNode.cpp; sourceTree = "<group>"; };
+		3A534B0225FB258300CDAE69 /* LMPlantNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMPlantNode.h; sourceTree = "<group>"; };
 		613C1CB225FA90CD00B213B8 /* LMPlant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMPlant.h; sourceTree = "<group>"; };
 		613C1CB625FA90D800B213B8 /* LMPlant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMPlant.cpp; sourceTree = "<group>"; };
+		C70BAC9E25F83F1700626819 /* LMLumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMLumiaNode.h; sourceTree = "<group>"; };
+		C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaNode.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -317,8 +322,6 @@
 				EBB4B5512040912400238092 /* LMInput.cpp */,
 				EBB4B5482040912400238092 /* LMLumiaModel.h */,
 				EBB4B54E2040912400238092 /* LMLumiaModel.cpp */,
-				EBB4B5482040912400238092 /* LMDudeModel.h */,
-				EBB4B54E2040912400238092 /* LMDudeModel.cpp */,
 				613C1CB225FA90CD00B213B8 /* LMPlant.h */,
 				613C1CB625FA90D800B213B8 /* LMPlant.cpp */,
 				EBB4B5522040912400238092 /* LMBullet.h */,
@@ -329,6 +332,8 @@
 				EBB4B5472040912400238092 /* LMSpinner.cpp */,
 				C70BAC9E25F83F1700626819 /* LMLumiaNode.h */,
 				C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */,
+				3A534AFB25FB256F00CDAE69 /* LMPlantNode.cpp */,
+				3A534B0225FB258300CDAE69 /* LMPlantNode.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -601,6 +606,7 @@
 				EBB4B5632040A30100238092 /* LMLumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* LMGameScene.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LMLoadingScene.cpp in Sources */,
+				3A534AFD25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
 				EBB4B5662040A30A00238092 /* LMSpinner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -619,6 +625,7 @@
 				EB5D20AA23FC77C8007D16CD /* LMLumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* LMGameScene.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LMLoadingScene.cpp in Sources */,
+				3A534AFE25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
 				EB5D20AD23FC77C8007D16CD /* LMSpinner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -637,6 +644,7 @@
 				EBB4B5592040912400238092 /* LMRopeBridge.cpp in Sources */,
 				EBB4B55E2040912400238092 /* LMGameScene.cpp in Sources */,
 				EBB4B5572040912400238092 /* LMSpinner.cpp in Sources */,
+				3A534AFC25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LMLoadingScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
