@@ -20,6 +20,9 @@
         "goal": {
             "file":      "textures/goaldoor.png"
         },
+        "lamp":{
+            "file":      "textures/lamp.png"
+        },
         "background":{
             "file": "textures/background.png"
         },
