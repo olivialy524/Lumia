@@ -64,8 +64,8 @@ float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
 	{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
 };
 
-/** The initial position of the dude */
-float DUDE_POS[] = { 2.5f, 5.0f};
+/** The initial position of Lumia */
+float LUMIA_POS[] = { 2.5f, 5.0f};
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -79,10 +79,6 @@ float DUDE_POS[] = { 2.5f, 5.0f};
 #define BASIC_FRICTION  0.4f
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
-/** Offset for bullet when firing */
-#define BULLET_OFFSET   0.5f
-/** The speed of the bullet after firing */
-#define BULLET_SPEED   20.0f
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
 
@@ -92,7 +88,7 @@ float DUDE_POS[] = { 2.5f, 5.0f};
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
-#define BULLET_TEXTURE  "bullet"
+#define LUMIA_TEXTURE  "lumia"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
@@ -274,7 +270,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     addChild(scene, 0);
     addChild(_worldnode, 1);
-    addChild(_debugnode,2);
+    addChild(_debugnode, 2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
    
@@ -382,33 +378,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 //	}
 
 #pragma mark : Platforms
-    /**
-	for (int ii = 0; ii < PLATFORM_COUNT; ii++) {
-		std::shared_ptr<physics2::PolygonObstacle> platobj;
-		Poly2 platform(PLATFORMS[ii],8);
-
-		SimpleTriangulator triangulator;
-		triangulator.set(platform);
-		triangulator.calculate();
-		platform.setIndices(triangulator.getTriangulation());
-		platform.setGeometry(Geometry::SOLID);
-
-		platobj = physics2::PolygonObstacle::alloc(platform);
-		// You cannot add constant "".  Must stringify
-		platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(ii));
-
-		// Set the physics attributes
-		platobj->setBodyType(b2_staticBody);
-		platobj->setDensity(BASIC_DENSITY);
-		platobj->setFriction(BASIC_FRICTION);
-		platobj->setRestitution(BASIC_RESTITUTION);
-		platobj->setDebugColor(DEBUG_COLOR);
-
-		platform *= _scale;
-		sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-		addObstacle(platobj,sprite,1);
-	}
-    */
     int numplats = _leveljson->getInt("numplatforms");
     for (int i = 1; i <= numplats; i++) {
         std::string platstring = "plat_" + to_string(i);
@@ -460,12 +429,12 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     }
 
 #pragma mark : Lumia
-	Vec2 lumiaPos = DUDE_POS;
+	Vec2 lumiaPos = LUMIA_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-    image = _assets->get<Texture>(BULLET_TEXTURE);
+    image = _assets->get<Texture>(LUMIA_TEXTURE);
     float radius = 1.0f;// change to value from json
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-    _avatar-> setTextures(image, DUDE_POS);
+    _avatar-> setTextures(image, LUMIA_POS);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
@@ -562,16 +531,10 @@ void GameScene::update(float dt) {
 		//glEnd();
 	}
     
-	_avatar->setJumping( _input.didJump());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
     _avatar->setSplitting(_input.didSplit());
     _avatar->setMerging(_input.didMerge());
-
-	if (_avatar->isJumping() && _avatar->isGrounded()) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(JUMP_EFFECT);
-		AudioEngine::get()->play(JUMP_EFFECT,source,false,EFFECT_VOLUME);
-	}
 
     if (_avatar->isSplitting()){
         float radius = _avatar->getRadius() / 1.4f;
@@ -581,9 +544,8 @@ void GameScene::update(float dt) {
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
     } else if(_avatar->isMerging()){
-     // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
+        // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
-        
     }
     
 	// Turn the physics engine crank.
@@ -591,10 +553,6 @@ void GameScene::update(float dt) {
 
 	// Since items may be deleted, garbage collect
 	_world->garbageCollect();
-
-	// Add a bullet AFTER physics allows it to hang in front
-	// Otherwise, it looks like bullet appears far away
-	_avatar->setShooting(_input.didFire());
 
 	// Record failure if necessary.
 	if (!_failed && _avatar->getY() < 0) {
@@ -690,9 +648,10 @@ void GameScene::checkWin() {
 }
 
 /**
- * Add a new bullet to the world and send it in the right direction.
+ * Add a new LUmia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
@@ -705,7 +664,6 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {    
 }
 
 void GameScene::mergeLumiasNearby(){
-    
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         if (lumia==_avatar){
             continue;
@@ -726,12 +684,11 @@ void GameScene::mergeLumiasNearby(){
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
-        
     }
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
-  // do not attempt to remove a bullet that has already been removed
+    // do not attempt to remove a Lumia that has already been removed
     if (lumia->isRemoved()) {
         return;
     }

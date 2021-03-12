@@ -285,11 +285,6 @@ public:
      */
     void reset();
 
-    /**
-    * Adds a new bullet to the world and sends it in the right direction.
-    */
-    void createBullet();
-
     void createPlant(float posx, float posy, int nplant, float ang);
     
     void checkWin();
@@ -307,6 +302,7 @@ public:
     * @param  bullet   the bullet to remove
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
+
     /**
      * Calculates trajectory point one timestep into future
      *
