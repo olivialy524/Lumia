@@ -168,10 +168,6 @@ void LumiaModel::split(){
     
 //    CULog("mass post split %f", _body->GetMass());
     _node->setScale(_node->getScale()/1.4f);
-
-//    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
-
-    
 }
 
 void LumiaModel::merge(float addRadius){

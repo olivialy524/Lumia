@@ -64,7 +64,7 @@ protected:
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel>			  _avatar;
     /** Reference to the player avatar */
-    std::set<LumiaModel*>                 _lumiaSet;
+    std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the spinning barrier */
     std::shared_ptr<Spinner>			  _spinner;
     /** Reference to the rope bridge */
@@ -317,7 +317,7 @@ public:
     /**
     * Adds a new bullet to the world and sends it in the right direction.
     */
-    void createLumia();
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos);
     
     void mergeLumiasNearby();
 
@@ -326,7 +326,7 @@ public:
     *
     * @param  bullet   the bullet to remove
     */
-    void removeLumia(LumiaModel* lumia);
+    void removeLumia(std::shared_ptr<LumiaModel> lumia);
     /**
      * Calculates trajectory point one timestep into future
      *
