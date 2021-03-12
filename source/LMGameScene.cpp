@@ -19,6 +19,7 @@
 #include <iostream>
 #include <sstream>
 #include <random>
+#include <algorithm>
 
 using namespace cugl;
 
@@ -354,7 +355,10 @@ void GameScene::reset() {
     _world->clear();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
-    _lumiaSet.clear();
+    for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
+        l->dispose();
+    }
+    _lumiaList.clear();
     _avatar = nullptr;
     _goalDoor = nullptr;
     _spinner = nullptr;
@@ -552,7 +556,7 @@ void GameScene::populate() {
     _avatar-> setTextures(image, DUDE_POS);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
-    _lumiaSet.insert(_avatar.get());
+    _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
@@ -643,6 +647,15 @@ void GameScene::update(float dt) {
     //    _rightnode->setVisible(false);
     //}
     
+    if(_input.didSwitch()){
+        auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
+        if (it != _lumiaList.end())
+        {
+            int index = (int) (it - _lumiaList.begin());
+            int switchIndex = index + 1 >= _lumiaList.size() ? 0 : index + 1;
+            _avatar = _lumiaList[switchIndex];
+        }
+    }
 	_avatar->setVelocity(_input.getLaunch());
 	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
 	if (_avatar->isGrounded()) {
@@ -655,6 +668,7 @@ void GameScene::update(float dt) {
 		//}
 		//glEnd();
 	}
+    
 	_avatar->setJumping( _input.didJump());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -667,10 +681,12 @@ void GameScene::update(float dt) {
 	}
 
     if (_avatar->isSplitting()){
-        CULog("gamescene spliting? %d", _avatar->isSplitting());
-        _avatar->setSplitForce(Vec2(6.0f, 0.0f));
-        _avatar->split();
-        createLumia();
+        float radius = _avatar->getRadius() / 1.4f;
+        Vec2 pos = _avatar->getPosition();
+        auto temp = _avatar;
+        _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
+        createLumia(radius, pos-Vec2(0.5f, 0.0f));
+        removeLumia(temp);
     } else if(_avatar->isMerging()){
      // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
@@ -819,20 +835,15 @@ void GameScene::checkWin() {
 /**
  * Add a new bullet to the world and send it in the right direction.
  */
-void GameScene::createLumia() {
-    Vec2 pos = _avatar->getPosition();
-    pos.x -= 0.5f;
-    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
-    float radius = _avatar->getRadius();
-    
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-    lumia->setSplitForce(Vec2(-6.0f, 0.0f));
     addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
     
-    _lumiaSet.insert(lumia.get());
+    _lumiaList.push_back(lumia);
+    return lumia;
  
 }
 /**
@@ -854,15 +865,20 @@ void GameScene::removeBullet(Bullet* bullet) {
 }
 
 void GameScene::mergeLumiasNearby(){
-    for (LumiaModel* lumia : _lumiaSet){
-        if (lumia==_avatar.get()){
+    
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
+        if (lumia==_avatar){
             continue;
         }
         Vec2 avatarPos = _avatar->getPosition();
         Vec2 lumiaPos = lumia->getPosition();
         float dist = avatarPos.distance(lumiaPos);
         if (dist <= lumia->getRadius() + _avatar->getRadius()){
-            _avatar->merge(lumia->getRadius());
+            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.35f;
+            Vec2 pos = _avatar->getPosition();
+            auto temp = _avatar;
+            _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
+            removeLumia(temp);
             removeLumia(lumia);
             break;
         } else if (dist < 10.0f){
@@ -874,13 +890,16 @@ void GameScene::mergeLumiasNearby(){
     }
 }
 
-void GameScene::removeLumia(LumiaModel* lumia) {
+void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
   // do not attempt to remove a bullet that has already been removed
     if (lumia->isRemoved()) {
         return;
     }
     _worldnode->removeChild(lumia->getSceneNode());
-    _lumiaSet.erase(lumia);
+    
+    std::vector<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
+    if (position != _lumiaList.end())
+        _lumiaList.erase(position);
     lumia->setDebugScene(nullptr);
     lumia->markRemoved(true);
 }
@@ -937,14 +956,31 @@ void GameScene::beginContact(b2Contact* contact) {
     else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
         ((Plant*)bd2)->lightUp();
     }
- 
+//    if (bd1->getName() == LUMIA_NAME){
+//        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd1);
+//        if (lumia->getSensorName() == fd1 && lumia.get() != bd2){
+//            lumia->setGrounded(true);
+//            // Could have more than one ground
+//            _sensorFixtures.emplace(fix2);
+//        }
+//    }
+//    else if (bd2->getName() == LUMIA_NAME){
+//        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd2);
+//        if (lumia->getSensorName() == fd2 && lumia.get() != bd1){
+//            lumia->setGrounded(true);
+//            // Could have more than one ground
+//            _sensorFixtures.emplace(fix1);
+//        }
+//    }
 	// See if we have landed on the ground.
-	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||
-		(_avatar->getSensorName() == fd1 && _avatar.get() != bd2)) {
-		_avatar->setGrounded(true);
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
+	if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+		(lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
+		lumia->setGrounded(true);
 		// Could have more than one ground
-		_sensorFixtures.emplace(_avatar.get() == bd1 ? fix2 : fix1);
+		_sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
 	}
+    }
 
 	// If we hit the "win" door, we are done
 	if((bd1 == _avatar.get()   && bd2 == _goalDoor.get()) ||

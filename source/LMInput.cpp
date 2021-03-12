@@ -32,6 +32,8 @@ using namespace cugl;
 
 #define MERGE_KEY KeyCode::M
 
+#define SWITCH_KEY KeyCode::C
+
 /** How close we need to be for a multi touch */
 #define NEAR_TOUCH      100
 /** The key for the event handlers */
@@ -185,6 +187,7 @@ void LumiaInput::update(float dt) {
     _keyJump   = keys->keyPressed(JUMP_KEY);
     _keyMerge   = keys->keyDown(MERGE_KEY);
     _keySplit   = keys->keyPressed(SPLIT_KEY);
+    _keySwitch   = keys->keyPressed(SWITCH_KEY);
 
     _keyLeft = keys->keyDown(KeyCode::ARROW_LEFT);
     _keyRight = keys->keyDown(KeyCode::ARROW_RIGHT);
@@ -198,6 +201,7 @@ void LumiaInput::update(float dt) {
     
     _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
+    _switchPressed = _keySwitch;
 
     _launched = _launchInputted;
     _launchInputted = false;
@@ -219,6 +223,7 @@ void LumiaInput::update(float dt) {
     _keyJump  = false;
     _keyFire  = false;
     _keySplit = false;
+    _keySwitch = false;
     _keyMerge = false;
     _launchInputted = false;
 #endif
@@ -234,6 +239,7 @@ void LumiaInput::clear() {
     _jumpPressed = false;
     _firePressed = false;
     _splitPressed = false;
+    _switchPressed = false;
     _mergePressed = false;
     _launched = false;
 
