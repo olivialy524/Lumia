@@ -616,7 +616,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  */
 void GameScene::update(float dt) {
 	_input.update(dt);
-    checkWin();
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -716,6 +715,7 @@ void GameScene::update(float dt) {
 	} else if (_countdown == 0) {
 		reset();
 	}
+    checkWin();
 }
 
 /**
@@ -948,10 +948,14 @@ void GameScene::beginContact(b2Contact* contact) {
 		removeBullet((Bullet*)bd2);
 	}
     if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
-        ((Plant*)bd1)->lightUp();
+        if (!((Plant*)bd1)->getIsLit()) {
+            ((Plant*)bd1)->lightUp();
+        }
     }
     else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
-        ((Plant*)bd2)->lightUp();
+        if (!((Plant*)bd2)->getIsLit()) {
+            ((Plant*)bd2)->lightUp();
+        }
     }
 //    if (bd1->getName() == LUMIA_NAME){
 //        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd1);
