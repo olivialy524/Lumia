@@ -1,39 +1,32 @@
 //
-//  LMDudeModel.h
+//  LMLumiaModel.h
 
 //  This file will be used as reference for building the body of the main character Lumia
 //
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_DUDE_MODEL_H__
-#define __LM_DUDE_MODEL_H__
+#ifndef __LM_LUMIA_MODEL_H__
+#define __LM_LUMIA_MODEL_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
 #include "LMLumiaNode.h"
 
-#pragma mark -
-#pragma mark Drawing Constants
-/** The texture for the character avatar */
-#define DUDE_TEXTURE    "dude"
-/** Identifier to allow us to track the sensor in ContactListener */
-#define SENSOR_NAME     "dudesensor"
-
 
 #pragma mark -
 #pragma mark Physics Constants
 /** The factor to multiply by the input */
-#define DUDE_FORCE      20.0f
+#define LUMIA_FORCE      20.0f
 /** The amount to slow the character down */
-#define DUDE_DAMPING    3.0f
+#define LUMIA_DAMPING    3.0f
 /** The maximum character speed */
-#define DUDE_MAXSPEED   5.0f
+#define LUMIA_MAXSPEED   5.0f
 
 
 #pragma mark -
-#pragma mark Dude Model
+#pragma mark Lumia Model
 /**
 * Player avatar for the plaform game.
 *
@@ -51,25 +44,15 @@ protected:
 	cugl::Vec2 _velocity;
     /** The planned velocity of Lumia */
     cugl::Vec2 _plannedVelocity;
-	/** Which direction is the character facing */
-	bool _faceRight;
-	/** How long until we can jump again */
-	int  _jumpCooldown;
-	/** Whether we are actively jumping */
-	bool _isJumping;
     /** Whether we are actively launching */
     bool _isLaunching;
-	/** How long until we can shoot again */
-	int  _shootCooldown;
 	/** Whether our feet are on the ground */
 	bool _isGrounded;
-	/** Whether we are actively shooting */
-	bool _isShooting;
-    
+    /** Whether Lumia is splitting into two */
     bool _isSplitting;
-    
+    /** Whether Lumia is merging nearby bodies together */
     bool _isMerging;
-    
+    /** Radius of Lumia's body */
     float _radius;
 	/** Ground sensor to represent our feet */
 	b2Fixture*  _sensorFixture;
@@ -78,7 +61,7 @@ protected:
 	/** The node for debugging the sensor */
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
-	/** The scene graph node for the Dude. */
+	/** The scene graph node for Lumia. */
 	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<LumiaNode> _node;
 
@@ -95,42 +78,36 @@ protected:
 	* the texture (e.g. a circular shape attached to a square texture).
 	*/
 	virtual void resetDebug() override;
-    
-    
-    
-
-    
-
 
 public:
     
 #pragma mark Hidden Constructors
     /**
-     * Creates a degenerate Dude object.
+     * Creates a degenerate Lumia object.
      *
-     * This constructor does not initialize any of the dude values beyond
-     * the defaults.  To use a DudeModel, you must call init().
+     * This constructor does not initialize any of the Lumia values beyond
+     * the defaults.  To use a LumiaModel, you must call init().
      */
     LumiaModel() : cugl::physics2::WheelObstacle() { }
     
     
     /**
-     * Destroys this DudeModel, releasing all resources.
+     * Destroys this LumiaModel, releasing all resources.
      */
     virtual ~LumiaModel(void) { dispose(); }
     
     /**
-     * Disposes all resources and assets of this DudeModel
+     * Disposes all resources and assets of this LumiaModel
      *
      * Any assets owned by this object will be immediately released.  Once
-     * disposed, a DudeModel may not be used until it is initialized again.
+     * disposed, a LumiaModel may not be used until it is initialized again.
      */
     void dispose();
     
     /**
-     * Initializes a new dude at the origin.
+     * Initializes a new Lumia at the origin.
      *
-     * The dude is a unit square scaled so that 1 pixel = 1 Box2d unit
+     * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -142,9 +119,9 @@ public:
     virtual bool init() override { return init(cugl::Vec2::ZERO, 1.0f, 1.0f); }
     
     /**
-     * Initializes a new dude at the given position.
+     * Initializes a new Lumia at the given position.
      *
-     * The dude is unit square scaled so that 1 pixel = 1 Box2d unit
+     * The Lumia is unit square scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -158,9 +135,9 @@ public:
     virtual bool init(const cugl::Vec2 pos) override { return init(pos, 1.0f, 1.0f); }
     
     /**
-     * Initializes a new dude at the given position.
+     * Initializes a new Lumia at the given position.
      *
-     * The dude has the given size, scaled so that 1 pixel = 1 Box2d unit
+     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -168,7 +145,7 @@ public:
      * according to the drawing scale.
      *
      * @param pos   Initial position in world coordinates
-     * @param size  The size of the dude in world units
+     * @param size  The size of the Lumia in world units
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
@@ -177,9 +154,9 @@ public:
     }
     
     /**
-     * Initializes a new dude at the given position.
+     * Initializes a new Lumia at the given position.
      *
-     * The dude is sized according to the given drawing scale.
+     * The Lumia is sized according to the given drawing scale.
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -187,7 +164,7 @@ public:
      * according to the drawing scale.
      *
      * @param pos   Initial position in world coordinates
-     * @param size  The size of the dude in world units
+     * @param size  The size of the Lumia in world units
      * @param scale The drawing scale (world to screen)
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
@@ -205,16 +182,16 @@ public:
 #pragma mark -
 #pragma mark Static Constructors
 	/**
-	 * Creates a new dude at the origin.
+	 * Creates a new Lumia at the origin.
 	 *
-	 * The dude is a unit square scaled so that 1 pixel = 1 Box2d unit
+	 * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
 	 *
 	 * The scene graph is completely decoupled from the physics system.
 	 * The node does not have to be the same size as the physics body. We
 	 * only guarantee that the scene graph node is positioned correctly
 	 * according to the drawing scale.
 	 *
-	 * @return  A newly allocated DudeModel at the origin
+	 * @return  A newly allocated LumiaModel at the origin
 	 */
 	static std::shared_ptr<LumiaModel> alloc() {
 		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
@@ -222,9 +199,9 @@ public:
 	}
 
 	/**
-	 * Creates a new dude at the given position.
+	 * Creates a new Lumia at the given position.
 	 *
-	 * The dude is a unit square scaled so that 1 pixel = 1 Box2d unit
+	 * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
 	 *
 	 * The scene graph is completely decoupled from the physics system.
 	 * The node does not have to be the same size as the physics body. We
@@ -233,7 +210,7 @@ public:
 	 *
      * @param pos   Initial position in world coordinates
 	 *
-	 * @return  A newly allocated DudeModel at the given position
+	 * @return  A newly allocated LumiaModel at the given position
 	 */
 	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos) {
 		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
@@ -241,9 +218,9 @@ public:
 	}
 
     /**
-	 * Creates a new dude at the given position.
+	 * Creates a new Lumia at the given position.
 	 *
-     * The dude has the given size, scaled so that 1 pixel = 1 Box2d unit
+     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
 	 *
  	 * The scene graph is completely decoupled from the physics system.
 	 * The node does not have to be the same size as the physics body. We
@@ -251,9 +228,9 @@ public:
 	 * according to the drawing scale.
 	 *
 	 * @param pos   Initial position in world coordinates
-     * @param size  The size of the dude in world units
+     * @param size  The size of the Lumia in world units
 	 *
-	 * @return  A newly allocated DudeModel at the given position with the given scale
+	 * @return  A newly allocated LumiaModel at the given position with the given scale
 	 */
 	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius) {
 		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
@@ -261,9 +238,9 @@ public:
 	}
 
 	/**
-	 * Creates a new dude at the given position.
+	 * Creates a new Lumia at the given position.
 	 *
-	 * The dude is sized according to the given drawing scale.
+	 * The Lumia is sized according to the given drawing scale.
 	 *
 	 * The scene graph is completely decoupled from the physics system.
 	 * The node does not have to be the same size as the physics body. We
@@ -271,10 +248,10 @@ public:
 	 * according to the drawing scale.
 	 *
 	 * @param pos   Initial position in world coordinates
-     * @param size  The size of the dude in world units
+     * @param size  The size of the Lumia in world units
 	 * @param scale The drawing scale (world to screen)
 	 *
-	 * @return  A newly allocated DudeModel at the given position with the given scale
+	 * @return  A newly allocated LumiaModel at the given position with the given scale
 	 */
 	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius, float scale) {
 		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
@@ -285,13 +262,13 @@ public:
 #pragma mark -
 #pragma mark Animation
     /**
-     * Returns the scene graph node representing this DudeModel.
+     * Returns the scene graph node representing this LumiaModel.
      *
      * By storing a reference to the scene graph node, the model can update
      * the node to be in sync with the physics info. It does this via the
      * {@link Obstacle#update(float)} method.
      *
-     * @return the scene graph node representing this DudeModel.
+     * @return the scene graph node representing this LumiaModel.
      */
 	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
     
@@ -299,10 +276,10 @@ public:
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
 
     /**
-     * Sets the scene graph node representing this DudeModel.
+     * Sets the scene graph node representing this LumiaModel.
      *
      * Note that this method also handles creating the nodes for the body parts
-     * of this DudeModel. Since the obstacles are decoupled from the scene graph,
+     * of this LumiaModel. Since the obstacles are decoupled from the scene graph,
      * initialization (which creates the obstacles) occurs prior to the call to
      * this method. Therefore, to be drawn to the screen, the nodes of the attached
      * bodies must be added here.
@@ -314,7 +291,7 @@ public:
      * the node to be in sync with the physics info. It does this via the
      * {@link Obstacle#update(float)} method.
      *
-     * @param node  The scene graph node representing this DudeModel, which has been added to the world node already.
+     * @param node  The scene graph node representing this LumiaModel, which has been added to the world node already.
      */
 	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
         _sceneNode = node;
@@ -361,104 +338,77 @@ public:
      * @param value planned velocity of Lumia.
      */
     void setPlannedVelocity(cugl::Vec2 value) { _plannedVelocity = value; }
-    
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    bool isShooting() const { return _isShooting && _shootCooldown <= 0; }
-    
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    void setShooting(bool value) { _isShooting = value; }
-    
-    /**
-     * Returns true if the dude is actively jumping.
-     *
-     * @return true if the dude is actively jumping.
-     */
-    bool isJumping() const { return _isJumping && _jumpCooldown <= 0; }
 
     /**
-     * Returns true if the dude is actively launching.
+     * Returns true if the Lumia is actively launching.
      *
-     * @return true if the dude is actively launching.
+     * @return true if the Lumia is actively launching.
      */
     bool isLaunching() const { return _isLaunching; }
     
     void setSplitForce(Vec2 sForce){ _splitForce = sForce;}
-    /**
-     * Sets whether the dude is actively jumping.
-     *
-     * @param value whether the dude is actively jumping.
-     */
-    void setJumping(bool value) { _isJumping = value; }
 
     /**
-     * Sets whether the dude is actively launching.
+     * Sets whether the Lumia is actively launching.
      *
-     * @param value whether the dude is actively launching.
+     * @param value whether the Lumia is actively launching.
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
     /**
-     * Sets whether the dude is actively jumping.
+     * Sets whether the Lumia is actively jumping.
      *
-     * @param value whether the dude is actively jumping.
+     * @param value whether the Lumia is actively jumping.
      */
     void setSplitting(bool value) { _isSplitting = value; }
     
     bool isSplitting() const {return _isSplitting;}
     /**
-     * Sets whether the dude is actively jumping.
+     * Sets whether the Lumia is actively jumping.
      *
-     * @param value whether the dude is actively jumping.
+     * @param value whether the Lumia is actively jumping.
      */
     void setMerging(bool value) { _isMerging = value; }
     
     bool isMerging() const {return _isMerging;}
     /**
-     * Returns true if the dude is on the ground.
+     * Returns true if the Lumia is on the ground.
      *
-     * @return true if the dude is on the ground.
+     * @return true if the Lumia is on the ground.
      */
     bool isGrounded() const { return _isGrounded; }
     
     /**
-     * Sets whether the dude is on the ground.
+     * Sets whether the Lumia is on the ground.
      *
-     * @param value whether the dude is on the ground.
+     * @param value whether the Lumia is on the ground.
      */
     void setGrounded(bool value) { _isGrounded = value; }
     
     /**
-     * Returns how much force to apply to get the dude moving
+     * Returns how much force to apply to get the Lumia moving
      *
      * Multiply this by the input to get the movement value.
      *
-     * @return how much force to apply to get the dude moving
+     * @return how much force to apply to get the Lumia moving
      */
-    float getForce() const { return DUDE_FORCE; }
+    float getForce() const { return LUMIA_FORCE; }
     
     /**
-     * Returns ow hard the brakes are applied to get a dude to stop moving
+     * Returns ow hard the brakes are applied to get a Lumia to stop moving
      *
-     * @return ow hard the brakes are applied to get a dude to stop moving
+     * @return ow hard the brakes are applied to get a Lumia to stop moving
      */
-    float getDamping() const { return DUDE_DAMPING; }
+    float getDamping() const { return LUMIA_DAMPING; }
     
     /**
-     * Returns the upper limit on dude left-right movement.
+     * Returns the upper limit on Lumia left-right movement.
      *
      * This does NOT apply to vertical movement.
      *
-     * @return the upper limit on dude left-right movement.
+     * @return the upper limit on Lumia left-right movement.
      */
-    float getMaxSpeed() const { return DUDE_MAXSPEED; }
+    float getMaxSpeed() const { return LUMIA_MAXSPEED; }
     
     /**
      * Returns the name of the ground sensor
@@ -468,13 +418,6 @@ public:
      * @return the name of the ground sensor
      */
     std::string* getSensorName() { return &_sensorName; }
-    
-    /**
-     * Returns true if this character is facing right
-     *
-     * @return true if this character is facing right
-     */
-    bool isFacingRight() const { return _faceRight; }
 
     
 #pragma mark -
@@ -507,11 +450,11 @@ public:
     void update(float dt) override;
     
     /**
-     * Applies the force to the body of this dude
+     * Applies the force to the body of this Lumia
      *
      * This method should be called after the force attribute is set.
      */
     void applyForce();
 };
 
-#endif /* __PF_DUDE_MODEL_H__ */
+#endif /* __PF_LUMIA_MODEL_H__ */
