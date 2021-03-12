@@ -35,6 +35,8 @@
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
 #define DUDE_DENSITY    0.5f
+/** The restitution of the character */
+#define DUDE_RESTITUTION 0.5f
 /** The impulse for the character jump */
 #define DUDE_JUMP       5.0f
 /** Debug color for the sensor */
@@ -81,7 +83,9 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
-        setFriction(0.2f);      // HE WILL STICK TO WALLS IF YOU FORGET
+        setFriction(0.2f);
+        // add bounciness to Lumia
+        setRestitution(DUDE_RESTITUTION);
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
@@ -103,26 +107,26 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
 #pragma mark Attribute Properties
 
 /**
- * Sets left/right movement of this character.
- *
- * This is the result of input times dude force.
- *
- * @param value left/right movement of this character.
- */
-void LumiaModel::setMovement(float value) {
-    _movement = value;
-    bool face = _movement > 0;
-    if (_movement == 0 || _faceRight == face) {
-        return;
-    }
-    
-    // Change facing
-    scene2::TexturedNode* image = dynamic_cast<scene2::TexturedNode*>(_node.get());
-    if (image != nullptr) {
-        image->flipHorizontal(!image->isFlipHorizontal());
-    }
-    _faceRight = face;
-}
+* Sets velocity of Lumia.
+*
+* This is the result of drag-and-release input.
+*
+* @param value velocity of Lumia.
+*/
+//void DudeModel::setVelocity(cugl::Vec2 value) {
+//    _velocity = value;
+//    /*bool face = _movement > 0;
+//    if (_movement == 0 || _faceRight == face) {
+//        return;
+//    }*/
+//    
+//    // Change facing
+//    /*scene2::TexturedNode* image = dynamic_cast<scene2::TexturedNode*>(_node.get());
+//    if (image != nullptr) {
+//        image->flipHorizontal(!image->isFlipHorizontal());
+//    }
+//    _faceRight = face;*/
+//}
 
 
 #pragma mark -
@@ -154,27 +158,19 @@ void LumiaModel::createFixtures() {
 
 
 void LumiaModel::split(){
-//    CULog("radius pre split %f", _radius);
-    CULog("mass pre split %f", _body->GetMass());
-//    CULog(" density %f", getDensity());
+//    CULog("mass pre split %f", _body->GetMass());
     _radius = _radius / 1.4f;
     WheelObstacle::setRadius(_radius);
-//    WheelObstacle::resetMass();
     resetMass();
     
-    
-//    CULog("radius post split %f", _radius);
-    CULog("mass post split %f", _body->GetMass());
-//    CULog("density %f", getDensity());
+//    CULog("mass post split %f", _body->GetMass());
     _node->setScale(_node->getScale()/1.4f);
     _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
     _isSplitting = false;
-
     
 }
 
 void LumiaModel::merge(float addRadius){
-    
 //    CULog("mass pre merge %f", _body->GetMass());
     float newRadius = 0.4f * addRadius + _radius;
     float scale = newRadius / _radius;
@@ -185,8 +181,6 @@ void LumiaModel::merge(float addRadius){
     _node->setScale(_node->getScale()*scale);
     _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
 //    CULog("mass post merge %f", _body->GetMass());
-
-    
 }
 /**
  * Release the fixtures for this body, reseting the shape
@@ -226,38 +220,49 @@ void LumiaModel::applyForce() {
         return;
     }
     
-    // Don't want to be moving. Damp out player motion
-    if (getMovement() == 0.0f) {
-        if (isGrounded()) {
-            // Instant friction on the ground
-            b2Vec2 vel = _body->GetLinearVelocity();
-            vel.x = 0; // If you set y, you will stop a jump in place
-            _body->SetLinearVelocity(vel);
-        } else {
-            // Damping factor in the air
-            b2Vec2 force(-getDamping()*getVX(),0);
-            _body->ApplyForce(force,_body->GetPosition(),true);
-        }
+    // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
+    if (isLaunching() && isGrounded()) {
+        b2Vec2 force(getVelocity().x, getVelocity().y);
+        _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
     }
-    
-    // Velocity too high, clamp it
-    if (fabs(getVX()) >= getMaxSpeed()) {
-        setVX(SIGNUM(getVX())*getMaxSpeed());
-    } else {
-        b2Vec2 force(getMovement(),0);
-        _body->ApplyForce(force,_body->GetPosition(),true);
-    }
-    // Jump!
-    if (isJumping() && isGrounded()) {
-        b2Vec2 force(0, DUDE_JUMP);
-        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    }
-//    CULog("splitting %d", isSplitting());
     if (isSplitting()){
-//        CULog("forcex %f", _splitForce.x);
         b2Vec2 force(_splitForce.x, _splitForce.y);
         _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
     }
+    
+    if (!isLaunching() && isGrounded()) {
+        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
+        b2Vec2 forceX(-getDamping() * getVX(), 0);
+        _body->ApplyForce(forceX, _body->GetPosition(), true);
+    }
+
+    // Don't want to be moving. Damp out player motion
+    //if (getVelocity().x != 0.0f) {
+    //    if (isGrounded()) {
+    //        // Instant friction on the ground
+    //        b2Vec2 vel = _body->GetLinearVelocity();
+    //        vel.x = 0; // If you set y, you will stop a jump in place
+    //        _body->SetLinearVelocity(vel);
+    //    } else {
+    //        // Damping factor in the air
+    //        b2Vec2 force(-getDamping()*getVX(),0);
+    //        _body->ApplyForce(force,_body->GetPosition(),true);
+    //    }
+    //}
+    //
+    //// Velocity too high, clamp it
+    //if (fabs(getVX()) >= getMaxSpeed()) {
+    //    setVX(SIGNUM(getVX())*getMaxSpeed());
+    //} else {
+    //    b2Vec2 force(getVelocity().x,0);
+    //    _body->ApplyForce(force,_body->GetPosition(),true);
+    //}
+    //
+    //// Jump!
+    //if (isJumping() && isGrounded()) {
+    //    b2Vec2 force(0, DUDE_JUMP);
+    //    _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
+    //}
 }
 
 
@@ -289,7 +294,6 @@ void LumiaModel::update(float dt) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());
     }
-//    CULog("mass %f", _body->GetMass());
 }
 
 

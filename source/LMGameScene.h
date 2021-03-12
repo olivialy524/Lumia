@@ -16,6 +16,7 @@
 #include "LMLumiaModel.h"
 #include "LMRopeBridge.h"
 #include "LMSpinner.h"
+#include "LMPlant.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -29,6 +30,9 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    std::shared_ptr<cugl::JsonReader> _jsonr;
+    
+    std::shared_ptr<cugl::JsonValue> _leveljson;
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     LumiaInput _input;
@@ -55,6 +59,8 @@ protected:
     // Physics objects for the game
     /** Reference to the goalDoor (for collision detection) */
     std::shared_ptr<cugl::physics2::BoxObstacle>    _goalDoor;
+    
+    std::list<std::shared_ptr<Plant>> _plants;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel>			  _avatar;
     /** Reference to the player avatar */
@@ -298,6 +304,9 @@ public:
     */
     void createBullet();
 
+    void createPlant(float posx, float posy, int nplant, float ang);
+    
+    void checkWin();
     /**
     * Removes the input Bullet from the world.
     *
@@ -318,6 +327,15 @@ public:
     * @param  bullet   the bullet to remove
     */
     void removeLumia(LumiaModel* lumia);
+    /**
+     * Calculates trajectory point one timestep into future
+     *
+     * @param startingPosition the position model is located before launching
+     * @param startingVelocity the velocity model will be launched at during aiming
+     * @param n timestep
+     */
+    Vec2 getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity, 
+                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world);
 
   };
 

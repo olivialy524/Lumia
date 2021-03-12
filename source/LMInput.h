@@ -53,6 +53,14 @@ private:
     bool  _keySplit;
     
     bool  _keyMerge;
+
+    // MOUSE SUPPORT
+    /** Whether the mouse was drag and released */
+    bool _launchInputted;
+    /** The initial click location for the current click-and-drag */
+    cugl::Vec2 _dclick;
+    /** The timestamp for the beginning of the current click-and-drag */
+    cugl::Timestamp _timestamp;
   
 protected:
     // INPUT RESULTS
@@ -71,8 +79,12 @@ protected:
     bool _splitPressed;
     /** Whether the jump action was chosen. */
     bool _mergePressed;
+    /** Whether Lumia was launched */
+    bool _launched;
     /** How much did we move horizontally? */
     float _horizontal;
+    /** The launch velocity produced by player input */
+    cugl::Vec2 _inputLaunch;
 
 #pragma mark Internal Touch Management   
 	// The screen is divided into four zones: Left, Bottom, Right and Main/
@@ -258,6 +270,15 @@ public:
 #pragma mark -
 #pragma mark Input Results
     /**
+     * Returns the current input launch.
+     *
+     * The launch is determined by the angle and length of the player's drag-and-release.
+     *
+     * @return The input launch
+     */
+    const cugl::Vec2& getLaunch() { return _inputLaunch; }
+
+    /**
      * Returns the amount of sideways movement.
      *
      * -1 = left, 1 = right, 0 = still
@@ -276,6 +297,13 @@ public:
     float didSplit() const { return _splitPressed; }
     
     float didMerge() const { return _mergePressed; }
+    /**
+     * Returns true if the player had drag and released.
+     *
+     * @return true if the player had drag and released.
+     */
+    float didLaunch() const { return _launched; }
+
     /**
      * Returns true if the fire button was pressed.
      *
@@ -320,6 +348,25 @@ public:
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
+    /**
+     * Callback for the beginning of a mouse event
+     *
+     * @param event The associated event
+     * @param clicks The number of recent clicks, including this one
+     * @param focus	Whether the listener currently has focus
+     * f
+     */
+    void mousePressedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
+
+    /**
+     * Callback for the end of a mouse event
+     *
+     * @param event The associated event
+     * @param clicks The number of recent clicks, including this one
+     * @param focus	Whether the listener currently has focus
+     */
+    void mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
+
     /**
      * Callback for the beginning of a touch event
      *

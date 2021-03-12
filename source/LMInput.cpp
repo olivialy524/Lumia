@@ -8,8 +8,15 @@
 
 using namespace cugl;
 
+#define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
+
+#define X_ADJUST_FACTOR 20.0f
+#define Y_ADJUST_FACTOR 10.0f
+
 #pragma mark Input Constants
 
+/** Maximum allowed Lumia launch velocity */
+#define MAXIMUM_LAUNCH_VELOCITY 70.0f
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
@@ -81,7 +88,8 @@ _keyLeft(false),
 _keyRight(false),
 _horizontal(0.0f),
 _joystick(false),
-_hasJumped(false) {
+_hasJumped(false),
+_launched(false) {
 }
 
 /**
@@ -94,6 +102,9 @@ void LumiaInput::dispose() {
     if (_active) {
 #ifndef CU_TOUCH_SCREEN
         Input::deactivate<Keyboard>();
+        Mouse* mouse = Input::get<Mouse>();
+        mouse->removePressListener(LISTENER_KEY);
+        mouse->removeReleaseListener(LISTENER_KEY);
 #else
         Touchscreen* touch = Input::get<Touchscreen>();
         touch->removeBeginListener(LISTENER_KEY);
@@ -126,6 +137,13 @@ bool LumiaInput::init(const Rect bounds) {
     
 #ifndef CU_TOUCH_SCREEN
     success = Input::activate<Keyboard>();
+    Mouse* mouse = Input::get<Mouse>();
+    mouse->addPressListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
+        this->mousePressedCB(event, clicks, focus);
+    });
+    mouse->addReleaseListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
+        this->mouseReleasedCB(event, clicks, focus);
+    });
 #else
     Touchscreen* touch = Input::get<Touchscreen>();
     touch->addBeginListener(LISTENER_KEY,[=](const TouchEvent& event, bool focus) {
@@ -181,6 +199,9 @@ void LumiaInput::update(float dt) {
     _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
 
+    _launched = _launchInputted;
+    _launchInputted = false;
+
 	// Directional controls
 	_horizontal = 0.0f;
 	if (_keyRight) {
@@ -197,9 +218,9 @@ void LumiaInput::update(float dt) {
     _keyDebug = false;
     _keyJump  = false;
     _keyFire  = false;
-    
     _keySplit = false;
     _keyMerge = false;
+    _launchInputted = false;
 #endif
 }
 
@@ -214,6 +235,11 @@ void LumiaInput::clear() {
     _firePressed = false;
     _splitPressed = false;
     _mergePressed = false;
+    _launched = false;
+
+    _inputLaunch = Vec2::ZERO;
+    _dclick = Vec2::ZERO;
+    _timestamp.mark();
 }
 
 #pragma mark -
@@ -342,6 +368,49 @@ int LumiaInput::processSwipe(const Vec2 start, const Vec2 stop, Timestamp curren
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
+
+/**
+ * Callback for the beginning of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void LumiaInput::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+    // Update the touch location for later gestures
+    _dclick.set(event.position);
+}
+
+/**
+ * Callback for the end of a touch event
+ *
+ * @param t     The touch information
+ * @param event The associated event
+ */
+void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+    // Check for a double tap.
+    //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
+    _timestamp = event.timestamp;
+
+    // If we reset, do not record the thrust
+    /*if (_keyReset) {
+        return;
+    }*/
+
+    Vec2 finishDrag = event.position - _dclick;
+
+    finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+    finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+
+    finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
+    finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+
+//    char print[64];
+//    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+//    CULog(print);
+    _inputLaunch = finishDrag;
+    _launchInputted = true;
+}
+
 /**
  * Callback for the beginning of a touch event
  *

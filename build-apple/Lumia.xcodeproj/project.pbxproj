@@ -10,6 +10,9 @@
 		C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
+		613C1CB725FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
+		613C1CB825FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
+		613C1CB925FA90D800B213B8 /* LMPlant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* LMPlant.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -133,6 +136,8 @@
 /* Begin PBXFileReference section */
 		C70BAC9E25F83F1700626819 /* LMLumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMLumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaNode.cpp; sourceTree = "<group>"; };
+		613C1CB225FA90CD00B213B8 /* LMPlant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMPlant.h; sourceTree = "<group>"; };
+		613C1CB625FA90D800B213B8 /* LMPlant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMPlant.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -312,6 +317,10 @@
 				EBB4B5512040912400238092 /* LMInput.cpp */,
 				EBB4B5482040912400238092 /* LMLumiaModel.h */,
 				EBB4B54E2040912400238092 /* LMLumiaModel.cpp */,
+				EBB4B5482040912400238092 /* LMDudeModel.h */,
+				EBB4B54E2040912400238092 /* LMDudeModel.cpp */,
+				613C1CB225FA90CD00B213B8 /* LMPlant.h */,
+				613C1CB625FA90D800B213B8 /* LMPlant.cpp */,
 				EBB4B5522040912400238092 /* LMBullet.h */,
 				EBB4B54D2040912400238092 /* LMBullet.cpp */,
 				EBB4B5552040912400238092 /* LMRopeBridge.h */,
@@ -462,7 +471,7 @@
 		EBB1ABFE1DF8C6BC00C353B0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Cornell Game Design Initiative";
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
@@ -584,6 +593,7 @@
 			files = (
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
 				EBB4B5622040A2FE00238092 /* LMInput.cpp in Sources */,
+				613C1CB825FA90D800B213B8 /* LMPlant.cpp in Sources */,
 				EBB4B5652040A30700238092 /* LMRopeBridge.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LMApp.cpp in Sources */,
 				EBB4B5642040A30400238092 /* LMBullet.cpp in Sources */,
@@ -601,6 +611,7 @@
 			files = (
 				EB5D20A523FC77C8007D16CD /* main.cpp in Sources */,
 				EB5D20A923FC77C8007D16CD /* LMInput.cpp in Sources */,
+				613C1CB925FA90D800B213B8 /* LMPlant.cpp in Sources */,
 				EB5D20AC23FC77C8007D16CD /* LMRopeBridge.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LMApp.cpp in Sources */,
 				EB5D20AB23FC77C8007D16CD /* LMBullet.cpp in Sources */,
@@ -618,6 +629,7 @@
 			files = (
 				EBB4B55B2040912400238092 /* LMLumiaModel.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
+				613C1CB725FA90D800B213B8 /* LMPlant.cpp in Sources */,
 				EBB4B55D2040912400238092 /* LMInput.cpp in Sources */,
 				EBB4B5582040912400238092 /* LMApp.cpp in Sources */,
 				EBB4B55A2040912400238092 /* LMBullet.cpp in Sources */,
@@ -790,7 +802,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(CUGL_INCLUDES)";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -847,7 +859,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(CUGL_INCLUDES)";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
