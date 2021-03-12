@@ -49,6 +49,10 @@ private:
     bool  _keyLeft;
     /** Whether the right arrow key is down */
     bool  _keyRight;
+    
+    bool  _keySplit;
+    
+    bool  _keyMerge;
 
     // MOUSE SUPPORT
     /** Whether the mouse was drag and released */
@@ -70,6 +74,11 @@ protected:
     bool _firePressed;
     /** Whether the jump action was chosen. */
     bool _jumpPressed;
+    
+    /** Whether the jump action was chosen. */
+    bool _splitPressed;
+    /** Whether the jump action was chosen. */
+    bool _mergePressed;
     /** Whether Lumia was launched */
     bool _launched;
     /** How much did we move horizontally? */
@@ -285,6 +294,9 @@ public:
      */
 	float didJump() const { return _jumpPressed; }
 
+    float didSplit() const { return _splitPressed; }
+    
+    float didMerge() const { return _mergePressed; }
     /**
      * Returns true if the player had drag and released.
      *

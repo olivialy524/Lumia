@@ -13,7 +13,7 @@
 #include <vector>
 #include "LMInput.h"
 #include "LMBullet.h"
-#include "LMDudeModel.h"
+#include "LMLumiaModel.h"
 #include "LMRopeBridge.h"
 #include "LMSpinner.h"
 #include "LMPlant.h"
@@ -62,7 +62,9 @@ protected:
     
     std::list<std::shared_ptr<Plant>> _plants;
     /** Reference to the player avatar */
-    std::shared_ptr<DudeModel>			  _avatar;
+    std::shared_ptr<LumiaModel>			  _avatar;
+    /** Reference to the player avatar */
+    std::set<LumiaModel*>                 _lumiaSet;
     /** Reference to the spinning barrier */
     std::shared_ptr<Spinner>			  _spinner;
     /** Reference to the rope bridge */
@@ -312,6 +314,19 @@ public:
     */
     void removeBullet(Bullet* bullet);
 
+    /**
+    * Adds a new bullet to the world and sends it in the right direction.
+    */
+    void createLumia();
+    
+    void mergeLumiasNearby();
+
+    /**
+    * Removes the input Bullet from the world.
+    *
+    * @param  bullet   the bullet to remove
+    */
+    void removeLumia(LumiaModel* lumia);
     /**
      * Calculates trajectory point one timestep into future
      *

@@ -8,7 +8,7 @@
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
-#include "LMDudeModel.h"
+#include "LMLumiaModel.h"
 #include "LMSpinner.h"
 #include "LMRopeBridge.h"
 #include "LMBullet.h"
@@ -113,6 +113,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
 #define WALL_NAME       "wall"
+
+#define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 /** The font for victory/failure messages */
@@ -145,6 +147,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define LEFT_IMAGE      "dpad_left"
 /** The image for the right dpad/joystick */
 #define RIGHT_IMAGE     "dpad_right"
+
+#define BACKGROUND_IMAGE "background"
 
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
@@ -238,11 +242,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+   
+   
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
     
+    
+    std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    scene->setContentSize(dimen);
+    scene->doLayout(); // Repositions the HUD;
+   
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
@@ -293,12 +303,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rightnode->setScale(0.35f);
     _rightnode->setVisible(false);
 
-    addChild(_worldnode,0);
-    addChild(_debugnode,1);
+    addChild(scene, 0);
+    addChild(_worldnode, 1);
+    addChild(_debugnode,2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     addChild(_leftnode, 5);
     addChild(_rightnode,6);
+   
 
     populate();
     _active = true;
@@ -342,6 +354,7 @@ void GameScene::reset() {
     _world->clear();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
+    _lumiaSet.clear();
     _avatar = nullptr;
     _goalDoor = nullptr;
     _spinner = nullptr;
@@ -372,29 +385,29 @@ void GameScene::populate() {
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
     std::shared_ptr<scene2::WireNode> draw;
-    /**
-	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
-	std::shared_ptr<scene2::PolygonNode> sprite;
-	std::shared_ptr<scene2::WireNode> draw;
-
-	// Create obstacle
-	Vec2 goalPos = GOAL_POS;
-	Size goalSize(image->getSize().width/_scale,
-	image->getSize().height/_scale);
-	_goalDoor = physics2::BoxObstacle::alloc(goalPos,goalSize);
-	
-	// Set the physics attributes
-	_goalDoor->setBodyType(b2_staticBody);
-	_goalDoor->setDensity(0.0f);
-	_goalDoor->setFriction(0.0f);
-	_goalDoor->setRestitution(0.0f);
-	_goalDoor->setSensor(true);
-
-	// Add the scene graph nodes to this object
-	sprite = scene2::PolygonNode::allocWithTexture(image);
-	_goalDoor->setDebugColor(DEBUG_COLOR);
-	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
-    */
+    
+//	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
+//	std::shared_ptr<scene2::PolygonNode> sprite;
+//	std::shared_ptr<scene2::WireNode> draw;
+//
+//	// Create obstacle
+//	Vec2 goalPos = GOAL_POS;
+//	Size goalSize(image->getSize().width/_scale,
+//	image->getSize().height/_scale);
+//	_goalDoor = physics2::BoxObstacle::alloc(goalPos,goalSize);
+//
+//	// Set the physics attributes
+//	_goalDoor->setBodyType(b2_staticBody);
+//	_goalDoor->setDensity(0.0f);
+//	_goalDoor->setFriction(0.0f);
+//	_goalDoor->setRestitution(0.0f);
+//	_goalDoor->setSensor(true);
+//
+//	// Add the scene graph nodes to this object
+//	sprite = scene2::PolygonNode::allocWithTexture(image);
+//	_goalDoor->setDebugColor(DEBUG_COLOR);
+//	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
+    
 #pragma mark : Walls
 	// All walls and platforms share the same texture
     image  = _assets->get<Texture>(EARTH_TEXTURE);
@@ -494,7 +507,7 @@ void GameScene::populate() {
         addObstacle(platobj,sprite,1);
     }
 
-#pragma mark : Spinner
+#pragma mark : Plant
     /**
 	Vec2 spinPos = SPIN_POS;
     image = _assets->get<Texture>(SPINNER_TEXTURE);
@@ -530,16 +543,18 @@ void GameScene::populate() {
 	_ropebridge->setDebugColor(DEBUG_COLOR);
 	addObstacle(_ropebridge, node, 3, false);
      */
-#pragma mark : Dude
-	Vec2 dudePos = DUDE_POS;
+#pragma mark : Lumia
+	Vec2 lumiaPos = DUDE_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-    image = _assets->get<Texture>(DUDE_TEXTURE);
-	_avatar = DudeModel::alloc(dudePos,image->getSize()/_scale,_scale);
-	sprite = scene2::PolygonNode::allocWithTexture(image);
-	_avatar->setSceneNode(sprite);
-	_avatar->setDebugColor(DEBUG_COLOR);
-	addObstacle(_avatar,sprite, 4); // Put this at the very front
-	// Play the background music on a loop.
+    image = _assets->get<Texture>(BULLET_TEXTURE);
+    float radius = 1.0f;// change to value from json
+	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
+    _avatar-> setTextures(image, DUDE_POS);
+    _avatar-> setName(LUMIA_NAME);
+	_avatar-> setDebugColor(DEBUG_COLOR);
+    _lumiaSet.insert(_avatar.get());
+	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
+
 	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
@@ -643,12 +658,25 @@ void GameScene::update(float dt) {
 	_avatar->setJumping( _input.didJump());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
+    _avatar->setSplitting(_input.didSplit());
+    _avatar->setMerging(_input.didMerge());
 
 	if (_avatar->isJumping() && _avatar->isGrounded()) {
 		std::shared_ptr<Sound> source = _assets->get<Sound>(JUMP_EFFECT);
 		AudioEngine::get()->play(JUMP_EFFECT,source,false,EFFECT_VOLUME);
 	}
 
+    if (_avatar->isSplitting()){
+        CULog("gamescene spliting? %d", _avatar->isSplitting());
+        _avatar->setSplitForce(Vec2(6.0f, 0.0f));
+        _avatar->split();
+        createLumia();
+    } else if(_avatar->isMerging()){
+     // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
+        mergeLumiasNearby();
+        
+    }
+    
 	// Turn the physics engine crank.
 	_world->update(dt);
 
@@ -667,6 +695,8 @@ void GameScene::update(float dt) {
 		setFailure(true);
 	}
 
+//    _avatar->setSplitting(false);
+    
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
 		_countdown--;
@@ -746,6 +776,7 @@ void GameScene::createBullet() {
 
 	std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
 	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
+    
 }
 
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
@@ -786,6 +817,25 @@ void GameScene::checkWin() {
 }
 
 /**
+ * Add a new bullet to the world and send it in the right direction.
+ */
+void GameScene::createLumia() {
+    Vec2 pos = _avatar->getPosition();
+    pos.x -= 0.5f;
+    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
+    float radius = _avatar->getRadius();
+    
+    std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
+    lumia-> setTextures(image, pos);
+    lumia->setDebugColor(DEBUG_COLOR);
+    lumia-> setName(LUMIA_NAME);
+    lumia->setSplitForce(Vec2(-6.0f, 0.0f));
+    addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
+    
+    _lumiaSet.insert(lumia.get());
+ 
+}
+/**
  * Removes a new bullet from the world.
  *
  * @param  bullet   the bullet to remove
@@ -803,6 +853,38 @@ void GameScene::removeBullet(Bullet* bullet) {
 	AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
 }
 
+void GameScene::mergeLumiasNearby(){
+    for (LumiaModel* lumia : _lumiaSet){
+        if (lumia==_avatar.get()){
+            continue;
+        }
+        Vec2 avatarPos = _avatar->getPosition();
+        Vec2 lumiaPos = lumia->getPosition();
+        float dist = avatarPos.distance(lumiaPos);
+        if (dist <= lumia->getRadius() + _avatar->getRadius()){
+            _avatar->merge(lumia->getRadius());
+            removeLumia(lumia);
+            break;
+        } else if (dist < 10.0f){
+            //set lumia velocity to move toward avatar
+            Vec2 distance = avatarPos-lumiaPos;
+            lumia->setLinearVelocity(distance.normalize().scale(5.0f));
+        }
+        
+    }
+}
+
+void GameScene::removeLumia(LumiaModel* lumia) {
+  // do not attempt to remove a bullet that has already been removed
+    if (lumia->isRemoved()) {
+        return;
+    }
+    _worldnode->removeChild(lumia->getSceneNode());
+    _lumiaSet.erase(lumia);
+    lumia->setDebugScene(nullptr);
+    lumia->markRemoved(true);
+}
+
 /**
 * Calculates trajectory point one timestep into future
 *
@@ -810,7 +892,7 @@ void GameScene::removeBullet(Bullet* bullet) {
 * @param startingVelocity the velocity model will be launched at during aiming
 * @param n timestep
 */
-Vec2 getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity,
+Vec2 GameScene::getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity,
 						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world) {
 	//velocity and gravity are given per second but we want time step values here
 	float t = 1 / 60.0f; // seconds per time step (at 60fps)
@@ -844,7 +926,6 @@ void GameScene::beginContact(b2Contact* contact) {
 	physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
-	// Test bullet collision with world
 	if (bd1->getName() == BULLET_NAME && bd2 != _avatar.get()) {
 		removeBullet((Bullet*)bd1);
 	} else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {

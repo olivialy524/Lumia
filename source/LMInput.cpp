@@ -28,6 +28,10 @@ using namespace cugl;
 /** The key for jumping up */
 #define JUMP_KEY KeyCode::ARROW_UP
 
+#define SPLIT_KEY KeyCode::S
+
+#define MERGE_KEY KeyCode::M
+
 /** How close we need to be for a multi touch */
 #define NEAR_TOUCH      100
 /** The key for the event handlers */
@@ -179,6 +183,8 @@ void LumiaInput::update(float dt) {
     _keyExit   = keys->keyPressed(EXIT_KEY);
     _keyFire   = keys->keyPressed(FIRE_KEY);
     _keyJump   = keys->keyPressed(JUMP_KEY);
+    _keyMerge   = keys->keyDown(MERGE_KEY);
+    _keySplit   = keys->keyPressed(SPLIT_KEY);
 
     _keyLeft = keys->keyDown(KeyCode::ARROW_LEFT);
     _keyRight = keys->keyDown(KeyCode::ARROW_RIGHT);
@@ -189,6 +195,9 @@ void LumiaInput::update(float dt) {
     _exitPressed  = _keyExit;
 	_firePressed  = _keyFire;
 	_jumpPressed  = _keyJump;
+    
+    _splitPressed = _keySplit;
+    _mergePressed = _keyMerge;
 
     _launched = _launchInputted;
     _launchInputted = false;
@@ -209,6 +218,8 @@ void LumiaInput::update(float dt) {
     _keyDebug = false;
     _keyJump  = false;
     _keyFire  = false;
+    _keySplit = false;
+    _keyMerge = false;
     _launchInputted = false;
 #endif
 }
@@ -222,6 +233,8 @@ void LumiaInput::clear() {
     _exitPressed  = false;
     _jumpPressed = false;
     _firePressed = false;
+    _splitPressed = false;
+    _mergePressed = false;
     _launched = false;
 
     _inputLaunch = Vec2::ZERO;
@@ -391,9 +404,9 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
     finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
     finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-    char print[64];
-    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-    CULog(print);
+//    char print[64];
+//    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+//    CULog(print);
     _inputLaunch = finishDrag;
     _launchInputted = true;
 }

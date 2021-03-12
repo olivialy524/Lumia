@@ -4,7 +4,8 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#include "LMDudeModel.h"
+#include "LMLumiaModel.h"
+#include "LMLumiaNode.h"
 #include <cugl/scene2/graph/CUPolygonNode.h>
 #include <cugl/scene2/graph/CUTexturedNode.h>
 #include <cugl/assets/CUAssetManager.h>
@@ -13,6 +14,13 @@
 
 #pragma mark -
 #pragma mark Physics Constants
+
+/** Number of rows in the ship image filmstrip */
+#define LUMIA_ROWS       1
+/** Number of columns in this ship image filmstrip */
+#define LUMIA_COLS       1
+/** Number of elements in this ship image filmstrip */
+#define LUMIA_FRAMES     1
 /** Cooldown (in animation frames) for jumping */
 #define JUMP_COOLDOWN   5
 /** Cooldown (in animation frames) for shooting */
@@ -26,11 +34,14 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define DUDE_DENSITY    1.0f
+#define DUDE_DENSITY    0.1f
 /** The restitution of the character */
 #define DUDE_RESTITUTION 0.5f
+
+
+
 /** The impulse for the character jump */
-#define DUDE_JUMP       5.5f
+#define DUDE_JUMP       5.0f
 /** Debug color for the sensor */
 #define DEBUG_COLOR     Color4::RED
 
@@ -38,6 +49,20 @@
 using namespace cugl;
 
 #pragma mark -
+
+
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
+    _sceneNode = scene2::SceneNode::alloc();
+   _node = LumiaNode::alloc(lumia, 1, 1, 1);
+    auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
+   _node->setScale(scale);
+   _node->setAnchor(Vec2::ANCHOR_CENTER);
+  
+   _node->setFrame(0);
+   _sceneNode->addChild(_node);
+   _node->setPosition(0, 0);
+}
+
 #pragma mark Constructors
 
 /**
@@ -56,17 +81,14 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool DudeModel::init(const cugl::Vec2& pos, const cugl::Size& size, float scale) {
-    Size nsize = size;
-    nsize.width  *= DUDE_HSHRINK;
-    nsize.height *= DUDE_VSHRINK;
+bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
-    if (CapsuleObstacle::init(pos,nsize)) {
+    if (WheelObstacle::init(pos,radius)) {
         setDensity(DUDE_DENSITY);
+        setFriction(0.2f);
         // add bounciness to Lumia
         setRestitution(DUDE_RESTITUTION);
-        setFriction(0.0f);      // HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
@@ -75,6 +97,7 @@ bool DudeModel::init(const cugl::Vec2& pos, const cugl::Size& size, float scale)
         _isJumping  = false;
         _faceRight  = true;
         
+        _radius = radius;
         _shootCooldown = 0;
         _jumpCooldown  = 0;
         return true;
@@ -111,51 +134,69 @@ bool DudeModel::init(const cugl::Vec2& pos, const cugl::Size& size, float scale)
 
 #pragma mark -
 #pragma mark Physics Methods
+
+
 /**
  * Create new fixtures for this body, defining the shape
  *
  * This is the primary method to override for custom physics objects
  */
-void DudeModel::createFixtures() {
+void LumiaModel::createFixtures() {
     if (_body == nullptr) {
         return;
     }
     
-    CapsuleObstacle::createFixtures();
+    WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
     sensorDef.density = DUDE_DENSITY;
     sensorDef.isSensor = true;
-    
-    // Sensor dimensions
-    b2Vec2 corners[4];
-    corners[0].x = -DUDE_SSHRINK*getWidth()/2.0f;
-    corners[0].y = (-getHeight()+SENSOR_HEIGHT)/2.0f;
-    corners[1].x = -DUDE_SSHRINK*getWidth()/2.0f;
-    corners[1].y = (-getHeight()-SENSOR_HEIGHT)/2.0f;
-    corners[2].x =  DUDE_SSHRINK*getWidth()/2.0f;
-    corners[2].y = (-getHeight()-SENSOR_HEIGHT)/2.0f;
-    corners[3].x =  DUDE_SSHRINK*getWidth()/2.0f;
-    corners[3].y = (-getHeight()+SENSOR_HEIGHT)/2.0f;
-    
-    b2PolygonShape sensorShape;
-    sensorShape.Set(corners,4);
-    
+
+    b2CircleShape sensorShape;
+    sensorShape.m_radius = _radius;
+
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
     _sensorFixture->SetUserData(getSensorName());
 }
 
+
+void LumiaModel::split(){
+//    CULog("mass pre split %f", _body->GetMass());
+    _radius = _radius / 1.4f;
+    WheelObstacle::setRadius(_radius);
+    resetMass();
+    
+//    CULog("mass post split %f", _body->GetMass());
+    _node->setScale(_node->getScale()/1.4f);
+
+//    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+
+    
+}
+
+void LumiaModel::merge(float addRadius){
+//    CULog("mass pre merge %f", _body->GetMass());
+    float newRadius = 0.4f * addRadius + _radius;
+    float scale = newRadius / _radius;
+    _radius = newRadius;
+    WheelObstacle::setRadius(_radius);
+    resetMass();
+    
+    _node->setScale(_node->getScale()*scale);
+    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
+//    CULog("mass post merge %f", _body->GetMass());
+}
 /**
  * Release the fixtures for this body, reseting the shape
  *
  * This is the primary method to override for custom physics objects.
  */
-void DudeModel::releaseFixtures() {
+void LumiaModel::releaseFixtures() {
     if (_body != nullptr) {
+        WheelObstacle::releaseFixtures();
         return;
     }
-    
-    CapsuleObstacle::releaseFixtures();
+    WheelObstacle::releaseFixtures();
     if (_sensorFixture != nullptr) {
         _body->DestroyFixture(_sensorFixture);
         _sensorFixture = nullptr;
@@ -168,8 +209,7 @@ void DudeModel::releaseFixtures() {
  * Any assets owned by this object will be immediately released.  Once
  * disposed, a DudeModel may not be used until it is initialized again.
  */
-void DudeModel::dispose() {
-    _core = nullptr;
+void LumiaModel::dispose() {
     _node = nullptr;
     _sensorNode = nullptr;
 }
@@ -179,7 +219,7 @@ void DudeModel::dispose() {
  *
  * This method should be called after the force attribute is set.
  */
-void DudeModel::applyForce() {
+void LumiaModel::applyForce() {
     if (!isActive()) {
         return;
     }
@@ -189,7 +229,10 @@ void DudeModel::applyForce() {
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
     }
-
+    if (isSplitting()){
+        b2Vec2 force(_splitForce.x, _splitForce.y);
+        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
+    }
     
     if (!isLaunching() && isGrounded()) {
         // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
@@ -226,6 +269,7 @@ void DudeModel::applyForce() {
     //}
 }
 
+
 /**
  * Updates the object's physics state (NOT GAME LOGIC).
  *
@@ -233,7 +277,7 @@ void DudeModel::applyForce() {
  *
  * @param delta Number of seconds since last animation frame
  */
-void DudeModel::update(float dt) {
+void LumiaModel::update(float dt) {
     // Apply cooldowns
     if (isJumping()) {
         _jumpCooldown = JUMP_COOLDOWN;
@@ -248,11 +292,11 @@ void DudeModel::update(float dt) {
         _shootCooldown = (_shootCooldown > 0 ? _shootCooldown-1 : 0);
     }
     
-    CapsuleObstacle::update(dt);
+    WheelObstacle::update(dt);
     
-    if (_node != nullptr) {
-        _node->setPosition(getPosition()*_drawScale);
-        _node->setAngle(getAngle());
+    if (_sceneNode != nullptr) {
+        _sceneNode->setPosition(getPosition()*_drawScale);
+        _sceneNode->setAngle(getAngle());
     }
 }
 
@@ -266,9 +310,9 @@ void DudeModel::update(float dt) {
  * This is very useful when the fixtures have a very different shape than
  * the texture (e.g. a circular shape attached to a square texture).
  */
-void DudeModel::resetDebug() {
-    CapsuleObstacle::resetDebug();
-    float w = DUDE_SSHRINK*_dimension.width;
+void LumiaModel::resetDebug() {
+    WheelObstacle::resetDebug();
+    float w = DUDE_SSHRINK*getRadius();
     float h = SENSOR_HEIGHT;
     Poly2 poly(Rect(-w/2.0f,-h/2.0f,w,h));
 
@@ -277,7 +321,6 @@ void DudeModel::resetDebug() {
     _sensorNode->setPosition(Vec2(_debug->getContentSize().width/2.0f, 0.0f));
     _debug->addChild(_sensorNode);
 }
-
 
 
 

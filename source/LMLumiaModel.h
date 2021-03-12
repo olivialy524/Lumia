@@ -12,6 +12,7 @@
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
+#include "LMLumiaNode.h"
 
 #pragma mark -
 #pragma mark Drawing Constants
@@ -40,10 +41,10 @@
 * experience, using a rectangular shape for a character will regularly snag
 * on a platform.  The round shapes on the end caps lead to smoother movement.
 */
-class DudeModel : public cugl::physics2::CapsuleObstacle {
+class LumiaModel : public cugl::physics2::WheelObstacle {
 private:
 	/** This macro disables the copy constructor (not allowed on physics objects) */
-	CU_DISALLOW_COPY_AND_ASSIGN(DudeModel);
+	CU_DISALLOW_COPY_AND_ASSIGN(LumiaModel);
 
 protected:
 	/** The current velocity of Lumia */
@@ -64,6 +65,12 @@ protected:
 	bool _isGrounded;
 	/** Whether we are actively shooting */
 	bool _isShooting;
+    
+    bool _isSplitting;
+    
+    bool _isMerging;
+    
+    float _radius;
 	/** Ground sensor to represent our feet */
 	b2Fixture*  _sensorFixture;
 	/** Reference to the sensor name (since a constant cannot have a pointer) */
@@ -72,9 +79,13 @@ protected:
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
 	/** The scene graph node for the Dude. */
-	std::shared_ptr<cugl::scene2::SceneNode> _node;
+	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
+    std::shared_ptr<LumiaNode> _node;
+
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
+    
+    Vec2 _splitForce;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -84,6 +95,12 @@ protected:
 	* the texture (e.g. a circular shape attached to a square texture).
 	*/
 	virtual void resetDebug() override;
+    
+    
+    
+
+    
+
 
 public:
     
@@ -94,12 +111,13 @@ public:
      * This constructor does not initialize any of the dude values beyond
      * the defaults.  To use a DudeModel, you must call init().
      */
-    DudeModel() : CapsuleObstacle(), _sensorName(SENSOR_NAME) { }
+    LumiaModel() : cugl::physics2::WheelObstacle() { }
+    
     
     /**
      * Destroys this DudeModel, releasing all resources.
      */
-    virtual ~DudeModel(void) { dispose(); }
+    virtual ~LumiaModel(void) { dispose(); }
     
     /**
      * Disposes all resources and assets of this DudeModel
@@ -121,7 +139,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init() override { return init(cugl::Vec2::ZERO, cugl::Size(1,1), 1.0f); }
+    virtual bool init() override { return init(cugl::Vec2::ZERO, 1.0f, 1.0f); }
     
     /**
      * Initializes a new dude at the given position.
@@ -137,7 +155,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos) override { return init(pos, cugl::Size(1,1), 1.0f); }
+    virtual bool init(const cugl::Vec2 pos) override { return init(pos, 1.0f, 1.0f); }
     
     /**
      * Initializes a new dude at the given position.
@@ -154,8 +172,8 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2 pos, const cugl::Size size) override {
-        return init(pos, size, 1.0f);
+    virtual bool init(const cugl::Vec2 pos, float radius) override {
+        return init(pos, radius, 1.0f);
     }
     
     /**
@@ -174,7 +192,14 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init(const cugl::Vec2& pos, const cugl::Size& size, float scale);
+    virtual bool init(const cugl::Vec2& pos, float radius, float scale);
+    
+    /**
+     * Sets the textures for this lumia.
+     *
+     * @param lumia      The texture for the lumia filmstrip
+     */
+    void setTextures(const std::shared_ptr<cugl::Texture>& lumia, Vec2 initPos);
 
     
 #pragma mark -
@@ -191,8 +216,8 @@ public:
 	 *
 	 * @return  A newly allocated DudeModel at the origin
 	 */
-	static std::shared_ptr<DudeModel> alloc() {
-		std::shared_ptr<DudeModel> result = std::make_shared<DudeModel>();
+	static std::shared_ptr<LumiaModel> alloc() {
+		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
 		return (result->init() ? result : nullptr);
 	}
 
@@ -210,8 +235,8 @@ public:
 	 *
 	 * @return  A newly allocated DudeModel at the given position
 	 */
-	static std::shared_ptr<DudeModel> alloc(const cugl::Vec2& pos) {
-		std::shared_ptr<DudeModel> result = std::make_shared<DudeModel>();
+	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos) {
+		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
 		return (result->init(pos) ? result : nullptr);
 	}
 
@@ -230,9 +255,9 @@ public:
 	 *
 	 * @return  A newly allocated DudeModel at the given position with the given scale
 	 */
-	static std::shared_ptr<DudeModel> alloc(const cugl::Vec2& pos, const cugl::Size& size) {
-		std::shared_ptr<DudeModel> result = std::make_shared<DudeModel>();
-		return (result->init(pos, size) ? result : nullptr);
+	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius) {
+		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
+		return (result->init(pos, radius) ? result : nullptr);
 	}
 
 	/**
@@ -251,9 +276,9 @@ public:
 	 *
 	 * @return  A newly allocated DudeModel at the given position with the given scale
 	 */
-	static std::shared_ptr<DudeModel> alloc(const cugl::Vec2& pos, const cugl::Size& size, float scale) {
-		std::shared_ptr<DudeModel> result = std::make_shared<DudeModel>();
-		return (result->init(pos, size, scale) ? result : nullptr);
+	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius, float scale) {
+		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
+		return (result->init(pos, radius, scale) ? result : nullptr);
 	}
     
 
@@ -268,7 +293,10 @@ public:
      *
      * @return the scene graph node representing this DudeModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _node; }
+	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
+    
+    
+    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
 
     /**
      * Sets the scene graph node representing this DudeModel.
@@ -289,9 +317,13 @@ public:
      * @param node  The scene graph node representing this DudeModel, which has been added to the world node already.
      */
 	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _node = node;
-        _node->setPosition(getPosition() * _drawScale);
+        _sceneNode = node;
+        _sceneNode->setPosition(getPosition() * _drawScale);
     }
+    
+    void split();
+    
+    void merge(float addRadius);
 
     
 #pragma mark -
@@ -358,6 +390,7 @@ public:
      */
     bool isLaunching() const { return _isLaunching; }
     
+    void setSplitForce(Vec2 sForce){ _splitForce = sForce;}
     /**
      * Sets whether the dude is actively jumping.
      *
@@ -372,6 +405,22 @@ public:
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
+    /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    void setSplitting(bool value) { _isSplitting = value; }
+    
+    bool isSplitting() const {return _isSplitting;}
+    /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    void setMerging(bool value) { _isMerging = value; }
+    
+    bool isMerging() const {return _isMerging;}
     /**
      * Returns true if the dude is on the ground.
      *
