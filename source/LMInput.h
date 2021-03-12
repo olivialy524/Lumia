@@ -53,6 +53,8 @@ private:
     bool  _keySplit;
     
     bool  _keyMerge;
+    
+    bool  _keySwitch;
 
     // MOUSE SUPPORT
     /** Whether the mouse was drag and released */
@@ -81,6 +83,8 @@ protected:
     bool _mergePressed;
     /** Whether Lumia was launched */
     bool _launched;
+    
+    bool _switchPressed;
     /** How much did we move horizontally? */
     float _horizontal;
     /** The launch velocity produced by player input */
@@ -297,6 +301,8 @@ public:
     float didSplit() const { return _splitPressed; }
     
     float didMerge() const { return _mergePressed; }
+    
+    float didSwitch() const { return _switchPressed; }
     /**
      * Returns true if the player had drag and released.
      *
