@@ -656,7 +656,6 @@ void GameScene::update(float dt) {
             _avatar = _lumiaList[switchIndex];
         }
     }
-    CULog("grounded %d", _avatar->isGrounded());
 	_avatar->setVelocity(_input.getLaunch());
 	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
 	if (_avatar->isGrounded()) {
