@@ -623,6 +623,10 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
+    
+    if (!_failed && !_complete) {
+    checkWin();
+    }
 
 	// Process the movement
     //if (_input.withJoystick()) {
@@ -715,7 +719,6 @@ void GameScene::update(float dt) {
 	} else if (_countdown == 0) {
 		reset();
 	}
-    checkWin();
 }
 
 /**
