@@ -75,7 +75,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(LUMIA_DENSITY);
-        setFriction(0.1f);
+        setFriction(0.05f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE

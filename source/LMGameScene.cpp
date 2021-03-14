@@ -500,7 +500,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  */
 void GameScene::update(float dt) {
 	_input.update(dt);
-    checkWin();
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -508,6 +507,9 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
+    if (!_failed && !_complete) {
+    checkWin();
+    }
     
     if(_input.didSwitch()){
         auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
@@ -558,8 +560,6 @@ void GameScene::update(float dt) {
 	if (!_failed && _avatar->getY() < 0) {
 		setFailure(true);
 	}
-
-//    _avatar->setSplitting(false);
     
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
@@ -656,7 +656,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-    addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
+    addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
     return lumia;
@@ -742,12 +742,6 @@ void GameScene::beginContact(b2Contact* contact) {
 	physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
-    if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
-        ((Plant*)bd1)->lightUp();
-    }
-    else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
-        ((Plant*)bd2)->lightUp();
-    }
 //    if (bd1->getName() == LUMIA_NAME){
 //        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd1);
 //        if (lumia->getSensorName() == fd1 && lumia.get() != bd2){
@@ -766,6 +760,17 @@ void GameScene::beginContact(b2Contact* contact) {
 //    }
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
+        
+        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
+            if (!((Plant*)bd1)->getIsLit()) {
+                ((Plant*)bd1)->lightUp();
+            }
+        }else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
+            if (!((Plant*)bd2)->getIsLit()) {
+                ((Plant*)bd2)->lightUp();
+            }
+        }
+        
 	    if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
 		    (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
 		    lumia->setGrounded(true);
@@ -797,8 +802,6 @@ void GameScene::endContact(b2Contact* contact) {
 
     
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
-
-        
         if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
             (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
             _sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
