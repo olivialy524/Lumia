@@ -12,10 +12,7 @@
 #include <unordered_set>
 #include <vector>
 #include "LMInput.h"
-#include "LMBullet.h"
 #include "LMLumiaModel.h"
-#include "LMRopeBridge.h"
-#include "LMSpinner.h"
 #include "LMPlant.h"
 
 /**
@@ -46,10 +43,6 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
-    /** Reference to the left joystick image */
-    std::shared_ptr<cugl::scene2::PolygonNode> _leftnode;
-    /** Reference to the right joystick image */
-    std::shared_ptr<cugl::scene2::PolygonNode> _rightnode;
 
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
@@ -57,18 +50,11 @@ protected:
     float _scale;
 
     // Physics objects for the game
-    /** Reference to the goalDoor (for collision detection) */
-    std::shared_ptr<cugl::physics2::BoxObstacle>    _goalDoor;
-    
     std::list<std::shared_ptr<Plant>> _plants;
     /** Reference to the player avatar */
-    std::shared_ptr<LumiaModel>			  _avatar;
+    std::shared_ptr<LumiaModel> _avatar;
     /** Reference to the player avatar */
     std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
-    /** Reference to the spinning barrier */
-    std::shared_ptr<Spinner>			  _spinner;
-    /** Reference to the rope bridge */
-    std::shared_ptr<RopeBridge>			  _ropebridge;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -299,20 +285,9 @@ public:
      */
     void reset();
 
-    /**
-    * Adds a new bullet to the world and sends it in the right direction.
-    */
-    void createBullet();
-
     void createPlant(float posx, float posy, int nplant, float ang);
     
     void checkWin();
-    /**
-    * Removes the input Bullet from the world.
-    *
-    * @param  bullet   the bullet to remove
-    */
-    void removeBullet(Bullet* bullet);
 
     /**
     * Adds a new bullet to the world and sends it in the right direction.
@@ -327,6 +302,7 @@ public:
     * @param  bullet   the bullet to remove
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
+
     /**
      * Calculates trajectory point one timestep into future
      *
