@@ -45,15 +45,11 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
-    /** Whether the left arrow key is down */
-    bool  _keyLeft;
-    /** Whether the right arrow key is down */
-    bool  _keyRight;
-    
+    /** Whether the split key is down */
     bool  _keySplit;
-    
+    /** Whether the merge key is down */
     bool  _keyMerge;
-    
+    /** Whether the switch control key is down */
     bool  _keySwitch;
 
     // MOUSE SUPPORT
@@ -72,10 +68,6 @@ protected:
     bool _debugPressed;
     /** Whether the exit action was chosen. */
     bool _exitPressed;
-    /** Whether the fire action was chosen. */
-    bool _firePressed;
-    /** Whether the jump action was chosen. */
-    bool _jumpPressed;
     
     /** Whether the jump action was chosen. */
     bool _splitPressed;
@@ -84,24 +76,12 @@ protected:
     /** Whether Lumia was launched */
     bool _launched;
     
+    /** Whether the switch control action was chosen */
     bool _switchPressed;
-    /** How much did we move horizontally? */
-    float _horizontal;
     /** The launch velocity produced by player input */
     cugl::Vec2 _inputLaunch;
 
 #pragma mark Internal Touch Management   
-	// The screen is divided into four zones: Left, Bottom, Right and Main/
-	// These are all shown in the diagram below.
-	//
-	//   |---------------|
-	//   |   |       |   |
-	//   | L |   M   | R |
-	//   |   |       |   |
-	//   -----------------
-	//
-	// The meaning of any touch depends on the zone it begins in.
-
 	/** Information representing a single "touch" (possibly multi-finger) */
 	struct TouchInstance {
 		/** The anchor touch position (on start) */
@@ -111,102 +91,11 @@ protected:
 		/** The touch id(s) for future reference */
         std::unordered_set<Uint64> touchids;
 	};
-
-	/** Enumeration identifying a zone for the current touch */
-	enum class Zone {
-		/** The touch was not inside the screen bounds */
-		UNDEFINED,
-		/** The touch was in the left zone (as shown above) */
-		LEFT,
-		/** The touch was in the right zone (as shown above) */
-		RIGHT,
-		/** The touch was in the main zone (as shown above) */
-		MAIN
-	};
-
-	/** The bounds of the entire game screen (in touch coordinates) */
-    cugl::Rect _tbounds;
-    /** The bounds of the entire game screen (in scene coordinates) */
-	cugl::Rect _sbounds;
-	/** The bounds of the left touch zone */
-	cugl::Rect _lzone;
-	/** The bounds of the right touch zone */
-	cugl::Rect _rzone;
-
-	// Each zone can have only one touch
-	/** The current touch location for the left zone */
-	TouchInstance _ltouch;
-	/** The current touch location for the right zone */
-	TouchInstance _rtouch;
-	/** The current touch location for the bottom zone */
-	TouchInstance _mtouch;
-    
-    /** Whether the virtual joystick is active */
-    bool _joystick;
-    /** The position of the virtual joystick */
-    cugl::Vec2 _joycenter;
-    /** Whether or not we have processed a jump for this swipe yet */
-    bool _hasJumped;
-    /** The timestamp for a double tap on the right */
-    cugl::Timestamp _rtime;
-	/** The timestamp for a double tap in the middle */
-	cugl::Timestamp _mtime;
-
-    /**
-     * Defines the zone boundaries, so we can quickly categorize touches.
-     */
-	void createZones();
   
     /**
      * Populates the initial values of the TouchInstances
      */
     void clearTouchInstance(TouchInstance& touchInstance);
-
-    /**
-     * Returns the correct zone for the given position.
-     *
-     * See the comments above for a description of how zones work.
-     *
-     * @param  pos  a position in screen coordinates
-     *
-     * @return the correct zone for the given position.
-     */
-    Zone getZone(const cugl::Vec2 pos) const;
-    
-    /**
-     * Returns the scene location of a touch
-     *
-     * Touch coordinates are inverted, with y origin in the top-left
-     * corner. This method corrects for this and scales the screen
-     * coordinates down on to the scene graph size.
-     *
-     * @return the scene location of a touch
-     */
-    cugl::Vec2 touch2Screen(const cugl::Vec2 pos) const;
-
-    /**
-     * Processes movement for the floating joystick.
-     *
-     * This will register movement as left or right (or neither).  It
-     * will also move the joystick anchor if the touch position moves
-     * too far.
-     *
-     * @param  pos  the current joystick position
-     */
-    void processJoystick(const cugl::Vec2 pos);
-    
-    /**
-     * Returns a nonzero value if this is a quick left or right swipe
-     *
-     * The function returns -1 if it is left swipe and 1 if it is a right swipe.
-     *
-     * @param  start    the start position of the candidate swipe
-     * @param  stop     the end position of the candidate swipe
-     * @param  current  the current timestamp of the gesture
-     *
-     * @return a nonzero value if this is a quick left or right swipe
-     */
-	int processSwipe(const cugl::Vec2 start, const cugl::Vec2 stop, cugl::Timestamp current);
   
 public:
 #pragma mark -
@@ -283,25 +172,24 @@ public:
     const cugl::Vec2& getLaunch() { return _inputLaunch; }
 
     /**
-     * Returns the amount of sideways movement.
+     * Returns true if the player had split Lumia.
      *
-     * -1 = left, 1 = right, 0 = still
-     *
-     * @return the amount of sideways movement.
+     * @return true if the player had split Lumia.
      */
-	float getHorizontal() const { return _horizontal; }
-
-    /**
-     * Returns if the jump button was pressed.
-     *
-     * @return if the jump button was pressed.
-     */
-	float didJump() const { return _jumpPressed; }
-
     float didSplit() const { return _splitPressed; }
     
+    /**
+     * Returns true if the player had merged Lumia.
+     *
+     * @return true if the player had merged Lumia.
+     */
     float didMerge() const { return _mergePressed; }
     
+    /**
+     * Returns true if the player had switched control of Lumia.
+     *
+     * @return true if the player had switched control of Lumia.
+     */
     float didSwitch() const { return _switchPressed; }
     /**
      * Returns true if the player had drag and released.
@@ -309,13 +197,6 @@ public:
      * @return true if the player had drag and released.
      */
     float didLaunch() const { return _launched; }
-
-    /**
-     * Returns true if the fire button was pressed.
-     *
-     * @return true if the fire button was pressed.
-     */
-	bool didFire() const { return _firePressed; }
 
     /**
      * Returns true if the reset button was pressed.
@@ -337,20 +218,6 @@ public:
 	 * @return true if the exit button was pressed.
 	 */
 	bool didExit() const { return _exitPressed; }
-    
-    /**
-     * Returns true if the virtual joystick is in use (touch only)
-     *
-     * @return true if the virtual joystick is in use (touch only)
-     */
-    bool withJoystick() const { return _joystick; }
-
-    /**
-     * Returns the scene graph position of the virtual joystick
-     *
-     * @return the scene graph position of the virtual joystick
-     */
-    cugl::Vec2 getJoystick() const { return _joycenter; }
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
@@ -389,15 +256,6 @@ public:
      * @param focus	Whether the listener currently has focus
      */
     void touchEndedCB(const cugl::TouchEvent& event, bool focus);
-  
-    /**
-     * Callback for a mouse release event.
-     *
-     * @param event The associated event
-     * @param previous The previous position of the touch
-     * @param focus	Whether the listener currently has focus
-     */
-    void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
   
 };
 
