@@ -9,9 +9,6 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
 #include "LMLumiaModel.h"
-#include "LMSpinner.h"
-#include "LMRopeBridge.h"
-#include "LMBullet.h"
 #include "LMPlant.h"
 #include "LMPlantNode.h"
 
@@ -67,14 +64,8 @@ float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
 	{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
 };
 
-/** The goal door position */
-float GOAL_POS[] = { 4.0f,14.0f};
-/** The position of the spinning barrier */
-float SPIN_POS[] = {13.0f,12.5f};
-/** The initial position of the dude */
-float DUDE_POS[] = { 2.5f, 5.0f};
-/** The position of the rope bridge */
-float BRIDGE_POS[] = {9.0f, 3.8f};
+/** The initial position of Lumia */
+float LUMIA_POS[] = { 2.5f, 5.0f};
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -88,12 +79,6 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define BASIC_FRICTION  0.4f
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
-/** The width of the rope bridge */
-#define BRIDGE_WIDTH    14.0f
-/** Offset for bullet when firing */
-#define BULLET_OFFSET   0.5f
-/** The speed of the bullet after firing */
-#define BULLET_SPEED   20.0f
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
 
@@ -103,11 +88,8 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
-#define GOAL_TEXTURE    "goal"
-/** The key for the win door texture in the asset manager */
-#define BULLET_TEXTURE  "bullet"
-/** The name of a bullet (for object identification) */
-#define BULLET_NAME     "bullet"
+#define LUMIA_TEXTURE  "lumia"
+/** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
 #define WALL_NAME       "wall"
@@ -141,10 +123,6 @@ float BRIDGE_POS[] = {9.0f, 3.8f};
 #define MUSIC_VOLUME    0.7f
 /** The volume for sound effects */
 #define EFFECT_VOLUME   0.8f
-/** The image for the left dpad/joystick */
-#define LEFT_IMAGE      "dpad_left"
-/** The image for the right dpad/joystick */
-#define RIGHT_IMAGE     "dpad_right"
 
 #define BACKGROUND_IMAGE "background"
 
@@ -290,24 +268,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
 
-    
-    _leftnode = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(LEFT_IMAGE));
-    _leftnode->SceneNode::setAnchor(cugl::Vec2::ANCHOR_MIDDLE_RIGHT);
-    _leftnode->setScale(0.35f);
-    _leftnode->setVisible(false);
-
-    _rightnode = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>(RIGHT_IMAGE));
-    _rightnode->SceneNode::setAnchor(cugl::Vec2::ANCHOR_MIDDLE_LEFT);
-    _rightnode->setScale(0.35f);
-    _rightnode->setVisible(false);
-
     addChild(scene, 0);
     addChild(_worldnode, 1);
-    addChild(_debugnode,2);
+    addChild(_debugnode, 2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
-    addChild(_leftnode, 5);
-    addChild(_rightnode,6);
    
 
     populate();
@@ -331,8 +296,6 @@ void GameScene::dispose() {
         _debugnode = nullptr;
         _winnode = nullptr;
         _losenode = nullptr;
-        _leftnode = nullptr;
-        _rightnode = nullptr;
         _complete = false;
         _debug = false;
         Scene2::dispose();
@@ -357,9 +320,6 @@ void GameScene::reset() {
     }
     _lumiaList.clear();
     _avatar = nullptr;
-    _goalDoor = nullptr;
-    _spinner = nullptr;
-    _ropebridge = nullptr;
     for (const std::shared_ptr<Plant> &p : _plants) {
         p->dispose();
     }
@@ -382,32 +342,8 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-#pragma mark : Goal door
-    std::shared_ptr<Texture> image;
-    std::shared_ptr<scene2::PolygonNode> sprite;
-    std::shared_ptr<scene2::WireNode> draw;
-    
-//	std::shared_ptr<Texture> image = _assets->get<Texture>(GOAL_TEXTURE);
-//	std::shared_ptr<scene2::PolygonNode> sprite;
-//	std::shared_ptr<scene2::WireNode> draw;
-//
-//	// Create obstacle
-//	Vec2 goalPos = GOAL_POS;
-//	Size goalSize(image->getSize().width/_scale,
-//	image->getSize().height/_scale);
-//	_goalDoor = physics2::BoxObstacle::alloc(goalPos,goalSize);
-//
-//	// Set the physics attributes
-//	_goalDoor->setBodyType(b2_staticBody);
-//	_goalDoor->setDensity(0.0f);
-//	_goalDoor->setFriction(0.0f);
-//	_goalDoor->setRestitution(0.0f);
-//	_goalDoor->setSensor(true);
-//
-//	// Add the scene graph nodes to this object
-//	sprite = scene2::PolygonNode::allocWithTexture(image);
-//	_goalDoor->setDebugColor(DEBUG_COLOR);
-//	addObstacle(_goalDoor, sprite, 0); // Put this at the very back
+std::shared_ptr<Texture> image;
+std::shared_ptr<scene2::PolygonNode> sprite;
     
 #pragma mark : Walls
 	// All walls and platforms share the same texture
@@ -442,33 +378,6 @@ void GameScene::populate() {
 //	}
 
 #pragma mark : Platforms
-    /**
-	for (int ii = 0; ii < PLATFORM_COUNT; ii++) {
-		std::shared_ptr<physics2::PolygonObstacle> platobj;
-		Poly2 platform(PLATFORMS[ii],8);
-
-		SimpleTriangulator triangulator;
-		triangulator.set(platform);
-		triangulator.calculate();
-		platform.setIndices(triangulator.getTriangulation());
-		platform.setGeometry(Geometry::SOLID);
-
-		platobj = physics2::PolygonObstacle::alloc(platform);
-		// You cannot add constant "".  Must stringify
-		platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(ii));
-
-		// Set the physics attributes
-		platobj->setBodyType(b2_staticBody);
-		platobj->setDensity(BASIC_DENSITY);
-		platobj->setFriction(BASIC_FRICTION);
-		platobj->setRestitution(BASIC_RESTITUTION);
-		platobj->setDebugColor(DEBUG_COLOR);
-
-		platform *= _scale;
-		sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-		addObstacle(platobj,sprite,1);
-	}
-    */
     int numplats = _leveljson->getInt("numplatforms");
     for (int i = 1; i <= numplats; i++) {
         std::string platstring = "plat_" + to_string(i);
@@ -509,17 +418,6 @@ void GameScene::populate() {
     }
 
 #pragma mark : Plant
-    /**
-	Vec2 spinPos = SPIN_POS;
-    image = _assets->get<Texture>(SPINNER_TEXTURE);
-	_spinner = Spinner::alloc(spinPos,image->getSize()/_scale,_scale);
-    _spinner->setTexture(image);
-	std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-	_spinner->setSceneNode(node);
-	_spinner->setBodyType(b2_staticBody);
-	_spinner->setDebugColor(DEBUG_COLOR);
-	addObstacle(_spinner, node, 2, false);
-    */
     int np = _leveljson->getInt("numplants");
     for (int i = 1; i <= np; i++) {
         std::string ps = ("plant_" + to_string(i));
@@ -529,28 +427,14 @@ void GameScene::populate() {
         float pa = (plant->getFloat("angle"))*M_PI/180;
         createPlant(px, py, i,pa);
     }
-#pragma mark : Rope Bridge
-    /**
-	Vec2 bridgeStart = BRIDGE_POS;
-	Vec2 bridgeEnd   = bridgeStart;
-	bridgeEnd.x += BRIDGE_WIDTH;
-    image = _assets->get<Texture>(BRIDGE_TEXTURE);
-    
-	_ropebridge = RopeBridge::alloc(bridgeStart,bridgeEnd,image->getSize()/_scale,_scale);
-    _ropebridge->setTexture(image);
-	node = scene2::SceneNode::alloc();
-	_ropebridge->setSceneNode(node);
-	_ropebridge->setBodyType(b2_staticBody);
-	_ropebridge->setDebugColor(DEBUG_COLOR);
-	addObstacle(_ropebridge, node, 3, false);
-     */
+
 #pragma mark : Lumia
-	Vec2 lumiaPos = DUDE_POS;
+	Vec2 lumiaPos = LUMIA_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-    image = _assets->get<Texture>(BULLET_TEXTURE);
+    image = _assets->get<Texture>(LUMIA_TEXTURE);
     float radius = 1.0f;// change to value from json
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-    _avatar-> setTextures(image, DUDE_POS);
+    _avatar-> setTextures(image, LUMIA_POS);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
@@ -616,7 +500,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  */
 void GameScene::update(float dt) {
 	_input.update(dt);
-    checkWin();
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -624,25 +507,9 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-
-	// Process the movement
-    //if (_input.withJoystick()) {
-    //    if (_input.getHorizontal() < 0) {
-    //        _leftnode->setVisible(true);
-    //        _rightnode->setVisible(false);
-    //    } else if (_input.getHorizontal() > 0) {
-    //        _leftnode->setVisible(false);
-    //        _rightnode->setVisible(true);
-    //    } else {
-    //        _leftnode->setVisible(false);
-    //        _rightnode->setVisible(false);
-    //    }
-    //    _leftnode->setPosition(_input.getJoystick());
-    //    _rightnode->setPosition(_input.getJoystick());
-    //} else {
-    //    _leftnode->setVisible(false);
-    //    _rightnode->setVisible(false);
-    //}
+    if (!_failed && !_complete) {
+    checkWin();
+    }
     
     if(_input.didSwitch()){
         auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
@@ -666,16 +533,10 @@ void GameScene::update(float dt) {
 		//glEnd();
 	}
     
-	_avatar->setJumping( _input.didJump());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
     _avatar->setSplitting(_input.didSplit());
     _avatar->setMerging(_input.didMerge());
-
-	if (_avatar->isJumping() && _avatar->isGrounded()) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(JUMP_EFFECT);
-		AudioEngine::get()->play(JUMP_EFFECT,source,false,EFFECT_VOLUME);
-	}
 
     if (_avatar->isSplitting()){
         float radius = _avatar->getRadius() / 1.4f;
@@ -685,9 +546,8 @@ void GameScene::update(float dt) {
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
     } else if(_avatar->isMerging()){
-     // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
+        // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
-        
     }
     
 	// Turn the physics engine crank.
@@ -696,19 +556,10 @@ void GameScene::update(float dt) {
 	// Since items may be deleted, garbage collect
 	_world->garbageCollect();
 
-	// Add a bullet AFTER physics allows it to hang in front
-	// Otherwise, it looks like bullet appears far away
-	_avatar->setShooting(_input.didFire());
-	if (_avatar->isShooting()) {
-		createBullet();
-	}
-
 	// Record failure if necessary.
 	if (!_failed && _avatar->getY() < 0) {
 		setFailure(true);
 	}
-
-//    _avatar->setSplitting(false);
     
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
@@ -757,39 +608,6 @@ void GameScene::setFailure(bool value) {
 		_losenode->setVisible(false);
 		_countdown = -1;
 	}
-}
-
-
-/**
- * Add a new bullet to the world and send it in the right direction.
- */
-void GameScene::createBullet() {
-	float offset = BULLET_OFFSET;
-	Vec2 pos = _avatar->getPosition();
-	pos.x += (_avatar->isFacingRight() ? offset : -offset);
-
-	std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
-	float radius = 0.5f*image->getSize().width/_scale;
-
-	std::shared_ptr<Bullet> bullet = Bullet::alloc(pos, radius);
-	bullet->setName(BULLET_NAME);
-	bullet->setDensity(HEAVY_DENSITY);
-	bullet->setBullet(true);
-	bullet->setGravityScale(0);
-	bullet->setDebugColor(DEBUG_COLOR);
-	bullet->setDrawScale(_scale);
-
-	std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
-	bullet->setSceneNode(sprite);
-
-	// Compute position and velocity
-	float speed  = (_avatar->isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-	bullet->setVX(speed);
-	addObstacle(bullet, sprite, 5);
-
-	std::shared_ptr<Sound> source = _assets->get<Sound>(PEW_EFFECT);
-	AudioEngine::get()->play(PEW_EFFECT,source, false, EFFECT_VOLUME, true);
-    
 }
 
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
@@ -843,39 +661,22 @@ void GameScene::checkWin() {
 }
 
 /**
- * Add a new bullet to the world and send it in the right direction.
+ * Add a new LUmia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {    std::shared_ptr<Texture> image = _assets->get<Texture>(BULLET_TEXTURE);
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-    addObstacle(lumia, lumia->getSceneNode(), 5); // Put this at the very front
+    addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
     return lumia;
  
 }
-/**
- * Removes a new bullet from the world.
- *
- * @param  bullet   the bullet to remove
- */
-void GameScene::removeBullet(Bullet* bullet) {
-  // do not attempt to remove a bullet that has already been removed
-	if (bullet->isRemoved()) {
-		return;
-	}
-	_worldnode->removeChild(bullet->getSceneNode());
-	bullet->setDebugScene(nullptr);
-	bullet->markRemoved(true);
-
-	std::shared_ptr<Sound> source = _assets->get<Sound>(POP_EFFECT);
-	AudioEngine::get()->play(POP_EFFECT,source,false,EFFECT_VOLUME, true);
-}
 
 void GameScene::mergeLumiasNearby(){
-    
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         if (lumia==_avatar){
             continue;
@@ -896,12 +697,11 @@ void GameScene::mergeLumiasNearby(){
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
-        
     }
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
-  // do not attempt to remove a bullet that has already been removed
+    // do not attempt to remove a Lumia that has already been removed
     if (lumia->isRemoved()) {
         return;
     }
@@ -955,17 +755,6 @@ void GameScene::beginContact(b2Contact* contact) {
 	physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
-	if (bd1->getName() == BULLET_NAME && bd2 != _avatar.get()) {
-		removeBullet((Bullet*)bd1);
-	} else if (bd2->getName() == BULLET_NAME && bd1 != _avatar.get()) {
-		removeBullet((Bullet*)bd2);
-	}
-    if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == _avatar.get()) {
-        ((Plant*)bd1)->lightUp();
-    }
-    else if (bd2->getName().substr(0.5) == PLANT_NAME && bd1 == _avatar.get()) {
-        ((Plant*)bd2)->lightUp();
-    }
 //    if (bd1->getName() == LUMIA_NAME){
 //        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd1);
 //        if (lumia->getSensorName() == fd1 && lumia.get() != bd2){
@@ -984,19 +773,24 @@ void GameScene::beginContact(b2Contact* contact) {
 //    }
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
-	if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-		(lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
-		lumia->setGrounded(true);
-		// Could have more than one ground
-		_sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-	}
+        
+        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
+            if (!((Plant*)bd1)->getIsLit()) {
+                ((Plant*)bd1)->lightUp();
+            }
+        }else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
+            if (!((Plant*)bd2)->getIsLit()) {
+                ((Plant*)bd2)->lightUp();
+            }
+        }
+        
+	    if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+		    (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
+		    lumia->setGrounded(true);
+		    // Could have more than one ground
+		    _sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+	    }
     }
-
-	// If we hit the "win" door, we are done
-	if((bd1 == _avatar.get()   && bd2 == _goalDoor.get()) ||
-		(bd1 == _goalDoor.get() && bd2 == _avatar.get())) {
-		setComplete(true);
-	}
 }
 
 /**
@@ -1019,14 +813,16 @@ void GameScene::endContact(b2Contact* contact) {
 	void* bd1 = body1->GetUserData();
 	void* bd2 = body2->GetUserData();
 
-
-	if ((_avatar->getSensorName() == fd2 && _avatar.get() != bd1) ||
-		(_avatar->getSensorName() == fd1 && _avatar.get() != bd2)) {
-		_sensorFixtures.erase(_avatar.get() == bd1 ? fix2 : fix1);
-		if (_sensorFixtures.empty()) {
-			_avatar->setGrounded(false);
-		}
-	}
+    
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
+        if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
+            _sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
+            if (_sensorFixtures.empty()) {
+                lumia->setGrounded(false);
+            }
+        }
+    }
 }
 
 /**

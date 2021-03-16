@@ -21,27 +21,16 @@
 #define LUMIA_COLS       1
 /** Number of elements in this ship image filmstrip */
 #define LUMIA_FRAMES     1
-/** Cooldown (in animation frames) for jumping */
-#define JUMP_COOLDOWN   5
-/** Cooldown (in animation frames) for shooting */
-#define SHOOT_COOLDOWN  20
-/** The amount to shrink the body fixture (vertically) relative to the image */
-#define DUDE_VSHRINK  0.95f
-/** The amount to shrink the body fixture (horizontally) relative to the image */
-#define DUDE_HSHRINK  0.7f
 /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-#define DUDE_SSHRINK  0.6f
+#define LUMIA_SSHRINK  0.6f
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define DUDE_DENSITY    0.1f
+#define LUMIA_DENSITY    0.13f
 /** The restitution of the character */
-#define DUDE_RESTITUTION 0.5f
+#define LUMIA_RESTITUTION 0.5f
 
 
-
-/** The impulse for the character jump */
-#define DUDE_JUMP       5.0f
 /** Debug color for the sensor */
 #define DEBUG_COLOR     Color4::RED
 
@@ -66,9 +55,9 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
 #pragma mark Constructors
 
 /**
- * Initializes a new dude at the given position.
+ * Initializes a new Lumia at the given position.
  *
- * The dude is sized according to the given drawing scale.
+ * The Lumia is sized according to the given drawing scale.
  *
  * The scene graph is completely decoupled from the physics system.
  * The node does not have to be the same size as the physics body. We
@@ -76,7 +65,7 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
  * according to the drawing scale.
  *
  * @param pos   Initial position in world coordinates
- * @param size  The size of the dude in world units
+ * @param size  The size of the Lumia in world units
  * @param scale The drawing scale (world to screen)
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
@@ -85,51 +74,20 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(DUDE_DENSITY);
-        setFriction(0.2f);
+        setDensity(LUMIA_DENSITY);
+        setFriction(0.05f);
         // add bounciness to Lumia
-        setRestitution(DUDE_RESTITUTION);
+        setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
         _isGrounded = false;
-        _isShooting = false;
-        _isJumping  = false;
-        _faceRight  = true;
         
         _radius = radius;
-        _shootCooldown = 0;
-        _jumpCooldown  = 0;
         return true;
     }
     return false;
 }
-
-
-#pragma mark -
-#pragma mark Attribute Properties
-
-/**
-* Sets velocity of Lumia.
-*
-* This is the result of drag-and-release input.
-*
-* @param value velocity of Lumia.
-*/
-//void DudeModel::setVelocity(cugl::Vec2 value) {
-//    _velocity = value;
-//    /*bool face = _movement > 0;
-//    if (_movement == 0 || _faceRight == face) {
-//        return;
-//    }*/
-//    
-//    // Change facing
-//    /*scene2::TexturedNode* image = dynamic_cast<scene2::TexturedNode*>(_node.get());
-//    if (image != nullptr) {
-//        image->flipHorizontal(!image->isFlipHorizontal());
-//    }
-//    _faceRight = face;*/
-//}
 
 
 #pragma mark -
@@ -148,7 +106,7 @@ void LumiaModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = DUDE_DENSITY;
+    sensorDef.density = LUMIA_DENSITY;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
@@ -200,10 +158,10 @@ void LumiaModel::releaseFixtures() {
 }
 
 /**
- * Disposes all resources and assets of this DudeModel
+ * Disposes all resources and assets of this LumiaModel
  *
  * Any assets owned by this object will be immediately released.  Once
- * disposed, a DudeModel may not be used until it is initialized again.
+ * disposed, a LumiaModel may not be used until it is initialized again.
  */
 void LumiaModel::dispose() {
     _node = nullptr;
@@ -211,7 +169,7 @@ void LumiaModel::dispose() {
 }
 
 /**
- * Applies the force to the body of this dude
+ * Applies the force to the body of this Lumia
  *
  * This method should be called after the force attribute is set.
  */
@@ -260,7 +218,7 @@ void LumiaModel::applyForce() {
     //
     //// Jump!
     //if (isJumping() && isGrounded()) {
-    //    b2Vec2 force(0, DUDE_JUMP);
+    //    b2Vec2 force(0, Lumia_JUMP);
     //    _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
     //}
 }
@@ -274,20 +232,6 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
-    // Apply cooldowns
-    if (isJumping()) {
-        _jumpCooldown = JUMP_COOLDOWN;
-    } else {
-        // Only cooldown while grounded
-        _jumpCooldown = (_jumpCooldown > 0 ? _jumpCooldown-1 : 0);
-    }
-    
-    if (isShooting()) {
-        _shootCooldown = SHOOT_COOLDOWN;
-    } else {
-        _shootCooldown = (_shootCooldown > 0 ? _shootCooldown-1 : 0);
-    }
-    
     WheelObstacle::update(dt);
     
     if (_sceneNode != nullptr) {
@@ -308,7 +252,7 @@ void LumiaModel::update(float dt) {
  */
 void LumiaModel::resetDebug() {
     WheelObstacle::resetDebug();
-    float w = DUDE_SSHRINK*getRadius();
+    float w = LUMIA_SSHRINK*getRadius();
     float h = SENSOR_HEIGHT;
     Poly2 poly(Rect(-w/2.0f,-h/2.0f,w,h));
 
