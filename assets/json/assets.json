@@ -23,6 +23,9 @@
         "lamp":{
             "file":      "textures/lamp.png"
         },
+        "lamp-lit":{
+            "file":      "textures/lamp-lit.png"
+        },
         "background":{
             "file": "textures/background.png"
         },

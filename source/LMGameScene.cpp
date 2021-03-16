@@ -795,6 +795,7 @@ void GameScene::createBullet() {
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
+    std::shared_ptr<Texture> image2 = _assets->get<Texture>("lamp-lit");
     float radius = 0.3*image->getSize().width/(_scale);
 
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
@@ -810,13 +811,25 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     p->setSensor(true);
     p->setDebugColor(DEBUG_COLOR);
     p->setDrawScale(_scale);
-
+    
+    
+    std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
+    p->setNode(_sceneNode);
+    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+    
     std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
+    sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setAngle(ang);
-    p->setSceneNode(sprite);
+//    p->setLampNode(sprite);
+    _sceneNode->addChild(sprite);
+    
+//    std::shared_ptr<PlantNode> sprite2 = PlantNode::alloc(image2);
+//    sprite2->setAngle(ang);
+//    sprite2->setAnchor(Vec2::ANCHOR_CENTER);
+//    p->setLampLitNode(sprite2);
 
     p->setVX(0);
-    addObstacle(p, sprite, 0);
+    addObstacle(p, _sceneNode, 0);
     _plants.push_front(p);
 }
 

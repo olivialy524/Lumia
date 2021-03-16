@@ -11,4 +11,6 @@
 
 void Plant::dispose() {
     _node = nullptr;
+    _lampNode = nullptr;
+    _lampLitNode = nullptr;
 }
