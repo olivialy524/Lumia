@@ -121,9 +121,6 @@ bool LumiaInput::init(const Rect bounds) {
     touch->addEndListener(LISTENER_KEY,[=](const TouchEvent& event, bool focus) {
         this->touchEndedCB(event,focus);
     });
-    touch->addMotionListener(LISTENER_KEY,[=](const TouchEvent& event, const Vec2& previous, bool focus) {
-        this->touchesMovedCB(event, previous, focus);
-    });
 	
 #endif
     _active = success;
@@ -234,11 +231,6 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
     //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
     _timestamp = event.timestamp;
 
-    // If we reset, do not record the thrust
-    /*if (_keyReset) {
-        return;
-    }*/
-
     Vec2 finishDrag = event.position - _dclick;
 
     finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
@@ -262,7 +254,9 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
  */
 void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
     //CULog("Touch began %lld", event.touch);
-    Vec2 pos = event.position;
+    //Vec2 pos = event.position;
+    // Update the touch location for later gestures
+    _dclick.set(event.position);
 }
 
  
@@ -273,6 +267,21 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
  * @param focus	Whether the listener currently has focus
  */
 void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
-    // Reset all keys that might have been set
-    Vec2 pos = event.position;
+    // Check for a double tap.
+    //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
+    _timestamp = event.timestamp;
+
+    Vec2 finishDrag = event.position - _dclick;
+
+    finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+    finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+
+    finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
+    finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+
+    //    char print[64];
+    //    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+    //    CULog(print);
+    _inputLaunch = finishDrag;
+    _launchInputted = true;
 }
