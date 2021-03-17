@@ -55,8 +55,10 @@ private:
     // MOUSE SUPPORT
     /** Whether the mouse was drag and released */
     bool _launchInputted;
-    /** The initial click location for the current click-and-drag */
+    /** The initial click/touch location for the current click-and-drag */
     cugl::Vec2 _dclick;
+    /** The touch id(s) for future reference */
+    std::unordered_set<Uint64> _touchids;
     /** The timestamp for the beginning of the current click-and-drag */
     cugl::Timestamp _timestamp;
   

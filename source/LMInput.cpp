@@ -253,10 +253,20 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
  * @param focus	Whether the listener currently has focus
  */
 void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
-    //CULog("Touch began %lld", event.touch);
-    //Vec2 pos = event.position;
-    // Update the touch location for later gestures
-    _dclick.set(event.position);
+    CULog("Touch began %lld", event.touch);
+    _touchids.insert(event.touch);
+
+    if (_touchids.size() == 1) {
+        // only one finger on screen, input is drag-and-release or tap
+        _dclick.set(event.position);
+    } else if (_touchids.size() == 2) {
+        // two fingers on screen, user is merging Lumia
+        _mergePressed = true;
+    } else {
+        // more than two fingers on screen, invalid input
+        return;
+    }
+    
 }
 
  
@@ -267,8 +277,8 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
  * @param focus	Whether the listener currently has focus
  */
 void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
-    // Check for a double tap.
-    //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
+    CULog("Touch ended %lld", event.touch);
+
     _timestamp = event.timestamp;
 
     Vec2 finishDrag = event.position - _dclick;
@@ -279,9 +289,13 @@ void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
     finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
     finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-    //    char print[64];
-    //    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-    //    CULog(print);
     _inputLaunch = finishDrag;
     _launchInputted = true;
+
+    // finger lifted off screen, remove from set of touch IDs
+    _touchids.erase(event.touch);
+    if (_touchids.size() != 2) {
+        // don't have 2 fingers on screen, stop merging
+        _mergePressed = false;
+    }
 }
