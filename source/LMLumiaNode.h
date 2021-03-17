@@ -42,7 +42,7 @@ public:
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
               const cugl::Mat4& transform, cugl::Color4 tint) override;
 
-
+    
 };
 
 #endif /* LMLumiaNode_h */
