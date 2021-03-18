@@ -655,6 +655,7 @@ void GameScene::createEnergy(Vec2 pos) {
     std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
     nrg->setGravityScale(0);
     nrg->setBodyType(b2_staticBody);
+    nrg->setSensor(true);
     nrg->setName("nrg_");
     cugl::Rect rectangle = Rect(pos, size);
     cugl::Poly2 poly = Poly2(rectangle);
@@ -799,15 +800,20 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
-            cout << "Colliding with Energy";
+            if (!(bd1->isRemoved())) {
+            ((LumiaModel*)bd2)->merge(1);
             _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
             ((EnergyModel*)bd1)->dispose();
             ((EnergyModel*)bd1)->markRemoved(true);
-            
+            }
         }
-        if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
-            cout << "Colliding with Energy";
+        else if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
+            if (!(bd2->isRemoved())) {
+            ((LumiaModel*)bd1)->merge(1);
+            _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
             ((EnergyModel*)bd2)->dispose();
+            ((EnergyModel*)bd2)->markRemoved(true);
+            }
         }
         
 	    if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
