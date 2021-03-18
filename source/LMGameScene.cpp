@@ -11,6 +11,7 @@
 #include "LMLumiaModel.h"
 #include "LMPlant.h"
 #include "LMPlantNode.h"
+#include "LMEnergyModel.h"
 
 #include <ctime>
 #include <string>
@@ -81,6 +82,8 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
+
+#define ENERGY_RADIUS  3.0f
 
 
 #pragma mark -
@@ -416,7 +419,16 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
-
+#pragma mark : Energy
+    int ne = _leveljson->getInt("numEnergy");
+    for (int i = 1; i <= ne; i++) {
+        std::string es = ("nrg_" + to_string(i));
+        std::shared_ptr<cugl::JsonValue> energy = _leveljson->get(es);
+        float ex = energy->getFloat("posx");
+        float ey = energy->getFloat("posy");
+        Vec2 epos = Vec2(ex, ey);
+        createEnergy(epos);
+    }
 #pragma mark : Plant
     int np = _leveljson->getInt("numplants");
     for (int i = 1; i <= np; i++) {
@@ -637,7 +649,21 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     addObstacle(p, sprite, 0);
     _plants.push_front(p);
 }
-
+void GameScene::createEnergy(Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
+    cugl::Size size = Size(2,2);
+    std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
+    nrg->setGravityScale(0);
+    nrg->setSensor(true);
+    cugl::Rect rectangle = Rect(pos, size);
+    cugl::Poly2 poly = Poly2(rectangle);
+    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
+    sprite->setScale(_scale);
+    addObstacle(nrg,sprite,0);
+    _energies.push_front(nrg);
+    
+}
 void GameScene::checkWin() {
     for (auto const& i : _plants) {
         if (!(i->getIsLit())) {

@@ -11,3 +11,7 @@
 #include <cugl/physics2/CUBoxObstacle.h>
 #include "LMEnergyModel.h"
 
+void EnergyModel::dispose() {
+    _node = nullptr;
+}
+

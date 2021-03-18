@@ -14,12 +14,9 @@ private:
     /** This macro disables the copy constructor (not allowed on physics objects) */
     CU_DISALLOW_COPY_AND_ASSIGN(EnergyModel);
 protected:
-    cugl::Color4 _stint;
-    
     float _scale;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<cugl::scene2::PolygonNode> _node;
-    float _drawScale;
 public:
     EnergyModel() : cugl::physics2::BoxObstacle() { }
 
@@ -40,16 +37,6 @@ public:
     static std::shared_ptr<EnergyModel> alloc(const cugl::Vec2& pos, cugl::Size size) {
         std::shared_ptr<EnergyModel> result = std::make_shared<EnergyModel>();
         return (result->init(pos, size) ? result : nullptr);
-    }
-    
-    const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
-    
-    
-    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
-    
-    void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _sceneNode = node;
-        _sceneNode->setPosition(getPosition() * _drawScale);
     }
 };
 #endif /* LMEnergyModel_h */

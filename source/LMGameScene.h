@@ -14,6 +14,7 @@
 #include "LMInput.h"
 #include "LMLumiaModel.h"
 #include "LMPlant.h"
+#include "LMEnergyModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -52,10 +53,12 @@ protected:
     // Physics objects for the game
     std::list<std::shared_ptr<Plant>> _plants;
     /** Reference to the player avatar */
+    std::list<std::shared_ptr<EnergyModel>> _energies;
     std::shared_ptr<LumiaModel> _avatar;
     /** Reference to the player avatar */
     std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
 
+    std::list<std::shared_ptr<EnergyModel>> _nrglist;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -286,6 +289,8 @@ public:
     void reset();
 
     void createPlant(float posx, float posy, int nplant, float ang);
+    
+    void createEnergy(Vec2 pos);
     
     void checkWin();
 
