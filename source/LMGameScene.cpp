@@ -654,12 +654,14 @@ void GameScene::createEnergy(Vec2 pos) {
     cugl::Size size = Size(2,2);
     std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
     nrg->setGravityScale(0);
-    nrg->setSensor(true);
+    nrg->setBodyType(b2_staticBody);
+    nrg->setName("nrg_");
     cugl::Rect rectangle = Rect(pos, size);
     cugl::Poly2 poly = Poly2(rectangle);
     std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
     std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
     sprite->setScale(_scale);
+    nrg->setNode(sprite);
     addObstacle(nrg,sprite,0);
     _energies.push_front(nrg);
     
@@ -795,6 +797,17 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
             }
+        }
+        if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
+            cout << "Colliding with Energy";
+            _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
+            ((EnergyModel*)bd1)->dispose();
+            ((EnergyModel*)bd1)->markRemoved(true);
+            
+        }
+        if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
+            cout << "Colliding with Energy";
+            ((EnergyModel*)bd2)->dispose();
         }
         
 	    if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||

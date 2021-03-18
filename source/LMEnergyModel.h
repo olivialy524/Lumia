@@ -38,5 +38,12 @@ public:
         std::shared_ptr<EnergyModel> result = std::make_shared<EnergyModel>();
         return (result->init(pos, size) ? result : nullptr);
     }
+    
+    std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
+        return _node;
+    }
+    void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
+        _node = n;
+    }
 };
 #endif /* LMEnergyModel_h */
