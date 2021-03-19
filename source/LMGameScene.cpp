@@ -21,6 +21,8 @@
 
 using namespace cugl;
 
+#define IN_RANGE(val, rangeMin, rangeMax) (val <= rangeMax && val >= rangeMin ? true : false)
+
 #pragma mark -
 #pragma mark Level Geography
 
@@ -70,7 +72,7 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
-#define DEFAULT_GRAVITY -28.9f
+#define DEFAULT_GRAVITY -12.0f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
 /** The density for a bullet */
@@ -512,26 +514,41 @@ void GameScene::update(float dt) {
     }
     
     if(_input.didSwitch()){
-        auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
-        if (it != _lumiaList.end())
-        {
-            int index = (int) (it - _lumiaList.begin());
-            int switchIndex = index + 1 >= _lumiaList.size() ? 0 : index + 1;
-            _avatar = _lumiaList[switchIndex];
+        cugl::Vec2 tapLocation = _input.getSwitch();
+
+        for (auto & lumia : _lumiaList) {
+            cugl::Vec2 lumiaPosition = lumia->getPosition();
+
+            // converting pixel coordinates of tap to world coordinates
+            Size dimen = Application::get()->getDisplaySize();
+            float tapX = tapLocation.x * DEFAULT_WIDTH / dimen.width;
+            float tapY = DEFAULT_HEIGHT - (tapLocation.y * DEFAULT_HEIGHT / dimen.height);
+
+            /*char print[64];
+            snprintf(print, sizeof print, "Lumia: (%f, %f) | Tap: (%f, %f)",
+                     lumiaPosition.x, lumiaPosition.y,
+                     tapX, tapY);
+            CULog(print);*/
+
+            float radius = lumia->getRadius();
+            if (IN_RANGE(tapX, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
+                IN_RANGE(tapY, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
+                _avatar = lumia;
+            }
         }
     }
 	_avatar->setVelocity(_input.getLaunch());
-	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
-	if (_avatar->isGrounded()) {
-		_avatar->setPlannedVelocity(_input.getLaunch());
-		//glColor3f(1, 1, 0);
-		//glBegin(GL_LINES);
-		//for (int i = 0; i < 180; i++) { // three seconds at 60fps
-		//	Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPos(), _input.getLaunch(), i, _world);
-		//	glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
-		//}
-		//glEnd();
-	}
+	// if Lumia is on ground, player can launch Lumia so we should show the projected
+    // trajectory if player is dragging
+	//if (_avatar->isGrounded() && _input.isDragging()) {
+	//	glColor3f(1, 1, 1);
+	//	glBegin(GL_LINES);
+	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
+	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world);
+	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
+	//	}
+	//	glEnd();
+	//}
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -721,13 +738,13 @@ void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
 * @param startingVelocity the velocity model will be launched at during aiming
 * @param n timestep
 */
-Vec2 GameScene::getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity,
+Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity,
 						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world) {
 	//velocity and gravity are given per second but we want time step values here
 	float t = 1 / 60.0f; // seconds per time step (at 60fps)
 	Vec2 stepVelocity = t * startingVelocity; // m/s
 	Vec2 stepGravity = t * t * _world->getGravity(); // m/s/s
-	return Vec2(startingPosition.x + n * stepVelocity.x, startingPosition.y + n * stepVelocity.y) + 0.5f * (n * n + n) * stepGravity;
+    return startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;
 }
 
 

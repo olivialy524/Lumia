@@ -54,7 +54,6 @@ _debugPressed(false),
 _exitPressed(false),
 _splitPressed(false),
 _mergePressed(false),
-_switchPressed(false),
 _keyJump(false),
 _keyFire(false),
 _keyReset(false),
@@ -62,7 +61,8 @@ _keyDebug(false),
 _keyExit(false),
 _keySplit(false),
 _keyMerge(false),
-_keySwitch(false),
+_switched(false),
+_switchInputted(false),
 _launched(false),
 _launchInputted(false)
 {
@@ -113,6 +113,9 @@ bool LumiaInput::init(const Rect bounds) {
     mouse->addReleaseListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
         this->mouseReleasedCB(event, clicks, focus);
     });
+    mouse->addMotionListener(LISTENER_KEY, [=](const MouseEvent& event, const Vec2& previous, bool focus) {
+        this->mouseMovedCB(event, previous, focus);
+    });
 #else
     Touchscreen* touch = Input::get<Touchscreen>();
     touch->addBeginListener(LISTENER_KEY,[=](const TouchEvent& event, bool focus) {
@@ -120,6 +123,9 @@ bool LumiaInput::init(const Rect bounds) {
     });
     touch->addEndListener(LISTENER_KEY,[=](const TouchEvent& event, bool focus) {
         this->touchEndedCB(event,focus);
+    });
+    touch->addMotionListener(LISTENER_KEY, [=](const TouchEvent& event, const Vec2& previous, bool focus) {
+        this->touchesMovedCB(event, previous, focus);
     });
 	
 #endif
@@ -149,7 +155,6 @@ void LumiaInput::update(float dt) {
     _keyExit   = keys->keyPressed(EXIT_KEY);
     _keyMerge   = keys->keyDown(MERGE_KEY);
     _keySplit   = keys->keyPressed(SPLIT_KEY);
-    _keySwitch   = keys->keyPressed(SWITCH_KEY);
 
 #endif
 
@@ -159,7 +164,9 @@ void LumiaInput::update(float dt) {
     
     _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
-    _switchPressed = _keySwitch;
+
+    _switched = _switchInputted;
+    _switchInputted = false;
 
     _launched = _launchInputted;
     _launchInputted = false;
@@ -172,7 +179,6 @@ void LumiaInput::update(float dt) {
     _keyJump  = false;
     _keyFire  = false;
     _keySplit = false;
-    _keySwitch = false;
     _keyMerge = false;
     _launchInputted = false;
 #endif
@@ -186,24 +192,12 @@ void LumiaInput::clear() {
     _debugPressed = false;
     _exitPressed  = false;
     _splitPressed = false;
-    _switchPressed = false;
     _mergePressed = false;
     _launched = false;
+    _switched = false;
 
     _inputLaunch = Vec2::ZERO;
     _dclick = Vec2::ZERO;
-    _timestamp.mark();
-}
-
-#pragma mark -
-#pragma mark Touch Controls
-
-/**
- * Populates the initial values of the input TouchInstance
- */
-void LumiaInput::clearTouchInstance(TouchInstance& touchInstance) {
-    touchInstance.touchids.clear();
-    touchInstance.position = Vec2::ZERO;
 }
 
 #pragma mark -
@@ -227,23 +221,53 @@ void LumiaInput::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focu
  * @param event The associated event
  */
 void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
-    // Check for a double tap.
-    //_keyReset = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
-    _timestamp = event.timestamp;
-
     Vec2 finishDrag = event.position - _dclick;
+    
+    if (finishDrag.lengthSquared() < 625.0f) {
+        // end position of touch was very close to start of touch, register as tap
+        _inputSwitch = event.position;
+        _switchInputted = true;
+    } else {
+        _dragging = false;
+        
+        // end position of touch was sufficiently far from start of touch, register as drag-and-release
+        finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+        finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
 
-    finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-    finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+        finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
+        finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-    finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
-    finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+        char print[64];
+        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+        CULog(print);
 
-//    char print[64];
-//    snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-//    CULog(print);
-    _inputLaunch = finishDrag;
-    _launchInputted = true;
+        _inputLaunch = finishDrag;
+        _launchInputted = true;
+    }
+}
+
+/**
+ * Callback for a touch moved event.
+ *
+ * @param event The associated event
+ * @param previous The previous position of the touch
+ * @param focus	Whether the listener currently has focus
+ */
+void LumiaInput::mouseMovedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
+    Vec2 currentDrag = event.position - _dclick;
+
+    // only register player as dragging if sufficiently far from initial click/touch
+    if (currentDrag.lengthSquared() >= 625.0f) {
+        _dragging = true;
+
+        currentDrag.x = RANGE_CLAMP(-currentDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+        currentDrag.y = RANGE_CLAMP(currentDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+
+        currentDrag.x = currentDrag.x / X_ADJUST_FACTOR;
+        currentDrag.y = currentDrag.y / Y_ADJUST_FACTOR;
+
+        _plannedLaunch = currentDrag;
+    }
 }
 
 /**
@@ -266,7 +290,6 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
         // more than two fingers on screen, invalid input
         return;
     }
-    
 }
 
  
@@ -279,23 +302,58 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
 void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
     CULog("Touch ended %lld", event.touch);
 
-    _timestamp = event.timestamp;
-
     Vec2 finishDrag = event.position - _dclick;
 
-    finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-    finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+    if (finishDrag.lengthSquared() < 625.0f) {
+        // end position of touch was very close to start of touch, register as tap
+        _inputSwitch = event.position;
+        _switchInputted = true;
+    } else {
+        _dragging = false;
 
-    finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
-    finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+        // end position of touch was sufficiently far from start of touch, register as drag-and-release
+        finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+        finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
 
-    _inputLaunch = finishDrag;
-    _launchInputted = true;
+        finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
+        finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+
+        char print[64];
+        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+        CULog(print);
+
+        _inputLaunch = finishDrag;
+        _launchInputted = true;
+    }
 
     // finger lifted off screen, remove from set of touch IDs
     _touchids.erase(event.touch);
     if (_touchids.size() != 2) {
         // don't have 2 fingers on screen, stop merging
         _mergePressed = false;
+    }
+}
+
+/**
+ * Callback for a touch moved event.
+ *
+ * @param event The associated event
+ * @param previous The previous position of the touch
+ * @param focus	Whether the listener currently has focus
+ */
+void LumiaInput::touchesMovedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
+    Vec2 currentDrag = event.position - _dclick;
+
+    // only register player as dragging if sufficiently far from initial click/touch
+    if (currentDrag.lengthSquared() >= 625.0f) {
+        _dragging = true;
+
+        currentDrag.x = RANGE_CLAMP(-currentDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+        currentDrag.y = RANGE_CLAMP(currentDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
+
+        currentDrag.x = currentDrag.x / X_ADJUST_FACTOR;
+        currentDrag.y = currentDrag.y / Y_ADJUST_FACTOR;
+
+        _plannedLaunch = currentDrag;
     }
 }
