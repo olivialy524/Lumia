@@ -42,7 +42,7 @@ using namespace cugl;
 
 void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
     _sceneNode = scene2::SceneNode::alloc();
-   _node = LumiaNode::alloc(lumia, 1, 1, 1);
+   _node = LumiaNode::alloc(lumia, LUMIA_ROWS, LUMIA_COLS, LUMIA_FRAMES);
     auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);

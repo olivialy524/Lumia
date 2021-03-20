@@ -12,7 +12,7 @@
 #include "LMPlant.h"
 #include "LMPlantNode.h"
 #include "LMEnergyModel.h"
-
+#include "LMSplitter.h"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -100,6 +100,8 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
+
+#define SPLIT_NAME      "split"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
 /** The message for winning the game */
@@ -327,7 +329,15 @@ void GameScene::reset() {
         p->dispose();
     }
     _plants.clear();
-      
+    
+    for (const std::shared_ptr<EnergyModel> &e : _energies) {
+        e->dispose();
+    }
+    _energies.clear();
+    for (const std::shared_ptr<Splitter> &s : _splitters) {
+        s->dispose();
+    }
+    _splitters.clear();
     setFailure(false);
     setComplete(false);
     populate();
@@ -429,6 +439,16 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
+#pragma mark : Splitter
+    int ns = _leveljson->getInt("numSplitters");
+    for (int i = 1; i <= ns; i++) {
+        std::string ss = ("split_" + to_string(i));
+        std::shared_ptr<cugl::JsonValue> split = _leveljson->get(ss);
+        float sx = split->getFloat("posx");
+        float sy = split->getFloat("posy");
+        Vec2 spos = Vec2(sx, sy);
+        createSplitter(spos);
+    }
 #pragma mark : Plant
     int np = _leveljson->getInt("numplants");
     for (int i = 1; i <= np; i++) {
@@ -449,7 +469,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     float radius = lum->getFloat("radius");// change to value from jso
     Vec2 lumiaPos = Vec2(lumx,lumy);
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-    _avatar-> setTextures(image, LUMIA_POS);
+    _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
@@ -526,6 +546,14 @@ void GameScene::update(float dt) {
     checkWin();
     }
     
+    for (const std::shared_ptr<Splitter> &s : _splitters) {
+        if (s->getCooldown() != 0.0) {
+            s->setCooldown(s->getCooldown() + 1);
+            if (s->getCooldown() >= 60.0) {
+                s->setCooldown(0.0);
+            }
+        }
+    }
     if(_input.didSwitch()){
         auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
         if (it != _lumiaList.end())
@@ -550,7 +578,7 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    _avatar->setSplitting(_input.didSplit());
+    //_avatar->setSplitting(_input.didSplit());
     _avatar->setMerging(_input.didMerge());
 
     if (_avatar->isSplitting()){
@@ -669,6 +697,25 @@ void GameScene::createEnergy(Vec2 pos) {
     nrg->setNode(sprite);
     addObstacle(nrg,sprite,0);
     _energies.push_front(nrg);
+    
+}
+
+void GameScene::createSplitter(Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
+    cugl::Size size = Size(.5,.5);
+    std::shared_ptr<Splitter> split = Splitter::alloc(pos, size);
+    split->setGravityScale(0);
+    split->setBodyType(b2_staticBody);
+    split->setSensor(true);
+    split->setName("split_");
+    cugl::Rect rectangle = Rect(pos, size);
+    cugl::Poly2 poly = Poly2(rectangle);
+    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
+    sprite->setScale(_scale);
+    split->setNode(sprite);
+    addObstacle(split,sprite,0);
+    _splitters.push_front(split);
     
 }
 void GameScene::checkWin() {
@@ -802,6 +849,13 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
             }
+        }
+        if (bd1->getName() == "split_" && bd2 == lumia.get()) {
+            if (((Splitter*)bd1)->getCooldown() == 0.0) {
+                ((LumiaModel*)bd2)->setSplitting(true);
+                ((Splitter*)bd1)->setCooldown(0.1);
+            }
+            cout << "splitting";
         }
         if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
             if (!(bd1->isRemoved())) {

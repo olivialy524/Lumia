@@ -16,6 +16,9 @@
 		613E8D252602A94D00900A39 /* LMEnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* LMEnergyModel.cpp */; };
 		613E8D262602A94D00900A39 /* LMEnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* LMEnergyModel.cpp */; };
 		613E8D272602A94D00900A39 /* LMEnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* LMEnergyModel.cpp */; };
+		613E8D312606ACA400900A39 /* LMSplitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* LMSplitter.cpp */; };
+		613E8D322606ACA400900A39 /* LMSplitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* LMSplitter.cpp */; };
+		613E8D332606ACA400900A39 /* LMSplitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* LMSplitter.cpp */; };
 		C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */; };
@@ -137,6 +140,8 @@
 		613C1CB625FA90D800B213B8 /* LMPlant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LMPlant.cpp; sourceTree = "<group>"; };
 		613E8D202602A93800900A39 /* LMEnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMEnergyModel.h; sourceTree = "<group>"; };
 		613E8D242602A94D00900A39 /* LMEnergyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMEnergyModel.cpp; sourceTree = "<group>"; };
+		613E8D2C2606ABE500900A39 /* LMSplitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMSplitter.h; sourceTree = "<group>"; };
+		613E8D302606ACA400900A39 /* LMSplitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMSplitter.cpp; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LMLumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LMLumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LMLumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LMLumiaNode.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -305,6 +310,8 @@
 				EBB4B54C2040912400238092 /* LMApp.h */,
 				EBB4B5492040912400238092 /* LMApp.cpp */,
 				EBB4B5542040912400238092 /* LMLoadingScene.h */,
+				613E8D2C2606ABE500900A39 /* LMSplitter.h */,
+				613E8D302606ACA400900A39 /* LMSplitter.cpp */,
 				EBB4B5502040912400238092 /* LMLoadingScene.cpp */,
 				EBB4B54F2040912400238092 /* LMGameScene.h */,
 				EBB4B5532040912400238092 /* LMGameScene.cpp */,
@@ -589,6 +596,7 @@
 				C70BACAF25F8427C00626819 /* LMLumiaNode.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LMLumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* LMGameScene.cpp in Sources */,
+				613E8D322606ACA400900A39 /* LMSplitter.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LMLoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* LMEnergyModel.cpp in Sources */,
 				3A534AFD25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
@@ -606,6 +614,7 @@
 				C70BACB025F8427C00626819 /* LMLumiaNode.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LMLumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* LMGameScene.cpp in Sources */,
+				613E8D332606ACA400900A39 /* LMSplitter.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LMLoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* LMEnergyModel.cpp in Sources */,
 				3A534AFE25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
@@ -623,6 +632,7 @@
 				EBB4B5582040912400238092 /* LMApp.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LMLumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* LMGameScene.cpp in Sources */,
+				613E8D312606ACA400900A39 /* LMSplitter.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* LMPlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* LMEnergyModel.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LMLoadingScene.cpp in Sources */,

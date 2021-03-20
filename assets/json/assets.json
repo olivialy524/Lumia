@@ -13,6 +13,9 @@
         },
         "background":{
             "file": "textures/background.png"
+        },
+        "split": {
+            "file": "textures/split.png"
         }
 	},
     "sounds": {

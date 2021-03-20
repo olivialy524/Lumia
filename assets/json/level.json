@@ -80,8 +80,12 @@
         "nrg_1": {
             "posx": 10,
             "posy": 10
+        },
+        "numSplitters": 1,
+        "split_1": {
+            "posx": 7,
+            "posy": 3
         }
-        
         
     }
 }
