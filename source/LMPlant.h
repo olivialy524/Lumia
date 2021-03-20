@@ -14,7 +14,7 @@
 
 #pragma mark -
 #pragma mark Plant Model
-class Plant : public cugl::physics2::WheelObstacle {
+class Plant : public cugl::physics2::BoxObstacle {
 protected:
     /** The scene graph node for the Bullet. */
     std::shared_ptr<cugl::scene2::SceneNode> _node;
@@ -30,7 +30,7 @@ public:
      * This constructor does not initialize any of the Bullet values beyond
      * the defaults.  To use a Bullet, you must call init().
      */
-    Plant() : WheelObstacle() { }
+    Plant() : BoxObstacle() { }
     
     /**
      * Destroys this Bullet, releasing all resources.
@@ -62,9 +62,9 @@ public:
      *
      * @return  A newly allocated Bullet at the given position, with the given radius
      */
-    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos, float radius) {
+    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos, cugl::Size size) {
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
-        return (result->init(pos, radius) ? result : nullptr);
+        return (result->init(pos, size) ? result : nullptr);
     }
 
 #pragma mark -

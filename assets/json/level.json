@@ -1,12 +1,10 @@
 {
     "level":
     {
-        "width": 1000,
-        "height": 300,
         "Lumia": {
-            "posx": 500,
-            "posy": 20,
-            "size": 40
+            "posx": 2.5,
+            "posy": 5,
+            "radius": 1
         },
         "numplants": 3,
         "plant_1": {

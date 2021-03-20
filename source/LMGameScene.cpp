@@ -441,10 +441,13 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     }
 
 #pragma mark : Lumia
-	Vec2 lumiaPos = LUMIA_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
-    float radius = 1.0f;// change to value from json
+    std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("Lumia");
+    float lumx = lum->getFloat("posx");
+    float lumy = lum->getFloat("posy");
+    float radius = lum->getFloat("radius");// change to value from jso
+    Vec2 lumiaPos = Vec2(lumx,lumy);
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
     _avatar-> setTextures(image, LUMIA_POS);
     _avatar-> setName(LUMIA_NAME);
@@ -625,9 +628,10 @@ void GameScene::setFailure(bool value) {
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
-    float radius = 0.3*image->getSize().width/(_scale);
+    
+    cugl::Size size  = 0.3*image->getSize()/(_scale);
 
-    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
+    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), size);
     p->setBodyType(b2_staticBody);
     p->setAngle(ang);
     p->lightDown();
