@@ -219,7 +219,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
    
-   
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
@@ -267,7 +266,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
-
+    
+    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
     addChild(scene, 0);
     addChild(_worldnode, 1);
     addChild(_debugnode, 2);
@@ -280,6 +280,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
+    cout << getCamera() << endl;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     return true;
@@ -521,6 +524,8 @@ void GameScene::update(float dt) {
         }
     }
 	_avatar->setVelocity(_input.getLaunch());
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
 	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
 	if (_avatar->isGrounded()) {
 		_avatar->setPlannedVelocity(_input.getLaunch());
