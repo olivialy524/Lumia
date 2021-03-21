@@ -391,10 +391,9 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 //	}
 
 #pragma mark : Platforms
-    int numplats = _leveljson->getInt("numplatforms");
-    for (int i = 1; i <= numplats; i++) {
-        std::string platstring = "plat_" + to_string(i);
-        std::shared_ptr<cugl::JsonValue> platfor = _leveljson->get(platstring);
+    std::shared_ptr<cugl::JsonValue> platforms = _leveljson->get("platforms");
+    for (int i = 0; i < platforms->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
         float vox = platfor->getFloat("v1x");
         float voy = platfor->getFloat("v1y");
         float vtwx = platfor->getFloat("v2x");
@@ -430,30 +429,29 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         addObstacle(platobj,sprite,1);
     }
 #pragma mark : Energy
-    int ne = _leveljson->getInt("numEnergy");
-    for (int i = 1; i <= ne; i++) {
-        std::string es = ("nrg_" + to_string(i));
-        std::shared_ptr<cugl::JsonValue> energy = _leveljson->get(es);
+    std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
+    for (int i = 0; i < energies->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> energy = energies->get(i);
         float ex = energy->getFloat("posx");
         float ey = energy->getFloat("posy");
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
 #pragma mark : Splitter
-    int ns = _leveljson->getInt("numSplitters");
-    for (int i = 1; i <= ns; i++) {
-        std::string ss = ("split_" + to_string(i));
-        std::shared_ptr<cugl::JsonValue> split = _leveljson->get(ss);
+    std::shared_ptr<cugl::JsonValue> splitters = _leveljson->get("splitters");
+    for (int i = 0; i < splitters->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> split = splitters->get(i);
         float sx = split->getFloat("posx");
         float sy = split->getFloat("posy");
         Vec2 spos = Vec2(sx, sy);
         createSplitter(spos);
     }
 #pragma mark : Plant
-    int np = _leveljson->getInt("numplants");
-    for (int i = 1; i <= np; i++) {
-        std::string ps = ("plant_" + to_string(i));
-        std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
+    std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
+    for (int i = 0; i < plants->size(); i++) {
+        std::string si = to_string(i);
+        std::string ps = ("plant_" + si);
+        std::shared_ptr<cugl::JsonValue> plant = plants->get(i);
         float px = plant->getFloat("posx");
         float py = plant->getFloat("posy");
         float pa = (plant->getFloat("angle"))*M_PI/180;
