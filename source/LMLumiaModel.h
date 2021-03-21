@@ -42,8 +42,6 @@ private:
 protected:
 	/** The current velocity of Lumia */
 	cugl::Vec2 _velocity;
-    /** The planned velocity of Lumia */
-    cugl::Vec2 _plannedVelocity;
     /** Whether we are actively launching */
     bool _isLaunching;
 	/** Whether our feet are on the ground */
@@ -335,15 +333,6 @@ public:
      * @param value velocity of Lumia.
      */
     void setVelocity(cugl::Vec2 value) { _velocity = value; }
-
-    /**
-     * Sets planned velocity of Lumia.
-     *
-     * This is what the player is currently aiming Lumia towards before the launch.
-     *
-     * @param value planned velocity of Lumia.
-     */
-    void setPlannedVelocity(cugl::Vec2 value) { _plannedVelocity = value; }
 
     /**
      * Returns true if the Lumia is actively launching.

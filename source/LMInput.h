@@ -49,16 +49,16 @@ private:
     bool  _keySplit;
     /** Whether the merge key is down */
     bool  _keyMerge;
-    /** Whether the switch control key is down */
-    bool  _keySwitch;
 
-    // MOUSE SUPPORT
-    /** Whether the mouse was drag and released */
+    // MOUSE + TOUCH SUPPORT
+    /** Whether the mouse or finger was tapped */
+    bool  _switchInputted;
+    /** Whether the mouse or finger was drag and released */
     bool _launchInputted;
-    /** The initial click location for the current click-and-drag */
+    /** The initial click or touch location for the current click-and-drag */
     cugl::Vec2 _dclick;
-    /** The timestamp for the beginning of the current click-and-drag */
-    cugl::Timestamp _timestamp;
+    /** The touch id(s) of fingers on the screen */
+    std::unordered_set<Uint64> _touchids;
   
 protected:
     // INPUT RESULTS
@@ -73,29 +73,18 @@ protected:
     bool _splitPressed;
     /** Whether the jump action was chosen. */
     bool _mergePressed;
+    /** Whether player attempted to switch control of Lumia(s) */
+    bool _switched;
+    /** The tap/click location of the players attempt to switch control */
+    cugl::Vec2 _inputSwitch;
     /** Whether Lumia was launched */
     bool _launched;
-    
-    /** Whether the switch control action was chosen */
-    bool _switchPressed;
     /** The launch velocity produced by player input */
     cugl::Vec2 _inputLaunch;
-
-#pragma mark Internal Touch Management   
-	/** Information representing a single "touch" (possibly multi-finger) */
-	struct TouchInstance {
-		/** The anchor touch position (on start) */
-		cugl::Vec2 position;
-        /** The current touch time */
-        cugl::Timestamp timestamp;
-		/** The touch id(s) for future reference */
-        std::unordered_set<Uint64> touchids;
-	};
-  
-    /**
-     * Populates the initial values of the TouchInstances
-     */
-    void clearTouchInstance(TouchInstance& touchInstance);
+    /** Whether the player is dragging */
+    bool _dragging;
+    /** The planned launch velocity produced by player input drag */
+    cugl::Vec2 _plannedLaunch;
   
 public:
 #pragma mark -
@@ -172,6 +161,29 @@ public:
     const cugl::Vec2& getLaunch() { return _inputLaunch; }
 
     /**
+     * Returns the current planned input launch.
+     *
+     * The planned launch is determined by the angle and length of the player's drag, without release.
+     *
+     * @return The planned input launch
+     */
+    cugl::Vec2& getPlannedLaunch() { return _plannedLaunch; }
+
+    /**
+     * Returns whether or not the player is dragging their mouse/finger.
+     *
+     * @return whether or not the player is dragging their mouse/finger
+     */
+    bool isDragging() { return _dragging; }
+
+    /**
+     * Returns the attempted input switch tap/click location.
+     *
+     * @return The inputted tap/click location
+     */
+    const cugl::Vec2& getSwitch() { return _inputSwitch; }
+
+    /**
      * Returns true if the player had split Lumia.
      *
      * @return true if the player had split Lumia.
@@ -190,7 +202,7 @@ public:
      *
      * @return true if the player had switched control of Lumia.
      */
-    float didSwitch() const { return _switchPressed; }
+    float didSwitch() const { return _switched; }
     /**
      * Returns true if the player had drag and released.
      *
@@ -241,6 +253,15 @@ public:
     void mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
 
     /**
+     * Callback for a mouse release event.
+     *
+     * @param event The associated event
+     * @param previous The previous position of the touch
+     * @param focus	Whether the listener currently has focus
+     */
+    void mouseMovedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
+
+    /**
      * Callback for the beginning of a touch event
      *
      * @param event The associated event
@@ -256,6 +277,15 @@ public:
      * @param focus	Whether the listener currently has focus
      */
     void touchEndedCB(const cugl::TouchEvent& event, bool focus);
+
+    /**
+     * Callback for a mouse release event.
+     *
+     * @param event The associated event
+     * @param previous The previous position of the touch
+     * @param focus	Whether the listener currently has focus
+     */
+    void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
   
 };
 
