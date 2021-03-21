@@ -171,7 +171,7 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/level.json");
+    _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -586,6 +586,7 @@ void GameScene::update(float dt) {
         _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
+        _avatar->setSplitting(false);
     } else if(_avatar->isMerging()){
         // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
@@ -837,7 +838,7 @@ void GameScene::beginContact(b2Contact* contact) {
 //        }
 //    }
 	// See if we have landed on the ground.
-    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             if (!((Plant*)bd1)->getIsLit()) {
@@ -853,7 +854,6 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((LumiaModel*)bd2)->setSplitting(true);
                 ((Splitter*)bd1)->setCooldown(0.1);
             }
-            cout << "splitting";
         }
         if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
             if (!(bd1->isRemoved())) {
