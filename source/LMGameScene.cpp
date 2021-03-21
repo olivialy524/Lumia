@@ -440,8 +440,8 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
-	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
+//	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+//    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -580,8 +580,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -600,8 +600,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+//        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
