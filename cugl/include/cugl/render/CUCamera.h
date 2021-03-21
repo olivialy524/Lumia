@@ -113,6 +113,24 @@ public:
     const Vec3 getPosition() const { return _position; }
     
     /**
+     * set the position of the camera
+     *
+     * @return the position of the camera
+     */
+    void setPosition(float tx, float ty) {
+        _position.x = tx;
+        _position.y = ty;
+    }
+    
+    void setPosition(Vec2 pos) {
+        _position.x = pos.x;
+        _position.y = pos.y;
+    }
+    
+    void setPositionX(float tx){
+        _position.x = tx;
+    }
+    /**
      * Returns the unit length direction vector of the camera
      *
      * @return the unit length direction vector of the camera

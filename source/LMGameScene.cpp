@@ -221,7 +221,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
    
-   
     // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
@@ -269,7 +268,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
-
+    
+    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
     addChild(scene, 0);
     addChild(_worldnode, 1);
     addChild(_debugnode, 2);
@@ -282,6 +282,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
+    cout << getCamera() << endl;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     return true;
@@ -442,8 +445,8 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
-	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
+//	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+//    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -552,7 +555,8 @@ void GameScene::update(float dt) {
 
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
-
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -601,8 +605,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -621,8 +625,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+//        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
