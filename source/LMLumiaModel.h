@@ -321,6 +321,12 @@ public:
      */
     b2Vec2 getPos() const { return _body->GetPosition(); }
     
+    
+    Vec2 getAvatarPos() const {
+        return Vec2(getPosition().x*_drawScale, getPosition().y*_drawScale);
+        
+    }
+    
     /**
      * Sets velocity of Lumia.
      *
