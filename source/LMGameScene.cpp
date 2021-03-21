@@ -549,6 +549,10 @@ void GameScene::update(float dt) {
 	//	}
 	//	glEnd();
 	//}
+
+    //glEnable(GL_POINT_SMOOTH);
+    //glPointSize(5);
+
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -558,7 +562,7 @@ void GameScene::update(float dt) {
     if (_avatar->isSplitting()){
         float radius = _avatar->getRadius() / 1.4f;
         Vec2 pos = _avatar->getPosition();
-        auto temp = _avatar;
+        std::shared_ptr<LumiaModel> temp = _avatar;
         _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
