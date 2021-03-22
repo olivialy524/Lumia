@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\BackgroundNode.h" />
     <ClInclude Include="..\..\source\LMApp.h" />
+    <ClInclude Include="..\..\source\LMEnergyModel.h" />
     <ClInclude Include="..\..\source\LMGameScene.h" />
     <ClInclude Include="..\..\source\LMInput.h" />
     <ClInclude Include="..\..\source\LMLoadingScene.h" />
@@ -194,14 +195,17 @@
     <ClInclude Include="..\..\source\LMLumiaNode.h" />
     <ClInclude Include="..\..\source\LMPlant.h" />
     <ClInclude Include="..\..\source\LMPlantNode.h" />
+    <ClInclude Include="..\..\source\LMSplitter.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\BackgroundNode.cpp" />
+    <ClCompile Include="..\..\source\LMEnergyModel.cpp" />
     <ClCompile Include="..\..\source\LMLumiaModel.cpp" />
     <ClCompile Include="..\..\source\LMLumiaNode.cpp" />
     <ClCompile Include="..\..\source\LMPlant.cpp" />
     <ClCompile Include="..\..\source\LMPlantNode.cpp" />
+    <ClCompile Include="..\..\source\LMSplitter.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\LMApp.cpp" />
     <ClCompile Include="..\..\source\LMGameScene.cpp" />
