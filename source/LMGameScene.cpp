@@ -11,6 +11,7 @@
 #include "LMLumiaModel.h"
 #include "LMPlant.h"
 #include "LMPlantNode.h"
+#include "BackgroundNode.h"
 
 #include <ctime>
 #include <string>
@@ -219,12 +220,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
    
-    // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
     
-    
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
+    std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
+    bkgNode->setPosition(dimen.width/2, dimen.height/2);
+
     std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    
+    
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD;
    
@@ -245,7 +250,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
-    std::shared_ptr<Texture> image;
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
@@ -267,8 +271,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
     
-    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
-    addChild(scene, 0);
+//    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
+//    addChild(scene, 0);
+    addChild(bkgNode);
     addChild(_worldnode, 1);
     addChild(_debugnode, 2);
     addChild(_winnode,  3);
@@ -284,7 +289,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     getCamera()->setPositionX(_avatar->getAvatarPos().x);
     getCamera()->update();
     // XNA nostalgia
-    Application::get()->setClearColor(Color4f::CORNFLOWER);
+    Application::get()->setClearColor(Color4f::BLACK);
     return true;
 }
 
