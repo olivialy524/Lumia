@@ -156,14 +156,19 @@ void LumiaInput::update(float dt) {
     _keyMerge   = keys->keyDown(MERGE_KEY);
     _keySplit   = keys->keyPressed(SPLIT_KEY);
 
-#endif
-
     _resetPressed = _keyReset;
-    _debugPressed = _keyDebug;
-    _exitPressed  = _keyExit;
     
     _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
+
+#endif
+
+//    _resetPressed = _keyReset;
+    _debugPressed = _keyDebug;
+    _exitPressed  = _keyExit;
+    
+//    _splitPressed = _keySplit;
+//    _mergePressed = _keyMerge;
 
     _switched = _switchInputted;
     _switchInputted = false;

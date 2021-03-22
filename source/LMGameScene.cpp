@@ -11,8 +11,9 @@
 #include "LMLumiaModel.h"
 #include "LMPlant.h"
 #include "LMPlantNode.h"
+#include "LMEnergyModel.h"
+#include "LMSplitter.h"
 #include "BackgroundNode.h"
-
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -85,6 +86,8 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
 
+#define ENERGY_RADIUS  3.0f
+
 
 #pragma mark -
 #pragma mark Asset Constants
@@ -100,6 +103,8 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
+
+#define SPLIT_NAME      "split"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
 /** The message for winning the game */
@@ -169,7 +174,7 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/level.json");
+    _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -334,7 +339,15 @@ void GameScene::reset() {
         p->dispose();
     }
     _plants.clear();
-      
+    
+    for (const std::shared_ptr<EnergyModel> &e : _energies) {
+        e->dispose();
+    }
+    _energies.clear();
+    for (const std::shared_ptr<Splitter> &s : _splitters) {
+        s->dispose();
+    }
+    _splitters.clear();
     setFailure(false);
     setComplete(false);
     populate();
@@ -388,10 +401,9 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 //	}
 
 #pragma mark : Platforms
-    int numplats = _leveljson->getInt("numplatforms");
-    for (int i = 1; i <= numplats; i++) {
-        std::string platstring = "plat_" + to_string(i);
-        std::shared_ptr<cugl::JsonValue> platfor = _leveljson->get(platstring);
+    std::shared_ptr<cugl::JsonValue> platforms = _leveljson->get("platforms");
+    for (int i = 0; i < platforms->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
         float vox = platfor->getFloat("v1x");
         float voy = platfor->getFloat("v1y");
         float vtwx = platfor->getFloat("v2x");
@@ -426,12 +438,30 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
-
+#pragma mark : Energy
+    std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
+    for (int i = 0; i < energies->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> energy = energies->get(i);
+        float ex = energy->getFloat("posx");
+        float ey = energy->getFloat("posy");
+        Vec2 epos = Vec2(ex, ey);
+        createEnergy(epos);
+    }
+#pragma mark : Splitter
+    std::shared_ptr<cugl::JsonValue> splitters = _leveljson->get("splitters");
+    for (int i = 0; i < splitters->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> split = splitters->get(i);
+        float sx = split->getFloat("posx");
+        float sy = split->getFloat("posy");
+        Vec2 spos = Vec2(sx, sy);
+        createSplitter(spos);
+    }
 #pragma mark : Plant
-    int np = _leveljson->getInt("numplants");
-    for (int i = 1; i <= np; i++) {
-        std::string ps = ("plant_" + to_string(i));
-        std::shared_ptr<cugl::JsonValue> plant = _leveljson->get(ps);
+    std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
+    for (int i = 0; i < plants->size(); i++) {
+        std::string si = to_string(i);
+        std::string ps = ("plant_" + si);
+        std::shared_ptr<cugl::JsonValue> plant = plants->get(i);
         float px = plant->getFloat("posx");
         float py = plant->getFloat("posy");
         float pa = (plant->getFloat("angle"))*M_PI/180;
@@ -439,15 +469,18 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     }
 
 #pragma mark : Lumia
-	Vec2 lumiaPos = LUMIA_POS;
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
-    float radius = 1.0f;// change to value from json
+    std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("Lumia");
+    float lumx = lum->getFloat("posx");
+    float lumy = lum->getFloat("posy");
+    float radius = lum->getFloat("radius");// change to value from jso
+    Vec2 lumiaPos = Vec2(lumx,lumy);
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-    _avatar-> setTextures(image, LUMIA_POS);
+    _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
-    _avatar-> setFixedRotation(false);
+    _avatar-> setSplitting(false);
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
@@ -522,6 +555,14 @@ void GameScene::update(float dt) {
     checkWin();
     }
     
+    for (const std::shared_ptr<Splitter> &s : _splitters) {
+        if (s->getCooldown() != 0.0) {
+            s->setCooldown(s->getCooldown() + 1);
+            if (s->getCooldown() >= 60.0) {
+                s->setCooldown(0.0);
+            }
+        }
+    }
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
@@ -556,7 +597,7 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    _avatar->setSplitting(_input.didSplit());
+    //_avatar->setSplitting(_input.didSplit());
     _avatar->setMerging(_input.didMerge());
 
     if (_avatar->isSplitting()){
@@ -566,6 +607,7 @@ void GameScene::update(float dt) {
         _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
+        _avatar->setSplitting(false);
     } else if(_avatar->isMerging()){
         // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
         mergeLumiasNearby();
@@ -634,10 +676,9 @@ void GameScene::setFailure(bool value) {
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
-    std::shared_ptr<Texture> image2 = _assets->get<Texture>("lamp-lit");
-    float radius = 0.3*image->getSize().width/(_scale);
+    cugl::Size size  = 0.3*image->getSize()/(_scale);
 
-    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), radius);
+    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), size);
     p->setBodyType(b2_staticBody);
     p->setAngle(ang);
     p->lightDown();
@@ -671,7 +712,43 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     addObstacle(p, _sceneNode, 0);
     _plants.push_front(p);
 }
+void GameScene::createEnergy(Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
+    cugl::Size size = Size(2,2);
+    std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
+    nrg->setGravityScale(0);
+    nrg->setBodyType(b2_staticBody);
+    nrg->setSensor(true);
+    nrg->setName("nrg_");
+    cugl::Rect rectangle = Rect(pos, size);
+    cugl::Poly2 poly = Poly2(rectangle);
+    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
+    sprite->setScale(_scale);
+    nrg->setNode(sprite);
+    addObstacle(nrg,sprite,0);
+    _energies.push_front(nrg);
+    
+}
 
+void GameScene::createSplitter(Vec2 pos) {
+    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
+    cugl::Size size = Size(.5,.5);
+    std::shared_ptr<Splitter> split = Splitter::alloc(pos, size);
+    split->setGravityScale(0);
+    split->setBodyType(b2_staticBody);
+    split->setSensor(true);
+    split->setName("split_");
+    cugl::Rect rectangle = Rect(pos, size);
+    cugl::Poly2 poly = Poly2(rectangle);
+    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
+    sprite->setScale(_scale);
+    split->setNode(sprite);
+    addObstacle(split,sprite,0);
+    _splitters.push_front(split);
+    
+}
 void GameScene::checkWin() {
     for (auto const& i : _plants) {
         if (!(i->getIsLit())) {
@@ -690,7 +767,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     lumia-> setTextures(image, pos);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-    lumia-> setFixedRotation(false);
+//    lumia-> setFixedRotation(false);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -794,7 +871,7 @@ void GameScene::beginContact(b2Contact* contact) {
 //        }
 //    }
 	// See if we have landed on the ground.
-    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             if (!((Plant*)bd1)->getIsLit()) {
@@ -803,6 +880,28 @@ void GameScene::beginContact(b2Contact* contact) {
         }else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
+            }
+        }
+        if (bd1->getName() == "split_" && bd2 == lumia.get()) {
+            if (((Splitter*)bd1)->getCooldown() == 0.0) {
+                ((LumiaModel*)bd2)->setSplitting(true);
+                ((Splitter*)bd1)->setCooldown(0.1);
+            }
+        }
+        if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
+            if (!(bd1->isRemoved())) {
+            ((LumiaModel*)bd2)->merge(1);
+            _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
+            ((EnergyModel*)bd1)->dispose();
+            ((EnergyModel*)bd1)->markRemoved(true);
+            }
+        }
+        else if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
+            if (!(bd2->isRemoved())) {
+            ((LumiaModel*)bd1)->merge(1);
+            _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
+            ((EnergyModel*)bd2)->dispose();
+            ((EnergyModel*)bd2)->markRemoved(true);
             }
         }
         
