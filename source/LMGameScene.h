@@ -58,7 +58,7 @@ protected:
     
     std::list<std::shared_ptr<Splitter>> _splitters;
     std::shared_ptr<LumiaModel> _avatar;
-    /** Reference to the player avatar */
+    /** Reference to the player avatars */
     std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
 
     std::list<std::shared_ptr<EnergyModel>> _nrglist;
@@ -320,7 +320,7 @@ public:
      * @param startingVelocity the velocity model will be launched at during aiming
      * @param n timestep
      */
-    Vec2 getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity, 
+    Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
                             float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world);
 
   };

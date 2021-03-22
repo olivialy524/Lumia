@@ -13,6 +13,7 @@
 #include "LMPlantNode.h"
 #include "LMEnergyModel.h"
 #include "LMSplitter.h"
+#include "BackgroundNode.h"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -21,6 +22,8 @@
 #include <algorithm>
 
 using namespace cugl;
+
+#define IN_RANGE(val, rangeMin, rangeMax) (val <= rangeMax && val >= rangeMin ? true : false)
 
 #pragma mark -
 #pragma mark Level Geography
@@ -71,7 +74,7 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
-#define DEFAULT_GRAVITY -28.9f
+#define DEFAULT_GRAVITY -12.0f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
 /** The density for a bullet */
@@ -224,13 +227,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
    
-   
-    // Start up the input handler
     _assets = assets;
     _input.init(getBounds());
     
-    
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
+    std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
+    bkgNode->setPosition(dimen.width/2, dimen.height/2);
+
     std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    
+    
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD;
    
@@ -251,7 +257,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
-    std::shared_ptr<Texture> image;
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
@@ -272,8 +277,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
-
-    addChild(scene, 0);
+    
+//    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
+//    addChild(scene, 0);
+    addChild(bkgNode);
     addChild(_worldnode, 1);
     addChild(_debugnode, 2);
     addChild(_winnode,  3);
@@ -285,8 +292,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
+    cout << getCamera() << endl;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
     // XNA nostalgia
-    Application::get()->setClearColor(Color4f::CORNFLOWER);
+    Application::get()->setClearColor(Color4f::BLACK);
     return true;
 }
 
@@ -474,8 +484,8 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
-	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
+//	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+//    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -554,26 +564,48 @@ void GameScene::update(float dt) {
         }
     }
     if(_input.didSwitch()){
-        auto it = find(_lumiaList.begin(), _lumiaList.end(), _avatar);
-        if (it != _lumiaList.end())
-        {
-            int index = (int) (it - _lumiaList.begin());
-            int switchIndex = index + 1 >= _lumiaList.size() ? 0 : index + 1;
-            _avatar = _lumiaList[switchIndex];
+        cugl::Vec2 tapLocation = _input.getSwitch();
+
+        for (auto & lumia : _lumiaList) {
+            cugl::Vec2 lumiaPosition = lumia->getPosition();
+            cugl::Vec2 lPos = getCamera()->worldToScreenCoords(lumia->getPosition());
+            screenToWorldCoords(tapLocation);
+
+            // converting pixel coordinates of tap to world coordinates
+            Size dimen = Application::get()->getDisplaySize();
+            float tapX = tapLocation.x * DEFAULT_WIDTH / dimen.width;
+            float tapY = DEFAULT_HEIGHT - (tapLocation.y * DEFAULT_HEIGHT / dimen.height);
+
+            char print[64];
+            snprintf(print, sizeof print, "Lumia: (%f, %f) | Tap: (%f, %f)",
+                     lPos.x, lPos.y,
+                     tapLocation.x, tapLocation.y);
+            CULog(print);
+
+            float radius = lumia->getRadius();
+            if (IN_RANGE(tapX, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
+                IN_RANGE(tapY, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
+                _avatar = lumia;
+            }
         }
     }
 	_avatar->setVelocity(_input.getLaunch());
-	// if Lumia is on ground, player can launch Lumia so we should show the projected trajectory
-	if (_avatar->isGrounded()) {
-		_avatar->setPlannedVelocity(_input.getLaunch());
-		//glColor3f(1, 1, 0);
-		//glBegin(GL_LINES);
-		//for (int i = 0; i < 180; i++) { // three seconds at 60fps
-		//	Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPos(), _input.getLaunch(), i, _world);
-		//	glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
-		//}
-		//glEnd();
-	}
+	// if Lumia is on ground, player can launch Lumia so we should show the projected
+    // trajectory if player is dragging
+	//if (_avatar->isGrounded() && _input.isDragging()) {
+	//	glColor3f(1, 1, 1);
+	//	glBegin(GL_LINES);
+	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
+	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world);
+	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
+	//	}
+	//	glEnd();
+	//}
+
+    //glEnable(GL_POINT_SMOOTH);
+    //glPointSize(5);
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -583,7 +615,7 @@ void GameScene::update(float dt) {
     if (_avatar->isSplitting()){
         float radius = _avatar->getRadius() / 1.4f;
         Vec2 pos = _avatar->getPosition();
-        auto temp = _avatar;
+        std::shared_ptr<LumiaModel> temp = _avatar;
         _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
         createLumia(radius, pos-Vec2(0.5f, 0.0f));
         removeLumia(temp);
@@ -623,8 +655,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -643,8 +675,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+//      AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
@@ -656,7 +688,6 @@ void GameScene::setFailure(bool value) {
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
-    
     cugl::Size size  = 0.3*image->getSize()/(_scale);
 
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), size);
@@ -672,13 +703,25 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
     p->setSensor(true);
     p->setDebugColor(DEBUG_COLOR);
     p->setDrawScale(_scale);
-
+    
+    
+    std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
+    p->setNode(_sceneNode);
+    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+    
     std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
+    sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setAngle(ang);
-    p->setSceneNode(sprite);
+//    p->setLampNode(sprite);
+    _sceneNode->addChild(sprite);
+    
+//    std::shared_ptr<PlantNode> sprite2 = PlantNode::alloc(image2);
+//    sprite2->setAngle(ang);
+//    sprite2->setAnchor(Vec2::ANCHOR_CENTER);
+//    p->setLampLitNode(sprite2);
 
     p->setVX(0);
-    addObstacle(p, sprite, 0);
+    addObstacle(p, _sceneNode, 0);
     _plants.push_front(p);
 }
 void GameScene::createEnergy(Vec2 pos) {
@@ -734,8 +777,9 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
-    lumia->setDebugColor(DEBUG_COLOR);
+    lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
+//    lumia-> setFixedRotation(false);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -788,13 +832,13 @@ void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
 * @param startingVelocity the velocity model will be launched at during aiming
 * @param n timestep
 */
-Vec2 GameScene::getTrajectoryPoint(b2Vec2& startingPosition, Vec2& startingVelocity,
+Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity,
 						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world) {
 	//velocity and gravity are given per second but we want time step values here
 	float t = 1 / 60.0f; // seconds per time step (at 60fps)
 	Vec2 stepVelocity = t * startingVelocity; // m/s
 	Vec2 stepGravity = t * t * _world->getGravity(); // m/s/s
-	return Vec2(startingPosition.x + n * stepVelocity.x, startingPosition.y + n * stepVelocity.y) + 0.5f * (n * n + n) * stepGravity;
+    return startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;
 }
 
 

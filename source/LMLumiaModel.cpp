@@ -41,15 +41,15 @@ using namespace cugl;
 
 
 void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
-    _sceneNode = scene2::SceneNode::alloc();
-   _node = LumiaNode::alloc(lumia, LUMIA_ROWS, LUMIA_COLS, LUMIA_FRAMES);
+    _sceneNode = scene2::SceneNode::allocWithBounds(lumia->getSize());
+    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+   _node = LumiaNode::alloc(lumia, 1, 1, 1);
     auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
   
    _node->setFrame(0);
    _sceneNode->addChild(_node);
-   _node->setPosition(0, 0);
 }
 
 #pragma mark Constructors

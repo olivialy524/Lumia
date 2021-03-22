@@ -17,6 +17,8 @@
 class Plant : public cugl::physics2::BoxObstacle {
 protected:
     /** The scene graph node for the Bullet. */
+    std::shared_ptr<cugl::scene2::SceneNode> _lampNode;
+    std::shared_ptr<cugl::scene2::SceneNode> _lampLitNode;
     std::shared_ptr<cugl::scene2::SceneNode> _node;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawScale;
@@ -78,7 +80,7 @@ public:
      *
      * @return the scene graph node representing this Bullet.
      */
-    const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _node; }
+    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
     
     /**
      * Sets the scene graph node representing this Bullet.
@@ -86,9 +88,20 @@ public:
      * @param node  The scene graph node representing this Bullet, which has
      *              been added to the world node already.
      */
-    void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
+    void setLampNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
+        _lampNode = node;
+        _node->addChild(_lampNode);
+    }
+    
+    void setLampLitNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
+        _lampLitNode = node;
+        _node->addChild(_lampLitNode);
+    }
+    
+    void setNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
         _node = node;
     }
+    
     
     /**
      * Sets the ratio of the Bullet sprite to the physics body
