@@ -442,6 +442,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _avatar-> setTextures(image, LUMIA_POS);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
+    _avatar-> setFixedRotation(false);
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
@@ -521,17 +522,19 @@ void GameScene::update(float dt) {
 
         for (auto & lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition();
+            cugl::Vec2 lPos = getCamera()->worldToScreenCoords(lumia->getPosition());
+            screenToWorldCoords(tapLocation);
 
             // converting pixel coordinates of tap to world coordinates
             Size dimen = Application::get()->getDisplaySize();
             float tapX = tapLocation.x * DEFAULT_WIDTH / dimen.width;
             float tapY = DEFAULT_HEIGHT - (tapLocation.y * DEFAULT_HEIGHT / dimen.height);
 
-            /*char print[64];
+            char print[64];
             snprintf(print, sizeof print, "Lumia: (%f, %f) | Tap: (%f, %f)",
-                     lumiaPosition.x, lumiaPosition.y,
-                     tapX, tapY);
-            CULog(print);*/
+                     lPos.x, lPos.y,
+                     tapLocation.x, tapLocation.y);
+            CULog(print);
 
             float radius = lumia->getRadius();
             if (IN_RANGE(tapX, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
@@ -626,7 +629,7 @@ void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
 //		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-//        AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+//      AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
@@ -692,8 +695,9 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
-    lumia->setDebugColor(DEBUG_COLOR);
+    lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
+    lumia-> setFixedRotation(false);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
