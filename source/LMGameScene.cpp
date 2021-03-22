@@ -470,6 +470,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
+    _avatar-> setSplitting(false);
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
