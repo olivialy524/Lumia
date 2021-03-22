@@ -319,9 +319,10 @@ public:
      * @param startingPosition the position model is located before launching
      * @param startingVelocity the velocity model will be launched at during aiming
      * @param n timestep
+     * @param dt time in seconds since last update frame
      */
     Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
-                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world);
+                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt);
 
   };
 

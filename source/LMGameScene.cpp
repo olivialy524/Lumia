@@ -584,7 +584,7 @@ void GameScene::update(float dt) {
 	//	glColor3f(1, 1, 1);
 	//	glBegin(GL_LINES);
 	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
-	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world);
+	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world, dt);
 	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
 	//	}
 	//	glEnd();
@@ -821,9 +821,10 @@ void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
 * @param n timestep
 */
 Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity,
-						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world) {
+						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt) {
 	//velocity and gravity are given per second but we want time step values here
-	float t = 1 / 60.0f; // seconds per time step (at 60fps)
+	// float t = 1 / 60.0f; // seconds per time step (at 60fps)
+    float t = dt;
 	Vec2 stepVelocity = t * startingVelocity; // m/s
 	Vec2 stepGravity = t * t * _world->getGravity(); // m/s/s
     return startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;

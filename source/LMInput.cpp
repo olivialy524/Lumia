@@ -10,8 +10,8 @@ using namespace cugl;
 
 #define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
 
-#define X_ADJUST_FACTOR 20.0f
-#define Y_ADJUST_FACTOR 10.0f
+#define X_ADJUST_FACTOR 17.0f
+#define Y_ADJUST_FACTOR 8.0f
 
 #pragma mark Input Constants
 
@@ -291,6 +291,8 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
     } else if (_touchids.size() == 2) {
         // two fingers on screen, user is merging Lumia
         _mergePressed = true;
+    } else if (_touchids.size() == 3) {
+        _resetPressed = true;
     } else {
         // more than two fingers on screen, invalid input
         return;
@@ -336,6 +338,9 @@ void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
     if (_touchids.size() != 2) {
         // don't have 2 fingers on screen, stop merging
         _mergePressed = false;
+    }
+    if (_touchids.size() != 3) {
+        _resetPressed = false;
     }
 }
 
