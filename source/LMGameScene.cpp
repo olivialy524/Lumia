@@ -564,27 +564,15 @@ void GameScene::update(float dt) {
         }
     }
     if(_input.didSwitch()){
-        cugl::Vec2 tapLocation = _input.getSwitch();
+        cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
         for (auto & lumia : _lumiaList) {
-            cugl::Vec2 lumiaPosition = lumia->getPosition();
-            cugl::Vec2 lPos = getCamera()->worldToScreenCoords(lumia->getPosition());
-            screenToWorldCoords(tapLocation);
+            cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
+            cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation);
 
-            // converting pixel coordinates of tap to world coordinates
-            Size dimen = Application::get()->getDisplaySize();
-            float tapX = tapLocation.x * DEFAULT_WIDTH / dimen.width;
-            float tapY = DEFAULT_HEIGHT - (tapLocation.y * DEFAULT_HEIGHT / dimen.height);
-
-            char print[64];
-            snprintf(print, sizeof print, "Lumia: (%f, %f) | Tap: (%f, %f)",
-                     lPos.x, lPos.y,
-                     tapLocation.x, tapLocation.y);
-            CULog(print);
-
-            float radius = lumia->getRadius();
-            if (IN_RANGE(tapX, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
-                IN_RANGE(tapY, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
+            float radius = lumia->getRadius() * _scale; // world coordinates
+            if (IN_RANGE(tapLocationWorld.x, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
+                IN_RANGE(tapLocationWorld.y, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
                 _avatar = lumia;
             }
         }

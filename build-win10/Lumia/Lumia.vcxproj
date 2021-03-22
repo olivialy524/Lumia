@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\BackgroundNode.h" />
     <ClInclude Include="..\..\source\LMApp.h" />
     <ClInclude Include="..\..\source\LMGameScene.h" />
     <ClInclude Include="..\..\source\LMInput.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\BackgroundNode.cpp" />
     <ClCompile Include="..\..\source\LMLumiaModel.cpp" />
     <ClCompile Include="..\..\source\LMLumiaNode.cpp" />
     <ClCompile Include="..\..\source\LMPlant.cpp" />
