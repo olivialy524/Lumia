@@ -242,9 +242,9 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
         finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
         finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-        char print[64];
-        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-        CULog(print);
+//        char print[64];
+//        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+//        CULog(print);
 
         _inputLaunch = finishDrag;
         _launchInputted = true;
@@ -325,9 +325,9 @@ void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
         finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
         finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-        char print[64];
-        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-        CULog(print);
+//        char print[64];
+//        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
+//        CULog(print);
 
         _inputLaunch = finishDrag;
         _launchInputted = true;

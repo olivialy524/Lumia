@@ -563,12 +563,14 @@ void GameScene::update(float dt) {
             }
         }
     }
+
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
         for (auto & lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation);
+            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
 
             float radius = lumia->getRadius() * _scale; // world coordinates
             if (IN_RANGE(tapLocationWorld.x, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
@@ -767,7 +769,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     lumia-> setTextures(image, pos);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
-//    lumia-> setFixedRotation(false);
+    lumia-> setFixedRotation(false);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
