@@ -18,11 +18,11 @@
 #pragma mark -
 #pragma mark Physics Constants
 /** The factor to multiply by the input */
-#define LUMIA_FORCE      20.0f
+#define LUMIA_FORCE       20.0f
 /** The amount to slow the character down */
-#define LUMIA_DAMPING    3.0f
+#define LUMIA_DAMPING     3.0f
 /** The maximum character speed */
-#define LUMIA_MAXSPEED   5.0f
+#define LUMIA_MAXVELOCITY 30.0f
 
 
 #pragma mark -
@@ -397,13 +397,11 @@ public:
     float getDamping() const { return LUMIA_DAMPING; }
     
     /**
-     * Returns the upper limit on Lumia left-right movement.
+     * Returns the upper limit on Lumia's velocity.
      *
-     * This does NOT apply to vertical movement.
-     *
-     * @return the upper limit on Lumia left-right movement.
+     * @return the upper limit on Lumia'v velocity.
      */
-    float getMaxSpeed() const { return LUMIA_MAXSPEED; }
+    float getMaxVelocity() const { return LUMIA_MAXVELOCITY; }
     
     /**
      * Returns the name of the ground sensor

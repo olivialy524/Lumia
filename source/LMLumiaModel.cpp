@@ -194,6 +194,12 @@ void LumiaModel::applyForce() {
         _body->ApplyForce(forceX, _body->GetPosition(), true);
     }
 
+    CULog("(%f, %f)", getLinearVelocity().x, getLinearVelocity().y);
+    // put a cap on maximum velocity Lumia can have
+    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
+        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
+        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+    }
     // Don't want to be moving. Damp out player motion
     //if (getVelocity().x != 0.0f) {
     //    if (isGrounded()) {
