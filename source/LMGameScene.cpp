@@ -481,6 +481,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _avatar-> setSplitting(false);
+    _avatar-> setFixedRotation(false);
     _lumiaList.push_back(_avatar);
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
@@ -514,9 +515,9 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
     
     // Position the scene graph node (enough for static objects)
   	if (useObjPosition) {
-	  	node->setPosition(obj->getPosition()*_scale);
-	  }
-	  _worldnode->addChild(node, zOrder);
+	    node->setPosition(obj->getPosition()*_scale);
+	}
+	_worldnode->addChild(node, zOrder);
     
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody) {
@@ -802,13 +803,17 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
 }
 
 void GameScene::mergeLumiasNearby(){
+    Vec2 avatarPos = _avatar->getPosition();
+
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        if (lumia==_avatar){
+        if (lumia == _avatar){
             continue;
         }
-        Vec2 avatarPos = _avatar->getPosition();
+        
         Vec2 lumiaPos = lumia->getPosition();
         float dist = avatarPos.distance(lumiaPos);
+
+        // avatar and lumia body are already touching
         if (dist <= lumia->getRadius() + _avatar->getRadius()){
             float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.35f;
             Vec2 pos = _avatar->getPosition();
@@ -897,19 +902,17 @@ void GameScene::beginContact(b2Contact* contact) {
 //            _sensorFixtures.emplace(fix1);
 //        }
 //    }
-	// See if we have landed on the ground.
-    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        
-        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
-            if (!((Plant*)bd1)->getIsLit()) {
-                ((Plant*)bd1)->lightUp();
-            }
-        } else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
-            if (!((Plant*)bd2)->getIsLit()) {
-                ((Plant*)bd2)->lightUp();
-            }
+    if (bd1->getName().substr(0, 5) == PLANT_NAME && bd2->getName() == LUMIA_NAME) {
+        if (!((Plant*)bd1)->getIsLit()) {
+            ((Plant*)bd1)->lightUp();
         }
+    } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1->getName() == LUMIA_NAME) {
+        if (!((Plant*)bd2)->getIsLit()) {
+            ((Plant*)bd2)->lightUp();
+        }
+    }
 
+    for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         if (bd1->getName() == "split_" && bd2 == lumia.get()) {
             if (((Splitter*)bd1)->getCooldown() == 0.0) {
                 ((LumiaModel*)bd2)->setSplitting(true);
@@ -924,18 +927,18 @@ void GameScene::beginContact(b2Contact* contact) {
 
         if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
             if (!(bd1->isRemoved())) {
-            ((LumiaModel*)bd2)->merge(1);
-            _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
-            ((EnergyModel*)bd1)->dispose();
-            ((EnergyModel*)bd1)->markRemoved(true);
+                ((LumiaModel*)bd2)->merge(1);
+                _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
+                ((EnergyModel*)bd1)->dispose();
+                ((EnergyModel*)bd1)->markRemoved(true);
             }
         }
         else if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
             if (!(bd2->isRemoved())) {
-            ((LumiaModel*)bd1)->merge(1);
-            _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
-            ((EnergyModel*)bd2)->dispose();
-            ((EnergyModel*)bd2)->markRemoved(true);
+                ((LumiaModel*)bd1)->merge(1);
+                _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
+                ((EnergyModel*)bd2)->dispose();
+                ((EnergyModel*)bd2)->markRemoved(true);
             }
         }
         
