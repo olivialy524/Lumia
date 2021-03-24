@@ -887,33 +887,17 @@ void GameScene::beginContact(b2Contact* contact) {
 	physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
-//    if (bd1->getName() == LUMIA_NAME){
-//        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd1);
-//        if (lumia->getSensorName() == fd1 && lumia.get() != bd2){
-//            lumia->setGrounded(true);
-//            // Could have more than one ground
-//            _sensorFixtures.emplace(fix2);
-//        }
-//    }
-//    else if (bd2->getName() == LUMIA_NAME){
-//        auto lumia = std::make_shared<LumiaModel>((LumiaModel*) bd2);
-//        if (lumia->getSensorName() == fd2 && lumia.get() != bd1){
-//            lumia->setGrounded(true);
-//            // Could have more than one ground
-//            _sensorFixtures.emplace(fix1);
-//        }
-//    }
-    if (bd1->getName().substr(0, 5) == PLANT_NAME && bd2->getName() == LUMIA_NAME) {
-        if (!((Plant*)bd1)->getIsLit()) {
-            ((Plant*)bd1)->lightUp();
-        }
-    } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1->getName() == LUMIA_NAME) {
-        if (!((Plant*)bd2)->getIsLit()) {
-            ((Plant*)bd2)->lightUp();
-        }
-    }
-
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
+        if (bd1->getName().substr(0, 5) == PLANT_NAME && bd2 == lumia.get()) {
+            if (!((Plant*)bd1)->getIsLit()) {
+                ((Plant*)bd1)->lightUp();
+            }
+        } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
+            if (!((Plant*)bd2)->getIsLit()) {
+                ((Plant*)bd2)->lightUp();
+            }
+        }
+
         if (bd1->getName() == "split_" && bd2 == lumia.get()) {
             if (((Splitter*)bd1)->getCooldown() == 0.0) {
                 ((LumiaModel*)bd2)->setSplitting(true);

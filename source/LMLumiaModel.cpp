@@ -199,33 +199,6 @@ void LumiaModel::applyForce() {
         Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
         _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
     }
-    // Don't want to be moving. Damp out player motion
-    //if (getVelocity().x != 0.0f) {
-    //    if (isGrounded()) {
-    //        // Instant friction on the ground
-    //        b2Vec2 vel = _body->GetLinearVelocity();
-    //        vel.x = 0; // If you set y, you will stop a jump in place
-    //        _body->SetLinearVelocity(vel);
-    //    } else {
-    //        // Damping factor in the air
-    //        b2Vec2 force(-getDamping()*getVX(),0);
-    //        _body->ApplyForce(force,_body->GetPosition(),true);
-    //    }
-    //}
-    //
-    //// Velocity too high, clamp it
-    //if (fabs(getVX()) >= getMaxSpeed()) {
-    //    setVX(SIGNUM(getVX())*getMaxSpeed());
-    //} else {
-    //    b2Vec2 force(getVelocity().x,0);
-    //    _body->ApplyForce(force,_body->GetPosition(),true);
-    //}
-    //
-    //// Jump!
-    //if (isJumping() && isGrounded()) {
-    //    b2Vec2 force(0, Lumia_JUMP);
-    //    _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    //}
 }
 
 
