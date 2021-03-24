@@ -26,9 +26,9 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define LUMIA_DENSITY    0.13f
+#define LUMIA_DENSITY    0.10f
 /** The restitution of the character */
-#define LUMIA_RESTITUTION 0.5f
+#define LUMIA_RESTITUTION 0.45f
 
 
 /** Debug color for the sensor */
@@ -74,11 +74,11 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(LUMIA_DENSITY);
-        setFriction(0.05f);
+        setDensity(.1 / radius);
+        setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
-        setFixedRotation(false); // OTHERWISE, HE IS A WEEBLE WOBBLE
+        setFixedRotation(false);
         
         // Gameplay attributes
         _isGrounded = false;
@@ -110,7 +110,7 @@ void LumiaModel::createFixtures() {
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.15f;
+    sensorShape.m_radius = _radius * 1.1f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
@@ -194,33 +194,11 @@ void LumiaModel::applyForce() {
         _body->ApplyForce(forceX, _body->GetPosition(), true);
     }
 
-    // Don't want to be moving. Damp out player motion
-    //if (getVelocity().x != 0.0f) {
-    //    if (isGrounded()) {
-    //        // Instant friction on the ground
-    //        b2Vec2 vel = _body->GetLinearVelocity();
-    //        vel.x = 0; // If you set y, you will stop a jump in place
-    //        _body->SetLinearVelocity(vel);
-    //    } else {
-    //        // Damping factor in the air
-    //        b2Vec2 force(-getDamping()*getVX(),0);
-    //        _body->ApplyForce(force,_body->GetPosition(),true);
-    //    }
-    //}
-    //
-    //// Velocity too high, clamp it
-    //if (fabs(getVX()) >= getMaxSpeed()) {
-    //    setVX(SIGNUM(getVX())*getMaxSpeed());
-    //} else {
-    //    b2Vec2 force(getVelocity().x,0);
-    //    _body->ApplyForce(force,_body->GetPosition(),true);
-    //}
-    //
-    //// Jump!
-    //if (isJumping() && isGrounded()) {
-    //    b2Vec2 force(0, Lumia_JUMP);
-    //    _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    //}
+    // put a cap on maximum velocity Lumia can have
+    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
+        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
+        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+    }
 }
 
 

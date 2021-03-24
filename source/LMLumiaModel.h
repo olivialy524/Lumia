@@ -18,11 +18,11 @@
 #pragma mark -
 #pragma mark Physics Constants
 /** The factor to multiply by the input */
-#define LUMIA_FORCE      20.0f
+#define LUMIA_FORCE       20.0f
 /** The amount to slow the character down */
-#define LUMIA_DAMPING    3.0f
+#define LUMIA_DAMPING     3.0f
 /** The maximum character speed */
-#define LUMIA_MAXSPEED   5.0f
+#define LUMIA_MAXVELOCITY 30.0f
 
 
 #pragma mark -
@@ -351,17 +351,17 @@ public:
     void setLaunching(bool value) { _isLaunching = value; }
     
     /**
-     * Sets whether the Lumia is actively jumping.
+     * Sets whether the Lumia is actively splitting.
      *
-     * @param value whether the Lumia is actively jumping.
+     * @param value whether the Lumia is actively splitting.
      */
     void setSplitting(bool value) { _isSplitting = value; }
     
     bool isSplitting() const {return _isSplitting;}
     /**
-     * Sets whether the Lumia is actively jumping.
+     * Sets whether the Lumia is actively merging.
      *
-     * @param value whether the Lumia is actively jumping.
+     * @param value whether the Lumia is actively merging.
      */
     void setMerging(bool value) { _isMerging = value; }
     
@@ -397,13 +397,11 @@ public:
     float getDamping() const { return LUMIA_DAMPING; }
     
     /**
-     * Returns the upper limit on Lumia left-right movement.
+     * Returns the upper limit on Lumia's velocity.
      *
-     * This does NOT apply to vertical movement.
-     *
-     * @return the upper limit on Lumia left-right movement.
+     * @return the upper limit on Lumia'v velocity.
      */
-    float getMaxSpeed() const { return LUMIA_MAXSPEED; }
+    float getMaxVelocity() const { return LUMIA_MAXVELOCITY; }
     
     /**
      * Returns the name of the ground sensor
