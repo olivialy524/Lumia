@@ -110,7 +110,7 @@ void LumiaModel::createFixtures() {
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.1f;
+    sensorShape.m_radius = _radius * 1.15f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
