@@ -76,7 +76,8 @@ protected:
     Vec2 _pospos = Vec2(-1,-1);
       
     /** Mark set to handle more sophisticated collision callbacks */
-    std::unordered_set<b2Fixture*> _sensorFixtures;
+    
+    std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
 
 #pragma mark Internal Object Management
     /**

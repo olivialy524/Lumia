@@ -78,7 +78,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         setFriction(0.05f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
-        setFixedRotation(true); // OTHERWISE, HE IS A WEEBLE WOBBLE
+        setFixedRotation(false); // OTHERWISE, HE IS A WEEBLE WOBBLE
         
         // Gameplay attributes
         _isGrounded = false;
@@ -110,7 +110,7 @@ void LumiaModel::createFixtures() {
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius;
+    sensorShape.m_radius = _radius * 1.15f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
