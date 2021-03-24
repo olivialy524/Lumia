@@ -351,17 +351,17 @@ public:
     void setLaunching(bool value) { _isLaunching = value; }
     
     /**
-     * Sets whether the Lumia is actively jumping.
+     * Sets whether the Lumia is actively splitting.
      *
-     * @param value whether the Lumia is actively jumping.
+     * @param value whether the Lumia is actively splitting.
      */
     void setSplitting(bool value) { _isSplitting = value; }
     
     bool isSplitting() const {return _isSplitting;}
     /**
-     * Sets whether the Lumia is actively jumping.
+     * Sets whether the Lumia is actively merging.
      *
-     * @param value whether the Lumia is actively jumping.
+     * @param value whether the Lumia is actively merging.
      */
     void setMerging(bool value) { _isMerging = value; }
     

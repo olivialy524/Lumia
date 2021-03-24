@@ -26,9 +26,9 @@
 /** Height of the sensor attached to the player's feet */
 #define SENSOR_HEIGHT   0.1f
 /** The density of the character */
-#define LUMIA_DENSITY    0.13f
+#define LUMIA_DENSITY    0.10f
 /** The restitution of the character */
-#define LUMIA_RESTITUTION 0.5f
+#define LUMIA_RESTITUTION 0.45f
 
 
 /** Debug color for the sensor */
@@ -75,7 +75,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(LUMIA_DENSITY);
-        setFriction(0.05f);
+        setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(false);

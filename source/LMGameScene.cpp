@@ -552,7 +552,7 @@ void GameScene::update(float dt) {
 		Application::get()->quit();
 	}
     if (!_failed && !_complete) {
-    checkWin();
+        checkWin();
     }
     
     for (const std::shared_ptr<Splitter> &s : _splitters) {
@@ -579,7 +579,9 @@ void GameScene::update(float dt) {
             }
         }
     }
+
 	_avatar->setVelocity(_input.getLaunch());
+
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
 	//if (_avatar->isGrounded() && _input.isDragging()) {
@@ -602,16 +604,38 @@ void GameScene::update(float dt) {
     //_avatar->setSplitting(_input.didSplit());
     _avatar->setMerging(_input.didMerge());
 
-    if (_avatar->isSplitting()){
+    // attempt to make non avatar controlled Lumias react to splitting too
+    /*for (auto & lumia : _lumiaList) {
+        if (lumia->isSplitting()) {
+            float radius = lumia->getRadius() / 1.4f;
+            Vec2 pos = lumia->getPosition();
+            std::shared_ptr<LumiaModel> temp = lumia;
+
+            std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos + Vec2(0.5f, 0.0f));
+            temp2->setSplitting(false);
+
+            if (lumia == _avatar) {
+                _avatar = temp2;
+            }
+
+            std::shared_ptr<LumiaModel> temp3 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
+            temp3->setSplitting(false);
+
+            removeLumia(temp);
+        }
+    }*/
+    if (_avatar->isSplitting()) {
         float radius = _avatar->getRadius() / 1.4f;
         Vec2 pos = _avatar->getPosition();
         std::shared_ptr<LumiaModel> temp = _avatar;
-        _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
-        createLumia(radius, pos-Vec2(0.5f, 0.0f));
+        _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
+        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
+        temp2->setSplitting(false);
         removeLumia(temp);
         _avatar->setSplitting(false);
-    } else if(_avatar->isMerging()){
-        // find all lumias close enough to _avatar, push them into the direction of lumia. once they contact, merge.
+    } else if (_avatar->isMerging()){
+        // find all lumias close enough to _avatar, push them into the direction of lumia
+        // once they contact, merge.
         mergeLumiasNearby();
     }
     
@@ -773,8 +797,8 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
+
     return lumia;
- 
 }
 
 void GameScene::mergeLumiasNearby(){
@@ -880,17 +904,24 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
             }
-        }else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
+        } else if (bd2->getName().substr(0,5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
             }
         }
+
         if (bd1->getName() == "split_" && bd2 == lumia.get()) {
             if (((Splitter*)bd1)->getCooldown() == 0.0) {
                 ((LumiaModel*)bd2)->setSplitting(true);
                 ((Splitter*)bd1)->setCooldown(0.1);
             }
+        } else if (bd2->getName() == "split_" && bd1 == lumia.get()) {
+            if (((Splitter*)bd2)->getCooldown() == 0.0) {
+                ((LumiaModel*)bd1)->setSplitting(true);
+                ((Splitter*)bd2)->setCooldown(0.1);
+            }
         }
+
         if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
             if (!(bd1->isRemoved())) {
             ((LumiaModel*)bd2)->merge(1);
