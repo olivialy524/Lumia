@@ -117,29 +117,6 @@ void LumiaModel::createFixtures() {
     _sensorFixture->SetUserData(getSensorName());
 }
 
-
-void LumiaModel::split(){
-//    CULog("mass pre split %f", _body->GetMass());
-    _radius = _radius / 1.4f;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-//    CULog("mass post split %f", _body->GetMass());
-    _node->setScale(_node->getScale()/1.4f);
-}
-
-void LumiaModel::merge(float addRadius){
-//    CULog("mass pre merge %f", _body->GetMass());
-    float newRadius = 0.4f * addRadius + _radius;
-    float scale = newRadius / _radius;
-    _radius = newRadius;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-    _node->setScale(_node->getScale()*scale);
-    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
-//    CULog("mass post merge %f", _body->GetMass());
-}
 /**
  * Release the fixtures for this body, reseting the shape
  *

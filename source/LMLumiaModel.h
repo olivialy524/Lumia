@@ -295,10 +295,6 @@ public:
         _sceneNode = node;
         _sceneNode->setPosition(getPosition() * _drawScale);
     }
-    
-    void split();
-    
-    void merge(float addRadius);
 
     
 #pragma mark -
