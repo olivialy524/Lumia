@@ -795,6 +795,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
+    lumia-> setDensity(.1 / radius);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);

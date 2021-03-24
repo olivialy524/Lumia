@@ -74,7 +74,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(LUMIA_DENSITY);
+        setDensity(.1 / radius);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
@@ -194,7 +194,6 @@ void LumiaModel::applyForce() {
         _body->ApplyForce(forceX, _body->GetPosition(), true);
     }
 
-    CULog("(%f, %f)", getLinearVelocity().x, getLinearVelocity().y);
     // put a cap on maximum velocity Lumia can have
     if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
         Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
