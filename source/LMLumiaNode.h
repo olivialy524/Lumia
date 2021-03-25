@@ -13,9 +13,11 @@
 
 using namespace cugl;
 
-class LumiaNode : public cugl::scene2::AnimationNode {
+class LumiaNode : public cugl::scene2::SceneNode {
+//class LumiaNode : public cugl::scene2::AnimationNode {
 public:
     
+    std::shared_ptr<cugl::scene2::AnimationNode> splittingNode;
     
     cugl::Color4 _stint;
     

@@ -946,6 +946,7 @@ void GameScene::beginContact(b2Contact* contact) {
 		    // Could have more than one ground
             std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
 		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+            CULog("size %d", sensorFixtures.size());
 	    }
         if (removing) {
             removeLumia(lumia);
@@ -979,6 +980,7 @@ void GameScene::endContact(b2Contact* contact) {
             (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
             std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
+            CULog("size %d", sensorFixtures.size());
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
             }

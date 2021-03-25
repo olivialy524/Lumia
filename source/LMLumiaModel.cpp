@@ -10,30 +10,6 @@
 #include <cugl/scene2/graph/CUTexturedNode.h>
 #include <cugl/assets/CUAssetManager.h>
 
-#define SIGNUM(x)  ((x > 0) - (x < 0))
-
-#pragma mark -
-#pragma mark Physics Constants
-
-/** Number of rows in the ship image filmstrip */
-#define LUMIA_ROWS       1
-/** Number of columns in this ship image filmstrip */
-#define LUMIA_COLS       1
-/** Number of elements in this ship image filmstrip */
-#define LUMIA_FRAMES     1
-/** The amount to shrink the sensor fixture (horizontally) relative to the image */
-#define LUMIA_SSHRINK  0.6f
-/** Height of the sensor attached to the player's feet */
-#define SENSOR_HEIGHT   0.1f
-/** The density of the character */
-#define LUMIA_DENSITY    0.10f
-/** The restitution of the character */
-#define LUMIA_RESTITUTION 0.45f
-
-
-/** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::RED
-
 
 using namespace cugl;
 
