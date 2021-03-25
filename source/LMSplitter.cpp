@@ -12,4 +12,5 @@
 
 void Splitter::dispose() {
     _node = nullptr;
+    _sceneNode = nullptr;
 }

@@ -368,38 +368,6 @@ void GameScene::reset() {
 void GameScene::populate() {
 std::shared_ptr<Texture> image;
 std::shared_ptr<scene2::PolygonNode> sprite;
-    
-#pragma mark : Walls
-	// All walls and platforms share the same texture
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
-	std::string wname = "wall";
-//	for (int ii = 0; ii < WALL_COUNT; ii++) {
-//		std::shared_ptr<physics2::PolygonObstacle> wallobj;
-//
-//		Poly2 wall(WALL[ii],WALL_VERTS);
-//		// Call this on a polygon to get a solid shape
-//		SimpleTriangulator triangulator;
-//		triangulator.set(wall);
-//		triangulator.calculate();
-//		wall.setIndices(triangulator.getTriangulation());
-//		wall.setGeometry(Geometry::SOLID);
-//
-//		wallobj = physics2::PolygonObstacle::alloc(wall);
-//		// You cannot add constant "".  Must stringify
-//		wallobj->setName(std::string(WALL_NAME)+cugl::strtool::to_string(ii));
-//		wallobj->setName(wname);
-//
-//		// Set the physics attributes
-//		wallobj->setBodyType(b2_staticBody);
-//		wallobj->setDensity(BASIC_DENSITY);
-//		wallobj->setFriction(BASIC_FRICTION);
-//		wallobj->setRestitution(BASIC_RESTITUTION);
-//		wallobj->setDebugColor(DEBUG_COLOR);
-//
-//		wall *= _scale;
-//		sprite = scene2::PolygonNode::allocWithTexture(image,wall);
-//		addObstacle(wallobj,sprite,1);  // All walls share the same texture
-//	}
 
 #pragma mark : Platforms
     std::shared_ptr<cugl::JsonValue> platforms = _leveljson->get("platforms");
@@ -431,9 +399,12 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setDebugColor(DEBUG_COLOR);
 
         platform *= _scale;
+        // All walls and platforms share the same texture
+        image = _assets->get<Texture>(EARTH_TEXTURE);
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
+
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
     for (int i = 0; i < energies->size(); i++) {
@@ -443,6 +414,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
+
 #pragma mark : Splitter
     std::shared_ptr<cugl::JsonValue> splitters = _leveljson->get("splitters");
     for (int i = 0; i < splitters->size(); i++) {
@@ -452,6 +424,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 spos = Vec2(sx, sy);
         createSplitter(spos);
     }
+
 #pragma mark : Plant
     std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
     for (int i = 0; i < plants->size(); i++) {
@@ -472,6 +445,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     float lumy = lum->getFloat("posy");
     float radius = lum->getFloat("radius");// change to value from jso
     Vec2 lumiaPos = Vec2(lumx,lumy);
+
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
     _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
@@ -485,7 +459,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
 //	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-//    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
+//  AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -627,9 +601,13 @@ void GameScene::update(float dt) {
     if (_avatar->isSplitting()) {
         float radius = _avatar->getRadius() / 1.4f;
         Vec2 pos = _avatar->getPosition();
+        Vec2 offset = Vec2(0.5f + radius, 0.0f);
+
+        // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+        // http://www.iforce2d.net/b2dtut/world-querying
         std::shared_ptr<LumiaModel> temp = _avatar;
-        _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
-        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
+        _avatar = createLumia(radius, pos + offset);
+        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset);
         temp2->setSplitting(false);
         removeLumia(temp);
         _avatar->setSplitting(false);
@@ -821,12 +799,13 @@ void GameScene::mergeLumiasNearby(){
 
         // avatar and lumia body are already touching
         if (dist <= lumia->getRadius() + _avatar->getRadius()){
-            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.35f;
+            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.4f;
             Vec2 pos = _avatar->getPosition();
-            auto temp = _avatar;
-            _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
+            std::shared_ptr<LumiaModel> temp = _avatar;
             removeLumia(temp);
+            // lumia is null, probably because iteration messed up from removing temp?
             removeLumia(lumia);
+            _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
             break;
         } else if (dist < 10.0f){
             //set lumia velocity to move toward avatar

@@ -69,9 +69,9 @@ protected:
     /** Whether the exit action was chosen. */
     bool _exitPressed;
     
-    /** Whether the jump action was chosen. */
+    /** Whether the split action was chosen. */
     bool _splitPressed;
-    /** Whether the jump action was chosen. */
+    /** Whether the merge action was chosen. */
     bool _mergePressed;
     /** Whether player attempted to switch control of Lumia(s) */
     bool _switched;

@@ -446,4 +446,4 @@ public:
     void applyForce();
 };
 
-#endif /* __PF_LUMIA_MODEL_H__ */
+#endif /* __LM_LUMIA_MODEL_H__ */

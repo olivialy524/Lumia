@@ -5,10 +5,11 @@
 //  Created by Ben Dacek on 3/17/21.
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
+#ifndef __LM_ENERGY_MODEL_H__
+#define __LM_ENERGY_MODEL_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
-#ifndef LMEnergyModel_h
-#define LMEnergyModel_h
+
 class EnergyModel : public cugl::physics2::BoxObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on physics objects) */
@@ -46,4 +47,5 @@ public:
         _node = n;
     }
 };
-#endif /* LMEnergyModel_h */
+
+#endif /* __LM_ENERGY_MODEL_H__ */

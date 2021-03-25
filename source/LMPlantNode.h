@@ -6,11 +6,10 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LMPlantNode_h
-#define LMPlantNode_h
+#ifndef __LM_PLANT_NODE_H__
+#define __LM_PLANT_NODE_H__
 
 #include <cugl/cugl.h>
-#endif /* LMPlantNode_h */
 using namespace cugl;
 
 class PlantNode : public cugl::scene2::PolygonNode {
@@ -34,4 +33,4 @@ public:
 
 };
 
-
+#endif /* __LM_PLANT_NODE_H__ */

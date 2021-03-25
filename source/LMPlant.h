@@ -6,8 +6,8 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LMPlant_h
-#define LMPlant_h
+#ifndef __LM_PLANT_H__
+#define __LM_PLANT_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
@@ -120,7 +120,7 @@ public:
     }
 
 #pragma mark -
-#pragma mark Physics Methods
+#pragma mark State Methods
 
     bool getIsLit() {
         return _isLit;
@@ -133,4 +133,5 @@ public:
         _isLit = false;
     }
 };
-#endif /* LMPlant_h */
+
+#endif /* __LM_PLANT_H__ */
