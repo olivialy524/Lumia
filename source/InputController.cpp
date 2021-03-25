@@ -4,7 +4,7 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#include "LMInput.h"
+#include "InputController.h"
 
 using namespace cugl;
 
@@ -47,7 +47,7 @@ using namespace cugl;
  * This constructor does NOT do any initialzation.  It simply allocates the
  * object. This makes it safe to use this class without a pointer.
  */
-LumiaInput::LumiaInput() :
+InputController::InputController() :
 _active(false),
 _resetPressed(false),
 _debugPressed(false),
@@ -74,7 +74,7 @@ _launchInputted(false)
  * This method will not dispose of the input controller. It can be reused
  * once it is reinitialized.
  */
-void LumiaInput::dispose() {
+void InputController::dispose() {
     if (_active) {
 #ifndef CU_TOUCH_SCREEN
         Input::deactivate<Keyboard>();
@@ -101,7 +101,7 @@ void LumiaInput::dispose() {
  *
  * @return true if the controller was initialized successfully
  */
-bool LumiaInput::init(const Rect bounds) {
+bool InputController::init(const Rect bounds) {
     bool success = true;
     
 #ifndef CU_TOUCH_SCREEN
@@ -144,7 +144,7 @@ bool LumiaInput::init(const Rect bounds) {
  * the OS, we may see multiple updates of the same touch in a single animation
  * frame, so we need to accumulate all of the data together.
  */
-void LumiaInput::update(float dt) {
+void InputController::update(float dt) {
 #ifndef CU_TOUCH_SCREEN
     // DESKTOP CONTROLS
     Keyboard* keys = Input::get<Keyboard>();
@@ -192,7 +192,7 @@ void LumiaInput::update(float dt) {
 /**
  * Clears any buffered inputs so that we may start fresh.
  */
-void LumiaInput::clear() {
+void InputController::clear() {
     _resetPressed = false;
     _debugPressed = false;
     _exitPressed  = false;
@@ -214,7 +214,7 @@ void LumiaInput::clear() {
  * @param t     The touch information
  * @param event The associated event
  */
-void LumiaInput::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+void InputController::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
     // Update the touch location for later gestures
     _dclick.set(event.position);
 }
@@ -225,7 +225,7 @@ void LumiaInput::mousePressedCB(const MouseEvent& event, Uint8 clicks, bool focu
  * @param t     The touch information
  * @param event The associated event
  */
-void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
+void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool focus) {
     Vec2 finishDrag = event.position - _dclick;
     
     if (finishDrag.lengthSquared() < 625.0f) {
@@ -258,7 +258,7 @@ void LumiaInput::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, bool foc
  * @param previous The previous position of the touch
  * @param focus	Whether the listener currently has focus
  */
-void LumiaInput::mouseMovedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
+void InputController::mouseMovedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
     Vec2 currentDrag = event.position - _dclick;
 
     // only register player as dragging if sufficiently far from initial click/touch
@@ -281,7 +281,7 @@ void LumiaInput::mouseMovedCB(const MouseEvent& event, const Vec2& previous, boo
  * @param event The associated event
  * @param focus	Whether the listener currently has focus
  */
-void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
+void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
@@ -306,7 +306,7 @@ void LumiaInput::touchBeganCB(const TouchEvent& event, bool focus) {
  * @param event The associated event
  * @param focus	Whether the listener currently has focus
  */
-void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
+void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     CULog("Touch ended %lld", event.touch);
 
     Vec2 finishDrag = event.position - _dclick;
@@ -351,7 +351,7 @@ void LumiaInput::touchEndedCB(const TouchEvent& event, bool focus) {
  * @param previous The previous position of the touch
  * @param focus	Whether the listener currently has focus
  */
-void LumiaInput::touchesMovedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
+void InputController::touchesMovedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
     Vec2 currentDrag = event.position - _dclick;
 
     // only register player as dragging if sufficiently far from initial click/touch

@@ -7,8 +7,8 @@
 //
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
-#ifndef LMSplitter_h
-#define LMSplitter_h
+#ifndef Splitter_h
+#define Splitter_h
 
 class Splitter : public cugl::physics2::BoxObstacle {
 private:

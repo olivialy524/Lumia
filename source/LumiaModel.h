@@ -6,13 +6,13 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_LUMIA_MODEL_H__
-#define __LM_LUMIA_MODEL_H__
+#ifndef __LUMIA_MODEL_H__
+#define __LUMIA_MODEL_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
-#include "LMLumiaNode.h"
+#include "LumiaNode.h"
 
 #pragma mark Lumia Model
 /**

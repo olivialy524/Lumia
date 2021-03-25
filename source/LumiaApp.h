@@ -4,11 +4,11 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_APP_H__
-#define __LM_APP_H__
+#ifndef __LUMIA_APP_H__
+#define __LUMIA_APP_H__
 #include <cugl/cugl.h>
-#include "LMGameScene.h"
-#include "LMLoadingScene.h"
+#include "GameScene.h"
+#include "LoadingScene.h"
 
 /**
  * This class represents the application root for the platform demo.
@@ -19,7 +19,6 @@ protected:
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
     // Player modes
     /** The primary controller for the game world */
     GameScene _gameplay;

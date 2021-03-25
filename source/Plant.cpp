@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-#include "LMPlant.h"
+#include "Plant.h"
 
 void Plant::dispose() {
     _node = nullptr;

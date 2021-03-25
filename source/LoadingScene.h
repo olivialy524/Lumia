@@ -5,8 +5,8 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_LOADING_SCENE_H__
-#define __LM_LOADING_SCENE_H__
+#ifndef __LOADING_SCENE_H__
+#define __LOADING_SCENE_H__
 #include <cugl/cugl.h>
 
 #pragma mark -
@@ -108,4 +108,4 @@ public:
     bool isPending( ) const;
 };
 
-#endif /* __PF_LOADING_SCENE_H__ */
+#endif /* __LOADING_SCENE_H__ */

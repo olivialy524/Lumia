@@ -6,14 +6,14 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LMLumiaNode_h
-#define LMLumiaNode_h
+#ifndef LumiaNode_h
+#define LumiaNode_h
 
 #include <cugl/cugl.h>
 
 using namespace cugl;
 
-class LumiaNode : public cugl::scene2::SceneNode {
+class LumiaNode : public cugl::scene2::AnimationNode {
 //class LumiaNode : public cugl::scene2::AnimationNode {
 public:
     

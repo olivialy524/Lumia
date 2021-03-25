@@ -4,15 +4,15 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#include "LMGameScene.h"
+#include "GameScene.h"
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
-#include "LMLumiaModel.h"
-#include "LMPlant.h"
-#include "LMPlantNode.h"
-#include "LMEnergyModel.h"
-#include "LMSplitter.h"
+#include "LumiaModel.h"
+#include "Plant.h"
+#include "PlantNode.h"
+#include "EnergyModel.h"
+#include "Splitter.h"
 #include "BackgroundNode.h"
 #include <ctime>
 #include <string>
@@ -39,37 +39,6 @@ using namespace cugl;
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
-
-// Since these appear only once, we do not care about the magic numbers.
-// In an actual game, this information would go in a data file.
-// IMPORTANT: Note that Box2D units do not equal drawing units
-/** The wall vertices */
-#define WALL_VERTS 12
-#define WALL_COUNT  2
-
-float WALL[WALL_COUNT][WALL_VERTS] = {
-	{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-	1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-	{32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-	31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}
-};
-
-/** The number of platforms */
-#define PLATFORM_VERTS  8
-#define PLATFORM_COUNT  10
-
-/** The outlines of all of the platforms */
-float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
-	{ 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-	{ 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-	{23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-	{26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-	{29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-	{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-};
-
-/** The initial position of Lumia */
-float LUMIA_POS[] = { 2.5f, 5.0f};
 
 #pragma mark -
 #pragma mark Physics Constants

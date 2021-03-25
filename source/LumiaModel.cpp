@@ -4,8 +4,8 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#include "LMLumiaModel.h"
-#include "LMLumiaNode.h"
+#include "LumiaModel.h"
+#include "LumiaNode.h"
 #include <cugl/scene2/graph/CUPolygonNode.h>
 #include <cugl/scene2/graph/CUTexturedNode.h>
 #include <cugl/assets/CUAssetManager.h>

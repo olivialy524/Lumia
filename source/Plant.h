@@ -6,8 +6,8 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LMPlant_h
-#define LMPlant_h
+#ifndef Plant_h
+#define Plant_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>

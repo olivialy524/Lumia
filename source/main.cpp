@@ -28,7 +28,7 @@
 //  Version: 7/1/16
 
 // Include your application class
-#include "LMApp.h"
+#include "LumiaApp.h"
 
 using namespace cugl;
 
@@ -46,8 +46,8 @@ int main(int argc, char * argv[]) {
     LumiaApp app;
     
     // Set the properties of your application
-    app.setName("Platform Demo");
-    app.setOrganization("GDIAC");
+    app.setName("Lumia");
+    app.setOrganization("Coffee Powered Studios");
     app.setHighDPI(true);
 
     //app.setFullscreen(true);

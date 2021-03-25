@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include "LMLumiaNode.h"
+#include "LumiaNode.h"
 #define SHADOW_OFFSET   10.0f
 
 

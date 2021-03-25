@@ -7,8 +7,8 @@
 //
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
-#ifndef LMEnergyModel_h
-#define LMEnergyModel_h
+#ifndef EnergyModel_h
+#define EnergyModel_h
 class EnergyModel : public cugl::physics2::BoxObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on physics objects) */

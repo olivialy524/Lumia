@@ -6,8 +6,8 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LMPlantNode_h
-#define LMPlantNode_h
+#ifndef PlantNode_h
+#define PlantNode_h
 
 #include <cugl/cugl.h>
 #endif /* LMPlantNode_h */
