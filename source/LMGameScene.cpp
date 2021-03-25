@@ -175,6 +175,7 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
+
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -708,7 +709,6 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
     cugl::Size size  = 0.3*image->getSize()/(_scale);
-
     std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), size);
     p->setBodyType(b2_staticBody);
     p->setAngle(ang);
