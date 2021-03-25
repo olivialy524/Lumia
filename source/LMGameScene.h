@@ -61,7 +61,7 @@ protected:
     /** Reference to the player avatars */
     std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
 
-    std::list<std::shared_ptr<EnergyModel>> _nrglist;
+    std::vector<std::shared_ptr<EnergyModel>> _nrglist;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -72,6 +72,10 @@ protected:
     int _countdown;
     
     int _posrad = -1;
+    
+    std::shared_ptr<LumiaModel> _removinglumia;
+    
+    std::shared_ptr<EnergyModel> _removingnrg;
     
     Vec2 _pospos = Vec2(-1,-1);
       
@@ -257,6 +261,10 @@ public:
 	*/
 	void setFailure(bool value);
     
+    void setRemoveEnergy(shared_ptr<EnergyModel> nrg) {
+        _removingnrg = nrg;
+    }
+    
 #pragma mark -
 #pragma mark Collision Handling
 	/**
@@ -318,6 +326,7 @@ public:
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
 
+    void removeEnergy(std::shared_ptr<EnergyModel> nrg);
     /**
      * Calculates trajectory point one timestep into future
      *

@@ -661,6 +661,14 @@ void GameScene::update(float dt) {
         _posrad = -1;
         _pospos = Vec2(-1,-1);
     }
+    if (_removingnrg != NULL) {
+        removeEnergy(_removingnrg);
+        _removingnrg = NULL;
+    }
+    if (_removinglumia != NULL) {
+        removeLumia(_removinglumia);
+        _removinglumia = NULL;
+    }
 }
 
 /**
@@ -758,8 +766,17 @@ void GameScene::createEnergy(Vec2 pos) {
     sprite->setScale(_scale);
     nrg->setNode(sprite);
     addObstacle(nrg,sprite,0);
-    _energies.push_front(nrg);
+    _energies.push_back(nrg);
     
+}
+void GameScene::removeEnergy(std::shared_ptr<EnergyModel> nrg) {
+    if (nrg->isRemoved()) {
+        return;
+    }
+    _worldnode->removeChild(nrg->getNode());
+    nrg->dispose();
+    nrg->setDebugScene(nullptr);
+    nrg->markRemoved(true);
 }
 
 void GameScene::createSplitter(Vec2 pos) {
@@ -894,7 +911,6 @@ void GameScene::beginContact(b2Contact* contact) {
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        bool removing = false;
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
@@ -922,21 +938,25 @@ void GameScene::beginContact(b2Contact* contact) {
                 LumiaModel*  lum = ((LumiaModel*)bd2);
                 _posrad = lum->getRadius()+1;
                 _pospos = Vec2(lum->getPos().x,lum->getPos().y);
-                removing = true;
-                _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
-                ((EnergyModel*)bd1)->dispose();
-                ((EnergyModel*)bd1)->markRemoved(true);
+                _removinglumia = lumia;
+                for (const std::shared_ptr<EnergyModel> &nrg : _energies) {
+                    if (nrg.get() == bd1) {
+                        setRemoveEnergy(nrg);
+                    }
             }
+        }
         }
         else if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
             if (!(bd2->isRemoved())) {
                 LumiaModel*  lum = ((LumiaModel*)bd1);
                 _posrad = lum->getRadius()+1;
                 _pospos = Vec2(lum->getPos().x,lum->getPos().y);
-                removing = true;
-                _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
-                ((EnergyModel*)bd2)->dispose();
-                ((EnergyModel*)bd2)->markRemoved(true);
+                _removinglumia = lumia;
+                for (const std::shared_ptr<EnergyModel> &nrg : _energies) {
+                    if (nrg.get() == bd2) {
+                        setRemoveEnergy(nrg);
+                    }
+            }
             }
         }
         
@@ -947,11 +967,9 @@ void GameScene::beginContact(b2Contact* contact) {
             std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
 		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
 	    }
-        if (removing) {
-            removeLumia(lumia);
-        }
     }
 }
+
 
 /**
  * Callback method for the start of a collision
