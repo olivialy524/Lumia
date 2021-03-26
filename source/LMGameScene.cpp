@@ -900,6 +900,69 @@ Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocit
 
 #pragma mark -
 #pragma mark Collision Handling
+
+void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia) {
+    // Lumia body remains if above min size, otherwise kill Lumia body
+    if (newRadius >= MIN_LUMIA_RADIUS) {
+        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
+        struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+        _lumiasToCreate.push_back(lumiaNew);
+    } else {
+        // if avatar is killed, player is given control of nearest Lumia body
+        if (lumia == _avatar) {
+            float minDistance = FLT_MAX;
+            std::shared_ptr<LumiaModel> closestLumia = NULL;
+            for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+                if (lumiaOther == lumia) {
+                    continue;
+                }
+
+                float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestLumia = lumiaOther;
+                }
+            }
+
+            if (closestLumia != NULL) {
+                _avatar = closestLumia;
+            }
+        }
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+    }
+}
+
+void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia) {
+    _energiesToRemove.push_back(energy);
+    energy->setRemoved(true);
+
+    float newRadius = lumia->getRadius() + 1.0f;
+    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
+    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+
+    _lumiasToRemove.push_back(lumia);
+    lumia->setRemoved(true);
+    _lumiasToCreate.push_back(lumiaNew);
+}
+
+void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
+    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
+    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+
+    _lumiasToRemove.push_back(lumia);
+    lumia->setRemoved(true);
+    _lumiasToRemove.push_back(lumia2);
+    lumia2->setRemoved(true);
+
+    _lumiasToCreate.push_back(lumiaNew);
+}
+
+
 /**
  * Processes the start of a collision
  *
@@ -931,81 +994,16 @@ void GameScene::beginContact(b2Contact* contact) {
             // Lumia needs enough size to light up a plant and plant must not already be lit
             if (!((Plant*)bd1)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd1)->lightUp();
-                
-                // Lumia body remains if above min size, otherwise kill Lumia body
-                if (newRadius >= MIN_LUMIA_RADIUS) {
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToCreate.push_back(lumiaNew);
-                } else {
-                    // if avatar is killed, player is given control of nearest Lumia body
-                    if (lumia == _avatar) {
-                        float minDistance = FLT_MAX;
-                        std::shared_ptr<LumiaModel> closestLumia = NULL;
-                        for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
-                            if (lumiaOther == lumia) {
-                                continue;
-                            }
-
-                            float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                closestLumia = lumiaOther;
-                            }
-                        }
-
-                        if (closestLumia != NULL) {
-                            _avatar = closestLumia;
-                        }
-                    }
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                }
+                processPlantLumiaCollision(newRadius, lumia);
             }
-
             break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             float newRadius = lumia->getRadius() - 0.25f;
 
             if (!((Plant*)bd2)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd2)->lightUp();
-
-                if (newRadius >= MIN_LUMIA_RADIUS) {
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToCreate.push_back(lumiaNew);
-                } else {
-                    // if avatar is killed, player is given control of nearest Lumia body
-                    if (lumia == _avatar) {
-                        float minDistance = FLT_MAX;
-                        std::shared_ptr<LumiaModel> closestLumia = NULL;
-                        for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
-                            if (lumiaOther == lumia) {
-                                continue;
-                            }
-
-                            float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                closestLumia = lumiaOther;
-                            }
-                        }
-
-                        if (closestLumia != NULL) {
-                            _avatar = closestLumia;
-                        }
-                    }
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                }
+                processPlantLumiaCollision(newRadius, lumia);
             }
-
             break;
         }
 
@@ -1026,17 +1024,7 @@ void GameScene::beginContact(b2Contact* contact) {
         if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd1 && !energy->getRemoved()) {
-                    _energiesToRemove.push_back(energy);
-                    energy->setRemoved(true);
-
-                    float newRadius = lumia->getRadius() + 1.0f;
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToCreate.push_back(lumiaNew);
-
+                    processEnergyLumiaCollision(energy, lumia);
                     break;
                 }
             }
@@ -1045,21 +1033,10 @@ void GameScene::beginContact(b2Contact* contact) {
         } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
-                    _energiesToRemove.push_back(energy);
-                    energy->setRemoved(true);
-
-                    float newRadius = lumia->getRadius() + 1.0f;
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToCreate.push_back(lumiaNew);
-
+                    processEnergyLumiaCollision(energy, lumia);
                     break;
                 }
             }
-
             break;
         }
         
@@ -1067,17 +1044,7 @@ void GameScene::beginContact(b2Contact* contact) {
         if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
-                    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToRemove.push_back(lumia2);
-                    lumia2->setRemoved(true);
-
-                    _lumiasToCreate.push_back(lumiaNew);
-
+                    processLumiaLumiaCollision(lumia, lumia2);
                     break;
                 }
             }
@@ -1086,21 +1053,10 @@ void GameScene::beginContact(b2Contact* contact) {
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
-                    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
-                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
-                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
-
-                    _lumiasToRemove.push_back(lumia);
-                    lumia->setRemoved(true);
-                    _lumiasToRemove.push_back(lumia2);
-                    lumia2->setRemoved(true);
-
-                    _lumiasToCreate.push_back(lumiaNew);
-
+                    processLumiaLumiaCollision(lumia, lumia2);
                     break;
                 }
             }
-
             break;
         }
 

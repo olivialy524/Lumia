@@ -273,6 +273,16 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+
+    /** Processes a collision between Lumia and a magical plant */
+    void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
+
+    /** Processes a collision between Lumia and an energy item */
+    void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
+
+    /** Processes a collision between Lumia and another Lumia */
+    void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
+
 	/**
 	* Processes the start of a collision
 	*
