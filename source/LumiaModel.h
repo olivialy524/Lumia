@@ -347,7 +347,11 @@ public:
         
     }
     
-    LumiaState getLumiaState(){
+    void setState(LumiaState state){
+        _state = state;
+    }
+    
+    LumiaState getState(){
         return _state;
     }
     
@@ -392,6 +396,8 @@ public:
     void setMerging(bool value) { _isMerging = value; }
     
     bool isMerging() const {return _isMerging;}
+    
+    
     /**
      * Returns true if the Lumia is on the ground.
      *

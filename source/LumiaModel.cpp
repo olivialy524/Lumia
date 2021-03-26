@@ -58,6 +58,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         
         // Gameplay attributes
         _isGrounded = false;
+        _state = Idle;
         
         _radius = radius;
         return true;

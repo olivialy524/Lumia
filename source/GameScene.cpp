@@ -314,10 +314,6 @@ void GameScene::reset() {
         e->dispose();
     }
     _energies.clear();
-    for (const std::shared_ptr<Splitter> &s : _splitters) {
-        s->dispose();
-    }
-    _splitters.clear();
     setFailure(false);
     setComplete(false);
     populate();
@@ -412,15 +408,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
-#pragma mark : Splitter
-    std::shared_ptr<cugl::JsonValue> splitters = _leveljson->get("splitters");
-    for (int i = 0; i < splitters->size(); i++) {
-        std::shared_ptr<cugl::JsonValue> split = splitters->get(i);
-        float sx = split->getFloat("posx");
-        float sy = split->getFloat("posy");
-        Vec2 spos = Vec2(sx, sy);
-        createSplitter(spos);
-    }
 #pragma mark : Plant
     std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
     for (int i = 0; i < plants->size(); i++) {
@@ -445,7 +432,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
-    _avatar-> setSplitting(false);
     _avatar-> setFixedRotation(false);
     _lumiaList.push_back(_avatar);
     
@@ -524,15 +510,6 @@ void GameScene::update(float dt) {
         checkWin();
     }
     
-    for (const std::shared_ptr<Splitter> &s : _splitters) {
-        if (s->getCooldown() != 0.0) {
-            s->setCooldown(s->getCooldown() + 1);
-            if (s->getCooldown() >= 60.0) {
-                s->setCooldown(0.0);
-            }
-        }
-    }
-
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
@@ -570,44 +547,30 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    //_avatar->setSplitting(_input.didSplit());
-    _avatar->setMerging(_input.didMerge());
-
-    // attempt to make non avatar controlled Lumias react to splitting too
-    /*for (auto & lumia : _lumiaList) {
-        if (lumia->isSplitting()) {
-            float radius = lumia->getRadius() / 1.4f;
-            Vec2 pos = lumia->getPosition();
-            std::shared_ptr<LumiaModel> temp = lumia;
-
-            std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos + Vec2(0.5f, 0.0f));
-            temp2->setSplitting(false);
-
-            if (lumia == _avatar) {
-                _avatar = temp2;
-            }
-
-            std::shared_ptr<LumiaModel> temp3 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
-            temp3->setSplitting(false);
-
-            removeLumia(temp);
-        }
-    }*/
-    if (_avatar->isSplitting()) {
-        float radius = _avatar->getRadius() / 1.4f;
-        Vec2 pos = _avatar->getPosition();
-        std::shared_ptr<LumiaModel> temp = _avatar;
-        _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
-        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
-        temp2->setSplitting(false);
-        removeLumia(temp);
-        _avatar->setSplitting(false);
-    } else if (_avatar->isMerging()){
-        // find all lumias close enough to _avatar, push them into the direction of lumia
-        // once they contact, merge.
-        mergeLumiasNearby();
+    if(_input.didMerge()){
+        _avatar->setState(LumiaModel::LumiaState::Merging);
+    }else if (_input.didSplit()){
+        _avatar->setState(LumiaModel::LumiaState::Splitting);
     }
     
+    switch (_avatar->getState()){
+        case LumiaModel::LumiaState::Splitting:{
+            float radius = _avatar->getRadius() / 1.4f;
+            Vec2 pos = _avatar->getPosition();
+            std::shared_ptr<LumiaModel> temp = _avatar;
+            _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
+            std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
+            removeLumia(temp);
+            break;
+        }
+        case LumiaModel::LumiaState::Merging:{
+            mergeLumiasNearby();
+            break;
+        }
+        case LumiaModel::LumiaState::Idle:{
+            break;
+        }
+    }
 	// Turn the physics engine crank.
 	_world->update(dt);
 
@@ -731,24 +694,6 @@ void GameScene::createEnergy(Vec2 pos) {
     
 }
 
-void GameScene::createSplitter(Vec2 pos) {
-    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
-    cugl::Size size = Size(.5,.5);
-    std::shared_ptr<Splitter> split = Splitter::alloc(pos, size);
-    split->setGravityScale(0);
-    split->setBodyType(b2_staticBody);
-    split->setSensor(true);
-    split->setName("split_");
-    cugl::Rect rectangle = Rect(pos, size);
-    cugl::Poly2 poly = Poly2(rectangle);
-    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
-    sprite->setScale(_scale);
-    split->setNode(sprite);
-    addObstacle(split,sprite,0);
-    _splitters.push_front(split);
-    
-}
 void GameScene::checkWin() {
     for (auto const& i : _plants) {
         if (!(i->getIsLit())) {
@@ -871,18 +816,6 @@ void GameScene::beginContact(b2Contact* contact) {
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
-            }
-        }
-
-        if (bd1->getName() == "split_" && bd2 == lumia.get()) {
-            if (((Splitter*)bd1)->getCooldown() == 0.0) {
-                ((LumiaModel*)bd2)->setSplitting(true);
-                ((Splitter*)bd1)->setCooldown(0.1);
-            }
-        } else if (bd2->getName() == "split_" && bd1 == lumia.get()) {
-            if (((Splitter*)bd2)->getCooldown() == 0.0) {
-                ((LumiaModel*)bd1)->setSplitting(true);
-                ((Splitter*)bd2)->setCooldown(0.1);
             }
         }
 
