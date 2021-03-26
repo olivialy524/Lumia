@@ -72,6 +72,17 @@ float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
 float LUMIA_POS[] = { 2.5f, 5.0f};
 
 #pragma mark -
+#pragma mark Gameplay Constants
+/** The minimum size a Lumia can be before it is killed */
+#define MIN_LUMIA_RADIUS 0.25f
+/** The amount of size a Lumia will lose when lighting up a magical plant */
+#define PLANT_SIZE_COST 0.25f
+/** The amount of size a Lumia will gain when consuming an energy item */
+#define ENERGY_SIZE_INC 1.0f
+/** The ratio of size Lumia is split into */
+#define LUMIA_SPLIT_RATIO 1.4f
+
+#pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
 #define DEFAULT_GRAVITY -12.0f
@@ -88,8 +99,7 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
-/** The minimum size a Lumia can be before it is killed */
-#define MIN_LUMIA_RADIUS 0.25f
+
 
 
 #pragma mark -
@@ -631,7 +641,7 @@ void GameScene::update(float dt) {
         }
     }*/
     if (_avatar->isSplitting()) {
-        float radius = _avatar->getRadius() / 1.4f;
+        float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
 
         // prevent player from splitting if doing so will make Lumia too small
         if (radius > MIN_LUMIA_RADIUS) {
@@ -904,7 +914,7 @@ Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocit
 void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia) {
     // Lumia body remains if above min size, otherwise kill Lumia body
     if (newRadius >= MIN_LUMIA_RADIUS) {
-        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
+        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - PLANT_SIZE_COST);
         struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
         _lumiasToRemove.push_back(lumia);
@@ -940,8 +950,8 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
     _energiesToRemove.push_back(energy);
     energy->setRemoved(true);
 
-    float newRadius = lumia->getRadius() + 1.0f;
-    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
+    float newRadius = lumia->getRadius() + ENERGY_SIZE_INC;
+    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + ENERGY_SIZE_INC);
     struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
     _lumiasToRemove.push_back(lumia);
@@ -950,7 +960,7 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 }
 
 void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
-    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
+    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
     Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
     struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
 
@@ -989,7 +999,7 @@ void GameScene::beginContact(b2Contact* contact) {
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         // handle collision between magical plant and Lumia
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
-            float newRadius = lumia->getRadius() - 0.25f;
+            float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
 
             // Lumia needs enough size to light up a plant and plant must not already be lit
             if (!((Plant*)bd1)->getIsLit() && newRadius > 0.0f) {
@@ -998,7 +1008,7 @@ void GameScene::beginContact(b2Contact* contact) {
             }
             break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
-            float newRadius = lumia->getRadius() - 0.25f;
+            float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
 
             if (!((Plant*)bd2)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd2)->lightUp();
