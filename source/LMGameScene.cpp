@@ -85,8 +85,11 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
-
+/** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
+
+/** The minimum size a Lumia can be before it is killed */
+#define MIN_LUMIA_RADIUS 0.25f
 
 
 #pragma mark -
@@ -629,16 +632,21 @@ void GameScene::update(float dt) {
     }*/
     if (_avatar->isSplitting()) {
         float radius = _avatar->getRadius() / 1.4f;
-        Vec2 pos = _avatar->getPosition();
-        Vec2 offset = Vec2(0.5f + radius, 0.0f);
 
-        // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
-        // http://www.iforce2d.net/b2dtut/world-querying
-        std::shared_ptr<LumiaModel> temp = _avatar;
-        createLumia(radius, pos + offset, true);
-        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset, false);
-        temp2->setSplitting(false);
-        removeLumia(temp);
+        // prevent player from splitting if doing so will make Lumia too small
+        if (radius > MIN_LUMIA_RADIUS) {
+            Vec2 pos = _avatar->getPosition();
+            Vec2 offset = Vec2(0.5f + radius, 0.0f);
+
+            // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+            // http://www.iforce2d.net/b2dtut/world-querying
+            std::shared_ptr<LumiaModel> temp = _avatar;
+            createLumia(radius, pos + offset, true);
+            std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset, false);
+            temp2->setSplitting(false);
+            removeLumia(temp);
+        }
+        
         _avatar->setSplitting(false);
     } else if (_avatar->isMerging()){
         // find all lumias close enough to _avatar, push them into the direction of lumia
@@ -653,7 +661,7 @@ void GameScene::update(float dt) {
 	_world->garbageCollect();
 
 	// Record failure if necessary.
-	if (!_failed && _avatar->getY() < 0) {
+	if (!_failed && _avatar->getY() < 0 || _lumiaList.size() == 0) {
 		setFailure(true);
 	}
     
@@ -918,30 +926,84 @@ void GameScene::beginContact(b2Contact* contact) {
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
         // handle collision between magical plant and Lumia
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
-            if (!((Plant*)bd1)->getIsLit()) {
+            float newRadius = lumia->getRadius() - 0.25f;
+
+            // Lumia needs enough size to light up a plant and plant must not already be lit
+            if (!((Plant*)bd1)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd1)->lightUp();
+                
+                // Lumia body remains if above min size, otherwise kill Lumia body
+                if (newRadius >= MIN_LUMIA_RADIUS) {
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
-                float newRadius = lumia->getRadius() - 0.25f;
-                Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
-                struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                    _lumiasToCreate.push_back(lumiaNew);
+                } else {
+                    // if avatar is killed, player is given control of nearest Lumia body
+                    if (lumia == _avatar) {
+                        float minDistance = FLT_MAX;
+                        std::shared_ptr<LumiaModel> closestLumia = NULL;
+                        for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+                            if (lumiaOther == lumia) {
+                                continue;
+                            }
 
-                _lumiasToRemove.push_back(lumia);
-                lumia->setRemoved(true);
-                _lumiasToCreate.push_back(lumiaNew);
+                            float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestLumia = lumiaOther;
+                            }
+                        }
+
+                        if (closestLumia != NULL) {
+                            _avatar = closestLumia;
+                        }
+                    }
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                }
             }
 
             break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
-            if (!((Plant*)bd2)->getIsLit()) {
+            float newRadius = lumia->getRadius() - 0.25f;
+
+            if (!((Plant*)bd2)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd2)->lightUp();
 
-                float newRadius = lumia->getRadius() - 0.25f;
-                Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
-                struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+                if (newRadius >= MIN_LUMIA_RADIUS) {
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
-                _lumiasToRemove.push_back(lumia);
-                lumia->setRemoved(true);
-                _lumiasToCreate.push_back(lumiaNew);
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                    _lumiasToCreate.push_back(lumiaNew);
+                } else {
+                    // if avatar is killed, player is given control of nearest Lumia body
+                    if (lumia == _avatar) {
+                        float minDistance = FLT_MAX;
+                        std::shared_ptr<LumiaModel> closestLumia = NULL;
+                        for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+                            if (lumiaOther == lumia) {
+                                continue;
+                            }
+
+                            float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestLumia = lumiaOther;
+                            }
+                        }
+
+                        if (closestLumia != NULL) {
+                            _avatar = closestLumia;
+                        }
+                    }
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                }
             }
 
             break;
