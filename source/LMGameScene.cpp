@@ -862,19 +862,9 @@ void GameScene::mergeLumiasNearby(){
         }
         
         Vec2 lumiaPos = lumia->getPosition();
-        float dist = avatarPos.distance(lumiaPos);
+        float dist = avatarPos.distanceSquared(lumiaPos);
 
-        // avatar and lumia body are already touching
-        if (dist <= lumia->getRadius() + _avatar->getRadius()){
-            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.4f;
-            Vec2 pos = _avatar->getPosition();
-            std::shared_ptr<LumiaModel> temp = _avatar;
-            removeLumia(temp);
-            // lumia is null, probably because iteration messed up from removing temp?
-            removeLumia(lumia);
-            createLumia(radius, pos + Vec2(0.5f, 0.0f), true);
-            break;
-        } else if (dist < 10.0f){
+        if (dist < 100.0f){
             //set lumia velocity to move toward avatar
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
@@ -931,9 +921,8 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
 
-                LumiaModel* lum = ((LumiaModel*)bd2);
-                float newRadius = lum->getRadius() - 0.25f;
-                Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
+                float newRadius = lumia->getRadius() - 0.25f;
+                Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
                 struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                 _lumiasToRemove.push_back(lumia);
@@ -946,9 +935,8 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
 
-                LumiaModel* lum = ((LumiaModel*)bd1);
-                float newRadius = lum->getRadius() - 0.25f;
-                Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
+                float newRadius = lumia->getRadius() - 0.25f;
+                Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - 0.25f);
                 struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                 _lumiasToRemove.push_back(lumia);
@@ -979,9 +967,8 @@ void GameScene::beginContact(b2Contact* contact) {
                     _energiesToRemove.push_back(energy);
                     energy->setRemoved(true);
 
-                    LumiaModel* lum = ((LumiaModel*)bd2);
-                    float newRadius = lum->getRadius() + 1.0f;
-                    Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y + 1.0f);
+                    float newRadius = lumia->getRadius() + 1.0f;
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
                     struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                     _lumiasToRemove.push_back(lumia);
@@ -999,9 +986,8 @@ void GameScene::beginContact(b2Contact* contact) {
                     _energiesToRemove.push_back(energy);
                     energy->setRemoved(true);
 
-                    LumiaModel* lum = ((LumiaModel*)bd1);
-                    float newRadius = lum->getRadius() + 1.0f;
-                    Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y + 1.0f);
+                    float newRadius = lumia->getRadius() + 1.0f;
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + 1.0f);
                     struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                     _lumiasToRemove.push_back(lumia);
@@ -1015,6 +1001,47 @@ void GameScene::beginContact(b2Contact* contact) {
             break;
         }
         
+        // handle collision between two Lumias
+        if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
+            for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
+                if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
+                    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                    _lumiasToRemove.push_back(lumia2);
+                    lumia2->setRemoved(true);
+
+                    _lumiasToCreate.push_back(lumiaNew);
+
+                    break;
+                }
+            }
+
+            break;
+        } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
+            for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
+                if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
+                    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / 1.4f;
+                    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+
+                    _lumiasToRemove.push_back(lumia);
+                    lumia->setRemoved(true);
+                    _lumiasToRemove.push_back(lumia2);
+                    lumia2->setRemoved(true);
+
+                    _lumiasToCreate.push_back(lumiaNew);
+
+                    break;
+                }
+            }
+
+            break;
+        }
+
         // handle detection of Lumia and ground
 	    if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
 		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
