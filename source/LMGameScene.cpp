@@ -555,7 +555,7 @@ void GameScene::update(float dt) {
 
     if (_lumiasToCreate.size() > 0) {
         for (const LumiaBody& lumia : _lumiasToCreate) {
-            createLumia(lumia.radius, lumia.position);
+            createLumia(lumia.radius, lumia.position, lumia.isAvatar);
         }
         _lumiasToCreate.clear();
     }
@@ -635,8 +635,8 @@ void GameScene::update(float dt) {
         // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
         // http://www.iforce2d.net/b2dtut/world-querying
         std::shared_ptr<LumiaModel> temp = _avatar;
-        _avatar = createLumia(radius, pos + offset);
-        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset);
+        createLumia(radius, pos + offset, true);
+        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset, false);
         temp2->setSplitting(false);
         removeLumia(temp);
         _avatar->setSplitting(false);
@@ -799,7 +799,7 @@ void GameScene::checkWin() {
 /**
  * Add a new Lumia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
@@ -812,6 +812,11 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     _lumiaList.push_back(lumia);
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[lumia.get()] = fixtures;
+
+    if (isAvatar) {
+        _avatar = lumia;
+    }
+
     return lumia;
 }
 
@@ -867,7 +872,7 @@ void GameScene::mergeLumiasNearby(){
             removeLumia(temp);
             // lumia is null, probably because iteration messed up from removing temp?
             removeLumia(lumia);
-            _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
+            createLumia(radius, pos + Vec2(0.5f, 0.0f), true);
             break;
         } else if (dist < 10.0f){
             //set lumia velocity to move toward avatar
@@ -929,12 +934,14 @@ void GameScene::beginContact(b2Contact* contact) {
                 LumiaModel* lum = ((LumiaModel*)bd2);
                 float newRadius = lum->getRadius() - 0.25f;
                 Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
-                struct LumiaBody lumiaNew = { newPosition, newRadius };
+                struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                 _lumiasToRemove.push_back(lumia);
                 lumia->setRemoved(true);
                 _lumiasToCreate.push_back(lumiaNew);
             }
+
+            break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
@@ -942,12 +949,14 @@ void GameScene::beginContact(b2Contact* contact) {
                 LumiaModel* lum = ((LumiaModel*)bd1);
                 float newRadius = lum->getRadius() - 0.25f;
                 Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
-                struct LumiaBody lumiaNew = { newPosition, newRadius };
+                struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                 _lumiasToRemove.push_back(lumia);
                 lumia->setRemoved(true);
                 _lumiasToCreate.push_back(lumiaNew);
             }
+
+            break;
         }
 
         // handle collision between splitter item and Lumia
@@ -973,7 +982,7 @@ void GameScene::beginContact(b2Contact* contact) {
                     LumiaModel* lum = ((LumiaModel*)bd2);
                     float newRadius = lum->getRadius() + 1.0f;
                     Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y + 1.0f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius };
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                     _lumiasToRemove.push_back(lumia);
                     lumia->setRemoved(true);
@@ -982,6 +991,8 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
+
+            break;
         } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
@@ -991,7 +1002,7 @@ void GameScene::beginContact(b2Contact* contact) {
                     LumiaModel* lum = ((LumiaModel*)bd1);
                     float newRadius = lum->getRadius() + 1.0f;
                     Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y + 1.0f);
-                    struct LumiaBody lumiaNew = { newPosition, newRadius };
+                    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
 
                     _lumiasToRemove.push_back(lumia);
                     lumia->setRemoved(true);
@@ -1000,6 +1011,8 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
+
+            break;
         }
         
         // handle detection of Lumia and ground

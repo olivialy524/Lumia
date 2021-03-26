@@ -70,6 +70,8 @@ protected:
         cugl::Vec2 position;
         /** The radius of the Lumia body */
         float radius;
+        /** Whether or not the Lumia body should be controlled by the player */
+        bool isAvatar;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -319,7 +321,7 @@ public:
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos);
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar);
 
     /**
     * Removes the input Lumia from the world.
