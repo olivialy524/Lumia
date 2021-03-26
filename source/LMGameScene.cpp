@@ -925,10 +925,28 @@ void GameScene::beginContact(b2Contact* contact) {
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
+
+                LumiaModel* lum = ((LumiaModel*)bd2);
+                float newRadius = lum->getRadius() - 0.25f;
+                Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
+                struct LumiaBody lumiaNew = { newPosition, newRadius };
+
+                _lumiasToRemove.push_back(lumia);
+                lumia->setRemoved(true);
+                _lumiasToCreate.push_back(lumiaNew);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
+
+                LumiaModel* lum = ((LumiaModel*)bd1);
+                float newRadius = lum->getRadius() - 0.25f;
+                Vec2 newPosition = Vec2(lum->getPosition().x, lum->getPosition().y - 0.25f);
+                struct LumiaBody lumiaNew = { newPosition, newRadius };
+
+                _lumiasToRemove.push_back(lumia);
+                lumia->setRemoved(true);
+                _lumiasToCreate.push_back(lumiaNew);
             }
         }
 
