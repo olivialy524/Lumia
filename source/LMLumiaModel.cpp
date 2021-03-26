@@ -72,6 +72,7 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
  */
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
+    _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(.1 / radius);
@@ -82,6 +83,10 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         
         // Gameplay attributes
         _isGrounded = false;
+        _isSplitting = false;
+        _velocity = Vec2::ZERO;
+        _isLaunching = false;
+        _isMerging = false;
         
         _radius = radius;
         return true;
