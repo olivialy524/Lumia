@@ -13,15 +13,18 @@
 		3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */; };
 		3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */; };
 		3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */; };
+		3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
+		3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
+		3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
+		3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
+		3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
+		3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
 		613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
 		613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
-		613E8D312606ACA400900A39 /* Splitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* Splitter.cpp */; };
-		613E8D322606ACA400900A39 /* Splitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* Splitter.cpp */; };
-		613E8D332606ACA400900A39 /* Splitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D302606ACA400900A39 /* Splitter.cpp */; };
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
@@ -141,12 +144,14 @@
 		3A534B0225FB258300CDAE69 /* PlantNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlantNode.h; sourceTree = "<group>"; };
 		3A9D6A1726082E9100898D04 /* BackgroundNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundNode.h; sourceTree = "<group>"; };
 		3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundNode.cpp; sourceTree = "<group>"; };
+        	3A9D6A50260C3DE800898D04 /* LevelModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelModel.h; sourceTree = "<group>"; };
+		3A9D6A51260C3DF700898D04 /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
+		3A9D6A5B260C415D00898D04 /* Tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
+		3A9D6A62260C417100898D04 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		613C1CB225FA90CD00B213B8 /* Plant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plant.h; sourceTree = "<group>"; };
 		613C1CB625FA90D800B213B8 /* Plant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
 		613E8D202602A93800900A39 /* EnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnergyModel.h; sourceTree = "<group>"; };
 		613E8D242602A94D00900A39 /* EnergyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyModel.cpp; sourceTree = "<group>"; };
-		613E8D2C2606ABE500900A39 /* Splitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Splitter.h; sourceTree = "<group>"; };
-		613E8D302606ACA400900A39 /* Splitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Splitter.cpp; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LumiaNode.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,8 +320,6 @@
 				EBB4B54C2040912400238092 /* LumiaApp.h */,
 				EBB4B5492040912400238092 /* LumiaApp.cpp */,
 				EBB4B5542040912400238092 /* LoadingScene.h */,
-				613E8D2C2606ABE500900A39 /* Splitter.h */,
-				613E8D302606ACA400900A39 /* Splitter.cpp */,
 				EBB4B5502040912400238092 /* LoadingScene.cpp */,
 				EBB4B54F2040912400238092 /* GameScene.h */,
 				EBB4B5532040912400238092 /* GameScene.cpp */,
@@ -334,6 +337,10 @@
 				3A534B0225FB258300CDAE69 /* PlantNode.h */,
 				3A9D6A1726082E9100898D04 /* BackgroundNode.h */,
 				3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */,
+				3A9D6A50260C3DE800898D04 /* LevelModel.h */,
+				3A9D6A51260C3DF700898D04 /* LevelModel.cpp */,
+				3A9D6A5B260C415D00898D04 /* Tile.cpp */,
+				3A9D6A62260C417100898D04 /* Tile.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -604,11 +611,12 @@
 				3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
-				613E8D322606ACA400900A39 /* Splitter.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFD25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
-			);
+				3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */,
+				3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */,
+		);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		EB5D204923FC73FF007D16CD /* Sources */ = {
@@ -621,12 +629,13 @@
 				EB5D20A623FC77C8007D16CD /* LumiaApp.cpp in Sources */,
 				C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */,
 				3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */,
-				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
+        			EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
-				613E8D332606ACA400900A39 /* Splitter.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFE25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
+        			3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */,
+				3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,12 +649,13 @@
 				EBB4B55D2040912400238092 /* InputController.cpp in Sources */,
 				EBB4B5582040912400238092 /* LumiaApp.cpp in Sources */,
 				3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */,
-				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
+        			C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
-				613E8D312606ACA400900A39 /* Splitter.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LoadingScene.cpp in Sources */,
+        			3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */,
+				3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

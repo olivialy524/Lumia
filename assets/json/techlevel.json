@@ -1,7 +1,7 @@
 {
     "level":
     {
-        "Lumia": {
+        "lumia": {
             "posx": 2.5,
             "posy": 17,
             "radius": 1
@@ -126,17 +126,6 @@
             "posx": 10,
             "posy": 10
             }
-        ],
-        "splitters": [
-            {
-            "posx": 21.25,
-            "posy": 16
-            },
-            {
-            "posx": 5.75,
-            "posy": 13
-            }
-            
         ]
     }
 }

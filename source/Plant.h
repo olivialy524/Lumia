@@ -11,14 +11,14 @@
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
+#include "PlantNode.h"
 
 #pragma mark -
 #pragma mark Plant Model
 class Plant : public cugl::physics2::BoxObstacle {
 protected:
     /** The scene graph node for the Bullet. */
-    std::shared_ptr<cugl::scene2::SceneNode> _lampNode;
-    std::shared_ptr<cugl::scene2::SceneNode> _lampLitNode;
+    std::shared_ptr<PlantNode> _plantNode;
     std::shared_ptr<cugl::scene2::SceneNode> _node;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawScale;
@@ -69,6 +69,11 @@ public:
         return (result->init(pos, size) ? result : nullptr);
     }
 
+    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos) {
+        std::shared_ptr<Plant> result = std::make_shared<Plant>();
+        return (result->init(pos) ? result : nullptr);
+    }
+
 #pragma mark -
 #pragma mark Animation
     /**
@@ -88,14 +93,9 @@ public:
      * @param node  The scene graph node representing this Bullet, which has
      *              been added to the world node already.
      */
-    void setLampNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _lampNode = node;
-        _node->addChild(_lampNode);
-    }
-    
-    void setLampLitNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _lampLitNode = node;
-        _node->addChild(_lampLitNode);
+    void setLampNode(const std::shared_ptr<PlantNode>& node) {
+        _plantNode = node;
+        _node->addChild(_plantNode);
     }
     
     void setNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
@@ -120,7 +120,7 @@ public:
     }
 
 #pragma mark -
-#pragma mark Physics Methods
+#pragma mark State Methods
 
     bool getIsLit() {
         return _isLit;
@@ -133,4 +133,5 @@ public:
         _isLit = false;
     }
 };
-#endif /* LMPlant_h */
+
+#endif /* __LM_PLANT_H__ */

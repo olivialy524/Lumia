@@ -10,7 +10,6 @@
 #define PlantNode_h
 
 #include <cugl/cugl.h>
-#endif /* LMPlantNode_h */
 using namespace cugl;
 
 class PlantNode : public cugl::scene2::PolygonNode {
@@ -34,4 +33,4 @@ public:
 
 };
 
-
+#endif /* __LM_PLANT_NODE_H__ */

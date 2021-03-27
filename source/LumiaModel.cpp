@@ -16,7 +16,7 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
     _sceneNode = scene2::SceneNode::allocWithBounds(lumia->getSize());
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
    _node = LumiaNode::alloc(lumia, 1, 1, 1);
@@ -48,6 +48,7 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
  */
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
+    _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(.1 / radius);
@@ -59,6 +60,8 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         // Gameplay attributes
         _isGrounded = false;
         _state = Idle;
+        _velocity = Vec2::ZERO;
+        _isLaunching = false;
         
         _radius = radius;
         return true;
@@ -94,29 +97,6 @@ void LumiaModel::createFixtures() {
     _sensorFixture->SetUserData(getSensorName());
 }
 
-
-void LumiaModel::split(){
-//    CULog("mass pre split %f", _body->GetMass());
-    _radius = _radius / 1.4f;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-//    CULog("mass post split %f", _body->GetMass());
-    _node->setScale(_node->getScale()/1.4f);
-}
-
-void LumiaModel::merge(float addRadius){
-//    CULog("mass pre merge %f", _body->GetMass());
-    float newRadius = 0.4f * addRadius + _radius;
-    float scale = newRadius / _radius;
-    _radius = newRadius;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-    _node->setScale(_node->getScale()*scale);
-    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
-//    CULog("mass post merge %f", _body->GetMass());
-}
 /**
  * Release the fixtures for this body, reseting the shape
  *
@@ -160,11 +140,6 @@ void LumiaModel::applyForce() {
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
     }
-    if (isSplitting()){
-        b2Vec2 force(_splitForce.x, _splitForce.y);
-        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    }
-    
     if (!isLaunching() && isGrounded()) {
         // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
         b2Vec2 forceX(-getDamping() * getVX(), 0);
@@ -222,3 +197,6 @@ void LumiaModel::resetDebug() {
 
 
 
+void LumiaModel::setDrawScale(float scale){
+    _drawScale = scale;
+}
