@@ -16,7 +16,7 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos) {
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
     _sceneNode = scene2::SceneNode::allocWithBounds(lumia->getSize());
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
    _node = LumiaNode::alloc(lumia, 1, 1, 1);
@@ -197,3 +197,6 @@ void LumiaModel::resetDebug() {
 
 
 
+void LumiaModel::setDrawScale(float scale){
+    _drawScale = scale;
+}
