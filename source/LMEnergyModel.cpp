@@ -11,7 +11,17 @@
 #include <cugl/physics2/CUBoxObstacle.h>
 #include "LMEnergyModel.h"
 
+bool EnergyModel::init(const cugl::Vec2 pos, cugl::Size size) {
+    _removed = false;
+
+    if (BoxObstacle::init(pos, size)) {
+        return true;
+    }
+    return false;
+}
+
 void EnergyModel::dispose() {
     _node = nullptr;
+    _sceneNode = nullptr;
 }
 

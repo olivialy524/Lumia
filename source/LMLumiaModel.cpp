@@ -72,6 +72,7 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia, Vec2 initPos
  */
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
+    _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(.1 / radius);
@@ -82,6 +83,10 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         
         // Gameplay attributes
         _isGrounded = false;
+        _isSplitting = false;
+        _velocity = Vec2::ZERO;
+        _isLaunching = false;
+        _isMerging = false;
         
         _radius = radius;
         return true;
@@ -117,29 +122,6 @@ void LumiaModel::createFixtures() {
     _sensorFixture->SetUserData(getSensorName());
 }
 
-
-void LumiaModel::split(){
-//    CULog("mass pre split %f", _body->GetMass());
-    _radius = _radius / 1.4f;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-//    CULog("mass post split %f", _body->GetMass());
-    _node->setScale(_node->getScale()/1.4f);
-}
-
-void LumiaModel::merge(float addRadius){
-//    CULog("mass pre merge %f", _body->GetMass());
-    float newRadius = 0.4f * addRadius + _radius;
-    float scale = newRadius / _radius;
-    _radius = newRadius;
-    WheelObstacle::setRadius(_radius);
-    resetMass();
-    
-    _node->setScale(_node->getScale()*scale);
-    _node->setPosition(Vec2(-getRadius()*_drawScale, -getRadius()*_drawScale));
-//    CULog("mass post merge %f", _body->GetMass());
-}
 /**
  * Release the fixtures for this body, reseting the shape
  *

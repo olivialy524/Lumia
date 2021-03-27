@@ -50,6 +50,8 @@ protected:
     bool _isSplitting;
     /** Whether Lumia is merging nearby bodies together */
     bool _isMerging;
+    /* Whether or not the Lumia body is due to be or has been removed */
+    bool _removed;
     /** Radius of Lumia's body */
     float _radius;
 	/** Ground sensor to represent our feet */
@@ -66,7 +68,7 @@ protected:
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
     
-    Vec2 _splitForce;
+    cugl::Vec2 _splitForce;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -295,10 +297,6 @@ public:
         _sceneNode = node;
         _sceneNode->setPosition(getPosition() * _drawScale);
     }
-    
-    void split();
-    
-    void merge(float addRadius);
 
     
 #pragma mark -
@@ -412,6 +410,11 @@ public:
      */
     std::string* getSensorName() { return &_sensorName; }
 
+    void setRemoved(bool value) { _removed = value; }
+
+    /* Returns whether or not this energy item is due to be or has been removed */
+    bool getRemoved() { return _removed; }
+
     
 #pragma mark -
 #pragma mark Physics Methods
@@ -450,4 +453,4 @@ public:
     void applyForce();
 };
 
-#endif /* __PF_LUMIA_MODEL_H__ */
+#endif /* __LM_LUMIA_MODEL_H__ */

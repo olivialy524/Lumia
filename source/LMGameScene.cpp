@@ -72,6 +72,17 @@ float PLATFORMS[PLATFORM_COUNT][PLATFORM_VERTS] = {
 float LUMIA_POS[] = { 2.5f, 5.0f};
 
 #pragma mark -
+#pragma mark Gameplay Constants
+/** The minimum size a Lumia can be before it is killed */
+#define MIN_LUMIA_RADIUS 0.25f
+/** The amount of size a Lumia will lose when lighting up a magical plant */
+#define PLANT_SIZE_COST 0.25f
+/** The amount of size a Lumia will gain when consuming an energy item */
+#define ENERGY_SIZE_INC 1.0f
+/** The ratio of size Lumia is split into */
+#define LUMIA_SPLIT_RATIO 1.4f
+
+#pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
 #define DEFAULT_GRAVITY -12.0f
@@ -85,8 +96,10 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
 #define EXIT_COUNT      240
-
+/** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
+
+
 
 
 #pragma mark -
@@ -105,6 +118,7 @@ float LUMIA_POS[] = { 2.5f, 5.0f};
 #define PLATFORM_NAME   "platform"
 
 #define SPLIT_NAME      "split"
+#define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
 /** The message for winning the game */
@@ -336,19 +350,26 @@ void GameScene::reset() {
     }
     _lumiaList.clear();
     _avatar = nullptr;
-    for (const std::shared_ptr<Plant> &p : _plants) {
+
+    for (const std::shared_ptr<Plant> &p : _plantList) {
         p->dispose();
     }
-    _plants.clear();
+    _plantList.clear();
     
-    for (const std::shared_ptr<EnergyModel> &e : _energies) {
+    for (const std::shared_ptr<EnergyModel> &e : _energyList) {
         e->dispose();
     }
-    _energies.clear();
-    for (const std::shared_ptr<Splitter> &s : _splitters) {
+    _energyList.clear();
+
+    for (const std::shared_ptr<Splitter> &s : _splitterList) {
         s->dispose();
     }
-    _splitters.clear();
+    _splitterList.clear();
+
+    _lumiasToRemove.clear();
+    _lumiasToCreate.clear();
+    _energiesToRemove.clear();
+
     setFailure(false);
     setComplete(false);
     populate();
@@ -368,38 +389,6 @@ void GameScene::reset() {
 void GameScene::populate() {
 std::shared_ptr<Texture> image;
 std::shared_ptr<scene2::PolygonNode> sprite;
-    
-#pragma mark : Walls
-	// All walls and platforms share the same texture
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
-	std::string wname = "wall";
-//	for (int ii = 0; ii < WALL_COUNT; ii++) {
-//		std::shared_ptr<physics2::PolygonObstacle> wallobj;
-//
-//		Poly2 wall(WALL[ii],WALL_VERTS);
-//		// Call this on a polygon to get a solid shape
-//		SimpleTriangulator triangulator;
-//		triangulator.set(wall);
-//		triangulator.calculate();
-//		wall.setIndices(triangulator.getTriangulation());
-//		wall.setGeometry(Geometry::SOLID);
-//
-//		wallobj = physics2::PolygonObstacle::alloc(wall);
-//		// You cannot add constant "".  Must stringify
-//		wallobj->setName(std::string(WALL_NAME)+cugl::strtool::to_string(ii));
-//		wallobj->setName(wname);
-//
-//		// Set the physics attributes
-//		wallobj->setBodyType(b2_staticBody);
-//		wallobj->setDensity(BASIC_DENSITY);
-//		wallobj->setFriction(BASIC_FRICTION);
-//		wallobj->setRestitution(BASIC_RESTITUTION);
-//		wallobj->setDebugColor(DEBUG_COLOR);
-//
-//		wall *= _scale;
-//		sprite = scene2::PolygonNode::allocWithTexture(image,wall);
-//		addObstacle(wallobj,sprite,1);  // All walls share the same texture
-//	}
 
 #pragma mark : Platforms
     std::shared_ptr<cugl::JsonValue> platforms = _leveljson->get("platforms");
@@ -431,9 +420,12 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setDebugColor(DEBUG_COLOR);
 
         platform *= _scale;
+        // All walls and platforms share the same texture
+        image = _assets->get<Texture>(EARTH_TEXTURE);
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
+
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
     for (int i = 0; i < energies->size(); i++) {
@@ -443,6 +435,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
+
 #pragma mark : Splitter
     std::shared_ptr<cugl::JsonValue> splitters = _leveljson->get("splitters");
     for (int i = 0; i < splitters->size(); i++) {
@@ -452,6 +445,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 spos = Vec2(sx, sy);
         createSplitter(spos);
     }
+
 #pragma mark : Plant
     std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
     for (int i = 0; i < plants->size(); i++) {
@@ -470,8 +464,9 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("Lumia");
     float lumx = lum->getFloat("posx");
     float lumy = lum->getFloat("posy");
-    float radius = lum->getFloat("radius");// change to value from jso
+    float radius = lum->getFloat("radius");
     Vec2 lumiaPos = Vec2(lumx,lumy);
+
 	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
     _avatar-> setTextures(image, lumiaPos);
     _avatar-> setName(LUMIA_NAME);
@@ -485,7 +480,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 
 //	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-//    AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
+//  AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -555,13 +550,34 @@ void GameScene::update(float dt) {
         checkWin();
     }
     
-    for (const std::shared_ptr<Splitter> &s : _splitters) {
+    for (const std::shared_ptr<Splitter> &s : _splitterList) {
         if (s->getCooldown() != 0.0) {
             s->setCooldown(s->getCooldown() + 1);
             if (s->getCooldown() >= 60.0) {
                 s->setCooldown(0.0);
             }
         }
+    }
+
+    if (_lumiasToRemove.size() > 0) {
+        for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
+            removeLumia(lumia);
+        }
+        _lumiasToRemove.clear();
+    }
+
+    if (_lumiasToCreate.size() > 0) {
+        for (const LumiaBody& lumia : _lumiasToCreate) {
+            createLumia(lumia.radius, lumia.position, lumia.isAvatar);
+        }
+        _lumiasToCreate.clear();
+    }
+
+    if (_energiesToRemove.size() > 0) {
+        for (const std::shared_ptr<EnergyModel>& energy : _energiesToRemove) {
+            removeEnergy(energy);
+        }
+        _energiesToRemove.clear();
     }
 
     if(_input.didSwitch()){
@@ -625,13 +641,22 @@ void GameScene::update(float dt) {
         }
     }*/
     if (_avatar->isSplitting()) {
-        float radius = _avatar->getRadius() / 1.4f;
-        Vec2 pos = _avatar->getPosition();
-        std::shared_ptr<LumiaModel> temp = _avatar;
-        _avatar = createLumia(radius, pos + Vec2(0.5f, 0.0f));
-        std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - Vec2(0.5f, 0.0f));
-        temp2->setSplitting(false);
-        removeLumia(temp);
+        float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
+
+        // prevent player from splitting if doing so will make Lumia too small
+        if (radius > MIN_LUMIA_RADIUS) {
+            Vec2 pos = _avatar->getPosition();
+            Vec2 offset = Vec2(0.5f + radius, 0.0f);
+
+            // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+            // http://www.iforce2d.net/b2dtut/world-querying
+            std::shared_ptr<LumiaModel> temp = _avatar;
+            createLumia(radius, pos + offset, true);
+            std::shared_ptr<LumiaModel> temp2 = createLumia(radius, pos - offset, false);
+            temp2->setSplitting(false);
+            removeLumia(temp);
+        }
+        
         _avatar->setSplitting(false);
     } else if (_avatar->isMerging()){
         // find all lumias close enough to _avatar, push them into the direction of lumia
@@ -646,7 +671,7 @@ void GameScene::update(float dt) {
 	_world->garbageCollect();
 
 	// Record failure if necessary.
-	if (!_failed && _avatar->getY() < 0) {
+	if (!_failed && _avatar->getY() < 0 || _lumiaList.size() == 0) {
 		setFailure(true);
 	}
     
@@ -656,11 +681,6 @@ void GameScene::update(float dt) {
 	} else if (_countdown == 0) {
 		reset();
 	}
-    if (_posrad > -1 && _pospos.x > -1) {
-        _avatar = createLumia(_posrad, _pospos);
-        _posrad = -1;
-        _pospos = Vec2(-1,-1);
-    }
 }
 
 /**
@@ -705,7 +725,6 @@ void GameScene::setFailure(bool value) {
 }
 
 void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
-
     std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
     cugl::Size size  = 0.3*image->getSize()/(_scale);
 
@@ -741,47 +760,53 @@ void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
 
     p->setVX(0);
     addObstacle(p, _sceneNode, 0);
-    _plants.push_front(p);
+    _plantList.push_back(p);
 }
 void GameScene::createEnergy(Vec2 pos) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
-    cugl::Size size = Size(2,2);
+    cugl::Size size = Size(2, 2);
     std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
+
     nrg->setGravityScale(0);
     nrg->setBodyType(b2_staticBody);
     nrg->setSensor(true);
-    nrg->setName("nrg_");
+    nrg->setName(ENERGY_NAME);
+
     cugl::Rect rectangle = Rect(pos, size);
     cugl::Poly2 poly = Poly2(rectangle);
+
     std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, poly);
     sprite->setScale(_scale);
     nrg->setNode(sprite);
-    addObstacle(nrg,sprite,0);
-    _energies.push_front(nrg);
-    
+
+    addObstacle(nrg, sprite, 0);
+    _energyList.push_back(nrg);
 }
 
 void GameScene::createSplitter(Vec2 pos) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
     cugl::Size size = Size(.5,.5);
     std::shared_ptr<Splitter> split = Splitter::alloc(pos, size);
+
     split->setGravityScale(0);
     split->setBodyType(b2_staticBody);
     split->setSensor(true);
-    split->setName("split_");
+    split->setName(SPLIT_NAME);
+
     cugl::Rect rectangle = Rect(pos, size);
     cugl::Poly2 poly = Poly2(rectangle);
+
     std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
     std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image,poly);
     sprite->setScale(_scale);
     split->setNode(sprite);
+
     addObstacle(split,sprite,0);
-    _splitters.push_front(split);
-    
+    _splitterList.push_back(split);
 }
 void GameScene::checkWin() {
-    for (auto const& i : _plants) {
+    for (auto const& i : _plantList) {
         if (!(i->getIsLit())) {
             return;
         }
@@ -790,9 +815,9 @@ void GameScene::checkWin() {
 }
 
 /**
- * Add a new LUmia to the world.
+ * Add a new Lumia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
     lumia-> setTextures(image, pos);
@@ -805,7 +830,45 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos) {
     _lumiaList.push_back(lumia);
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[lumia.get()] = fixtures;
+
+    if (isAvatar) {
+        _avatar = lumia;
+    }
+
     return lumia;
+}
+
+void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
+    // do not attempt to remove a Lumia that has already been removed
+    if (lumia->isRemoved()) {
+        return;
+    }
+    _sensorFixtureMap.erase(lumia.get());
+    _worldnode->removeChild(lumia->getSceneNode());
+
+    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
+    if (position != _lumiaList.end())
+        _lumiaList.erase(position);
+
+    lumia->dispose();
+    lumia->setDebugScene(nullptr);
+    lumia->markRemoved(true);
+}
+
+void GameScene::removeEnergy(shared_ptr<EnergyModel> energy) {
+    // do not attempt to remove an energy item that has already been removed
+    if (energy->isRemoved()) {
+        return;
+    }
+    _worldnode->removeChild(energy->getNode());
+
+    std::list<shared_ptr<EnergyModel>>::iterator position = std::find(_energyList.begin(), _energyList.end(), energy);
+    if (position != _energyList.end())
+        _energyList.erase(position);
+
+    energy->dispose();
+    energy->setDebugScene(nullptr);
+    energy->markRemoved(true);
 }
 
 void GameScene::mergeLumiasNearby(){
@@ -817,38 +880,14 @@ void GameScene::mergeLumiasNearby(){
         }
         
         Vec2 lumiaPos = lumia->getPosition();
-        float dist = avatarPos.distance(lumiaPos);
+        float dist = avatarPos.distanceSquared(lumiaPos);
 
-        // avatar and lumia body are already touching
-        if (dist <= lumia->getRadius() + _avatar->getRadius()){
-            float radius = (_avatar->getRadius() + lumia->getRadius()) / 1.35f;
-            Vec2 pos = _avatar->getPosition();
-            auto temp = _avatar;
-            _avatar = createLumia(radius, pos+Vec2(0.5f, 0.0f));
-            removeLumia(temp);
-            removeLumia(lumia);
-            break;
-        } else if (dist < 10.0f){
+        if (dist < 100.0f){
             //set lumia velocity to move toward avatar
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
     }
-}
-
-void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
-    // do not attempt to remove a Lumia that has already been removed
-    if (lumia->isRemoved()) {
-        return;
-    }
-    _sensorFixtureMap.erase(lumia.get());
-    _worldnode->removeChild(lumia->getSceneNode());
-    
-    std::vector<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
-    if (position != _lumiaList.end())
-        _lumiaList.erase(position);
-    lumia->setDebugScene(nullptr);
-    lumia->markRemoved(true);
 }
 
 /**
@@ -871,6 +910,69 @@ Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocit
 
 #pragma mark -
 #pragma mark Collision Handling
+
+void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia) {
+    // Lumia body remains if above min size, otherwise kill Lumia body
+    if (newRadius >= MIN_LUMIA_RADIUS) {
+        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - PLANT_SIZE_COST);
+        struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+        _lumiasToCreate.push_back(lumiaNew);
+    } else {
+        // if avatar is killed, player is given control of nearest Lumia body
+        if (lumia == _avatar) {
+            float minDistance = FLT_MAX;
+            std::shared_ptr<LumiaModel> closestLumia = NULL;
+            for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+                if (lumiaOther == lumia) {
+                    continue;
+                }
+
+                float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestLumia = lumiaOther;
+                }
+            }
+
+            if (closestLumia != NULL) {
+                _avatar = closestLumia;
+            }
+        }
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+    }
+}
+
+void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia) {
+    _energiesToRemove.push_back(energy);
+    energy->setRemoved(true);
+
+    float newRadius = lumia->getRadius() + ENERGY_SIZE_INC;
+    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + ENERGY_SIZE_INC);
+    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+
+    _lumiasToRemove.push_back(lumia);
+    lumia->setRemoved(true);
+    _lumiasToCreate.push_back(lumiaNew);
+}
+
+void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
+    float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
+    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+
+    _lumiasToRemove.push_back(lumia);
+    lumia->setRemoved(true);
+    _lumiasToRemove.push_back(lumia2);
+    lumia2->setRemoved(true);
+
+    _lumiasToCreate.push_back(lumiaNew);
+}
+
+
 /**
  * Processes the start of a collision
  *
@@ -892,54 +994,83 @@ void GameScene::beginContact(b2Contact* contact) {
 
 	physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
     physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
+
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        bool removing = false;
+        // handle collision between magical plant and Lumia
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
-            if (!((Plant*)bd1)->getIsLit()) {
+            float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
+
+            // Lumia needs enough size to light up a plant and plant must not already be lit
+            if (!((Plant*)bd1)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd1)->lightUp();
+                processPlantLumiaCollision(newRadius, lumia);
             }
+            break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
-            if (!((Plant*)bd2)->getIsLit()) {
+            float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
+
+            if (!((Plant*)bd2)->getIsLit() && newRadius > 0.0f) {
                 ((Plant*)bd2)->lightUp();
+                processPlantLumiaCollision(newRadius, lumia);
             }
+            break;
         }
 
-        if (bd1->getName() == "split_" && bd2 == lumia.get()) {
+        // handle collision between splitter item and Lumia
+        if (bd1->getName() == SPLIT_NAME && bd2 == lumia.get()) {
             if (((Splitter*)bd1)->getCooldown() == 0.0) {
                 ((LumiaModel*)bd2)->setSplitting(true);
                 ((Splitter*)bd1)->setCooldown(0.1);
             }
-        } else if (bd2->getName() == "split_" && bd1 == lumia.get()) {
+        } else if (bd2->getName() == SPLIT_NAME && bd1 == lumia.get()) {
             if (((Splitter*)bd2)->getCooldown() == 0.0) {
                 ((LumiaModel*)bd1)->setSplitting(true);
                 ((Splitter*)bd2)->setCooldown(0.1);
             }
         }
 
-        if (bd1->getName() == "nrg_" && bd2 == lumia.get()) {
-            if (!(bd1->isRemoved())) {
-                LumiaModel*  lum = ((LumiaModel*)bd2);
-                _posrad = lum->getRadius()+1;
-                _pospos = Vec2(lum->getPos().x,lum->getPos().y);
-                removing = true;
-                _worldnode->removeChild(((EnergyModel*)bd1)->getNode());
-                ((EnergyModel*)bd1)->dispose();
-                ((EnergyModel*)bd1)->markRemoved(true);
+        // handle collision between energy item and Lumia
+        if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get()) {
+            for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
+                if (energy.get() == bd1 && !energy->getRemoved()) {
+                    processEnergyLumiaCollision(energy, lumia);
+                    break;
+                }
             }
-        }
-        else if (bd2->getName() == "nrg_" && bd1 == lumia.get()) {
-            if (!(bd2->isRemoved())) {
-                LumiaModel*  lum = ((LumiaModel*)bd1);
-                _posrad = lum->getRadius()+1;
-                _pospos = Vec2(lum->getPos().x,lum->getPos().y);
-                removing = true;
-                _worldnode->removeChild(((EnergyModel*)bd2)->getNode());
-                ((EnergyModel*)bd2)->dispose();
-                ((EnergyModel*)bd2)->markRemoved(true);
+
+            break;
+        } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get()) {
+            for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
+                if (energy.get() == bd2 && !energy->getRemoved()) {
+                    processEnergyLumiaCollision(energy, lumia);
+                    break;
+                }
             }
+            break;
         }
         
+        // handle collision between two Lumias
+        if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
+            for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
+                if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
+                    processLumiaLumiaCollision(lumia, lumia2);
+                    break;
+                }
+            }
+
+            break;
+        } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
+            for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
+                if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
+                    processLumiaLumiaCollision(lumia, lumia2);
+                    break;
+                }
+            }
+            break;
+        }
+
+        // handle detection of Lumia and ground
 	    if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
 		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
 		    lumia->setGrounded(true);
@@ -947,9 +1078,6 @@ void GameScene::beginContact(b2Contact* contact) {
             std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
 		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
 	    }
-        if (removing) {
-            removeLumia(lumia);
-        }
     }
 }
 

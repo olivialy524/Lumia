@@ -5,10 +5,10 @@
 //  Created by Ben Dacek on 3/20/21.
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
+#ifndef __LM_SPLITTER_H__
+#define __LM_SPLITTER_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
-#ifndef LMSplitter_h
-#define LMSplitter_h
 
 class Splitter : public cugl::physics2::BoxObstacle {
 private:
@@ -56,4 +56,4 @@ public:
     }
 };
 
-#endif /* Splitter_h */
+#endif /* __LM_SPLITTER_H__ */
