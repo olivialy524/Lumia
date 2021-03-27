@@ -361,7 +361,7 @@ public:
                 break;
             }
         }
-        _node->setState(s);
+        _node->setAnimState(s);
     }
     
     LumiaState getState(){
