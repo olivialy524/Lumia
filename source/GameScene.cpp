@@ -116,6 +116,8 @@ using namespace cugl;
 
 #define BACKGROUND_IMAGE "background"
 
+#define LEVEL_NAME "json/techlevel"
+
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -334,6 +336,7 @@ void GameScene::reset() {
     _lumiasToCreate.clear();
     _energiesToRemove.clear();
 
+    _level->resetLevel(LEVEL_NAME);
     setFailure(false);
     setComplete(false);
     populate();
@@ -414,24 +417,18 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     
 #pragma mark : Lumia
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-     image = _assets->get<Texture>(LUMIA_TEXTURE);
-     std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("lumia");
-     float lumx = lum->getFloat("posx");
-     float lumy = lum->getFloat("posy");
-     float radius = lum->getFloat("radius");
-     Vec2 lumiaPos = Vec2(lumx,lumy);
-
-     _avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-     _avatar-> setTextures(image);
-     _avatar-> setName(LUMIA_NAME);
-     _avatar-> setDebugColor(DEBUG_COLOR);
-     _avatar-> setFixedRotation(false);
-     _lumiaList.push_back(_avatar);
-     
-     std::unordered_set<b2Fixture*> fixtures;
-     _sensorFixtureMap[_avatar.get()] = fixtures;
-     addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
-
+    image = _assets->get<Texture>(LUMIA_TEXTURE);
+    _avatar = _level->getLumia();
+    _avatar-> setDrawScale(_scale);
+    _avatar-> setTextures(image);
+    _avatar-> setName(LUMIA_NAME);
+	_avatar-> setDebugColor(DEBUG_COLOR);
+    _avatar-> setFixedRotation(false);
+    _lumiaList.push_back(_avatar);
+    
+    std::unordered_set<b2Fixture*> fixtures;
+    _sensorFixtureMap[_avatar.get()] = fixtures;
+	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 }
 
 /**
@@ -867,6 +864,9 @@ void GameScene::beginContact(b2Contact* contact) {
 
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
+        if (bd1 != lumia.get() && bd2 != lumia.get()){
+            continue;
+        }
         // handle collision between magical plant and Lumia
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
@@ -876,7 +876,6 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd1)->lightUp();
                 processPlantLumiaCollision(newRadius, lumia);
             }
-            break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
 
@@ -884,7 +883,6 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd2)->lightUp();
                 processPlantLumiaCollision(newRadius, lumia);
             }
-            break;
         }
         // handle collision between energy item and Lumia
         if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get()) {
@@ -894,7 +892,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
@@ -902,7 +899,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         }
 
         // handle collision between two Lumias
@@ -921,7 +917,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         }
 
         // handle detection of Lumia and ground
@@ -931,7 +926,6 @@ void GameScene::beginContact(b2Contact* contact) {
             // Could have more than one ground
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
             sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-            break;
         }
     }
 }
