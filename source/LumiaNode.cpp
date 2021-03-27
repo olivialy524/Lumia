@@ -15,8 +15,18 @@
 void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     
-//    cugl::Mat4 translation_mat = cugl::Mat4::createScale(_scale);
-    
+    switch (_state){
+        case LumiaAnimState::Idle:{
+            break;
+        }
+        case LumiaAnimState::Splitting:{
+            break;
+        }
+        case LumiaAnimState::Merging:{
+            break;
+        }
+            
+    }
     AnimationNode::draw(batch, transform, tint);
     
 }

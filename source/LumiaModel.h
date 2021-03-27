@@ -349,6 +349,22 @@ public:
     
     void setState(LumiaState state){
         _state = state;
+        LumiaNode::LumiaAnimState s;
+        switch (_state){
+            case LumiaState::Idle:{
+                s = LumiaNode::LumiaAnimState::Idle;
+                break;
+            }
+            case LumiaState::Splitting:{
+                s = LumiaNode::LumiaAnimState::Splitting;
+                break;
+            }
+            case LumiaState::Merging:{
+                s = LumiaNode::LumiaAnimState::Merging;
+                break;
+            }
+        }
+        _node->setState(s);
     }
     
     LumiaState getState(){

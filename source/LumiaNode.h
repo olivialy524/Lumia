@@ -14,19 +14,31 @@
 using namespace cugl;
 
 class LumiaNode : public cugl::scene2::AnimationNode {
-//class LumiaNode : public cugl::scene2::AnimationNode {
+#pragma mark Constants and Enums
 public:
+    enum LumiaAnimState {
+        /** When Lumia is still or rolling */
+        Idle,
+        /** When Lumia is splitting */
+        Splitting,
+        /** When Lumia is merging */
+        Merging
+    };
+
     
-    std::shared_ptr<cugl::scene2::AnimationNode> splittingNode;
+protected:
+    LumiaAnimState _state;
+public:
     
     cugl::Color4 _stint;
     
-    
-    LumiaNode() : AnimationNode() {}
+    LumiaNode() : _state(Idle), AnimationNode() {}
 
     ~LumiaNode() { dispose(); }
-
- 
+    
+    void setAnimState(LumiaAnimState state){
+        _state = state;
+    }
  
     static std::shared_ptr<LumiaNode> alloc(const std::shared_ptr<Texture>& texture,
                                                 int rows, int cols, int size) {
