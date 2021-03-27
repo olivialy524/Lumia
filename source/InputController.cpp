@@ -153,23 +153,18 @@ void InputController::update(float dt) {
     _keyReset  = keys->keyPressed(RESET_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
-    _keyMerge   = keys->keyDown(MERGE_KEY);
-    _keySplit   = keys->keyPressed(SPLIT_KEY);
+    _keyMerge  = keys->keyDown(MERGE_KEY);
+    _keySplit  = keys->keyPressed(SPLIT_KEY);
 
     _resetPressed = _keyReset;
-    
     _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
 
 #endif
 
-//    _resetPressed = _keyReset;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     
-//    _splitPressed = _keySplit;
-//    _mergePressed = _keyMerge;
-
     _switched = _switchInputted;
     _switchInputted = false;
 

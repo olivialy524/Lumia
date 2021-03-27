@@ -15,7 +15,6 @@
 #include "LumiaModel.h"
 #include "Plant.h"
 #include "EnergyModel.h"
-#include "Splitter.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -32,6 +31,7 @@ protected:
     std::shared_ptr<cugl::JsonReader> _jsonr;
     
     std::shared_ptr<cugl::JsonValue> _leveljson;
+
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -52,16 +52,32 @@ protected:
     float _scale;
 
     // Physics objects for the game
-    std::list<std::shared_ptr<Plant>> _plants;
+    /** References to the magical plants */
+    std::list<std::shared_ptr<Plant>> _plantList;
+    /** References to the energy items */
+    std::list<std::shared_ptr<EnergyModel>> _energyList;
+    /** References to the Lumia bodies */
+    std::list<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the player avatar */
-    std::list<std::shared_ptr<EnergyModel>> _energies;
-    
-    std::list<std::shared_ptr<Splitter>> _splitters;
     std::shared_ptr<LumiaModel> _avatar;
-    /** Reference to the player avatars */
-    std::vector<std::shared_ptr<LumiaModel>> _lumiaList;
 
-    std::list<std::shared_ptr<EnergyModel>> _nrglist;
+    /** Information representing a Lumia to create */
+    struct LumiaBody {
+        /** The position to spawn the Lumia body at */
+        cugl::Vec2 position;
+        /** The radius of the Lumia body */
+        float radius;
+        /** Whether or not the Lumia body should be controlled by the player */
+        bool isAvatar;
+    };
+
+    /** List of Lumia bodies to remove in next update step */
+    std::list<std::shared_ptr<LumiaModel>> _lumiasToRemove;
+    /** List of Lumia bodies to create in next update step */
+    std::list<LumiaBody> _lumiasToCreate;
+    /** List of energy item sto remove in next update step */
+    std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
+
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -70,13 +86,8 @@ protected:
     bool _failed;
     /** Countdown active for winning or losing */
     int _countdown;
-    
-    int _posrad = -1;
-    
-    Vec2 _pospos = Vec2(-1,-1);
       
     /** Mark set to handle more sophisticated collision callbacks */
-    
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
 
 #pragma mark Internal Object Management
@@ -259,6 +270,16 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+
+    /** Processes a collision between Lumia and a magical plant */
+    void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
+
+    /** Processes a collision between Lumia and an energy item */
+    void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
+
+    /** Processes a collision between Lumia and another Lumia */
+    void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
+
 	/**
 	* Processes the start of a collision
 	*
@@ -305,18 +326,25 @@ public:
     void checkWin();
 
     /**
-    * Adds a new bullet to the world and sends it in the right direction.
+    * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos);
-    
-    void mergeLumiasNearby();
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar);
 
     /**
-    * Removes the input Bullet from the world.
+    * Removes the input Lumia from the world.
     *
-    * @param  bullet   the bullet to remove
+    * @param  lumia the Lumia to remove
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
+
+    /**
+    * Removes the input energy item from the world.
+    *
+    * @param  energy the energy item to remove
+    */
+    void removeEnergy(std::shared_ptr<EnergyModel> energy);
+    
+    void mergeLumiasNearby();
 
     /**
      * Calculates trajectory point one timestep into future
@@ -331,4 +359,4 @@ public:
 
   };
 
-#endif /* __PF_GAME_SCENE_H__ */
+#endif /* __LM_GAME_SCENE_H__ */
