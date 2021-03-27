@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include "LMPlantNode.h"
+#include "PlantNode.h"
 #define SHADOW_OFFSET   10.0f
 
 

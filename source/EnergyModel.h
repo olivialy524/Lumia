@@ -5,8 +5,8 @@
 //  Created by Ben Dacek on 3/17/21.
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
-#ifndef __LM_ENERGY_MODEL_H__
-#define __LM_ENERGY_MODEL_H__
+#ifndef EnergyModel_h
+#define EnergyModel_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 

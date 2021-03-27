@@ -6,8 +6,8 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef __LM_PLANT_NODE_H__
-#define __LM_PLANT_NODE_H__
+#ifndef PlantNode_h
+#define PlantNode_h
 
 #include <cugl/cugl.h>
 using namespace cugl;

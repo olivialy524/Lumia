@@ -4,35 +4,11 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#include "LMLumiaModel.h"
-#include "LMLumiaNode.h"
+#include "LumiaModel.h"
+#include "LumiaNode.h"
 #include <cugl/scene2/graph/CUPolygonNode.h>
 #include <cugl/scene2/graph/CUTexturedNode.h>
 #include <cugl/assets/CUAssetManager.h>
-
-#define SIGNUM(x)  ((x > 0) - (x < 0))
-
-#pragma mark -
-#pragma mark Physics Constants
-
-/** Number of rows in the ship image filmstrip */
-#define LUMIA_ROWS       1
-/** Number of columns in this ship image filmstrip */
-#define LUMIA_COLS       1
-/** Number of elements in this ship image filmstrip */
-#define LUMIA_FRAMES     1
-/** The amount to shrink the sensor fixture (horizontally) relative to the image */
-#define LUMIA_SSHRINK  0.6f
-/** Height of the sensor attached to the player's feet */
-#define SENSOR_HEIGHT   0.1f
-/** The density of the character */
-#define LUMIA_DENSITY    0.10f
-/** The restitution of the character */
-#define LUMIA_RESTITUTION 0.45f
-
-
-/** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::RED
 
 
 using namespace cugl;
@@ -83,10 +59,9 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         
         // Gameplay attributes
         _isGrounded = false;
-        _isSplitting = false;
+        _state = Idle;
         _velocity = Vec2::ZERO;
         _isLaunching = false;
-        _isMerging = false;
         
         _radius = radius;
         return true;
@@ -165,11 +140,6 @@ void LumiaModel::applyForce() {
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
     }
-    if (isSplitting()){
-        b2Vec2 force(_splitForce.x, _splitForce.y);
-        _body->ApplyLinearImpulse(force,_body->GetPosition(),true);
-    }
-    
     if (!isLaunching() && isGrounded()) {
         // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
         b2Vec2 forceX(-getDamping() * getVX(), 0);

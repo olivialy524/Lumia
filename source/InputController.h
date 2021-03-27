@@ -4,8 +4,8 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_INPUT_H__
-#define __LM_INPUT_H__
+#ifndef __INPUT_H__
+#define __INPUT_H__
 #include <cugl/cugl.h>
 #include <unordered_set>
 
@@ -30,7 +30,7 @@
  * until later. This is one of the main reasons we like to avoid initialization
  * in the constructor.
  */
-class LumiaInput {
+class InputController {
 private:
     /** Whether or not this input is active */
     bool _active;
@@ -95,12 +95,12 @@ public:
      * This constructor does NOT do any initialzation.  It simply allocates the
      * object. This makes it safe to use this class without a pointer.
      */
-    LumiaInput(); // Don't initialize.  Allow stack based
+    InputController(); // Don't initialize.  Allow stack based
     
     /**
      * Disposes of this input controller, releasing all listeners.
      */
-    ~LumiaInput() { dispose(); }
+    ~InputController() { dispose(); }
     
     /**
      * Deactivates this input controller, releasing all listeners.
@@ -289,4 +289,4 @@ public:
   
 };
 
-#endif /* __PF_INPUT_H__ */
+#endif /* __INPUT_H__ */

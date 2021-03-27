@@ -4,18 +4,17 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_GAME_SCENE_H__
-#define __LM_GAME_SCENE_H__
+#ifndef __GAME_SCENE_H__
+#define __GAME_SCENE_H__
 #include <cugl/cugl.h>
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <Box2D/Dynamics/b2Fixture.h>
 #include <unordered_set>
 #include <vector>
-#include "LMInput.h"
-#include "LMLumiaModel.h"
-#include "LMPlant.h"
-#include "LMEnergyModel.h"
-#include "LMSplitter.h"
+#include "InputController.h"
+#include "LumiaModel.h"
+#include "Plant.h"
+#include "EnergyModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -35,7 +34,7 @@ protected:
 
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    LumiaInput _input;
+    InputController _input;
     
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -57,8 +56,6 @@ protected:
     std::list<std::shared_ptr<Plant>> _plantList;
     /** References to the energy items */
     std::list<std::shared_ptr<EnergyModel>> _energyList;
-    /** References to the splitter items */
-    std::list<std::shared_ptr<Splitter>> _splitterList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the player avatar */

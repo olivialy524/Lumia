@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
-#include "LMEnergyModel.h"
+#include "EnergyModel.h"
 
 bool EnergyModel::init(const cugl::Vec2 pos, cugl::Size size) {
     _removed = false;

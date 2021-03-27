@@ -7,10 +7,9 @@
 //
 
 #include <stdio.h>
-#include "LMPlant.h"
+#include "Plant.h"
 
 void Plant::dispose() {
     _node = nullptr;
-    _lampNode = nullptr;
-    _lampLitNode = nullptr;
+    _plantNode = nullptr;
 }

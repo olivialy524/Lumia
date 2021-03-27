@@ -6,26 +6,14 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 //
-#ifndef __LM_LUMIA_MODEL_H__
-#define __LM_LUMIA_MODEL_H__
+#ifndef __LUMIA_MODEL_H__
+#define __LUMIA_MODEL_H__
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
-#include "LMLumiaNode.h"
+#include "LumiaNode.h"
 
-
-#pragma mark -
-#pragma mark Physics Constants
-/** The factor to multiply by the input */
-#define LUMIA_FORCE       20.0f
-/** The amount to slow the character down */
-#define LUMIA_DAMPING     3.0f
-/** The maximum character speed */
-#define LUMIA_MAXVELOCITY 30.0f
-
-
-#pragma mark -
 #pragma mark Lumia Model
 /**
 * Player avatar for the plaform game.
@@ -35,6 +23,37 @@
 * on a platform.  The round shapes on the end caps lead to smoother movement.
 */
 class LumiaModel : public cugl::physics2::WheelObstacle {
+#pragma mark Constants and Enums
+protected:
+#define SIGNUM(x)  ((x > 0) - (x < 0))
+    
+/** Debug color for the sensor */
+#define DEBUG_COLOR     Color4::RED
+
+    /** The base density of the character */
+    static constexpr float LUMIA_DENSITY = 0.10f;
+    /** The restitution of the character */
+    static constexpr float LUMIA_RESTITUTION = 0.45f;
+    /** The factor to multiply by the input */
+    static constexpr float LUMIA_FORCE = 20.0f;
+    /** The amount to slow the character down */
+    static constexpr float LUMIA_DAMPING = 3.0f;
+    /** The maximum character speed */
+    static constexpr float LUMIA_MAXVELOCITY = 30.0f;
+
+public:
+    enum LumiaState {
+        /** When Lumia is still or rolling */
+        Idle,
+        /** When Lumia is splitting */
+        Splitting,
+        /** When Lumia is merging */
+        Merging
+    };
+
+    
+#pragma mark Attributes
+    
 private:
 	/** This macro disables the copy constructor (not allowed on physics objects) */
 	CU_DISALLOW_COPY_AND_ASSIGN(LumiaModel);
@@ -68,7 +87,8 @@ protected:
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
     
-    cugl::Vec2 _splitForce;
+    /** The current state of this Lumia*/
+    LumiaState _state;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -323,6 +343,14 @@ public:
         
     }
     
+    void setState(LumiaState state){
+        _state = state;
+    }
+    
+    LumiaState getState(){
+        return _state;
+    }
+    
     /**
      * Sets velocity of Lumia.
      *
@@ -338,8 +366,6 @@ public:
      * @return true if the Lumia is actively launching.
      */
     bool isLaunching() const { return _isLaunching; }
-    
-    void setSplitForce(Vec2 sForce){ _splitForce = sForce;}
 
     /**
      * Sets whether the Lumia is actively launching.
@@ -364,6 +390,8 @@ public:
     void setMerging(bool value) { _isMerging = value; }
     
     bool isMerging() const {return _isMerging;}
+    
+    
     /**
      * Returns true if the Lumia is on the ground.
      *

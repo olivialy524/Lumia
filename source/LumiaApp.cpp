@@ -4,7 +4,7 @@
 //  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
 //  Version: 3/5/21
 
-#include "LMApp.h"
+#include "LumiaApp.h"
 
 using namespace cugl;
 
