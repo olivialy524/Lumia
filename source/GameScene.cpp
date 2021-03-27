@@ -500,7 +500,6 @@ void GameScene::update(float dt) {
     if (!_failed && !_complete) {
         checkWin();
     }
-    
 
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
@@ -905,7 +904,7 @@ void GameScene::beginContact(b2Contact* contact) {
             }
             break;
         }
-        
+
         // handle collision between two Lumias
         if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
@@ -914,7 +913,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-
             break;
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
@@ -927,14 +925,14 @@ void GameScene::beginContact(b2Contact* contact) {
         }
 
         // handle detection of Lumia and ground
-	    if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
-		    lumia->setGrounded(true);
-		    // Could have more than one ground
-            std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
-		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-            CULog("size %d", sensorFixtures.size());
-	    }
+        if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
+            lumia->setGrounded(true);
+            // Could have more than one ground
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
+            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+            break;
+        }
     }
 }
 
@@ -962,9 +960,8 @@ void GameScene::endContact(b2Contact* contact) {
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
         if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
             (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
-            std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
-            CULog("size %d", sensorFixtures.size());
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
             }
