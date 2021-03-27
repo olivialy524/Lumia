@@ -157,8 +157,11 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
+
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
+    
+    _level = assets->get<LevelModel>("json/techlevel.json");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -274,7 +277,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
-    cout << getCamera() << endl;
     getCamera()->setPositionX(_avatar->getAvatarPos().x);
     getCamera()->update();
     // XNA nostalgia
@@ -352,18 +354,15 @@ void GameScene::populate() {
 std::shared_ptr<Texture> image;
 std::shared_ptr<scene2::PolygonNode> sprite;
 
+
 #pragma mark : Platforms
-    std::shared_ptr<cugl::JsonValue> platforms = _leveljson->get("platforms");
-    for (int i = 0; i < platforms->size(); i++) {
-        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
-        float blx = platfor->getFloat("blx");
-        float bly = platfor->getFloat("bly");
-        float height = platfor->getFloat("height");
-        float width = platfor->getFloat("width");
-        Rect rectangle = Rect(blx,bly,width,height);
+    image  = _assets->get<Texture>(EARTH_TEXTURE);
+    std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
+    for (int i = 0; i < platforms.size(); i++) {
+        std::shared_ptr<Tile> tile = platforms[i];
+        Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
         std::shared_ptr<physics2::PolygonObstacle> platobj;
         Poly2 platform(rectangle,false);
-
         SimpleTriangulator triangulator;
         triangulator.set(platform);
         triangulator.calculate();
@@ -380,7 +379,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setFriction(BASIC_FRICTION);
         platobj->setRestitution(BASIC_RESTITUTION);
         platobj->setDebugColor(DEBUG_COLOR);
-
         platform *= _scale;
         // All walls and platforms share the same texture
         image = _assets->get<Texture>(EARTH_TEXTURE);
@@ -398,28 +396,28 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         createEnergy(epos);
     }
 #pragma mark : Plant
-    std::shared_ptr<cugl::JsonValue> plants = _leveljson->get("plants");
-    for (int i = 0; i < plants->size(); i++) {
-        std::string si = to_string(i);
-        std::string ps = ("plant_" + si);
-        std::shared_ptr<cugl::JsonValue> plant = plants->get(i);
-        float px = plant->getFloat("posx");
-        float py = plant->getFloat("posy");
-        float pa = (plant->getFloat("angle"))*M_PI/180;
-        createPlant(px, py, i,pa);
+    vector<std::shared_ptr<Plant>> plants = _level->getPlants();
+    for (int i = 0; i < plants.size(); i++) {
+        std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
+        std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
+        plants[i]->setNode(_sceneNode);
+        _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+        std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
+        sprite->setAnchor(Vec2::ANCHOR_CENTER);
+        sprite->setAngle(plants[i]->getAngle());
+        _sceneNode->addChild(sprite);
+        plants[i]->setVX(0);
+        addObstacle(plants[i], _sceneNode, 0);
+        _plantList.push_front(plants[i]);
     }
 
+    
 #pragma mark : Lumia
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
-    std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("Lumia");
-    float lumx = lum->getFloat("posx");
-    float lumy = lum->getFloat("posy");
-    float radius = lum->getFloat("radius");
-    Vec2 lumiaPos = Vec2(lumx,lumy);
-
-	_avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-    _avatar-> setTextures(image, lumiaPos);
+    _avatar = _level->getLumia();
+    _avatar-> setDrawScale(_scale);
+    _avatar-> setTextures(image);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _avatar-> setFixedRotation(false);
@@ -428,9 +426,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
-
-//	std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-//  AudioEngine::get()->getMusicQueue()->play(source, true, MUSIC_VOLUME);
 }
 
 /**
@@ -652,44 +647,7 @@ void GameScene::setFailure(bool value) {
 	}
 }
 
-void GameScene::createPlant(float posx, float posy, int nplant, float ang) {
-    std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
-    cugl::Size size  = 0.3*image->getSize()/(_scale);
 
-    std::shared_ptr<Plant> p = Plant::alloc(Vec2(posx,posy), size);
-    p->setBodyType(b2_staticBody);
-    p->setAngle(ang);
-    p->lightDown();
-    p->setFriction(0.0f);
-    p->setRestitution(0.0f);
-    p->setName(PLANT_NAME + to_string(nplant));
-    p->setDensity(0);
-    p->setBullet(false);
-    p->setGravityScale(0);
-    p->setSensor(true);
-    p->setDebugColor(DEBUG_COLOR);
-    p->setDrawScale(_scale);
-    
-    
-    std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
-    p->setNode(_sceneNode);
-    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-    
-    std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
-    sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setAngle(ang);
-//    p->setLampNode(sprite);
-    _sceneNode->addChild(sprite);
-    
-//    std::shared_ptr<PlantNode> sprite2 = PlantNode::alloc(image2);
-//    sprite2->setAngle(ang);
-//    sprite2->setAnchor(Vec2::ANCHOR_CENTER);
-//    p->setLampLitNode(sprite2);
-
-    p->setVX(0);
-    addObstacle(p, _sceneNode, 0);
-    _plantList.push_back(p);
-}
 void GameScene::createEnergy(Vec2 pos) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
     cugl::Size size = Size(2, 2);
@@ -727,7 +685,7 @@ void GameScene::checkWin() {
 std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
-    lumia-> setTextures(image, pos);
+    lumia-> setTextures(image);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
