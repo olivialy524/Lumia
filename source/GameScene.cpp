@@ -116,6 +116,8 @@ using namespace cugl;
 
 #define BACKGROUND_IMAGE "background"
 
+#define LEVEL_NAME "json/techlevel"
+
 /** Color to outline the physics nodes */
 #define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -334,6 +336,7 @@ void GameScene::reset() {
     _lumiasToCreate.clear();
     _energiesToRemove.clear();
 
+    _level->resetLevel(LEVEL_NAME);
     setFailure(false);
     setComplete(false);
     populate();
@@ -414,24 +417,18 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     
 #pragma mark : Lumia
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
-     image = _assets->get<Texture>(LUMIA_TEXTURE);
-     std::shared_ptr<cugl::JsonValue> lum = _leveljson->get("lumia");
-     float lumx = lum->getFloat("posx");
-     float lumy = lum->getFloat("posy");
-     float radius = lum->getFloat("radius");
-     Vec2 lumiaPos = Vec2(lumx,lumy);
-
-     _avatar = LumiaModel::alloc(lumiaPos,radius,_scale);
-     _avatar-> setTextures(image);
-     _avatar-> setName(LUMIA_NAME);
-     _avatar-> setDebugColor(DEBUG_COLOR);
-     _avatar-> setFixedRotation(false);
-     _lumiaList.push_back(_avatar);
-     
-     std::unordered_set<b2Fixture*> fixtures;
-     _sensorFixtureMap[_avatar.get()] = fixtures;
-     addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
-
+    image = _assets->get<Texture>(LUMIA_TEXTURE);
+    _avatar = _level->getLumia();
+    _avatar-> setDrawScale(_scale);
+    _avatar-> setTextures(image);
+    _avatar-> setName(LUMIA_NAME);
+	_avatar-> setDebugColor(DEBUG_COLOR);
+    _avatar-> setFixedRotation(false);
+    _lumiaList.push_back(_avatar);
+    
+    std::unordered_set<b2Fixture*> fixtures;
+    _sensorFixtureMap[_avatar.get()] = fixtures;
+	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
 }
 
 /**
