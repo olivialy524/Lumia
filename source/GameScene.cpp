@@ -865,6 +865,9 @@ void GameScene::beginContact(b2Contact* contact) {
 
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
+        if (bd1 != lumia.get() && bd2 != lumia.get()){
+            continue;
+        }
         // handle collision between magical plant and Lumia
         if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get()) {
             float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
@@ -874,7 +877,6 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd1)->lightUp();
                 processPlantLumiaCollision(newRadius, lumia);
             }
-            break;
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             float newRadius = lumia->getRadius() - PLANT_SIZE_COST;
 
@@ -882,7 +884,6 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd2)->lightUp();
                 processPlantLumiaCollision(newRadius, lumia);
             }
-            break;
         }
         // handle collision between energy item and Lumia
         if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get()) {
@@ -892,7 +893,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
@@ -900,7 +900,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         }
         
         // handle collision between two Lumias
@@ -920,7 +919,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-            break;
         }
 
         // handle detection of Lumia and ground
@@ -928,9 +926,8 @@ void GameScene::beginContact(b2Contact* contact) {
 		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
 		    lumia->setGrounded(true);
 		    // Could have more than one ground
-            std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
 		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-            CULog("size %d", sensorFixtures.size());
 	    }
     }
 }
@@ -959,9 +956,8 @@ void GameScene::endContact(b2Contact* contact) {
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
         if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
             (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
-            std::unordered_set<b2Fixture*> sensorFixtures = _sensorFixtureMap[lumia.get()];
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
-            CULog("size %d", sensorFixtures.size());
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
             }
