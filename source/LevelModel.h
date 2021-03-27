@@ -24,6 +24,7 @@ private:
     
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
+    std::shared_ptr<cugl::JsonValue> _levelJson;
 public:
     
 #pragma mark Static Constructors
@@ -65,6 +66,10 @@ public:
     
     std::vector<std::shared_ptr<Plant>> getPlants(){
         return _plants;
+    }
+    
+    void resetLevel(const std::string& file){
+        preload(_levelJson);
     }
     
     
