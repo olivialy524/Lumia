@@ -35,10 +35,6 @@ private:
     /** Whether or not this input is active */
     bool _active;
     // KEYBOARD EMULATION
-    /** Whether the jump key is down */
-    bool  _keyJump;
-    /** Whether the fire key is down */
-    bool  _keyFire;
     /** Whether the reset key is down */
     bool  _keyReset;
     /** Whether the debug key is down */

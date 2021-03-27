@@ -911,7 +911,6 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
-
             break;
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
