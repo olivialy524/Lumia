@@ -35,8 +35,8 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
         CUAssertLog(false, "Failed to load level file");
         return false;
     }
+    _levelJson = json;
     std::shared_ptr<cugl::JsonValue> _leveljson = json->get("level");
-    //plants
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
