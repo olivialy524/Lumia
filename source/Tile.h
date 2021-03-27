@@ -5,7 +5,9 @@
 //  Created by Vivi Ye on 3/24/21.
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
-
+#include <cugl/cugl.h>
+#include <cugl/physics2/CUBoxObstacle.h>
+#include <cugl/scene2/graph/CUWireNode.h>
 #ifndef Tile_h
 #define Tile_h
 
@@ -17,6 +19,26 @@ private:
     float _y;
     
 public:
+    
+    Tile(float x, float y, float width, float height){
+        _x = x;
+        _y = y;
+        _height = height;
+        _width = width;
+    }
+    
+    Tile(){}
+    
+    static std::shared_ptr<Tile> alloc(float x, float y, float width, float height){
+        CULog("hereee");
+        std::shared_ptr<Tile> result = std::make_shared<Tile>();
+        result->setX(x);
+        result->setY(y);
+        result->setHeight(height);
+        result->setWidth(width);
+        return result? result: nullptr;
+    }
+    
     void setX(float x){
         _x = x;
     }

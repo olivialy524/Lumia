@@ -174,8 +174,9 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& lumia, Vec2 initPos);
+    void setTextures(const std::shared_ptr<cugl::Texture>& lumia);
 
+    void setDrawScale(float scale);
     
 #pragma mark -
 #pragma mark Static Constructors

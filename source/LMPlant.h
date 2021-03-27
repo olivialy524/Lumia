@@ -69,6 +69,11 @@ public:
         return (result->init(pos, size) ? result : nullptr);
     }
 
+    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos) {
+        std::shared_ptr<Plant> result = std::make_shared<Plant>();
+        return (result->init(pos) ? result : nullptr);
+    }
+
 #pragma mark -
 #pragma mark Animation
     /**

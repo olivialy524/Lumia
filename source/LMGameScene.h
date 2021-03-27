@@ -16,6 +16,7 @@
 #include "LMPlant.h"
 #include "LMEnergyModel.h"
 #include "LMSplitter.h"
+#include "LevelModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -32,6 +33,8 @@ protected:
     std::shared_ptr<cugl::JsonReader> _jsonr;
     
     std::shared_ptr<cugl::JsonValue> _leveljson;
+    
+    std::shared_ptr<LevelModel> _level;
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     LumiaInput _input;
