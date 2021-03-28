@@ -36,8 +36,6 @@ using namespace cugl;
 /** The key for the event handlers */
 #define LISTENER_KEY      1
 
-/** How fast a double click must be in milliseconds */
-#define DOUBLE_CLICK    400
 
 #pragma mark -
 #pragma mark Input Controller
