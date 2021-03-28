@@ -38,6 +38,8 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
     
+    float _cameraTargetX;
+    
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
