@@ -155,11 +155,11 @@ void InputController::update(float dt) {
     _keySplit  = keys->keyPressed(SPLIT_KEY);
 
     _resetPressed = _keyReset;
-    _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
 
 #endif
-
+    
+    _splitPressed = _keySplit;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     
@@ -282,7 +282,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
         _dclick.set(event.position);
     } else if (_touchids.size() == 2) {
         // two fingers on screen, user is splitting Lumia
-        _splitPressed = true;
+        _keySplit = true;
     } else if (_touchids.size() == 3) {
         // two fingers on screen, user is merging Lumia
         _mergePressed = true;
@@ -328,7 +328,7 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     _touchids.erase(event.touch);
     if (_touchids.size() != 2) {
         // doesn't have 2 fingers on screen, stop splitting
-        _splitPressed = false;
+        _keySplit = false;
     }
     if (_touchids.size() != 3) {
         // doesn't have 3 fingers on screen, stop merging
