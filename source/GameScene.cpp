@@ -862,7 +862,7 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 
 void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
     float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
-    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+    Vec2 newPosition = Vec2((lumia->getPosition().x + lumia2->getPosition().x) / 2, lumia->getPosition().y + (newRadius - lumia->getRadius()));
     struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
 
     _lumiasToRemove.push_back(lumia);
