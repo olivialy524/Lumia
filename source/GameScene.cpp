@@ -114,7 +114,7 @@ using namespace cugl;
 /** The volume for sound effects */
 #define EFFECT_VOLUME   0.8f
 
-#define CAMERA_SPEED 3.0f
+#define CAMERA_SPEED 4.0f
 
 #define BACKGROUND_IMAGE "background"
 
@@ -524,18 +524,26 @@ void GameScene::update(float dt) {
         _energiesToRemove.clear();
     }
 
-    // player avatar fell out of the level
-    if (_avatar->getY() < 0) {
-        std::shared_ptr<LumiaModel> temp = _avatar;
-        switchToNearestLumia(_avatar);
-        removeLumia(temp);
-        temp->setRemoved(true);
+    CULog("size: %i", _lumiaList.size());
+    // check if Lumia bodies fell out of the level, and remove as needed
+    for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
+        if (lumia->getY() < 0) {
+            if (lumia == _avatar) {
+                std::shared_ptr<LumiaModel> temp = _avatar;
+                switchToNearestLumia(_avatar);
+                _lumiasToRemove.push_back(temp);
+                temp->setRemoved(true);
+            } else {
+                _lumiasToRemove.push_back(lumia);
+                lumia->setRemoved(true);
+            }
+        }
     }
 
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
-        for (auto & lumia : _lumiaList) {
+        for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation);
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
