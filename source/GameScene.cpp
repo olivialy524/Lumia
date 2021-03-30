@@ -524,6 +524,14 @@ void GameScene::update(float dt) {
         _energiesToRemove.clear();
     }
 
+    // player avatar fell out of the level
+    if (_avatar->getY() < 0) {
+        std::shared_ptr<LumiaModel> temp = _avatar;
+        switchToNearestLumia(_avatar);
+        removeLumia(temp);
+        temp->setRemoved(true);
+    }
+
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
@@ -610,7 +618,7 @@ void GameScene::update(float dt) {
 	_world->garbageCollect();
 
 	// Record failure if necessary.
-	if (!_failed && _avatar->getY() < 0 || _lumiaList.size() == 0) {
+	if (!_failed && _lumiaList.size() == 0) {
 		setFailure(true);
 	}
     
@@ -752,7 +760,7 @@ void GameScene::removeEnergy(shared_ptr<EnergyModel> energy) {
     energy->markRemoved(true);
 }
 
-void GameScene::mergeLumiasNearby(){
+void GameScene::mergeLumiasNearby() {
     Vec2 avatarPos = _avatar->getPosition();
 
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
@@ -768,6 +776,26 @@ void GameScene::mergeLumiasNearby(){
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
+    }
+}
+
+void GameScene::switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia) {
+    float minDistance = FLT_MAX;
+    std::shared_ptr<LumiaModel> closestLumia = NULL;
+    for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+        if (lumiaOther == lumia) {
+            continue;
+        }
+
+        float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestLumia = lumiaOther;
+        }
+    }
+
+    if (closestLumia != NULL) {
+        _avatar = closestLumia;
     }
 }
 
@@ -804,23 +832,7 @@ void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_pt
     } else {
         // if avatar is killed, player is given control of nearest Lumia body
         if (lumia == _avatar) {
-            float minDistance = FLT_MAX;
-            std::shared_ptr<LumiaModel> closestLumia = NULL;
-            for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
-                if (lumiaOther == lumia) {
-                    continue;
-                }
-
-                float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestLumia = lumiaOther;
-                }
-            }
-
-            if (closestLumia != NULL) {
-                _avatar = closestLumia;
-            }
+            switchToNearestLumia(lumia);
         }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);

@@ -321,11 +321,7 @@ public:
      */
     void reset();
 
-    void createPlant(float posx, float posy, int nplant, float ang);
-    
     void createEnergy(Vec2 pos);
-    
-    void createSplitter(Vec2 pos);
     
     void checkWin();
 
@@ -348,7 +344,11 @@ public:
     */
     void removeEnergy(std::shared_ptr<EnergyModel> energy);
     
+    /** Gives nearby Lumia velocity towards player avatar so they merge on contact */
     void mergeLumiasNearby();
+
+    /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
+    void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
 
     /**
      * Calculates trajectory point one timestep into future
