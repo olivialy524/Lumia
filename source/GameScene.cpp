@@ -512,7 +512,7 @@ void GameScene::update(float dt) {
 
     if (_lumiasToCreate.size() > 0) {
         for (const LumiaBody& lumia : _lumiasToCreate) {
-            createLumia(lumia.radius, lumia.position, lumia.isAvatar);
+            createLumia(lumia.radius, lumia.position, lumia.isAvatar, lumia.vel);
         }
         _lumiasToCreate.clear();
     }
@@ -524,7 +524,6 @@ void GameScene::update(float dt) {
         _energiesToRemove.clear();
     }
 
-    CULog("size: %i", _lumiaList.size());
     // check if Lumia bodies fell out of the level, and remove as needed
     for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
         if (lumia->getY() < 0) {
@@ -604,8 +603,47 @@ void GameScene::update(float dt) {
                 // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
                 // http://www.iforce2d.net/b2dtut/world-querying
                 std::shared_ptr<LumiaModel> temp = _avatar;
-                createLumia(radius, pos + offset, true);
-                createLumia(radius, pos - offset, false);
+                Vec2 currentVel = _avatar->getVelocity();
+                Vec2 splitVel1 = Vec2::ZERO;
+                Vec2 splitVel2 = Vec2::ZERO;
+
+                if (IN_RANGE(currentVel.x, -1, 1) && currentVel.y > 0) {
+                    // Lumia velocity is North
+                    splitVel1 = Vec2(currentVel.x - 1.0f, currentVel.y);
+                    splitVel2 = Vec2(currentVel.x + 1.0f, currentVel.y);
+                } else if (currentVel.x > 1 && currentVel.y > 1) {
+                    // Lumia velocity is North East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x > 0 && IN_RANGE(currentVel.y, -1, 1)) {
+                    // Lumia velocity is East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x > 0 && currentVel.y < -1) {
+                    // Lumia velocity is South East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (IN_RANGE(currentVel.x, -1, 1) && currentVel.y < 0) {
+                    // Lumia velocity is South
+                    splitVel1 = Vec2(currentVel.x - 1.0f, currentVel.y);
+                    splitVel2 = Vec2(currentVel.x + 1.0f, currentVel.y);
+                } else if (currentVel.x < -1 && currentVel.y < -1) {
+                    // Lumia velocity is South West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x < 0 && IN_RANGE(currentVel.y, -1, 1)) {
+                    // Lumia velocity is West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x < -1 && currentVel.y < 1) {
+                    // Lumia velocity is North West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                }
+                CULog("current: (%f, %f)", currentVel.x, currentVel.y);
+                CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
+                createLumia(radius, pos + offset, true, splitVel1);
+                createLumia(radius, pos - offset, false, splitVel2);
                 removeLumia(temp);
             }
             break;
@@ -714,14 +752,15 @@ void GameScene::checkWin() {
 /**
  * Add a new Lumia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar, Vec2 vel) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
-    lumia-> setTextures(image);
-    lumia-> setDebugColor(DEBUG_COLOR);
-    lumia-> setName(LUMIA_NAME);
-    lumia-> setFixedRotation(false);
-    lumia-> setDensity(0.1f / radius);
+    lumia->setTextures(image);
+    lumia->setDebugColor(DEBUG_COLOR);
+    lumia->setName(LUMIA_NAME);
+    lumia->setFixedRotation(false);
+    lumia->setDensity(0.1f / radius);
+    lumia->setVelocity(vel);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -832,7 +871,12 @@ void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_pt
     // Lumia body remains if above min size, otherwise kill Lumia body
     if (newRadius >= MIN_LUMIA_RADIUS) {
         Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - PLANT_SIZE_COST);
-        struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+        struct LumiaBody lumiaNew = {
+            newPosition,
+            newRadius,
+            lumia == _avatar,
+            lumia->getVelocity()
+        };
 
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
@@ -853,7 +897,12 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 
     float newRadius = lumia->getRadius() + ENERGY_SIZE_INC;
     Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + ENERGY_SIZE_INC);
-    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+    struct LumiaBody lumiaNew = {
+        newPosition,
+        newRadius,
+        lumia == _avatar,
+        lumia->getVelocity()
+    };
 
     _lumiasToRemove.push_back(lumia);
     lumia->setRemoved(true);
@@ -863,7 +912,12 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
     float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
     Vec2 newPosition = Vec2((lumia->getPosition().x + lumia2->getPosition().x) / 2, lumia->getPosition().y + (newRadius - lumia->getRadius()));
-    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+    struct LumiaBody lumiaNew = {
+        newPosition,
+        newRadius,
+        lumia == _avatar || lumia2 == _avatar,
+        (lumia->getVelocity() + lumia2->getVelocity()) / 2
+    };
 
     _lumiasToRemove.push_back(lumia);
     lumia->setRemoved(true);
