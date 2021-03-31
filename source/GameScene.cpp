@@ -31,9 +31,6 @@ using namespace cugl;
 #define SCENE_WIDTH 1024
 #define SCENE_HEIGHT 576
 
-/** This is the aspect ratio for physics */
-#define SCENE_ASPECT 9.0/16.0
-
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
@@ -56,8 +53,6 @@ using namespace cugl;
 #define DEFAULT_GRAVITY -12.0f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
-/** The density for a bullet */
-#define HEAVY_DENSITY   10.0f
 /** Friction of most platforms */
 #define BASIC_FRICTION  0.4f
 /** The restitution for all physics objects */
@@ -78,8 +73,6 @@ using namespace cugl;
 #define LUMIA_TEXTURE  "lumia"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
-/** The name of a wall (for object identification) */
-#define WALL_NAME       "wall"
 
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
@@ -97,31 +90,10 @@ using namespace cugl;
 #define LOSE_MESSAGE    "FAILURE!"
 /** The color of the lose message */
 #define LOSE_COLOR      Color4::RED
-/** The key the basic game music */
-#define GAME_MUSIC      "game"
-/** The key the victory game music */
-#define WIN_MUSIC       "win"
-/** The key the failure game music */
-#define LOSE_MUSIC      "lose"
-/** The sound effect for firing a bullet */
-#define PEW_EFFECT      "pew"
-/** The sound effect for a bullet collision */
-#define POP_EFFECT      "pop"
-/** The sound effect for jumping */
-#define JUMP_EFFECT     "jump"
-/** The volume for the music */
-#define MUSIC_VOLUME    0.7f
-/** The volume for sound effects */
-#define EFFECT_VOLUME   0.8f
 
 #define CAMERA_SPEED 4.0f
 
-#define BACKGROUND_IMAGE "background"
-
 #define LEVEL_NAME "json/techlevel"
-
-/** Opacity of the physics outlines */
-#define DEBUG_OPACITY   192
 
 
 
@@ -640,6 +612,7 @@ void GameScene::update(float dt) {
                     splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
                     splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
                 }
+
                 CULog("current: (%f, %f)", currentVel.x, currentVel.y);
                 CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 createLumia(radius, pos + offset, true, splitVel1);
