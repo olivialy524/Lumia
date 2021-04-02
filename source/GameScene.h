@@ -287,6 +287,7 @@ public:
     /** Processes a collision between Lumia and another Lumia */
     void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
 
+    void processMoverLumiaCollision(const std::shared_ptr<MovingPlatform> mv, const std::shared_ptr<LumiaModel> lumia);
 	/**
 	* Processes the start of a collision
 	*

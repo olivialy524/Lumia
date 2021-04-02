@@ -334,6 +334,10 @@ void GameScene::reset() {
     for (const std::shared_ptr<EnergyModel> &e : _energyList) {
         e->dispose();
     }
+    for (const std::shared_ptr<MovingPlatform> &mv : _moverList) {
+        mv->dispose();
+    }
+    _moverList.clear();
     _energyList.clear();
     _lumiasToRemove.clear();
     _lumiasToCreate.clear();
@@ -416,6 +420,7 @@ std:shared_ptr<cugl::JsonValue> movers = _leveljson->get("movers");
     mv->setBodyType(b2_staticBody);
     mv->setRestitution(BASIC_RESTITUTION);
     mv->setDebugColor(DEBUG_COLOR);
+    mv->setName("mover");
     platform *= _scale;
     image = _assets->get<Texture>(EARTH_TEXTURE);
     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
@@ -640,6 +645,14 @@ void GameScene::update(float dt) {
         if (mover->getCD() > 2) {
             mover->move(_scale);
             mover->resetCD();
+        }
+    }
+    for (auto & lumia : _lumiaList) {
+        if (lumia->getMoveX() != 0 || lumia->getMoveY() != 0) {
+            cout << "Moving Lumia \n";
+            lumia->setPosition(lumia->getX()+lumia->getMoveX(), lumia->getY()+lumia->getMoveY());
+            lumia->setMoveY(0);
+            lumia->setMoveX(0);
         }
     }
 	// Turn the physics engine crank.
@@ -892,7 +905,6 @@ void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lum
     _lumiasToCreate.push_back(lumiaNew);
 }
 
-
 /**
  * Processes the start of a collision
  *
@@ -980,6 +992,20 @@ void GameScene::beginContact(b2Contact* contact) {
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
 		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
 	    }
+        if (bd1->getName() == "mover" && bd2->getName() == LUMIA_NAME) {
+            for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
+                if (lumia.get() == bd2 && !lumia->getRemoved()) {
+                    for (const std::shared_ptr<MovingPlatform>& mv : _moverList) {
+                        if (mv.get() == bd1) {
+                            lumia->setMoveX(mv->getTravelX());
+                            lumia->setMoveY(mv->getTravelY());
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -1013,7 +1039,7 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setGrounded(false);
             }
         }
-    }
+}
 }
 
 /**

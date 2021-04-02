@@ -33,6 +33,8 @@ public:
      */
     MovingPlatform() : cugl::physics2::PolygonObstacle() { }
     
+    void dispose();
+    
     static std::shared_ptr<MovingPlatform> alloc(cugl::Vec2 pos, cugl::Poly2 p, float nx, float ny) {
         std::shared_ptr<MovingPlatform> result = std::make_shared<MovingPlatform>();
         result->setOriginalX(pos.x);

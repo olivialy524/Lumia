@@ -79,6 +79,9 @@ protected:
 	std::string _sensorName;
 	/** The node for debugging the sensor */
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
+    
+    float _movex = 0;
+    float _movey = 0;
 
 	/** The scene graph node for Lumia. */
 	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
@@ -443,6 +446,22 @@ public:
 
     /* Returns whether or not this energy item is due to be or has been removed */
     bool getRemoved() { return _removed; }
+    
+    float getMoveX() {
+        return _movex;
+    }
+    
+    void setMoveX(float x) {
+        _movex = x;
+    }
+    
+    float getMoveY() {
+        return _movey;
+    }
+    
+    void setMoveY(float y) {
+        _movey = y;
+    }
 
     
 #pragma mark -

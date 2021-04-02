@@ -19,8 +19,8 @@ void MovingPlatform::move(float scale) {
         dir = -cugl::Vec2(cugl::Vec2(getOriginalX(),getOriginalY()), cugl::Vec2(getNewX(),getNewY()));
     }
     dir.normalize();
-    setTravelX(getX()+(dir.x*.1));
-    setTravelY(getY()+(dir.y*.1));
+    setTravelX((dir.x*.1));
+    setTravelY((dir.y*.1));
     setPosition(getX()+(dir.x*.1), getY()+(dir.y*.1));
     
     if (getReverse() && std::abs(currpos.x - getOriginalX()) <= .9 && std::abs(currpos.y - getOriginalY()) <= .9 ) {
@@ -30,4 +30,8 @@ void MovingPlatform::move(float scale) {
         reverse();
     }
     _node->setPosition(getX()*scale,getY()*scale);
+}
+void MovingPlatform::dispose() {
+    _node = nullptr;
+    _scenenode = nullptr;
 }
