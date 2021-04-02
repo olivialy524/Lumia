@@ -16,6 +16,7 @@
 #include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "MovingPlatform.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -64,6 +65,8 @@ protected:
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
+    
+    std::list<std::shared_ptr<MovingPlatform>> _moverList;
 
     /** Information representing a Lumia to create */
     struct LumiaBody {

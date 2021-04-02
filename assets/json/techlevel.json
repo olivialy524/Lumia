@@ -126,6 +126,16 @@
             "posx": 10,
             "posy": 10
             }
+        ],
+        "movers": [
+            {
+            "origx": 10,
+            "origy": 15,
+            "newx": 15,
+            "newy": 15,
+            "width": 3,
+            "height": 1
+            }
         ]
     }
 }

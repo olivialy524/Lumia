@@ -17,7 +17,7 @@ private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Tile>> _tiles;
     std::shared_ptr<LumiaModel> _lumia;
-    
+
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
     
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);

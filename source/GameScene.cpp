@@ -394,7 +394,16 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         addObstacle(platobj,sprite,1);
     }
 #pragma mark : Moving Platforms
-    Rect rectangle = Rect(10,15,1,3);
+std:shared_ptr<cugl::JsonValue> movers = _leveljson->get("movers");
+    for (int i = 0; i < movers->size(); i++) {
+    std::shared_ptr<cugl::JsonValue> mover = movers->get(i);
+        float orx = mover->getFloat("origx");
+        float ory = mover->getFloat("origy");
+        float nex = mover->getFloat("newx");
+        float ney = mover->getFloat("newy");
+        float wid = mover->getFloat("width");
+        float hgt = mover->getFloat("height");
+    Rect rectangle = Rect(orx,ory,wid,hgt);
     std::shared_ptr<MovingPlatform> mv;
     Poly2 platform(rectangle,false);
     SimpleTriangulator triangulator;
@@ -402,8 +411,19 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     triangulator.calculate();
     platform.setIndices(triangulator.getTriangulation());
     platform.setGeometry(Geometry::SOLID);
-    mv = MovingPlatform::alloc(cugl::Vec2(10,15), platform, 15, 15);
-    mv->setName("YO");
+    mv = MovingPlatform::alloc(cugl::Vec2(orx,ory), platform, nex, ney);
+    mv->setDensity(BASIC_DENSITY);
+    mv->setBodyType(b2_staticBody);
+    mv->setRestitution(BASIC_RESTITUTION);
+    mv->setDebugColor(DEBUG_COLOR);
+    platform *= _scale;
+    image = _assets->get<Texture>(EARTH_TEXTURE);
+    sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+    mv->setNode(sprite);
+    addObstacle(mv,sprite,1);
+    _moverList.push_front(mv);
+    }
+    
         
 
 #pragma mark : Energy
@@ -615,7 +635,13 @@ void GameScene::update(float dt) {
             break;
         }
     }
-            
+    for (auto & mover : _moverList) {
+        mover->incCD();
+        if (mover->getCD() > 2) {
+            mover->move(_scale);
+            mover->resetCD();
+        }
+    }
 	// Turn the physics engine crank.
 	_world->update(dt);
 

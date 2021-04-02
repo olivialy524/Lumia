@@ -10,13 +10,18 @@
 #define MovingPlatform_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUPolygonObstacle.h>
-class MovingPlatform : cugl::physics2::PolygonObstacle{
+class MovingPlatform : public cugl::physics2::PolygonObstacle {
 private:
     float _ox;
     float _oy;
     float _nx;
     float _ny;
     bool _rev;
+    float _travelx;
+    float _travely;
+    int _cooldown = 0;
+    std::shared_ptr<cugl::scene2::SceneNode> _scenenode;
+    std::shared_ptr<cugl::scene2::PolygonNode> _node;
 public:
     
 #pragma mark Constructors
@@ -30,6 +35,10 @@ public:
     
     static std::shared_ptr<MovingPlatform> alloc(cugl::Vec2 pos, cugl::Poly2 p, float nx, float ny) {
         std::shared_ptr<MovingPlatform> result = std::make_shared<MovingPlatform>();
+        result->setOriginalX(pos.x);
+        result->setOriginalY(pos.y);
+        result->setNewX(nx);
+        result->setNewY(ny);
         return (result->init(p) ? result : nullptr);
     }
     float getOriginalX() {
@@ -68,6 +77,49 @@ public:
         _rev = not _rev;
     }
     
-    void move();
+    std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
+        return _node;
+    }
+    
+    void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
+        _node = n;
+    }
+    
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() {
+        return _scenenode;
+    }
+    
+    void setSceneNode(std::shared_ptr<cugl::scene2::SceneNode> scene) {
+        _scenenode = scene;
+    }
+    
+    void move(float scale);
+    
+    int getCD() {
+        return _cooldown;
+    }
+    
+    void incCD() {
+        _cooldown++;
+    }
+    
+    void resetCD() {
+        _cooldown = 0;
+    }
+    float getTravelX() {
+        return _travelx;
+    }
+    
+    void setTravelX(float x) {
+        _travelx = x;
+    }
+    
+    float getTravelY() {
+        return _travely;
+    }
+    
+    void setTravelY(float y) {
+        _travely = y;
+    }
 };
 #endif /* MovingPlatform_h */
