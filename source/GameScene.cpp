@@ -13,6 +13,7 @@
 #include "PlantNode.h"
 #include "EnergyModel.h"
 #include "BackgroundNode.h"
+#include "MovingPlatform.h"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -392,6 +393,18 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
+#pragma mark : Moving Platforms
+    Rect rectangle = Rect(10,15,1,3);
+    std::shared_ptr<MovingPlatform> mv;
+    Poly2 platform(rectangle,false);
+    SimpleTriangulator triangulator;
+    triangulator.set(platform);
+    triangulator.calculate();
+    platform.setIndices(triangulator.getTriangulation());
+    platform.setGeometry(Geometry::SOLID);
+    mv = MovingPlatform::alloc(cugl::Vec2(10,15), platform, 15, 15);
+    mv->setName("YO");
+        
 
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");

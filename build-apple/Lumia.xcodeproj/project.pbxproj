@@ -25,6 +25,9 @@
 		613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
 		613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
 		613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E8D242602A94D00900A39 /* EnergyModel.cpp */; };
+		6144345B261631CE00F597E4 /* MovingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61443459261631CE00F597E4 /* MovingPlatform.cpp */; };
+		6144345C261631CE00F597E4 /* MovingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61443459261631CE00F597E4 /* MovingPlatform.cpp */; };
+		6144345D261631CE00F597E4 /* MovingPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61443459261631CE00F597E4 /* MovingPlatform.cpp */; };
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
@@ -152,6 +155,8 @@
 		613C1CB625FA90D800B213B8 /* Plant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
 		613E8D202602A93800900A39 /* EnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnergyModel.h; sourceTree = "<group>"; };
 		613E8D242602A94D00900A39 /* EnergyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyModel.cpp; sourceTree = "<group>"; };
+		61443459261631CE00F597E4 /* MovingPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MovingPlatform.cpp; sourceTree = "<group>"; };
+		61443461261631F700F597E4 /* MovingPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MovingPlatform.h; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LumiaNode.cpp; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -335,6 +340,8 @@
 				C70BACAC25F8427C00626819 /* LumiaNode.cpp */,
 				3A534AFB25FB256F00CDAE69 /* PlantNode.cpp */,
 				3A534B0225FB258300CDAE69 /* PlantNode.h */,
+				61443461261631F700F597E4 /* MovingPlatform.h */,
+				61443459261631CE00F597E4 /* MovingPlatform.cpp */,
 				3A9D6A1726082E9100898D04 /* BackgroundNode.h */,
 				3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */,
 				3A9D6A50260C3DE800898D04 /* LevelModel.h */,
@@ -603,6 +610,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6144345C261631CE00F597E4 /* MovingPlatform.cpp in Sources */,
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
 				EBB4B5622040A2FE00238092 /* InputController.cpp in Sources */,
 				613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */,
@@ -623,6 +631,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6144345D261631CE00F597E4 /* MovingPlatform.cpp in Sources */,
 				EB5D20A523FC77C8007D16CD /* main.cpp in Sources */,
 				EB5D20A923FC77C8007D16CD /* InputController.cpp in Sources */,
 				613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */,
@@ -643,6 +652,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6144345B261631CE00F597E4 /* MovingPlatform.cpp in Sources */,
 				EBB4B55B2040912400238092 /* LumiaModel.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
 				613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */,
