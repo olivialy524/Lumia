@@ -1039,6 +1039,7 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setGrounded(false);
             }
         }
+        
 }
 }
 
