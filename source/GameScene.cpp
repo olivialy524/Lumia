@@ -417,6 +417,59 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         addObstacle(plants[i], _sceneNode, 0);
         _plantList.push_front(plants[i]);
     }
+#pragma mark : Buttons & Doors
+    std::shared_ptr<cugl::JsonValue> buttons = _leveljson->get("buttons");
+    std::shared_ptr<cugl::JsonValue> doors = _leveljson->get("doors");
+    for (int i = 0; i < buttons->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> door = doors->get(i);
+        float x = door->getFloat("blx");
+         float y = door->getFloat("bly");
+         float wid = door->getFloat("width");
+         float hgt = door->getFloat("height");
+     Rect rectangle = Rect(x,y,wid,hgt);
+     std::shared_ptr<Door> d;
+     Poly2 platform(rectangle,false);
+     SimpleTriangulator triangulator;
+     triangulator.set(platform);
+     triangulator.calculate();
+     platform.setIndices(triangulator.getTriangulation());
+     platform.setGeometry(Geometry::SOLID);
+     d = Door::alloc(cugl::Vec2(x,y), platform);
+     d->setDensity(BASIC_DENSITY);
+     d->setBodyType(b2_staticBody);
+     d->setRestitution(BASIC_RESTITUTION);
+     d->setDebugColor(DEBUG_COLOR);
+        d->setName("door " + toString(i));
+     platform *= _scale;
+     image = _assets->get<Texture>(EARTH_TEXTURE);
+     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+     d->setNode(sprite);
+     addObstacle(d,sprite,1);
+     _doorList.push_front(d);
+        std::shared_ptr<cugl::JsonValue> button = buttons->get(i);
+        float bx = button->getFloat("posx");
+        float by = button->getFloat("posy");
+        std::shared_ptr<Button> b;
+        b = Button::alloc(Vec2(bx,by), Size(1,1));
+        b->setDensity(BASIC_DENSITY);
+        b->setBodyType(b2_staticBody);
+        b->setRestitution(BASIC_RESTITUTION);
+        b->setDebugColor(DEBUG_COLOR);
+        b->setName("button " + toString(i));
+        image = _assets->get<Texture>(EARTH_TEXTURE);
+        b->setDoor(d);
+        rectangle = Rect(x,y,1,1);
+        Poly2 buttonp(rectangle,false);
+        triangulator.calculate();
+        buttonp.setIndices(triangulator.getTriangulation());
+        buttonp.setGeometry(Geometry::SOLID);
+        std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
+        std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
+        sprite->setScale(_scale);
+        b->setNode(sprite);
+        addObstacle(b,sprite,1);
+        _buttonList.push_front(b);
+    }
 
     
 #pragma mark : Lumia

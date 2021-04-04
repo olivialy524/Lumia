@@ -16,6 +16,8 @@
 #include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "Button.h"
+#include "Door.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -62,6 +64,10 @@ protected:
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
+    
+    std::list<std::shared_ptr<Button>> _buttonList;
+    
+    std::list<std::shared_ptr<Door>> _doorList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
 
