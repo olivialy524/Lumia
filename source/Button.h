@@ -18,11 +18,10 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(Button);
 protected:
     float _scale;
-    /* Whether or not this button is pressed */
-    bool _pressed;
     std::shared_ptr<Door> _door;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<cugl::scene2::PolygonNode> _node;
+    int _cooldown;
 public:
     Button() : cugl::physics2::BoxObstacle() { }
 
@@ -51,11 +50,6 @@ public:
     void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
         _node = n;
     }
-
-    void Press() { _pressed = not _pressed; }
-
-    /* Returns whether or not this energy item is due to be or has been removed */
-    bool getPressed() { return _pressed; }
     
     std::shared_ptr<Door> getDoor() {
         return _door;
@@ -64,6 +58,7 @@ public:
     void setDoor(std::shared_ptr<Door> d) {
         _door = d;
     }
+    
 };
 
 #endif /* Button_h */

@@ -87,6 +87,8 @@ protected:
     std::list<LumiaBody> _lumiasToCreate;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
+    
+    std::list<std::shared_ptr<Door>> _doorsToOpen;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -290,6 +292,8 @@ public:
     /** Processes a collision between Lumia and another Lumia */
     void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
 
+    void processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
+    
 	/**
 	* Processes the start of a collision
 	*

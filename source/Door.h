@@ -36,12 +36,15 @@ private:
      }
     
     void changeOpen() {
-        _open = not _open;
-        if (not _open) {
-            getSceneNode()->setColor(cugl::Color4(0,0,0,0));
+        _open = !_open;
+        if (!_open) {
+            cout << "Closing Door \n";
+            getNode()->setColor(cugl::Color4(0,255,0,255));
+            setSensor(false);
         }
         else {
-            getSceneNode()->setColor(cugl::Color4(0,0,0,0));
+            getNode()->setColor(cugl::Color4(0,0,0,0));
+            setSensor(true);
     }
     }
      

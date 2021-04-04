@@ -455,7 +455,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         b->setBodyType(b2_staticBody);
         b->setRestitution(BASIC_RESTITUTION);
         b->setDebugColor(DEBUG_COLOR);
-        b->setName("button " + toString(i));
+        b->setName("button");
         image = _assets->get<Texture>(EARTH_TEXTURE);
         b->setDoor(d);
         rectangle = Rect(x,y,1,1);
@@ -575,6 +575,14 @@ void GameScene::update(float dt) {
             removeEnergy(energy);
         }
         _energiesToRemove.clear();
+    }
+    if (_doorsToOpen.size() > 0) {
+        for (const std::shared_ptr<Door>& door : _doorsToOpen) {
+            if (!door->getOpen()) {
+            door->changeOpen();
+            }
+        }
+        _doorsToOpen.clear();
     }
 
     if(_input.didSwitch()){
@@ -905,6 +913,10 @@ void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lum
 
     _lumiasToCreate.push_back(lumiaNew);
 }
+void GameScene::processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
+        _doorsToOpen.push_back(button->getDoor());
+}
+
 
 
 /**
@@ -963,6 +975,14 @@ void GameScene::beginContact(b2Contact* contact) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
                     processEnergyLumiaCollision(energy, lumia);
+                    break;
+                }
+            }
+        }
+        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd1) {
+                    processButtonLumiaCollision(lumia, button);
                     break;
                 }
             }
