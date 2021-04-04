@@ -36,8 +36,6 @@ using namespace cugl;
 /** The key for the event handlers */
 #define LISTENER_KEY      1
 
-/** How fast a double click must be in milliseconds */
-#define DOUBLE_CLICK    400
 
 #pragma mark -
 #pragma mark Input Controller
@@ -54,8 +52,6 @@ _debugPressed(false),
 _exitPressed(false),
 _splitPressed(false),
 _mergePressed(false),
-_keyJump(false),
-_keyFire(false),
 _keyReset(false),
 _keyDebug(false),
 _keyExit(false),
@@ -157,11 +153,11 @@ void InputController::update(float dt) {
     _keySplit  = keys->keyPressed(SPLIT_KEY);
 
     _resetPressed = _keyReset;
-    _splitPressed = _keySplit;
     _mergePressed = _keyMerge;
 
 #endif
-
+    
+    _splitPressed = _keySplit;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     
@@ -176,11 +172,10 @@ void InputController::update(float dt) {
     _keyExit = false;
     _keyReset = false;
     _keyDebug = false;
-    _keyJump  = false;
-    _keyFire  = false;
     _keySplit = false;
     _keyMerge = false;
     _launchInputted = false;
+    _switchInputted = false;
 #endif
 }
 
@@ -195,9 +190,13 @@ void InputController::clear() {
     _mergePressed = false;
     _launched = false;
     _switched = false;
+    _dragging = false;
 
     _inputLaunch = Vec2::ZERO;
+    _inputSwitch = Vec2::ZERO;
     _dclick = Vec2::ZERO;
+    _plannedLaunch = Vec2::ZERO;
+    _touchids.clear();
 }
 
 #pragma mark -
@@ -236,10 +235,6 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
 
         finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
         finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
-
-//        char print[64];
-//        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-//        CULog(print);
 
         _inputLaunch = finishDrag;
         _launchInputted = true;
@@ -284,12 +279,15 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
         // only one finger on screen, input is drag-and-release or tap
         _dclick.set(event.position);
     } else if (_touchids.size() == 2) {
+        // two fingers on screen, user is splitting Lumia
+        _keySplit = true;
+    } else if (_touchids.size() == 3) {
         // two fingers on screen, user is merging Lumia
         _mergePressed = true;
-    } else if (_touchids.size() == 3) {
+    } else if (_touchids.size() == 4) {
         _resetPressed = true;
     } else {
-        // more than two fingers on screen, invalid input
+        // invalid input
         return;
     }
 }
@@ -320,10 +318,6 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
         finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
         finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
 
-//        char print[64];
-//        snprintf(print, sizeof print, "%f %f", finishDrag.x, finishDrag.y);
-//        CULog(print);
-
         _inputLaunch = finishDrag;
         _launchInputted = true;
     }
@@ -331,10 +325,14 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     // finger lifted off screen, remove from set of touch IDs
     _touchids.erase(event.touch);
     if (_touchids.size() != 2) {
-        // don't have 2 fingers on screen, stop merging
-        _mergePressed = false;
+        // doesn't have 2 fingers on screen, stop splitting
+        _keySplit = false;
     }
     if (_touchids.size() != 3) {
+        // doesn't have 3 fingers on screen, stop merging
+        _mergePressed = false;
+    }
+    if (_touchids.size() != 4) {
         _resetPressed = false;
     }
 }

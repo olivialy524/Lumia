@@ -8,7 +8,9 @@
 #define __INPUT_H__
 #include <cugl/cugl.h>
 #include <unordered_set>
-
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 /**
  * This class represents player input in the Platform demo.
  *
@@ -35,10 +37,6 @@ private:
     /** Whether or not this input is active */
     bool _active;
     // KEYBOARD EMULATION
-    /** Whether the jump key is down */
-    bool  _keyJump;
-    /** Whether the fire key is down */
-    bool  _keyFire;
     /** Whether the reset key is down */
     bool  _keyReset;
     /** Whether the debug key is down */

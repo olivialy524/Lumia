@@ -114,14 +114,15 @@ using namespace cugl;
 /** The volume for sound effects */
 #define EFFECT_VOLUME   0.8f
 
+#define CAMERA_SPEED 3.0f
+
 #define BACKGROUND_IMAGE "background"
 
 #define LEVEL_NAME "json/techlevel"
 
-/** Color to outline the physics nodes */
-#define DEBUG_COLOR     Color4::YELLOW
 /** Opacity of the physics outlines */
 #define DEBUG_OPACITY   192
+
 
 
 
@@ -280,6 +281,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     setDebug(false);
     
     getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    _cameraTargetX = _avatar->getAvatarPos().x;
     getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -340,6 +342,8 @@ void GameScene::reset() {
     setFailure(false);
     setComplete(false);
     populate();
+    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    getCamera()->update();
 }
 
 /**
@@ -551,7 +555,16 @@ void GameScene::update(float dt) {
 
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    _cameraTargetX = _avatar->getAvatarPos().x;
+//    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    float currentPosX = getCamera()->getPosition().x;
+    float diff = _cameraTargetX - currentPosX;
+    if (std::abs(diff) <= 3){
+        getCamera()->setPositionX(_cameraTargetX);
+    }else{
+        float new_pos = currentPosX + CAMERA_SPEED * sgn(diff);
+        getCamera()->setPositionX(new_pos);
+    }
     getCamera()->update();
     
 	_avatar->setLaunching(_input.didLaunch());
@@ -691,7 +704,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
-    lumia-> setDensity(.1 / radius);
+    lumia-> setDensity(0.1f / radius);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
