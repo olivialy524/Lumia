@@ -159,6 +159,8 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
+    setName("game");
+
     _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
@@ -358,9 +360,8 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-std::shared_ptr<Texture> image;
-std::shared_ptr<scene2::PolygonNode> sprite;
-
+    std::shared_ptr<Texture> image;
+    std::shared_ptr<scene2::PolygonNode> sprite;
 
 #pragma mark : Platforms
     image  = _assets->get<Texture>(EARTH_TEXTURE);

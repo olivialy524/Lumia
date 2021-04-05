@@ -36,6 +36,7 @@ void LumiaApp::onStartup() {
     _assets->attach<Font>(FontLoader::alloc()->getHook());
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
+    _assets->attach<WidgetValue>(WidgetLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook());
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
 
@@ -129,10 +130,37 @@ void LumiaApp::update(float timestep) {
         _loading.update(0.01f);
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets);
+
+        // should actually be main menu but is level select for now
+        // we have finished loading assets, go to main menu
+        _levelSelect.init(_assets);
+        _currentScene = &_levelSelect;
         _loaded = true;
+        CULog("%s", _currentScene->getName().c_str());
     } else {
-        _gameplay.update(timestep);
+        // Screens:
+        // Main menu -> settings/level select/exit
+        // Settings -> main menu/gameplay
+        // Level select -> main menu/gameplay
+        // Gameplay / gameoverlay -> mainmenu
+        // Pause -> gameplay
+        // Loading -> mainmenu
+        // Game Over -> gameplay/mainmenu
+
+        if (!_currentScene->isActive()) {
+            string nextScene;
+            if (_currentScene->getName() == "levelselect") {
+                _levelSelect.setActive(false);
+                nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
+                if (nextScene == "game") {
+                    _gameplay.init(_assets);
+                    _gameplay.setActive(true);
+                    _currentScene = &_gameplay;
+                }
+            }
+        } else {
+            _currentScene->update(timestep);
+        }
     }
 }
 
@@ -149,7 +177,7 @@ void LumiaApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
     } else {
-        _gameplay.render(_batch);
+        _currentScene->render(_batch);
     }
 }
 

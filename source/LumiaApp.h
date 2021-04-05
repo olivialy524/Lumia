@@ -9,6 +9,7 @@
 #include <cugl/cugl.h>
 #include "GameScene.h"
 #include "LoadingScene.h"
+#include "LevelSelectScene.h"
 
 /**
  * This class represents the application root for the platform demo.
@@ -24,6 +25,10 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    /** The controller for the level select screen */
+    LevelSelectScene _levelSelect;
+    /** The currently active scene */
+    cugl::Scene2* _currentScene;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
