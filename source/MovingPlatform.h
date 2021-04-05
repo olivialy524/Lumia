@@ -17,9 +17,9 @@ private:
     float _nx;
     float _ny;
     bool _rev;
-    float _travelx;
-    float _travely;
-    int _cooldown = 0;
+    float _velocity;
+    float _dirx;
+    float _diry;
     std::shared_ptr<cugl::scene2::SceneNode> _scenenode;
     std::shared_ptr<cugl::scene2::PolygonNode> _node;
 public:
@@ -35,12 +35,13 @@ public:
     
     void dispose();
     
-    static std::shared_ptr<MovingPlatform> alloc(cugl::Vec2 pos, cugl::Poly2 p, float nx, float ny) {
+    static std::shared_ptr<MovingPlatform> alloc(cugl::Vec2 pos, cugl::Poly2 p, float nx, float ny, float vel) {
         std::shared_ptr<MovingPlatform> result = std::make_shared<MovingPlatform>();
         result->setOriginalX(pos.x);
         result->setOriginalY(pos.y);
         result->setNewX(nx);
         result->setNewY(ny);
+        result->setVelocity(vel);
         return (result->init(p) ? result : nullptr);
     }
     float getOriginalX() {
@@ -97,31 +98,30 @@ public:
     
     void move(float scale);
     
-    int getCD() {
-        return _cooldown;
+    
+    float getVelocity() {
+        return _velocity;
     }
     
-    void incCD() {
-        _cooldown++;
+    void setVelocity(float x) {
+        _velocity = x;
     }
     
-    void resetCD() {
-        _cooldown = 0;
-    }
-    float getTravelX() {
-        return _travelx;
+    float getDirX() {
+        return _dirx;
     }
     
-    void setTravelX(float x) {
-        _travelx = x;
+    void setDirX(float dx) {
+        _dirx = dx;
     }
     
-    float getTravelY() {
-        return _travely;
+    float getDirY() {
+        return _diry;
     }
     
-    void setTravelY(float y) {
-        _travely = y;
+    void setDirY(float dy) {
+        _diry = dy;
     }
+    
 };
 #endif /* MovingPlatform_h */

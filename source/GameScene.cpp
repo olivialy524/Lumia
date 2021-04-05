@@ -407,6 +407,7 @@ std:shared_ptr<cugl::JsonValue> movers = _leveljson->get("movers");
         float ney = mover->getFloat("newy");
         float wid = mover->getFloat("width");
         float hgt = mover->getFloat("height");
+        float vel = mover->getFloat("velocity");
     Rect rectangle = Rect(orx,ory,wid,hgt);
     std::shared_ptr<MovingPlatform> mv;
     Poly2 platform(rectangle,false);
@@ -415,11 +416,12 @@ std:shared_ptr<cugl::JsonValue> movers = _leveljson->get("movers");
     triangulator.calculate();
     platform.setIndices(triangulator.getTriangulation());
     platform.setGeometry(Geometry::SOLID);
-    mv = MovingPlatform::alloc(cugl::Vec2(orx,ory), platform, nex, ney);
-    mv->setDensity(BASIC_DENSITY);
-    mv->setBodyType(b2_staticBody);
+    mv = MovingPlatform::alloc(cugl::Vec2(orx,ory), platform, nex, ney,vel);
+    mv->setDensity(10000);
+    //mv->setBodyType(b2_staticBody);
     mv->setRestitution(BASIC_RESTITUTION);
     mv->setDebugColor(DEBUG_COLOR);
+    mv->setGravityScale(0);
     mv->setName("mover");
     platform *= _scale;
     image = _assets->get<Texture>(EARTH_TEXTURE);
@@ -641,12 +643,9 @@ void GameScene::update(float dt) {
         }
     }
     for (auto & mover : _moverList) {
-        mover->incCD();
-        if (mover->getCD() > 2) {
-            mover->move(_scale);
-            mover->resetCD();
+        mover->move(_scale);
+        mover->setAngle(0);
         }
-    }
     for (auto & lumia : _lumiaList) {
         if (lumia->getMoveX() != 0 || lumia->getMoveY() != 0) {
             cout << "Moving Lumia \n";
@@ -997,8 +996,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 if (lumia.get() == bd2 && !lumia->getRemoved()) {
                     for (const std::shared_ptr<MovingPlatform>& mv : _moverList) {
                         if (mv.get() == bd1) {
-                            lumia->setMoveX(mv->getTravelX());
-                            lumia->setMoveY(mv->getTravelY());
+                            lumia->setLinearVelocity((mv->getLinearVelocity().x),mv->getLinearVelocity().y);
                             break;
                         }
                     }

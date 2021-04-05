@@ -132,9 +132,10 @@
             "origx": 10,
             "origy": 15,
             "newx": 15,
-            "newy": 15.15,
+            "newy": 16,
             "width": 3,
-            "height": 1
+            "height": 1,
+            "velocity": 2
             }
         ]
     }
