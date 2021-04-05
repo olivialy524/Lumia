@@ -17,16 +17,21 @@
         "background":{
             "file": "textures/background.png"
         },
+        "mainmenu":{
+            "file": "textures/mainmenu.png"
+        },
         "split": {
             "file": "textures/split.png"
         },
-        "redb": {
-            "file":      "textures/red.png",
+        "levelbutton": {
+            "file":      "textures/levelbutton.png",
+            "wrapS":     "clamp",
+            "wrapT":     "clamp",
             "minfilter": "linear",
             "magfilter": "linear"
         },
-        "levelbutton": {
-            "file":      "textures/levelbutton.png",
+        "playbutton": {
+            "file":      "textures/playbutton.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
@@ -82,8 +87,73 @@
         "levelbutton" : "widgets/levelbutton.json"
     },
     "scene2s" : {
+    	"mainmenu" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "mainmenu",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "play": {
+                	"type"   : "Button",
+			        "format" : {
+			            "type" : "Anchored"
+			        },
+			        "data"   : {
+			            "anchor"   : [0.5,0.5],
+			            "upnode"  : "up"
+			        },
+			        "children": {
+			            "up" : {
+			                "type" : "Node",
+			                "format" : {
+			                    "type" : "Anchored"
+			                },
+			                "data" : {
+			                    "size"     : [100, 40],
+			                    "anchor"   : [0.5,0.5]
+			                },
+			                "children"  : {
+			                    "playpatch"  : {
+			                        "type"   : "NinePatch",
+			                        "format" : {
+			                            "type" : "Anchored"
+			                        },
+			                        "data"   : {
+			                            "texture"  : "playbutton",
+			                            "anchor"   : [0.5, 0.5]
+			                        },
+			                        "layout" : {
+			                            "x_anchor" : "fill",
+			                            "y_anchor" : "fill"
+			                        }
+			                  	}
+			                },
+			                "layout" : {
+			                    "x_anchor" : "fill",
+			                    "y_anchor" : "fill"
+			                }
+			            }
+			        },
+			        "layout" : {
+			            "x_anchor" : "center",
+			            "y_anchor" : "bottom",
+			            "y_offset" : 0.2
+			        }
+                }
+            }
+        },
         "game" : {
-            "comment"   : "??",
             "type"      : "Node",
             "format"    : {
                 "type" : "Anchored"

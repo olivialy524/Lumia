@@ -10,6 +10,7 @@
 #include "GameScene.h"
 #include "LoadingScene.h"
 #include "LevelSelectScene.h"
+#include "MainMenuScene.h"
 
 /**
  * This class represents the application root for the platform demo.
@@ -27,6 +28,8 @@ protected:
     LoadingScene _loading;
     /** The controller for the level select screen */
     LevelSelectScene _levelSelect;
+    /** The controller for the main menu screen */
+    MainMenuScene _mainMenu;
     /** The currently active scene */
     cugl::Scene2* _currentScene;
     

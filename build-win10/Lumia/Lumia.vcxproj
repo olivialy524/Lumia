@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\source\LumiaApp.h" />
     <ClInclude Include="..\..\source\LumiaModel.h" />
     <ClInclude Include="..\..\source\LumiaNode.h" />
+    <ClInclude Include="..\..\source\MainMenuScene.h" />
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
     <ClInclude Include="..\..\source\Tile.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="..\..\source\LumiaModel.cpp" />
     <ClCompile Include="..\..\source\LumiaNode.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
+    <ClCompile Include="..\..\source\MainMenuScene.cpp" />
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />

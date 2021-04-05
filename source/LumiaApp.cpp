@@ -134,10 +134,9 @@ void LumiaApp::update(float timestep) {
 
         // should actually be main menu but is level select for now
         // we have finished loading assets, go to main menu
-        _levelSelect.init(_assets);
-        _currentScene = &_levelSelect;
+        _mainMenu.init(_assets);
+        _currentScene = &_mainMenu;
         _loaded = true;
-        CULog("%s", _currentScene->getName().c_str());
     } else {
         // Screens:
         // Main menu -> settings/level select/exit
@@ -150,12 +149,19 @@ void LumiaApp::update(float timestep) {
 
         if (!_currentScene->isActive()) {
             string nextScene;
-            if (_currentScene->getName() == "levelselect") {
+            if (_currentScene->getName() == "mainmenu") {
+                _mainMenu.setActive(false);
+                nextScene = dynamic_cast<MainMenuScene*>(_currentScene)->getNextScene();
+                CULog("%s", nextScene.c_str());
+                if (nextScene == "levelselect") {
+                    _levelSelect.init(_assets);
+                    _currentScene = &_levelSelect;
+                }
+            } else if (_currentScene->getName() == "levelselect") {
                 _levelSelect.setActive(false);
                 nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
                 if (nextScene == "game") {
                     _gameplay.init(_assets, dynamic_cast<LevelSelectScene*>(_currentScene)->getSelectedLevel());
-                    _gameplay.setActive(true);
                     _currentScene = &_gameplay;
                 }
             }

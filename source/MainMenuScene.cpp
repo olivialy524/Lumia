@@ -8,7 +8,7 @@
 //  Author: Walker White
 //  Version: 1/20/18
 //
-#include "LevelSelectScene.h"
+#include "MainMenuScene.h"
 
 using namespace cugl;
 
@@ -26,8 +26,8 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
-    setName("levelselect");
+bool MainMenuScene::init(const std::shared_ptr<AssetManager>& assets) {
+    setName("mainmenu");
 
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
@@ -39,33 +39,20 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     }
     
     _assets = assets;
-    auto layer = assets->get<scene2::SceneNode>("levelselect");
+    auto layer = assets->get<scene2::SceneNode>("mainmenu");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     addChild(layer);
     
+    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("mainmenu_play"));
+    _button->addListener([=](const std::string& name, bool down) {
+        this->_active = down;
+        _nextScene = "levelselect";
+    });
 
-    auto levelbuttons = layer->getChildren();
-    int count = 0;
-
-    for (auto it = levelbuttons.begin(); it != levelbuttons.end(); ++it) {
-        if (count == 0) {
-            // first child is a label
-            count++;
-            continue;
-        }
-        std::shared_ptr<scene2::Button> butt = std::dynamic_pointer_cast<scene2::Button>(*it);
-        _buttons[butt->getName()] = butt;
-        butt->addListener([=](const std::string& name, bool down) {
-            this->_active = down;
-            _nextScene = "game";
-            _selectedLevel = "json/level" + std::to_string(count) + ".json";
-            CULog("%s", ("hi" + std::to_string(count)).c_str());
-        });
-        count++;
+    if (_active) {
+        _button->activate();
     }
-
-    setActive(_active);
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -75,8 +62,8 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
-void LevelSelectScene::dispose() {
-    _buttons.clear();
+void MainMenuScene::dispose() {
+    _button = nullptr;
     _assets = nullptr;
     Scene2::dispose();
 }
@@ -86,14 +73,12 @@ void LevelSelectScene::dispose() {
  *
  * @param value whether the scene is currently active
  */
-void LevelSelectScene::setActive(bool value) {
+void MainMenuScene::setActive(bool value) {
     _active = value;
-    for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
-        if (value && !it->second->isActive()) {
-            it->second->activate();
-        } else {
-            it->second->deactivate();
-        }
+    if (value && !_button->isActive()) {
+        _button->activate();
+    } else if (!value && _button->isActive()) {
+        _button->deactivate();
     }
 }
 

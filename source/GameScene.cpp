@@ -285,6 +285,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     getCamera()->setPositionX(_avatar->getAvatarPos().x);
     _cameraTargetX = _avatar->getAvatarPos().x;
     getCamera()->update();
+
+    setActive(true);
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
     return true;
