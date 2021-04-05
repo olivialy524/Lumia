@@ -38,7 +38,7 @@ void LumiaApp::onStartup() {
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook());
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
-
+    _assets->attach<TileDataModel>(GenericLoader<TileDataModel>::alloc()->getHook());
     // Create a "loading" screen
     _loaded = false;
     _loading.init(_assets);
@@ -47,8 +47,8 @@ void LumiaApp::onStartup() {
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     //load in the json file
-    _assets->loadAsync<LevelModel>("json/techlevel.json", "json/techlevel.json", nullptr);
-    
+    _assets->loadAsync<LevelModel>("json/newlevel.json", "json/newlevel.json", nullptr);
+    _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     Application::onStartup(); // YOU MUST END with call to parent
 }
 

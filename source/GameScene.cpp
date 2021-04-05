@@ -159,12 +159,13 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
+    _jsonr = cugl::JsonReader::alloc("json/newlevel.json");
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     
-    _level = assets->get<LevelModel>("json/techlevel.json");
+    _level = assets->get<LevelModel>("json/newlevel.json");
+    _tileManager = assets->get<TileDataModel>("json/tiles.json");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -392,6 +393,95 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
+    
+    std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
+   
+    for (int i=0; i< irregular_tiles.size(); i++){
+        std::shared_ptr<Tile> t = irregular_tiles[i];
+        cout << t->getAngle() << endl;
+        vector<Vec2> tile_data = _tileManager->getTileData(t->getType()-1);
+        Spline2 sp = Spline2(tile_data);
+        sp.setClosed(true);
+        PolySplineFactory ft(&sp);
+        ft.calculate(PolySplineFactory::Criterion::DISTANCE, 0.07f);
+        std::shared_ptr<physics2::PolygonObstacle> platobj;
+        SimpleTriangulator triangulator;
+        Poly2 platform = ft.getPath();
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+        
+        platform += Vec2(t->getX(), t->getY());
+        platobj = physics2::PolygonObstacle::alloc(platform);
+        platobj->setAngle(t->getAngle());
+        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        
+           //  Set the physics attributes
+        platobj->setBodyType(b2_staticBody);
+        platobj->setDensity(BASIC_DENSITY);
+        platobj->setFriction(BASIC_FRICTION);
+        platobj->setRestitution(BASIC_RESTITUTION);
+        platobj->setDebugColor(DEBUG_COLOR);
+        platform *= _scale;
+        
+        image = _assets->get<Texture>("tile1");
+        sprite = scene2::PolygonNode::allocWithTexture(image);
+        sprite->setAngle(t->getAngle());
+        _world->addObstacle(platobj);
+        platobj->setDebugScene(_debugnode);
+        sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+        _worldnode->addChild(sprite, 1);
+        
+    }
+    
+//    std::vector<Vec2> points = {
+//        Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f),Vec2(0.0f, 3.0f),
+//        Vec2(0.0f, 3.0f), Vec2(0.0f, 3.0f), Vec2(0.5f, 3.0f),
+//        Vec2(0.5f, 3.0f), Vec2(0.5f, 1.75f), Vec2(1.75f, 0.5f),
+//        Vec2(3.0f, 0.5f), Vec2(3.0f, 0.5f), Vec2(3.0f, 0.0f),
+//        Vec2(3.0f, 0.0f), Vec2(3.0f, 0.0f), Vec2(0.0f, 0.0f),
+//        Vec2(0.0f, 0.0f)
+//    };
+//
+//    Spline2 sp = Spline2(points);
+//    sp.setClosed(true);
+//    PolySplineFactory ft(&sp);
+//    ft.calculate(PolySplineFactory::Criterion::DISTANCE, 0.07f);
+//    std::shared_ptr<physics2::PolygonObstacle> platobj;
+//    SimpleTriangulator triangulator;
+//    Poly2 platform = ft.getPath();
+//    triangulator.set(platform);
+//    triangulator.calculate();
+//    platform.setIndices(triangulator.getTriangulation());
+//    platform.setGeometry(Geometry::SOLID);
+//
+//    platform += Vec2(5.0f, 5.0f);
+//    platobj = physics2::PolygonObstacle::alloc(platform);
+//    platobj->setAngle(1.57f);
+//    platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+//
+//   //  Set the physics attributes
+//    platobj->setBodyType(b2_staticBody);
+//    platobj->setDensity(BASIC_DENSITY);
+//    platobj->setFriction(BASIC_FRICTION);
+//    platobj->setRestitution(BASIC_RESTITUTION);
+//    platobj->setDebugColor(DEBUG_COLOR);
+////    platobj->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY() );
+//
+//
+//    platform *= _scale;
+//    image = _assets->get<Texture>("tile1");
+//    sprite = scene2::PolygonNode::allocWithTexture(image);
+//    sprite->setAngle(1.57f);
+//    _world->addObstacle(platobj);
+//    platobj->setDebugScene(_debugnode);
+//    sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+//    _worldnode->addChild(sprite, 1);
+//
+    
+
+    
 
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");

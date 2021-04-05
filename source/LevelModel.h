@@ -16,12 +16,13 @@ class LevelModel : public cugl::Asset {
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Tile>> _tiles;
+    std::vector<std::shared_ptr<Tile>> _iregular_tiles;
     std::shared_ptr<LumiaModel> _lumia;
     
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
     
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);
-    
+    std::vector<std::shared_ptr<Tile>> createIrregular(const std::shared_ptr<cugl::JsonValue>& tiles);
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
     std::shared_ptr<cugl::JsonValue> _levelJson;
@@ -68,10 +69,13 @@ public:
         return _plants;
     }
     
+    std::vector<std::shared_ptr<Tile>> getIrregularTile(){
+        return _iregular_tiles;
+    }
+    
     void resetLevel(const std::string& file){
         preload(_levelJson);
     }
-    
     
     
     bool preload(const std::string& file) override {

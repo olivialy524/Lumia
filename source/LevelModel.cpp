@@ -40,9 +40,11 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
+    std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createPlants(plants_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
+    createIrregular(irregular_tile_json);
 
     return true;
 };
@@ -89,6 +91,20 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr
         _tiles.push_back(t);
     }
     
+    return _tiles;
+}
+
+std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared_ptr<cugl::JsonValue> &platforms){
+    for (int i = 0; i < platforms->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
+        float x = platfor->getFloat("posx");
+        float y = platfor->getFloat("posy");
+        int type = platfor->getInt("type");
+        float angle = platfor->getFloat("angle");
+        std::shared_ptr<Tile> t = Tile::alloc(x, y, angle, type);
+        _iregular_tiles.push_back(t);
+    }
+
     return _tiles;
 }
 

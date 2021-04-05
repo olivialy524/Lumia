@@ -17,6 +17,8 @@ private:
     float _width;
     float _x;
     float _y;
+    float _angle;
+    int _type;
     
 public:
     
@@ -35,6 +37,15 @@ public:
         result->setY(y);
         result->setHeight(height);
         result->setWidth(width);
+        return result? result: nullptr;
+    }
+    
+    static std::shared_ptr<Tile> alloc(float x, float y, float angle, int type){
+        std::shared_ptr<Tile> result = std::make_shared<Tile>();
+        result->setX(x);
+        result->setY(y);
+        result->setAngle(angle);
+        result->setType(type);
         return result? result: nullptr;
     }
     
@@ -68,6 +79,22 @@ public:
     float getHeight(){
         return _height;
     }
+    
+    void setAngle(float angle){
+        _angle = angle;
+    }
+    
+    float getAngle(){
+        return _angle;
+    }
+    void setType(int type){
+        _type = type;
+    }
+    
+    int getType(){
+        return _type;
+    }
+
 };
 
 #endif /* Tile_h */

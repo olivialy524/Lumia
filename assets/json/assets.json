@@ -5,6 +5,16 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
+        "tile1": {
+            "file":     "textures/tile1.png",
+            "wrapS":    "repeat",
+            "wrapT":    "repeat"
+        },
+        "tile2": {
+            "file":     "textures/tile2.png",
+            "wrapS":    "repeat",
+            "wrapT":    "repeat"
+        },
         "lumia": {
             "file":      "textures/lumia.png"
         },
