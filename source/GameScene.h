@@ -12,9 +12,6 @@
 #include <unordered_set>
 #include <vector>
 #include "InputController.h"
-#include "LumiaModel.h"
-#include "LumiaNode.h"
-#include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
 
@@ -63,6 +60,8 @@ protected:
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
+    /** References to the Lumia bodies */
+    std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
     /** Reference to the player avatar */

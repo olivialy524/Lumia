@@ -6,6 +6,13 @@
             "posy": 17,
             "radius": 1
         },
+        "enemies": [
+            {
+            "posx": 10,
+            "posy": 15,
+            "radius": 1
+            }
+        ],
         "platforms": [
             {
                 "blx": 0,

@@ -9,6 +9,7 @@
 #define PLANT_NAME       "plant"
 #define PLATFORM_NAME    "platform"
 #define LUMIA_NAME       "lumia"
+#define ENEMY_NAME       "enemy"
 #define DEBUG_COLOR     Color4::YELLOW
 /** The new heavier gravity for this world (so it is not so floaty) */
 #define DEFAULT_GRAVITY -12.0f
@@ -40,9 +41,11 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
+    std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
     createPlants(plants_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
+    createEnemies(enemies_json);
 
     return true;
 };
@@ -75,6 +78,23 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
     }
     
     return _plants;
+}
+
+std::vector<std::shared_ptr<EnemyModel>> LevelModel::createEnemies(const std::shared_ptr<cugl::JsonValue> &enemies){
+    
+    for (int i=0; i< enemies->size(); i++){
+        std::shared_ptr<cugl::JsonValue> enemy_json = enemies->get(i);
+        float posx = enemy_json ->getFloat("posx");
+        float posy = enemy_json->getFloat("posy");
+        float radius = enemy_json->getFloat("radius");
+        Vec2 pos = Vec2(posx, posy);
+        auto enemy = EnemyModel::alloc(pos,radius);
+        enemy-> setName(ENEMY_NAME);
+        enemy-> setDebugColor(DEBUG_COLOR);
+        _enemies.push_back(enemy);
+    }
+    
+    return _enemies;
 }
 
 

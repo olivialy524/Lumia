@@ -19,6 +19,9 @@
         },
         "split": {
             "file": "textures/lumia-splitting.png"
+        },
+        "enemy":{
+            "file": "textures/enemy-3d.png"
         }
 	},
     "sounds": {

@@ -9,6 +9,7 @@
 #ifndef LevelModel_h
 #define LevelModel_h
 #include "LumiaModel.h"
+#include "EnemyModel.h"
 #include "Plant.h"
 #include "Tile.h"
 
@@ -16,11 +17,14 @@ class LevelModel : public cugl::Asset {
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Tile>> _tiles;
+    std::vector<std::shared_ptr<EnemyModel>> _enemies;
     std::shared_ptr<LumiaModel> _lumia;
     
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
     
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);
+    
+    std::vector<shared_ptr<EnemyModel>> createEnemies(const std::shared_ptr<cugl::JsonValue>& enemies);
     
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
@@ -68,10 +72,13 @@ public:
         return _plants;
     }
     
+    std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
+        return _enemies;
+    }
+    
     void resetLevel(const std::string& file){
         preload(_levelJson);
     }
-    
     
     
     bool preload(const std::string& file) override {
@@ -80,9 +87,6 @@ public:
     }
     
     bool preload(const std::shared_ptr<cugl::JsonValue>& json) override;
-    
-    
-    
     
     
     LevelModel() {};
