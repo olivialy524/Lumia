@@ -44,16 +44,27 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     layer->doLayout(); // This rearranges the children to fit the screen
     addChild(layer);
     
-    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("levelselect_action"));
-    _label  = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("levelselect_action_up_label"));
-    _button->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
-        _nextScene = "game";
-    });
 
-    if (_active) {
-        _button->activate();
+    auto levelbuttons = layer->getChildren();
+    int count = 0;
+
+    for (auto it = levelbuttons.begin(); it != levelbuttons.end(); ++it) {
+        if (count == 0) {
+            // first child is a label
+            count++;
+            continue;
+        }
+        std::shared_ptr<scene2::Button> butt = std::dynamic_pointer_cast<scene2::Button>(*it);
+        _buttons[butt->getName()] = butt;
+        butt->addListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _nextScene = "game";
+            _selectedLevel = "json/level" + std::to_string(count) + ".json";
+        });
+        count++;
     }
+
+    setActive(_active);
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -64,8 +75,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LevelSelectScene::dispose() {
-    _button = nullptr;
-    _label  = nullptr;
+    _buttons.clear();
     _assets = nullptr;
     Scene2::dispose();
 }
@@ -77,10 +87,12 @@ void LevelSelectScene::dispose() {
  */
 void LevelSelectScene::setActive(bool value) {
     _active = value;
-    if (value && !_button->isActive()) {
-        _button->activate();
-    } else if (!value && _button->isActive()) {
-        _button->deactivate();
+    for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
+        if (value && !it->second->isActive()) {
+            it->second->activate();
+        } else {
+            it->second->deactivate();
+        }
     }
 }
 

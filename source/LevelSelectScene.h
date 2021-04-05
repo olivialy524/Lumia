@@ -20,12 +20,11 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
 
-    std::shared_ptr<cugl::scene2::Button> _button;
-    std::shared_ptr<cugl::scene2::Label> _label;
+    std::unordered_map<std::string, std::shared_ptr<cugl::scene2::Button>> _buttons;
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
-    /** Whether or not this scene should be deactivated. Avoids issue with deactivating buttons in listener function */
-    bool _pendingDeactivate;
+    /** The identifier for the level selected by the player */
+    string _selectedLevel;
     
 public:
 #pragma mark -
@@ -36,7 +35,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    LevelSelectScene() : _nextScene(""), _pendingDeactivate(false) {}
+    LevelSelectScene() : _nextScene(""), _selectedLevel("") {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -79,9 +78,8 @@ public:
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; };
 
-    /** Returns whether or not this scene should be deactivated */
-    bool isPendingDeactivate() { return _pendingDeactivate; };
-
+    /** Returns the string representing the next scene to transition to */
+    string getSelectedLevel() { return _selectedLevel; };
 };
 
 #endif /* __LEVEL_SELECT_SCENE_H__ */

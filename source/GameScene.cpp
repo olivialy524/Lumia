@@ -158,15 +158,15 @@ GameScene::GameScene() : Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
 
-    _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
+    _jsonr = cugl::JsonReader::alloc(level);
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     
-    _level = assets->get<LevelModel>("json/techlevel.json");
+    _level = assets->get<LevelModel>(level);
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 

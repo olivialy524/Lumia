@@ -24,6 +24,13 @@
             "file":      "textures/red.png",
             "minfilter": "linear",
             "magfilter": "linear"
+        },
+        "levelbutton": {
+            "file":      "textures/levelbutton.png",
+            "wrapS":     "clamp",
+            "wrapT":     "clamp",
+            "minfilter": "linear",
+            "magfilter": "linear"
         }
 	},
     "sounds": {
@@ -72,7 +79,7 @@
         }
 	},
     "widgets": {
-        "largebutton" : "widgets/largebutton.json"
+        "levelbutton" : "widgets/levelbutton.json"
     },
     "scene2s" : {
         "game" : {
@@ -96,19 +103,45 @@
             }
         },
         "levelselect" : {
-            "comment"   : "The scene graph definition for the NinePatch button.  Noted the nested layouts.",
-            "type"      : "Node",
-            "format" : {
-                "type" : "Anchored"
+            "type": "Solid",
+            "format": {
+                "type": "Anchored"
+            },
+            "data": {
+                "color": [0,0,0,255]
             },
             "children"  : {
-                 "action"  : {
-                    "type"   : "Widget",
+            	"label" : {
+                    "type"   : "Label",
                     "data"   : {
-                        "key" : "largebutton",
+                        "font"       : "sans",
+                        "text"       : "Level Select",
+                        "foreground" : [255,255,255,255],
+                        "halign"     : "center",
+                        "valign"     : "top"
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "levelbutton1"  : {
+                    "type": "Widget",
+                    "data": {
+                    	"key"   : "levelbutton",
                         "variables" : {
-                            "size"  : [550,300],
-                            "text"  : "1"
+                        	"text": "1",
+                        	"x_offset": 100
+                        }
+                    }
+                },
+                "levelbutton2"  : {
+                    "type": "Widget",
+                    "data": {
+                    	"key"   : "levelbutton",
+                        "variables" : {
+                        	"text": "2",
+                        	"x_offset": 500
                         }
                     }
                 }

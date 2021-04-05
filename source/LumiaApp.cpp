@@ -48,7 +48,8 @@ void LumiaApp::onStartup() {
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     //load in the json file
-    _assets->loadAsync<LevelModel>("json/techlevel.json", "json/techlevel.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
     
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -153,7 +154,7 @@ void LumiaApp::update(float timestep) {
                 _levelSelect.setActive(false);
                 nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
                 if (nextScene == "game") {
-                    _gameplay.init(_assets);
+                    _gameplay.init(_assets, dynamic_cast<LevelSelectScene*>(_currentScene)->getSelectedLevel());
                     _gameplay.setActive(true);
                     _currentScene = &_gameplay;
                 }
