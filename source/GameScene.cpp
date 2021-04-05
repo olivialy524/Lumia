@@ -471,8 +471,10 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
     if (obj->getBodyType() == b2_dynamicBody) {
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle* obs){
+            if(!obs->isRemoved()){
             weak->setPosition(obs->getPosition()*_scale);
             weak->setAngle(obs->getAngle());
+            }
         });
     }
 }
@@ -571,27 +573,35 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    if(_input.didMerge()){
-        _avatar->setState(LumiaModel::LumiaState::Merging);
-    }else if (_input.didSplit()){
-        _avatar->setState(LumiaModel::LumiaState::Splitting);
-    }else{
-        _avatar->setState(LumiaModel::LumiaState::Idle);
+    
+    if(!_avatar->isRemoved()){
+        if(_input.didMerge()){
+            _avatar->setState(LumiaModel::LumiaState::Merging);
+        }else if (_input.didSplit()){
+            _avatar->setState(LumiaModel::LumiaState::Splitting);
+        }else{
+            _avatar->setState(LumiaModel::LumiaState::Idle);
+        }
     }
     
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
-            float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
-            if (radius > MIN_LUMIA_RADIUS) {
+            if (_avatar->isDoneSplitting()) {
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
                 Vec2 pos = _avatar->getPosition();
                 Vec2 offset = Vec2(0.5f + radius, 0.0f);
-
-                // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
-                // http://www.iforce2d.net/b2dtut/world-querying
-                std::shared_ptr<LumiaModel> temp = _avatar;
+                removeAvatarNode();
                 createLumia(radius, pos + offset, true);
                 createLumia(radius, pos - offset, false);
-                removeLumia(temp);
+                
+            }else if(!_avatar->isRemoved()){
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
+                if (radius > MIN_LUMIA_RADIUS) {
+                    
+                    // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+                    // http://www.iforce2d.net/b2dtut/world-querying
+                    deactivateAvatarPhysics();
+                }
             }
             break;
         }
@@ -602,6 +612,7 @@ void GameScene::update(float dt) {
         case LumiaModel::LumiaState::Idle:{
             break;
         }
+            
     }
             
 	// Turn the physics engine crank.
@@ -721,21 +732,23 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     return lumia;
 }
 
-void GameScene::startSplitting() {
+void GameScene::deactivateAvatarPhysics() {
     // do not attempt to remove a Lumia that has already been removed
     if (_avatar->isRemoved()) {
         return;
     }
     _sensorFixtureMap.erase(_avatar.get());
-//    _worldnode->removeChild(lumia->getSceneNode());
+    _avatar->markRemoved(true);
+}
 
+void GameScene::removeAvatarNode() {
     std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), _avatar);
     if (position != _lumiaList.end())
         _lumiaList.erase(position);
-    _avatar->deactivatePhysics(_world->getWorld());
-//    lumia->dispose();
-//    lumia->setDebugScene(nullptr);
-//    lumia->markRemoved(true);
+    
+    _worldnode->removeChild(_avatar->getSceneNode());
+    _avatar->dispose();
+    _avatar->setDebugScene(nullptr);
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {

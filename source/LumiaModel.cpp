@@ -165,7 +165,7 @@ void LumiaModel::applyForce() {
 void LumiaModel::update(float dt) {
     WheelObstacle::update(dt);
     
-    if (_sceneNode != nullptr) {
+    if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());
     }

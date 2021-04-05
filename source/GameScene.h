@@ -13,6 +13,7 @@
 #include <vector>
 #include "InputController.h"
 #include "LumiaModel.h"
+#include "LumiaNode.h"
 #include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
@@ -317,8 +318,10 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
+    
+    void removeAvatarNode();
 
-    void startSplitting();
+    void deactivateAvatarPhysics();
     /**
      * Resets the status of the game so that we can play again.
      */

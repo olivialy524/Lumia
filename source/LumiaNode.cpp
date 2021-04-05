@@ -20,13 +20,24 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
             break;
         }
         case LumiaAnimState::Splitting:{
+            if (_frameCount == 0){
+                int frame = AnimationNode::getFrame() + 1;
+                AnimationNode::setFrame(frame);
+                if (frame == 19){
+                    setAnimState(LumiaAnimState::SplitFinished);
+                }
+            }
             break;
         }
         case LumiaAnimState::Merging:{
             break;
         }
-            
+        case LumiaAnimState::SplitFinished:{
+            break;
+        }
     }
+    _frameCount = (_frameCount + 1) % ANIMATION_INTERVAL;
+    
     AnimationNode::draw(batch, transform, tint);
     
 }

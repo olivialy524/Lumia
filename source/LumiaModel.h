@@ -291,7 +291,7 @@ public:
      *
      * @return the scene graph node representing this LumiaModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
+	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
     
     
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
@@ -353,6 +353,7 @@ public:
                 break;
             }
             case LumiaState::Splitting:{
+                _sceneNode->setAngle(0.0f);
                 s = LumiaNode::LumiaAnimState::Splitting;
                 break;
             }
@@ -391,14 +392,8 @@ public:
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
-    /**
-     * Sets whether the Lumia is actively splitting.
-     *
-     * @param value whether the Lumia is actively splitting.
-     */
-    void setSplitting(bool value) { _isSplitting = value; }
+    bool isDoneSplitting() const {return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;}
     
-    bool isSplitting() const {return _isSplitting;}
     /**
      * Sets whether the Lumia is actively merging.
      *

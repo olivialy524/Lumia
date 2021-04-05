@@ -22,22 +22,32 @@ public:
         /** When Lumia is splitting */
         Splitting,
         /** When Lumia is merging */
-        Merging
+        Merging,
+        
+        SplitFinished
     };
 
     
 protected:
     LumiaAnimState _state;
+    
+    int _frameCount;
+
+    int ANIMATION_INTERVAL = 1.5f;
 public:
     
     cugl::Color4 _stint;
     
-    LumiaNode() : _state(Idle), AnimationNode() {}
+    LumiaNode() : _state(Idle), _frameCount(0), AnimationNode() {}
 
     ~LumiaNode() { dispose(); }
     
     void setAnimState(LumiaAnimState state){
         _state = state;
+    }
+    
+    LumiaAnimState getAnimState(){
+        return _state;
     }
  
     static std::shared_ptr<LumiaNode> alloc(const std::shared_ptr<Texture>& texture,
