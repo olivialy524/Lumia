@@ -85,6 +85,9 @@ protected:
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
 
+    Vec2 _linVelocityData;
+    
+    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -246,7 +249,7 @@ public:
      *
      * @return true if the level is completed.
      */
-    bool isComplete( ) const { return _complete; }
+    bool isComplete() const { return _complete; }
     
     /**
      * Sets whether the level is completed.

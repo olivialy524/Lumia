@@ -719,6 +719,10 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
     lumia-> setDensity(0.1f / radius);
+    if (isAvatar){
+    lumia-> setLinearVelocity(_linVelocityData);
+    lumia-> setAngularVelocity(_angVelocityData);
+    }
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -737,6 +741,8 @@ void GameScene::deactivateAvatarPhysics() {
     if (_avatar->isRemoved()) {
         return;
     }
+    _linVelocityData = _avatar->getLinearVelocity();
+    _angVelocityData = _avatar->getAngularVelocity();
     _sensorFixtureMap.erase(_avatar.get());
     _avatar->markRemoved(true);
 }
