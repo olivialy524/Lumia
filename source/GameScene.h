@@ -64,6 +64,8 @@ protected:
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
+    /** Reference to the player avatar */
+    std::shared_ptr<LumiaNode> _avatarNode;
 
     /** Information representing a Lumia to create */
     struct LumiaBody {
@@ -316,6 +318,7 @@ public:
      */
     void update(float timestep);
 
+    void startSplitting();
     /**
      * Resets the status of the game so that we can play again.
      */

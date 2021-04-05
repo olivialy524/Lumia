@@ -75,7 +75,7 @@ using namespace cugl;
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
-#define LUMIA_TEXTURE  "lumia"
+#define LUMIA_TEXTURE   "lumia"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
@@ -86,6 +86,7 @@ using namespace cugl;
 #define PLATFORM_NAME   "platform"
 
 #define SPLIT_NAME      "split"
+
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
@@ -422,9 +423,10 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 #pragma mark : Lumia
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
     _avatar = _level->getLumia();
     _avatar-> setDrawScale(_scale);
-    _avatar-> setTextures(image);
+    _avatar-> setTextures(image, split);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _avatar-> setFixedRotation(false);
@@ -699,8 +701,9 @@ void GameScene::checkWin() {
  */
 std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
-    lumia-> setTextures(image);
+    lumia-> setTextures(image, splitting);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
@@ -716,6 +719,23 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     }
 
     return lumia;
+}
+
+void GameScene::startSplitting() {
+    // do not attempt to remove a Lumia that has already been removed
+    if (_avatar->isRemoved()) {
+        return;
+    }
+    _sensorFixtureMap.erase(_avatar.get());
+//    _worldnode->removeChild(lumia->getSceneNode());
+
+    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), _avatar);
+    if (position != _lumiaList.end())
+        _lumiaList.erase(position);
+    _avatar->deactivatePhysics(_world->getWorld());
+//    lumia->dispose();
+//    lumia->setDebugScene(nullptr);
+//    lumia->markRemoved(true);
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {

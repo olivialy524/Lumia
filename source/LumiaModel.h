@@ -28,7 +28,7 @@ protected:
 #define SIGNUM(x)  ((x > 0) - (x < 0))
     
 /** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::RED
+#define DEBUG_COLOR     Color4::YELLOW
 
     /** The base density of the character */
     static constexpr float LUMIA_DENSITY = 0.10f;
@@ -196,7 +196,7 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& lumia);
+    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting);
 
     void setDrawScale(float scale);
     
