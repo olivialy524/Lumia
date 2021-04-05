@@ -75,7 +75,7 @@ using namespace cugl;
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
-#define LUMIA_TEXTURE  "lumia"
+#define LUMIA_TEXTURE   "lumia"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
@@ -86,6 +86,7 @@ using namespace cugl;
 #define PLATFORM_NAME   "platform"
 
 #define SPLIT_NAME      "split"
+
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
@@ -422,9 +423,10 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 #pragma mark : Lumia
     std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
     _avatar = _level->getLumia();
     _avatar-> setDrawScale(_scale);
-    _avatar-> setTextures(image);
+    _avatar-> setTextures(image, split);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _avatar-> setFixedRotation(false);
@@ -469,8 +471,10 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
     if (obj->getBodyType() == b2_dynamicBody) {
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle* obs){
+            if(!obs->isRemoved()){
             weak->setPosition(obs->getPosition()*_scale);
             weak->setAngle(obs->getAngle());
+            }
         });
     }
 }
@@ -501,7 +505,6 @@ void GameScene::update(float dt) {
     if (!_failed && !_complete) {
         checkWin();
     }
-    
 
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
@@ -570,27 +573,35 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    if(_input.didMerge()){
-        _avatar->setState(LumiaModel::LumiaState::Merging);
-    }else if (_input.didSplit()){
-        _avatar->setState(LumiaModel::LumiaState::Splitting);
-    }else{
-        _avatar->setState(LumiaModel::LumiaState::Idle);
+    
+    if(!_avatar->isRemoved()){
+        if(_input.didMerge()){
+            _avatar->setState(LumiaModel::LumiaState::Merging);
+        }else if (_input.didSplit()){
+            _avatar->setState(LumiaModel::LumiaState::Splitting);
+        }else{
+            _avatar->setState(LumiaModel::LumiaState::Idle);
+        }
     }
     
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
-            float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
-            if (radius > MIN_LUMIA_RADIUS) {
+            if (_avatar->isDoneSplitting()) {
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
                 Vec2 pos = _avatar->getPosition();
                 Vec2 offset = Vec2(0.5f + radius, 0.0f);
-
-                // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
-                // http://www.iforce2d.net/b2dtut/world-querying
-                std::shared_ptr<LumiaModel> temp = _avatar;
+                removeAvatarNode();
                 createLumia(radius, pos + offset, true);
                 createLumia(radius, pos - offset, false);
-                removeLumia(temp);
+                
+            }else if(!_avatar->isRemoved()){
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
+                if (radius > MIN_LUMIA_RADIUS) {
+                    
+                    // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+                    // http://www.iforce2d.net/b2dtut/world-querying
+                    deactivateAvatarPhysics();
+                }
             }
             break;
         }
@@ -601,6 +612,7 @@ void GameScene::update(float dt) {
         case LumiaModel::LumiaState::Idle:{
             break;
         }
+            
     }
             
 	// Turn the physics engine crank.
@@ -700,12 +712,17 @@ void GameScene::checkWin() {
  */
 std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
-    lumia-> setTextures(image);
+    lumia-> setTextures(image, splitting);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
     lumia-> setDensity(0.1f / radius);
+    if (isAvatar){
+    lumia-> setLinearVelocity(_linVelocityData);
+    lumia-> setAngularVelocity(_angVelocityData);
+    }
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -717,6 +734,27 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     }
 
     return lumia;
+}
+
+void GameScene::deactivateAvatarPhysics() {
+    // do not attempt to remove a Lumia that has already been removed
+    if (_avatar->isRemoved()) {
+        return;
+    }
+    _linVelocityData = _avatar->getLinearVelocity();
+    _angVelocityData = _avatar->getAngularVelocity();
+    _sensorFixtureMap.erase(_avatar.get());
+    _avatar->markRemoved(true);
+}
+
+void GameScene::removeAvatarNode() {
+    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), _avatar);
+    if (position != _lumiaList.end())
+        _lumiaList.erase(position);
+    
+    _worldnode->removeChild(_avatar->getSceneNode());
+    _avatar->dispose();
+    _avatar->setDebugScene(nullptr);
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
@@ -914,7 +952,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        
+
         // handle collision between two Lumias
         if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
@@ -934,13 +972,13 @@ void GameScene::beginContact(b2Contact* contact) {
         }
 
         // handle detection of Lumia and ground
-	    if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
-		    lumia->setGrounded(true);
-		    // Could have more than one ground
+        if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
+            lumia->setGrounded(true);
+            // Could have more than one ground
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
-		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-	    }
+            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+        }
     }
 }
 

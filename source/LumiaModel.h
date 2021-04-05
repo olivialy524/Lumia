@@ -28,7 +28,7 @@ protected:
 #define SIGNUM(x)  ((x > 0) - (x < 0))
     
 /** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::RED
+#define DEBUG_COLOR     Color4::YELLOW
 
     /** The base density of the character */
     static constexpr float LUMIA_DENSITY = 0.10f;
@@ -196,7 +196,7 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& lumia);
+    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting);
 
     void setDrawScale(float scale);
     
@@ -291,7 +291,7 @@ public:
      *
      * @return the scene graph node representing this LumiaModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() const { return _sceneNode; }
+	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
     
     
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
@@ -346,6 +346,23 @@ public:
     
     void setState(LumiaState state){
         _state = state;
+        LumiaNode::LumiaAnimState s;
+        switch (_state){
+            case LumiaState::Idle:{
+                s = LumiaNode::LumiaAnimState::Idle;
+                break;
+            }
+            case LumiaState::Splitting:{
+                _sceneNode->setAngle(0.0f);
+                s = LumiaNode::LumiaAnimState::Splitting;
+                break;
+            }
+            case LumiaState::Merging:{
+                s = LumiaNode::LumiaAnimState::Merging;
+                break;
+            }
+        }
+        _node->setAnimState(s);
     }
     
     LumiaState getState(){
@@ -375,14 +392,8 @@ public:
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
-    /**
-     * Sets whether the Lumia is actively splitting.
-     *
-     * @param value whether the Lumia is actively splitting.
-     */
-    void setSplitting(bool value) { _isSplitting = value; }
+    bool isDoneSplitting() const {return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;}
     
-    bool isSplitting() const {return _isSplitting;}
     /**
      * Sets whether the Lumia is actively merging.
      *
