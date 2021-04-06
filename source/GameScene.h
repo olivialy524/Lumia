@@ -14,6 +14,7 @@
 #include "InputController.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "GraphNode.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -98,6 +99,8 @@ protected:
       
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    
+    std::unordered_map<Node, NodeState> _graph;
 
 #pragma mark Internal Object Management
     /**

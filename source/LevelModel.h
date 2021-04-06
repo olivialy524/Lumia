@@ -20,6 +20,10 @@ private:
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
     std::shared_ptr<LumiaModel> _lumia;
     
+    float _xBound;
+    
+    float _yBound;
+    
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
     
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);
@@ -29,6 +33,7 @@ private:
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
     std::shared_ptr<cugl::JsonValue> _levelJson;
+    
 public:
     
 #pragma mark Static Constructors
@@ -59,6 +64,14 @@ public:
     }
     
 #pragma mark Level Attributes
+    
+    float getXBound(){
+        return _xBound;
+    }
+    
+    float getYBound(){
+        return _yBound;
+    }
     
     std::shared_ptr<LumiaModel> getLumia(){
         return _lumia;

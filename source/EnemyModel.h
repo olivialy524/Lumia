@@ -79,6 +79,8 @@ protected:
     
     /** The current state of this enemy*/
     EnemyState _state;
+    
+    Vec2 _lastPositon;
 
     /**
     * Redraws the outline of the physics fixtures to the debug node
@@ -320,19 +322,8 @@ public:
      * @return velocity of Lumia.
      */
     cugl::Vec2 getVelocity() const { return _velocity; }
-
-    /**
-     * Returns current position of Lumia (used for trajectory prediction).
-     *
-     * @return position of Lumia.
-     */
-    b2Vec2 getPos() const { return _body->GetPosition(); }
     
-    
-    Vec2 getAvatarPos() const {
-        return Vec2(getPosition().x*_drawScale, getPosition().y*_drawScale);
-        
-    }
+    cugl::Vec2 getLastPosition() const {return _lastPosition;}
     
     void setState(EnemyState state){
         _state = state;

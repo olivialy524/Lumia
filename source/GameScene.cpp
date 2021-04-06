@@ -366,16 +366,24 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-std::shared_ptr<Texture> image;
-std::shared_ptr<scene2::PolygonNode> sprite;
-
-
+    float xBound = _level->getXBound();
+    float yBound = _level->getYBound();
+    for (int i = 0; i < xBound; i++){
+        for (int j = 0; j < yBound; j++){
+            _graph[{Vec2(i, j)}] = NodeState::Void;
+        }
+    }
+    
+    
+    std::shared_ptr<Texture> image;
+    std::shared_ptr<scene2::PolygonNode> sprite;
 #pragma mark : Platforms
     image  = _assets->get<Texture>(EARTH_TEXTURE);
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
         std::shared_ptr<Tile> tile = platforms[i];
         Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
+        
         std::shared_ptr<physics2::PolygonObstacle> platobj;
         Poly2 platform(rectangle,false);
         SimpleTriangulator triangulator;
@@ -399,6 +407,8 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         image = _assets->get<Texture>(EARTH_TEXTURE);
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
+        
+        // get bounds and world query within the bounds; if there is tile, mark obstacle on the graph, else remain void
     }
 
 #pragma mark : Energy
@@ -435,6 +445,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
     
+    _graph[{Vec2(_avatar->getPosition())}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front

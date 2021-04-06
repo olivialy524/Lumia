@@ -162,6 +162,7 @@ void EnemyModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void EnemyModel::update(float dt) {
+    _lastPositon = getPosition() * _drawScale;
     WheelObstacle::update(dt);
     
     if (_sceneNode != nullptr && !isRemoved()) {
