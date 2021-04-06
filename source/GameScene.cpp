@@ -647,11 +647,10 @@ void GameScene::update(float dt) {
         mover->setAngle(0);
         }
     for (auto & lumia : _lumiaList) {
-        if (lumia->getMoveX() != 0 || lumia->getMoveY() != 0) {
-            cout << "Moving Lumia \n";
-            lumia->setPosition(lumia->getX()+lumia->getMoveX(), lumia->getY()+lumia->getMoveY());
-            lumia->setMoveY(0);
-            lumia->setMoveX(0);
+        if (lumia->getMoverX() != 0 && lumia->getMoverY() != 0) {
+            lumia->setLinearVelocity(lumia->getLinearVelocity()+Vec2(lumia->getMoverX(), lumia->getMoverY()));
+            lumia->setMoverX(0);
+            lumia->setMoverY(0);
         }
     }
 	// Turn the physics engine crank.
@@ -891,6 +890,11 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
     _lumiasToCreate.push_back(lumiaNew);
 }
 
+void GameScene::processMoverLumiaCollision(const std::shared_ptr<MovingPlatform> mv, const std::shared_ptr<LumiaModel> lumia) {
+    lumia->setMoverX(mv->getLinearVelocity().x);
+    lumia->setMoverY(mv->getLinearVelocity().y);
+}
+
 void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
     float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
     Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
@@ -996,7 +1000,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 if (lumia.get() == bd2 && !lumia->getRemoved()) {
                     for (const std::shared_ptr<MovingPlatform>& mv : _moverList) {
                         if (mv.get() == bd1) {
-                            lumia->setLinearVelocity((mv->getLinearVelocity().x),mv->getLinearVelocity().y);
+                            processMoverLumiaCollision(mv, lumia);
                             break;
                         }
                     }
