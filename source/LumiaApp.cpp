@@ -152,7 +152,6 @@ void LumiaApp::update(float timestep) {
             if (_currentScene->getName() == "mainmenu") {
                 _mainMenu.setActive(false);
                 nextScene = dynamic_cast<MainMenuScene*>(_currentScene)->getNextScene();
-                CULog("%s", nextScene.c_str());
                 if (nextScene == "levelselect") {
                     _levelSelect.init(_assets);
                     _currentScene = &_levelSelect;

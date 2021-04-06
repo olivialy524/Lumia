@@ -76,7 +76,11 @@
         "sans": {
             "file":     "fonts/Roboto-Bold.ttf",
             "size":     64
-        }
+        },
+        "retro": {
+			"file":     "fonts/RetroGame.ttf",
+			"size":     64
+		}
 	},
     "widgets": {
         "levelbutton" : "widgets/levelbutton.json"
