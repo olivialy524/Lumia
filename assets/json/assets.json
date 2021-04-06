@@ -24,18 +24,13 @@
             "file": "textures/split.png"
         },
         "levelbutton": {
-            "file":      "textures/levelbutton.png",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
+            "file": "textures/levelbutton.png"
         },
         "playbutton": {
-            "file":      "textures/playbutton.png",
-            "wrapS":     "clamp",
-            "wrapT":     "clamp",
-            "minfilter": "linear",
-            "magfilter": "linear"
+            "file": "textures/playbutton.png"
+        },
+        "closebutton": {
+        	"file": "textures/closebutton.png"
         }
 	},
     "sounds": {
@@ -74,8 +69,8 @@
         }                
     },
 	"fonts": {
-		"retro": {
-			"file":     "fonts/RetroGame.ttf",
+		"orbitron": {
+			"file":     "fonts/Orbitron-Bold.ttf",
 			"size":     64
 		},
         "sans": {
@@ -150,6 +145,54 @@
 			            "y_anchor" : "bottom",
 			            "y_offset" : 0.2
 			        }
+                },
+                "close": {
+                	"type"   : "Button",
+			        "format" : {
+			            "type" : "Anchored"
+			        },
+			        "data"   : {
+			            "anchor"   : [0.5,0.5],
+			            "upnode"  : "up"
+			        },
+			        "children": {
+			            "up" : {
+			                "type" : "Node",
+			                "format" : {
+			                    "type" : "Anchored"
+			                },
+			                "data" : {
+			                    "size"     : [15, 15],
+			                    "anchor"   : [0.5,0.5]
+			                },
+			                "children"  : {
+			                    "playpatch"  : {
+			                        "type"   : "NinePatch",
+			                        "format" : {
+			                            "type" : "Anchored"
+			                        },
+			                        "data"   : {
+			                            "texture"  : "closebutton",
+			                            "anchor"   : [0.5, 0.5]
+			                        },
+			                        "layout" : {
+			                            "x_anchor" : "fill",
+			                            "y_anchor" : "fill"
+			                        }
+			                  	}
+			                },
+			                "layout" : {
+			                    "x_anchor" : "fill",
+			                    "y_anchor" : "fill"
+			                }
+			            }
+			        },
+			        "layout" : {
+			            "x_anchor" : "right",
+			            "y_anchor" : "top",
+			            "y_offset" : -0.06,
+			            "x_offset" : -0.06
+			        }
                 }
             }
         },
@@ -184,7 +227,7 @@
             	"label" : {
                     "type"   : "Label",
                     "data"   : {
-                        "font"       : "sans",
+                        "font"       : "orbitron",
                         "text"       : "Level Select",
                         "foreground" : [255,255,255,255],
                         "halign"     : "center",
@@ -201,7 +244,9 @@
                     	"key"   : "levelbutton",
                         "variables" : {
                         	"text": "1",
-                        	"x_offset": 100
+                        	"x_offset": 200,
+                        	"y_offset": 50,
+                        	"label_x_offset": 0.05
                         }
                     }
                 },
@@ -211,7 +256,8 @@
                     	"key"   : "levelbutton",
                         "variables" : {
                         	"text": "2",
-                        	"x_offset": 500
+                        	"x_offset": 400,
+                        	"y_offset": -50
                         }
                     }
                 }

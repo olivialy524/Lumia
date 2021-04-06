@@ -20,7 +20,7 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
 
-    std::shared_ptr<cugl::scene2::Button> _button;
+    std::unordered_map<std::string, std::shared_ptr<cugl::scene2::Button>> _buttons;
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;

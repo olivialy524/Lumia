@@ -60,7 +60,6 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
             this->_active = down;
             _nextScene = "game";
             _selectedLevel = "json/level" + std::to_string(count) + ".json";
-            CULog("%s", ("hi" + std::to_string(count)).c_str());
         });
         count++;
     }
