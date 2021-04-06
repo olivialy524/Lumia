@@ -101,7 +101,9 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared
         float y = platfor->getFloat("posy");
         int type = platfor->getInt("type");
         float angle = platfor->getFloat("angle");
+        string file_name = platfor->getString("texture");
         std::shared_ptr<Tile> t = Tile::alloc(x, y, angle, type);
+        t->setFile(file_name);
         _iregular_tiles.push_back(t);
     }
 

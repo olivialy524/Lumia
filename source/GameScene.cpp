@@ -281,8 +281,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * 0.25f;
     getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -343,7 +344,8 @@ void GameScene::reset() {
     setFailure(false);
     setComplete(false);
     populate();
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
     getCamera()->update();
 }
 
@@ -364,7 +366,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 
 
 #pragma mark : Platforms
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
         std::shared_ptr<Tile> tile = platforms[i];
@@ -389,7 +390,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setDebugColor(DEBUG_COLOR);
         platform *= _scale;
         // All walls and platforms share the same texture
-        image = _assets->get<Texture>(EARTH_TEXTURE);
+        image = _assets->get<Texture>("tile3");
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
@@ -398,7 +399,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
    
     for (int i=0; i< irregular_tiles.size(); i++){
         std::shared_ptr<Tile> t = irregular_tiles[i];
-        cout << t->getAngle() << endl;
         vector<Vec2> tile_data = _tileManager->getTileData(t->getType()-1);
         Spline2 sp = Spline2(tile_data);
         sp.setClosed(true);
@@ -425,61 +425,30 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setDebugColor(DEBUG_COLOR);
         platform *= _scale;
         
-        image = _assets->get<Texture>("tile1");
+        image = _assets->get<Texture>(t->getFile());
+
+        // calcuate the drawing overlay scale
+        float scalex = platform.getBounds().size.width/image->getWidth();
+        float scaley = platform.getBounds().size.height/image->getHeight();
+        
+        cout << t->getFile() <<endl;
+        cout << platform.getBounds().size.width << endl;
+        cout << platform.getBounds().size.height << endl;
+        cout << image->getWidth() << endl;
+        cout << image->getHeight()<<  endl;
         sprite = scene2::PolygonNode::allocWithTexture(image);
+        sprite->setScale(Vec2(scalex, scaley));
         sprite->setAngle(t->getAngle());
+       
         _world->addObstacle(platobj);
         platobj->setDebugScene(_debugnode);
         sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
         _worldnode->addChild(sprite, 1);
         
+        
+        
     }
-    
-//    std::vector<Vec2> points = {
-//        Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f),Vec2(0.0f, 3.0f),
-//        Vec2(0.0f, 3.0f), Vec2(0.0f, 3.0f), Vec2(0.5f, 3.0f),
-//        Vec2(0.5f, 3.0f), Vec2(0.5f, 1.75f), Vec2(1.75f, 0.5f),
-//        Vec2(3.0f, 0.5f), Vec2(3.0f, 0.5f), Vec2(3.0f, 0.0f),
-//        Vec2(3.0f, 0.0f), Vec2(3.0f, 0.0f), Vec2(0.0f, 0.0f),
-//        Vec2(0.0f, 0.0f)
-//    };
-//
-//    Spline2 sp = Spline2(points);
-//    sp.setClosed(true);
-//    PolySplineFactory ft(&sp);
-//    ft.calculate(PolySplineFactory::Criterion::DISTANCE, 0.07f);
-//    std::shared_ptr<physics2::PolygonObstacle> platobj;
-//    SimpleTriangulator triangulator;
-//    Poly2 platform = ft.getPath();
-//    triangulator.set(platform);
-//    triangulator.calculate();
-//    platform.setIndices(triangulator.getTriangulation());
-//    platform.setGeometry(Geometry::SOLID);
-//
-//    platform += Vec2(5.0f, 5.0f);
-//    platobj = physics2::PolygonObstacle::alloc(platform);
-//    platobj->setAngle(1.57f);
-//    platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
-//
-//   //  Set the physics attributes
-//    platobj->setBodyType(b2_staticBody);
-//    platobj->setDensity(BASIC_DENSITY);
-//    platobj->setFriction(BASIC_FRICTION);
-//    platobj->setRestitution(BASIC_RESTITUTION);
-//    platobj->setDebugColor(DEBUG_COLOR);
-////    platobj->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY() );
-//
-//
-//    platform *= _scale;
-//    image = _assets->get<Texture>("tile1");
-//    sprite = scene2::PolygonNode::allocWithTexture(image);
-//    sprite->setAngle(1.57f);
-//    _world->addObstacle(platobj);
-//    platobj->setDebugScene(_debugnode);
-//    sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
-//    _worldnode->addChild(sprite, 1);
-//
-    
+ 
 
     
 
@@ -646,7 +615,8 @@ void GameScene::update(float dt) {
 
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*0.25;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
     float diff = _cameraTargetX - currentPosX;

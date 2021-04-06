@@ -8,6 +8,7 @@
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
+#include <string>
 #ifndef Tile_h
 #define Tile_h
 
@@ -19,6 +20,7 @@ private:
     float _y;
     float _angle;
     int _type;
+    string _filename;
     
 public:
     
@@ -93,6 +95,14 @@ public:
     
     int getType(){
         return _type;
+    }
+    
+    void setFile(string file){
+        _filename = file;
+    }
+    
+    string getFile(){
+        return _filename;
     }
 
 };
