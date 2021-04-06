@@ -160,12 +160,13 @@ GameScene::GameScene() : Scene2(),
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/techlevel.json");
+    _jsonr = cugl::JsonReader::alloc("json/newlevel.json");
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     
-    _level = assets->get<LevelModel>("json/techlevel.json");
+    _level = assets->get<LevelModel>("json/newlevel.json");
+    _tileManager = assets->get<TileDataModel>("json/tiles.json");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -281,8 +282,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     setDebug(false);
     
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * 0.25f;
     getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -343,7 +345,8 @@ void GameScene::reset() {
     setFailure(false);
     setComplete(false);
     populate();
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
     getCamera()->update();
 }
 
@@ -364,7 +367,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
 
 
 #pragma mark : Platforms
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
         std::shared_ptr<Tile> tile = platforms[i];
@@ -389,10 +391,67 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         platobj->setDebugColor(DEBUG_COLOR);
         platform *= _scale;
         // All walls and platforms share the same texture
-        image = _assets->get<Texture>(EARTH_TEXTURE);
+        image = _assets->get<Texture>("tile3");
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
     }
+    
+    std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
+   
+    for (int i=0; i< irregular_tiles.size(); i++){
+        std::shared_ptr<Tile> t = irregular_tiles[i];
+        vector<Vec2> tile_data = _tileManager->getTileData(t->getType()-1);
+        Spline2 sp = Spline2(tile_data);
+        sp.setClosed(true);
+        PolySplineFactory ft(&sp);
+        ft.calculate(PolySplineFactory::Criterion::DISTANCE, 0.07f);
+        std::shared_ptr<physics2::PolygonObstacle> platobj;
+        SimpleTriangulator triangulator;
+        Poly2 platform = ft.getPath();
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+        
+        platform += Vec2(t->getX(), t->getY());
+        platobj = physics2::PolygonObstacle::alloc(platform);
+        platobj->setAngle(t->getAngle());
+        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        
+           //  Set the physics attributes
+        platobj->setBodyType(b2_staticBody);
+        platobj->setDensity(BASIC_DENSITY);
+        platobj->setFriction(BASIC_FRICTION);
+        platobj->setRestitution(BASIC_RESTITUTION);
+        platobj->setDebugColor(DEBUG_COLOR);
+        platform *= _scale;
+        
+        image = _assets->get<Texture>(t->getFile());
+
+        // calcuate the drawing overlay scale
+        float scalex = platform.getBounds().size.width/image->getWidth();
+        float scaley = platform.getBounds().size.height/image->getHeight();
+        
+        cout << t->getFile() <<endl;
+        cout << platform.getBounds().size.width << endl;
+        cout << platform.getBounds().size.height << endl;
+        cout << image->getWidth() << endl;
+        cout << image->getHeight()<<  endl;
+        sprite = scene2::PolygonNode::allocWithTexture(image);
+        sprite->setScale(Vec2(scalex, scaley));
+        sprite->setAngle(t->getAngle());
+       
+        _world->addObstacle(platobj);
+        platobj->setDebugScene(_debugnode);
+        sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+        _worldnode->addChild(sprite, 1);
+        
+        
+        
+    }
+ 
+
+    
 
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
@@ -559,7 +618,8 @@ void GameScene::update(float dt) {
 
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*0.25;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
     float diff = _cameraTargetX - currentPosX;

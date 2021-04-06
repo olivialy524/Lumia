@@ -175,7 +175,8 @@ Spline2::Spline2(const vector<float>& points) {
  * @param  points   The vector of control points
  */
 Spline2::Spline2(const vector<Vec2>& points) {
-    CUAssertLog(points.size() % 3 != 1, "Control point array is the wrong size");
+//    std::cout << points.size() << endl;
+    CUAssertLog(points.size() % 3 == 1, "Control point array is the wrong size");
     
     _size = ((int)points.size() - 1) / 3;
     _closed = false;
