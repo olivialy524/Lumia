@@ -13,6 +13,7 @@
 #include <vector>
 #include "InputController.h"
 #include "LumiaModel.h"
+#include "LumiaNode.h"
 #include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
@@ -68,6 +69,8 @@ protected:
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
+    /** Reference to the player avatar */
+    std::shared_ptr<LumiaNode> _avatarNode;
 
     /** Information representing a Lumia to create */
     struct LumiaBody {
@@ -86,6 +89,9 @@ protected:
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
 
+    Vec2 _linVelocityData;
+    
+    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -247,7 +253,7 @@ public:
      *
      * @return true if the level is completed.
      */
-    bool isComplete( ) const { return _complete; }
+    bool isComplete() const { return _complete; }
     
     /**
      * Sets whether the level is completed.
@@ -319,7 +325,10 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
+    
+    void removeAvatarNode();
 
+    void deactivateAvatarPhysics();
     /**
      * Resets the status of the game so that we can play again.
      */

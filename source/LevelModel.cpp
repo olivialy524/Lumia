@@ -119,7 +119,6 @@ std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::
     _lumia = LumiaModel::alloc(lumiaPos,radius);
     _lumia-> setName(LUMIA_NAME);
     _lumia-> setDebugColor(DEBUG_COLOR);
-    _lumia-> setSplitting(false);
     _lumia-> setFixedRotation(false);
     
     return  _lumia;

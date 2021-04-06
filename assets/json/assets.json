@@ -33,7 +33,7 @@
             "file": "textures/background.png"
         },
         "split": {
-            "file": "textures/split.png"
+            "file": "textures/lumia-splitting.png"
         }
 	},
     "sounds": {
