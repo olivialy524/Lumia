@@ -163,13 +163,17 @@ GameScene::GameScene() : Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/newlevel.json");
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
+    setName("game");
+
+    _jsonr = cugl::JsonReader::alloc(level);
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
-    _level = assets->get<LevelModel>("json/newlevel.json");
+    
+    _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
+
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -221,7 +225,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     }
    
     _assets = assets;
-    _input.init(getBounds());
+    _input.init();
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
@@ -237,10 +241,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
-      beginContact(contact);
+        beginContact(contact);
     };
     _world->onEndContact = [this](b2Contact* contact) {
-      endContact(contact);
+        endContact(contact);
     };
   
     // IMPORTANT: SCALING MUST BE UNIFORM
@@ -284,12 +288,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
+
+    setActive(true);
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
     return true;
@@ -382,6 +390,7 @@ void GameScene::populate() {
     
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
+
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {

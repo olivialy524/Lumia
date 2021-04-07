@@ -190,12 +190,15 @@
     <ClInclude Include="..\..\source\GameScene.h" />
     <ClInclude Include="..\..\source\InputController.h" />
     <ClInclude Include="..\..\source\LevelModel.h" />
+    <ClInclude Include="..\..\source\LevelSelectScene.h" />
     <ClInclude Include="..\..\source\LoadingScene.h" />
     <ClInclude Include="..\..\source\LumiaApp.h" />
     <ClInclude Include="..\..\source\LumiaModel.h" />
     <ClInclude Include="..\..\source\LumiaNode.h" />
+    <ClInclude Include="..\..\source\MainMenuScene.h" />
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
+    <ClInclude Include="..\..\source\SettingsScene.h" />
     <ClInclude Include="..\..\source\Tile.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -205,13 +208,16 @@
     <ClCompile Include="..\..\source\GameScene.cpp" />
     <ClCompile Include="..\..\source\InputController.cpp" />
     <ClCompile Include="..\..\source\LevelModel.cpp" />
+    <ClCompile Include="..\..\source\LevelSelectScene.cpp" />
     <ClCompile Include="..\..\source\LoadingScene.cpp" />
     <ClCompile Include="..\..\source\LumiaApp.cpp" />
     <ClCompile Include="..\..\source\LumiaModel.cpp" />
     <ClCompile Include="..\..\source\LumiaNode.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
+    <ClCompile Include="..\..\source\MainMenuScene.cpp" />
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
+    <ClCompile Include="..\..\source\SettingsScene.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>

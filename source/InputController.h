@@ -115,11 +115,9 @@ public:
      * the bounds of the scene graph do not match the bounds of the display.
      * This allows the input device to do the proper conversion for us.
      *
-     * @param bounds    the scene graph bounds
-     *
      * @return true if the controller was initialized successfully
      */
-    bool init(const cugl::Rect bounds);
+    bool init();
     
 #pragma mark -
 #pragma mark Input Detection

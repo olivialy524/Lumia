@@ -34,7 +34,7 @@ using namespace cugl;
 /** How close we need to be for a multi touch */
 #define NEAR_TOUCH      100
 /** The key for the event handlers */
-#define LISTENER_KEY      1
+#define LISTENER_KEY    999
 
 
 #pragma mark -
@@ -77,10 +77,12 @@ void InputController::dispose() {
         Mouse* mouse = Input::get<Mouse>();
         mouse->removePressListener(LISTENER_KEY);
         mouse->removeReleaseListener(LISTENER_KEY);
+        mouse->removeMotionListener(LISTENER_KEY);
 #else
         Touchscreen* touch = Input::get<Touchscreen>();
         touch->removeBeginListener(LISTENER_KEY);
         touch->removeEndListener(LISTENER_KEY);
+        touch->removeMotionListener(LISTENER_KEY);
 #endif
         _active = false;
     }
@@ -97,7 +99,7 @@ void InputController::dispose() {
  *
  * @return true if the controller was initialized successfully
  */
-bool InputController::init(const Rect bounds) {
+bool InputController::init() {
     bool success = true;
     
 #ifndef CU_TOUCH_SCREEN
