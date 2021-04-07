@@ -26,6 +26,9 @@
         "tile7": {
             "file":     "textures/tile7.png"
         },
+        "energy": {
+            "file":     "textures/energy.png"
+        },
         "lumia": {
             "file":      "textures/lumia.png"
         },
