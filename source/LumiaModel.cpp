@@ -52,7 +52,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(.1 / radius);
+        setDensity(.15 / radius);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);

@@ -18,6 +18,7 @@ using namespace cugl;
 class TileDataModel : public cugl::Asset {
 private:
     vector<vector<Vec2>> _tiles;
+    vector<vector<Vec2>> _griddata;
   
 public:
     
@@ -54,7 +55,14 @@ public:
         return _tiles[type];
     }
     
+    vector<Vec2> getTileGridData(int type){
+        return _griddata[type];
+    }
     
+    vector<Vec2> getTileGridData(int type, float angle){
+        
+        return vector<Vec2>();
+    }
     
     bool preload(const std::string& file) override {
         std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::allocWithAsset(file);
