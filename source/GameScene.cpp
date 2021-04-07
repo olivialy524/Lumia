@@ -67,10 +67,6 @@ using namespace cugl;
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
-#define CAMERA_SHIFT 0.3f
-
-
-
 
 #pragma mark -
 #pragma mark Asset Constants
@@ -119,9 +115,9 @@ using namespace cugl;
 /** The volume for sound effects */
 #define EFFECT_VOLUME   0.8f
 
-#define CAMERA_SPEED 3.0f
+#define CAMERA_SPEED 4.0f
 
-#define BACKGROUND_IMAGE "background"
+#define CAMERA_SHIFT 0.3f
 
 #define LEVEL_NAME "json/techlevel"
 
