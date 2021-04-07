@@ -67,6 +67,8 @@ using namespace cugl;
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
+#define CAMERA_SHIFT 0.15f
+
 
 
 
@@ -246,6 +248,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
+    _scale *= 1.2;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -285,8 +288,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * 0.25f;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -353,7 +356,7 @@ void GameScene::reset() {
     setComplete(false);
     populate();
     float cameraWidth = getCamera()->getViewport().size.width;
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
 }
 
@@ -449,11 +452,6 @@ void GameScene::populate() {
         float scalex = platform.getBounds().size.width/image->getWidth();
         float scaley = platform.getBounds().size.height/image->getHeight();
         
-        cout << t->getFile() <<endl;
-        cout << platform.getBounds().size.width << endl;
-        cout << platform.getBounds().size.height << endl;
-        cout << image->getWidth() << endl;
-        cout << image->getHeight()<<  endl;
         sprite = scene2::PolygonNode::allocWithTexture(image);
         sprite->setScale(Vec2(scalex, scaley));
         sprite->setAngle(t->getAngle());
@@ -649,7 +647,7 @@ void GameScene::update(float dt) {
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
     float cameraWidth = getCamera()->getViewport().size.width;
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*0.25;
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
     float diff = _cameraTargetX - currentPosX;

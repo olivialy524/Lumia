@@ -3,7 +3,7 @@
     "level":
     {
         "lumia": {
-            "posx": 2.5,
+            "posx": 10,
             "posy": 17,
             "radius": 1
         },
@@ -17,111 +17,156 @@
         "platforms": [],
         "plants": [
             {
-                "posx": 1,
-                "posy": 1,
+                "posx": 16.5,
+                "posy": 2,
                 "angle": 180
+            },
+            {
+                "posx": 21,
+                "posy": 8.6,
+                "angle": 180
+            },
+            {
+                "posx": 26,
+                "posy": 4,
+                "angle": -90
             }
                 ],
         "energies": [],
-        
         "tiles":[
             {
             "type": 3,
-            "angle": 0,
-            "posx": 0,
+            "angle": 3.14,
+            "posx": 9,
+            "posy": 10,
+            "texture": "tile3"
+            },
+            {
+            "type": 2,
+            "angle": 3.14,
+            "posx": 1,
+            "posy": 0,
+            "texture": "tile4"
+            },
+            {
+            "type": 4,
+            "angle": 3.14,
+            "posx": 0.5,
+            "posy": 0,
+            "texture": "tile6"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 4.0,
+            "posy": 2.5,
+            "texture": "tile7"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 4.0,
+            "posy": 3,
+            "texture": "tile5"
+            },
+            
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 8.0,
+            "posy": 1,
+            "texture": "tile3"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 11.0,
+            "posy": 1,
+            "texture": "tile3"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 14.0,
+            "posy": 1,
+            "texture": "tile3"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 19.0,
             "posy": 0,
             "texture": "tile3"
             },
             {
-            "type": 1,
-            "angle": 4.71,
-            "posx": 1,
-            "posy": 10,
-            "texture": "tile1"
-            },
-            {
-             "type": 1,
-             "angle": 0,
-             "posx": 1,
-             "posy": 7,
-             "texture": "tile1"
-            },
-            {
-             "type": 3,
-             "angle": 0,
-             "posx": 4,
-             "posy": 7,
-             "texture": "tile3"
-            },
-            {
-             "type": 3,
-             "angle": 0,
-             "posx": 4,
-             "posy": 10,
-             "texture": "tile3"
-            },
-            {
-             "type": 3,
-             "angle": 0,
-             "posx": 7,
-             "posy": 10,
-             "texture": "tile3"
-            },
-            {
-             "type": 2,
-             "angle": 1.57,
-             "posx": 10,
-             "posy": 7.5,
-             "texture": "tile4"
-            },
-            {
-             "type": 2,
-             "angle": 0,
-             "posx": 10,
-             "posy": 4.5,
-             "texture": "tile4"
-            },
-            {
-             "type": 3,
-             "angle": 0,
-             "posx": 7,
-             "posy": 4.5,
-             "texture": "tile3"
-            },
-            {
-            "type": 1,
-            "angle": 0,
-            "posx": 14,
-            "posy": 12,
-            "texture": "tile2"
-            },
-            {
-            "type": 2,
-            "angle": 1.57,
-            "posx": 17,
-            "posy": 9.5,
-            "texture": "tile4"
-            },
-            {
             "type": 3,
-            "angle": 0,
-            "posx": 17,
-            "posy": 9,
+            "angle": 3.14,
+            "posx": 22.0,
+            "posy": 0,
             "texture": "tile3"
             },
             {
             "type": 3,
-            "angle": -1.57,
-            "posx": 12.25,
-            "posy": 13.25,
+            "angle": 3.14,
+            "posx": 19.0,
+            "posy": 0.5,
             "texture": "tile5"
             },
             {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 22.0,
+            "posy": 0.5,
+            "texture": "tile5"
+            },
+            {
+            "type": 1,
+            "angle": 1.57,
+            "posx": 25.0,
+            "posy": 0,
+            "texture": "tile1"
+            },
+            {
+            "type": 3,
+            "angle": 1.57,
+            "posx": 26.25,
+            "posy":4.25,
+            "texture": "tile7"
+            },
+            {
+            "type": 3,
+            "angle": 1.57,
+            "posx": 25.75,
+            "posy":4.25,
+            "texture": "tile5"
+            },
+            {
+            "type": 3,
+            "angle": 1.57,
+            "posx": 25.25,
+            "posy":3.35,
+            "texture": "tile3"
+            },
+            {
             "type": 2,
-            "angle": -3.14,
-            "posx": 14,
-            "posy": 3,
+            "angle": 1.57,
+            "posx": 24,
+            "posy":5.1,
             "texture": "tile4"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 21,
+            "posy":7.6,
+            "texture": "tile3"
+            },
+            {
+            "type": 3,
+            "angle": 3.14,
+            "posx": 18,
+            "posy":7.6,
+            "texture": "tile3"
             }
         ]
     }
