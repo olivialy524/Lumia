@@ -87,6 +87,8 @@ protected:
     LumiaModel* target;
     
     bool _removed;
+    
+    bool _inCoolDown;
 
     /**
     * Redraws the outline of the physics fixtures to the debug node
@@ -331,6 +333,14 @@ public:
     cugl::Vec2 getVelocity() const { return _velocity; }
     
     cugl::Vec2 getLastPosition() const {return _lastPosition;}
+    
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
+    }
     
     void setState(EnemyState state){
         _state = state;

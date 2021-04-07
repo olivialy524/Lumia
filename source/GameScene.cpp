@@ -734,7 +734,7 @@ void GameScene::update(float dt) {
         else{
             enemy->setVelocity(Vec2::ZERO);
         }
-        
+        enemy->setInCoolDown(false);
     }
     }
 //    for (auto & lumia : _lumiaList){
@@ -856,7 +856,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     lumia-> setDensity(0.1f / radius);
     if (isAvatar){
     lumia-> setLinearVelocity(_linVelocityData);
-    lumia-> setAngularVelocity(_angVelocityData);
+//    lumia-> setAngularVelocity(_angVelocityData);
     }
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
@@ -1049,12 +1049,6 @@ void GameScene::processEnemyLumiaCollision(float newRadius, const std::shared_pt
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
     }
-    if (!destroyEnemy){
-        enemy->setVelocity(Vec2::ZERO);
-    } else{
-        _enemiesToRemove.push_back(enemy);
-        enemy->setRemoved(true);
-    }
 }
 
 void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia) {
@@ -1129,27 +1123,40 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         } else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get()) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
-                if (enemy.get() == bd1 && !enemy->getRemoved() ) {
+                if (enemy.get() == bd1 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
+                    enemy->setInCoolDown(true);
                     float lumiaRadius = lumia->getRadius();
                     float enemyRadius = enemy->getRadius();
                     bool destroyEnemy = lumiaRadius >= enemyRadius * 1.4f;
+                    enemy->setVelocity(Vec2::ZERO);
+                    if (destroyEnemy){
+                        _enemiesToRemove.push_back(enemy);
+                        enemy->setRemoved(true);
+                    }
                     float newRadius = destroyEnemy ? enemyRadius * 0.4f + lumiaRadius : lumiaRadius / 1.4f ;
 
                     // Lumia needs enough size to light up a plant and plant must not already be lit
-                    if (newRadius > 0.0f) {
+                    if (newRadius > 0.0f ) {
                         processEnemyLumiaCollision(newRadius, enemy, lumia, destroyEnemy);
                     }
                     break;
                 }
             }
+            break;
         } else if (bd2->getName() == ENEMY_TEXTURE && bd1 == lumia.get()) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
-                if (enemy.get() == bd2 && !enemy->getRemoved()) {
+                if (enemy.get() == bd2 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
+                    enemy->setInCoolDown(true);
                     float lumiaRadius = lumia->getRadius();
                     float enemyRadius = enemy->getRadius();
                     bool destroyEnemy = lumiaRadius >= enemyRadius * 1.4f;
                     float newRadius = destroyEnemy ? enemyRadius * 0.4f + lumiaRadius : lumiaRadius / 1.4f ;
-
+                    
+                    enemy->setVelocity(Vec2::ZERO);
+                    if (destroyEnemy){
+                        _enemiesToRemove.push_back(enemy);
+                        enemy->setRemoved(true);
+                    }
                     // Lumia needs enough size to light up a plant and plant must not already be lit
                     if (newRadius > 0.0f) {
                         processEnemyLumiaCollision(newRadius, enemy, lumia, destroyEnemy);
@@ -1157,6 +1164,7 @@ void GameScene::beginContact(b2Contact* contact) {
                     break;
                 }
             }
+            break;
         }
         // handle collision between energy item and Lumia
         else if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get()) {

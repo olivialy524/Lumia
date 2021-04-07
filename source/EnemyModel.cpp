@@ -65,6 +65,7 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
         setGravityScale(0.1f);
         _radius = radius;
         _removed = false;
+        _inCoolDown = false;
         return true;
     }
     return false;
