@@ -67,6 +67,8 @@ using namespace cugl;
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
+#define CAMERA_SHIFT 0.15f
+
 
 
 
@@ -76,6 +78,8 @@ using namespace cugl;
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
 #define LUMIA_TEXTURE   "lumia"
+
+#define ENEMY_TEXTURE   "enemy"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
@@ -244,6 +248,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
+    _scale *= 1.2;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -283,8 +288,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * 0.25f;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -337,6 +342,11 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
+    
+    for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
+        enemy->dispose();
+    }
+    _enemyList.clear();
     _lumiasToRemove.clear();
     _lumiasToCreate.clear();
     _energiesToRemove.clear();
@@ -346,7 +356,7 @@ void GameScene::reset() {
     setComplete(false);
     populate();
     float cameraWidth = getCamera()->getViewport().size.width;
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * 0.25f);
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
 }
 
@@ -362,15 +372,23 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-std::shared_ptr<Texture> image;
-std::shared_ptr<scene2::PolygonNode> sprite;
-
-
+    float xBound = _level->getXBound();
+    float yBound = _level->getYBound();
+    for (int i = 0; i < xBound; i++){
+        for (int j = 0; j < yBound; j++){
+            _graph[{Vec2(i, j)}] = NodeState::Void;
+        }
+    }
+    
+    
+    std::shared_ptr<Texture> image;
+    std::shared_ptr<scene2::PolygonNode> sprite;
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
         std::shared_ptr<Tile> tile = platforms[i];
         Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
+        
         std::shared_ptr<physics2::PolygonObstacle> platobj;
         Poly2 platform(rectangle,false);
         SimpleTriangulator triangulator;
@@ -394,6 +412,8 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         image = _assets->get<Texture>("tile3");
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
+        
+        // get bounds and world query within the bounds; if there is tile, mark obstacle on the graph, else remain void
     }
     
     std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
@@ -432,11 +452,6 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         float scalex = platform.getBounds().size.width/image->getWidth();
         float scaley = platform.getBounds().size.height/image->getHeight();
         
-        cout << t->getFile() <<endl;
-        cout << platform.getBounds().size.width << endl;
-        cout << platform.getBounds().size.height << endl;
-        cout << image->getWidth() << endl;
-        cout << image->getHeight()<<  endl;
         sprite = scene2::PolygonNode::allocWithTexture(image);
         sprite->setScale(Vec2(scalex, scaley));
         sprite->setAngle(t->getAngle());
@@ -462,7 +477,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
-#pragma mark : Plant
+#pragma mark : Plants
     vector<std::shared_ptr<Plant>> plants = _level->getPlants();
     for (int i = 0; i < plants.size(); i++) {
         std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
@@ -477,10 +492,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         addObstacle(plants[i], _sceneNode, 0);
         _plantList.push_front(plants[i]);
     }
-
-    
 #pragma mark : Lumia
-    std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
     _avatar = _level->getLumia();
@@ -488,12 +500,28 @@ std::shared_ptr<scene2::PolygonNode> sprite;
     _avatar-> setTextures(image, split);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
-    _avatar-> setFixedRotation(false);
     _lumiaList.push_back(_avatar);
     
+    _graph[{Vec2(_avatar->getPosition())}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
+    
+#pragma mark : Enemies
+    
+    vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
+    for (int i = 0; i < enemies.size(); i++) {
+        
+        image = _assets->get<Texture>(ENEMY_TEXTURE);
+        auto enemy = enemies[i];
+        enemy-> setDrawScale(_scale);
+        enemy-> setTextures(image);
+        enemy-> setName(ENEMY_TEXTURE);
+        enemy-> setDebugColor(DEBUG_COLOR);
+        addObstacle(enemy,enemy->getSceneNode(), 3);
+        _enemyList.push_back(enemy);
+    }
+    
 }
 
 /**
@@ -619,7 +647,7 @@ void GameScene::update(float dt) {
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
     float cameraWidth = getCamera()->getViewport().size.width;
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*0.25;
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
     float diff = _cameraTargetX - currentPosX;

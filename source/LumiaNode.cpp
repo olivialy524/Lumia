@@ -9,7 +9,6 @@
 #include <stdio.h>
 
 #include "LumiaNode.h"
-#define SHADOW_OFFSET   10.0f
 
 
 void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,

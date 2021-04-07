@@ -20,6 +20,12 @@
         "tile5": {
             "file":     "textures/tile5.png"
         },
+        "tile6": {
+            "file":     "textures/tile6.png"
+        },
+        "tile7": {
+            "file":     "textures/tile7.png"
+        },
         "lumia": {
             "file":      "textures/lumia.png"
         },
@@ -34,6 +40,9 @@
         },
         "split": {
             "file": "textures/lumia-splitting.png"
+        },
+        "enemy":{
+            "file": "textures/enemy-3d.png"
         }
 	},
     "sounds": {

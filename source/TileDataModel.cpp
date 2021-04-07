@@ -23,6 +23,12 @@ bool TileDataModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
             tile.push_back(Vec2(point[0], point[1]));
         }
         _tiles.push_back(tile);
+        vector<Vec2> grid;
+        for (int j = 0; j< tile_json->get("grid_data")->size(); j++){
+            vector<float> point = tile_json->get("grid_data")->get(j)->asFloatArray();
+            grid.push_back(Vec2(point[0], point[1]));
+        }
+        _griddata.push_back(grid);
     }
     return true;
 };
