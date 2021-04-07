@@ -78,6 +78,8 @@ protected:
         float radius;
         /** Whether or not the Lumia body should be controlled by the player */
         bool isAvatar;
+        /** The velocity to spawn the Lumia body with */
+        cugl::Vec2 vel;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -353,18 +355,14 @@ public:
      */
     void reset();
 
-    void createPlant(float posx, float posy, int nplant, float ang);
-    
     void createEnergy(Vec2 pos);
-    
-    void createSplitter(Vec2 pos);
     
     void checkWin();
 
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar);
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar,Vec2 vel);
 
     /**
     * Removes the input Lumia from the world.
@@ -380,7 +378,11 @@ public:
     */
     void removeEnergy(std::shared_ptr<EnergyModel> energy);
     
+    /** Gives nearby Lumia velocity towards player avatar so they merge on contact */
     void mergeLumiasNearby();
+
+    /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
+    void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
 
     /**
      * Calculates trajectory point one timestep into future
