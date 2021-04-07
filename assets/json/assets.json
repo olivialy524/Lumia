@@ -1,27 +1,51 @@
 {
-	"textures": {
-		"earth": {
-			"file":     "textures/tile.png",
-            "wrapS":    "repeat",
-            "wrapT":    "repeat"
-		},
+    "textures": {
+        "earth": {
+            "file": "textures/tile.png",
+            "wrapS": "repeat",
+            "wrapT": "repeat"
+        },
+        "tile1": {
+            "file": "textures/tile1.png"
+        },
+        "tile2": {
+            "file": "textures/tile2.png"
+        },
+        "tile3": {
+            "file": "textures/tile3.png"
+        },
+        "tile4": {
+            "file": "textures/tile4.png"
+        },
+        "tile5": {
+            "file": "textures/tile5.png"
+        },
+        "tile6": {
+            "file": "textures/tile6.png"
+        },
+        "tile7": {
+            "file": "textures/tile7.png"
+        },
+        "energy": {
+            "file": "textures/energy.png"
+        },
         "lumia": {
-            "file":      "textures/lumia.png"
+            "file": "textures/lumia.png"
         },
-        "lamp":{
-            "file":      "textures/lamp.png"
+        "lamp": {
+            "file": "textures/lamp.png"
         },
-        "lamp-lit":{
-            "file":      "textures/lamp-lit.png"
+        "lamp-lit": {
+            "file": "textures/lamp-lit.png"
         },
-        "background":{
+        "background": {
             "file": "textures/background.png"
         },
-        "mainmenu":{
+        "mainmenu": {
             "file": "textures/mainmenu.png"
         },
         "split": {
-            "file": "textures/split.png"
+            "file": "textures/lumia-splitting.png"
         },
         "level_complete": {
             "file": "textures/level_complete_icon.png"
@@ -33,24 +57,27 @@
             "file": "textures/playbutton.png"
         },
         "closebutton": {
-        	"file": "textures/closebutton.png"
+            "file": "textures/closebutton.png"
         },
         "settingsbutton": {
-        	"file": "textures/settingsbutton.png"
+            "file": "textures/settingsbutton.png"
         },
         "musicicon": {
-        	"file": "textures/music.png"
+            "file": "textures/music.png"
         },
         "effecticon": {
-        	"file": "textures/soundeffect.png"
+            "file": "textures/soundeffect.png"
         },
         "levelselectbg": {
-        	"file": "textures/levelselect.png"
+            "file": "textures/levelselect.png"
         },
         "sliderbutton": {
-        	"file": "textures/sliderbutton.png"
+            "file": "textures/sliderbutton.png"
+        },
+        "enemy": {
+            "file": "textures/enemy-3d.png"
         }
-	},
+    },
     "sounds": {
         "game": {
             "type":     "sample",

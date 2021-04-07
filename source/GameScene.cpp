@@ -67,6 +67,8 @@ using namespace cugl;
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
+#define CAMERA_SHIFT 0.3f
+
 
 
 
@@ -75,7 +77,9 @@ using namespace cugl;
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
-#define LUMIA_TEXTURE  "lumia"
+#define LUMIA_TEXTURE   "lumia"
+
+#define ENEMY_TEXTURE   "enemy"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 /** The name of a wall (for object identification) */
@@ -86,6 +90,7 @@ using namespace cugl;
 #define PLATFORM_NAME   "platform"
 
 #define SPLIT_NAME      "split"
+
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
@@ -167,6 +172,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) 
     _leveljson = jv->get("level");
     
     _level = assets->get<LevelModel>(level);
+    _tileManager = assets->get<TileDataModel>("json/tiles.json");
+
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -244,6 +251,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
+    _scale *= 1.2;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -284,8 +292,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _effectVolume = 1.0f;
     setDebug(false);
     
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
 
     setActive(true);
@@ -340,6 +349,11 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
+    
+    for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
+        enemy->dispose();
+    }
+    _enemyList.clear();
     _lumiasToRemove.clear();
     _lumiasToCreate.clear();
     _energiesToRemove.clear();
@@ -348,7 +362,8 @@ void GameScene::reset() {
     setFailure(false);
     setComplete(false);
     populate();
-    getCamera()->setPositionX(_avatar->getAvatarPos().x);
+    float cameraWidth = getCamera()->getViewport().size.width;
+    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
 }
 
@@ -364,15 +379,24 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
+    float xBound = _level->getXBound();
+    float yBound = _level->getYBound();
+    for (int i = 0; i < xBound; i++){
+        for (int j = 0; j < yBound; j++){
+            _graph[{Vec2(i, j)}] = NodeState::Void;
+        }
+    }
+    
+    
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
 
 #pragma mark : Platforms
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
         std::shared_ptr<Tile> tile = platforms[i];
         Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
+        
         std::shared_ptr<physics2::PolygonObstacle> platobj;
         Poly2 platform(rectangle,false);
         SimpleTriangulator triangulator;
@@ -393,13 +417,68 @@ void GameScene::populate() {
         platobj->setDebugColor(DEBUG_COLOR);
         platform *= _scale;
         // All walls and platforms share the same texture
-        image = _assets->get<Texture>(EARTH_TEXTURE);
+        image = _assets->get<Texture>("tile3");
         sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         addObstacle(platobj,sprite,1);
+        
+        // get bounds and world query within the bounds; if there is tile, mark obstacle on the graph, else remain void
     }
+    
+    std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
+   
+    for (int i=0; i< irregular_tiles.size(); i++){
+        std::shared_ptr<Tile> t = irregular_tiles[i];
+        vector<Vec2> tile_data = _tileManager->getTileData(t->getType()-1);
+        Spline2 sp = Spline2(tile_data);
+        sp.setClosed(true);
+        PolySplineFactory ft(&sp);
+        ft.calculate(PolySplineFactory::Criterion::DISTANCE, 0.07f);
+        std::shared_ptr<physics2::PolygonObstacle> platobj;
+        SimpleTriangulator triangulator;
+        Poly2 platform = ft.getPath();
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+        
+        platform += Vec2(t->getX(), t->getY());
+        platobj = physics2::PolygonObstacle::alloc(platform);
+        platobj->setAngle(t->getAngle());
+        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        
+           //  Set the physics attributes
+        platobj->setBodyType(b2_staticBody);
+        platobj->setDensity(BASIC_DENSITY);
+        platobj->setFriction(BASIC_FRICTION);
+        platobj->setRestitution(BASIC_RESTITUTION);
+        platobj->setDebugColor(DEBUG_COLOR);
+        platform *= _scale;
+        
+        image = _assets->get<Texture>(t->getFile());
+
+        // calcuate the drawing overlay scale
+        float scalex = platform.getBounds().size.width/image->getWidth();
+        float scaley = platform.getBounds().size.height/image->getHeight();
+        
+        sprite = scene2::PolygonNode::allocWithTexture(image);
+        sprite->setScale(Vec2(scalex, scaley));
+        sprite->setAngle(t->getAngle());
+       
+        _world->addObstacle(platobj);
+        platobj->setDebugScene(_debugnode);
+        sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+        _worldnode->addChild(sprite, 1);
+        
+        
+        
+    }
+ 
+
+    
 
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
+    cout << "energies" << energies->size() <<endl;
     for (int i = 0; i < energies->size(); i++) {
         std::shared_ptr<cugl::JsonValue> energy = energies->get(i);
         float ex = energy->getFloat("posx");
@@ -407,7 +486,7 @@ void GameScene::populate() {
         Vec2 epos = Vec2(ex, ey);
         createEnergy(epos);
     }
-#pragma mark : Plant
+#pragma mark : Plants
     vector<std::shared_ptr<Plant>> plants = _level->getPlants();
     for (int i = 0; i < plants.size(); i++) {
         std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
@@ -422,22 +501,36 @@ void GameScene::populate() {
         addObstacle(plants[i], _sceneNode, 0);
         _plantList.push_front(plants[i]);
     }
-
-    
 #pragma mark : Lumia
-    std::shared_ptr<scene2::SceneNode> node = scene2::SceneNode::alloc();
     image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
     _avatar = _level->getLumia();
     _avatar-> setDrawScale(_scale);
-    _avatar-> setTextures(image);
+    _avatar-> setTextures(image, split);
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
-    _avatar-> setFixedRotation(false);
     _lumiaList.push_back(_avatar);
     
+    _graph[{Vec2(_avatar->getPosition())}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
+    
+#pragma mark : Enemies
+    
+    vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
+    for (int i = 0; i < enemies.size(); i++) {
+        
+        image = _assets->get<Texture>(ENEMY_TEXTURE);
+        auto enemy = enemies[i];
+        enemy-> setDrawScale(_scale);
+        enemy-> setTextures(image);
+        enemy-> setName(ENEMY_TEXTURE);
+        enemy-> setDebugColor(DEBUG_COLOR);
+        addObstacle(enemy,enemy->getSceneNode(), 3);
+        _enemyList.push_back(enemy);
+    }
+    
 }
 
 /**
@@ -474,8 +567,10 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
     if (obj->getBodyType() == b2_dynamicBody) {
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle* obs){
+            if(!obs->isRemoved()){
             weak->setPosition(obs->getPosition()*_scale);
             weak->setAngle(obs->getAngle());
+            }
         });
     }
 }
@@ -506,7 +601,7 @@ void GameScene::update(float dt) {
     if (!_failed && !_complete) {
         checkWin();
     }
-    
+
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
             removeLumia(lumia);
@@ -560,7 +655,8 @@ void GameScene::update(float dt) {
 
     //glEnable(GL_POINT_SMOOTH);
     //glPointSize(5);
-    _cameraTargetX = _avatar->getAvatarPos().x;
+    float cameraWidth = getCamera()->getViewport().size.width;
+    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
     float diff = _cameraTargetX - currentPosX;
@@ -574,27 +670,35 @@ void GameScene::update(float dt) {
     
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    if(_input.didMerge()){
-        _avatar->setState(LumiaModel::LumiaState::Merging);
-    }else if (_input.didSplit()){
-        _avatar->setState(LumiaModel::LumiaState::Splitting);
-    }else{
-        _avatar->setState(LumiaModel::LumiaState::Idle);
+    
+    if(!_avatar->isRemoved()){
+        if(_input.didMerge()){
+            _avatar->setState(LumiaModel::LumiaState::Merging);
+        }else if (_input.didSplit()){
+            _avatar->setState(LumiaModel::LumiaState::Splitting);
+        }else{
+            _avatar->setState(LumiaModel::LumiaState::Idle);
+        }
     }
     
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
-            float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
-            if (radius > MIN_LUMIA_RADIUS) {
+            if (_avatar->isDoneSplitting()) {
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
                 Vec2 pos = _avatar->getPosition();
                 Vec2 offset = Vec2(0.5f + radius, 0.0f);
-
-                // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
-                // http://www.iforce2d.net/b2dtut/world-querying
-                std::shared_ptr<LumiaModel> temp = _avatar;
+                removeAvatarNode();
                 createLumia(radius, pos + offset, true);
                 createLumia(radius, pos - offset, false);
-                removeLumia(temp);
+                
+            }else if(!_avatar->isRemoved()){
+                float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
+                if (radius > MIN_LUMIA_RADIUS) {
+                    
+                    // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+                    // http://www.iforce2d.net/b2dtut/world-querying
+                    deactivateAvatarPhysics();
+                }
             }
             break;
         }
@@ -605,6 +709,7 @@ void GameScene::update(float dt) {
         case LumiaModel::LumiaState::Idle:{
             break;
         }
+            
     }
             
 	// Turn the physics engine crank.
@@ -669,8 +774,8 @@ void GameScene::setFailure(bool value) {
 
 
 void GameScene::createEnergy(Vec2 pos) {
-    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
-    cugl::Size size = Size(2, 2);
+    std::shared_ptr<Texture> image = _assets->get<Texture>("energy");
+    cugl::Size size = Size(1, 1);
     std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
 
     nrg->setGravityScale(0);
@@ -682,8 +787,8 @@ void GameScene::createEnergy(Vec2 pos) {
     cugl::Poly2 poly = Poly2(rectangle);
 
     std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, poly);
-    sprite->setScale(_scale);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+//    sprite->setScale(_scale);
     nrg->setNode(sprite);
 
     addObstacle(nrg, sprite, 0);
@@ -704,12 +809,17 @@ void GameScene::checkWin() {
  */
 std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
+    std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
-    lumia-> setTextures(image);
+    lumia-> setTextures(image, splitting);
     lumia-> setDebugColor(DEBUG_COLOR);
     lumia-> setName(LUMIA_NAME);
     lumia-> setFixedRotation(false);
     lumia-> setDensity(0.1f / radius);
+    if (isAvatar){
+    lumia-> setLinearVelocity(_linVelocityData);
+    lumia-> setAngularVelocity(_angVelocityData);
+    }
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -721,6 +831,27 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool 
     }
 
     return lumia;
+}
+
+void GameScene::deactivateAvatarPhysics() {
+    // do not attempt to remove a Lumia that has already been removed
+    if (_avatar->isRemoved()) {
+        return;
+    }
+    _linVelocityData = _avatar->getLinearVelocity();
+    _angVelocityData = _avatar->getAngularVelocity();
+    _sensorFixtureMap.erase(_avatar.get());
+    _avatar->markRemoved(true);
+}
+
+void GameScene::removeAvatarNode() {
+    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), _avatar);
+    if (position != _lumiaList.end())
+        _lumiaList.erase(position);
+    
+    _worldnode->removeChild(_avatar->getSceneNode());
+    _avatar->dispose();
+    _avatar->setDebugScene(nullptr);
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
@@ -918,7 +1049,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        
+
         // handle collision between two Lumias
         if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
@@ -938,13 +1069,13 @@ void GameScene::beginContact(b2Contact* contact) {
         }
 
         // handle detection of Lumia and ground
-	    if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-		    (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
-		    lumia->setGrounded(true);
-		    // Could have more than one ground
+        if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
+            lumia->setGrounded(true);
+            // Could have more than one ground
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
-		    sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
-	    }
+            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+        }
     }
 }
 

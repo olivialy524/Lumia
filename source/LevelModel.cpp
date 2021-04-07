@@ -9,6 +9,7 @@
 #define PLANT_NAME       "plant"
 #define PLATFORM_NAME    "platform"
 #define LUMIA_NAME       "lumia"
+#define ENEMY_NAME       "enemy"
 #define DEBUG_COLOR     Color4::YELLOW
 /** The new heavier gravity for this world (so it is not so floaty) */
 #define DEFAULT_GRAVITY -12.0f
@@ -29,6 +30,24 @@
 #include <stdio.h>
 #include "LevelModel.h"
 
+
+
+void LevelModel::dispose(){
+    _lumia->dispose();
+    _lumia = nullptr;
+    for (const std::shared_ptr<EnemyModel> &e : _enemies) {
+        e->dispose();
+    }
+    _enemies.clear();
+    
+    for (const std::shared_ptr<Plant> &p : _plants) {
+        p->dispose();
+    }
+    _plants.clear();
+    _irregular_tiles.clear();
+    _tiles.clear();
+}
+
 bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     if (json == nullptr) {
         // NOLINTNEXTLINE idk why but clang-tidy is complaining
@@ -37,12 +56,18 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     }
     _levelJson = json;
     std::shared_ptr<cugl::JsonValue> _leveljson = json->get("level");
+    _xBound = _leveljson->getFloat("xBound");
+    _yBound = _leveljson->getFloat("yBound");
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
+    std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
+    std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createPlants(plants_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
+    createIrregular(irregular_tile_json);
+    createEnemies(enemies_json);
 
     return true;
 };
@@ -77,6 +102,23 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
     return _plants;
 }
 
+std::vector<std::shared_ptr<EnemyModel>> LevelModel::createEnemies(const std::shared_ptr<cugl::JsonValue> &enemies){
+    
+    for (int i=0; i< enemies->size(); i++){
+        std::shared_ptr<cugl::JsonValue> enemy_json = enemies->get(i);
+        float posx = enemy_json ->getFloat("posx");
+        float posy = enemy_json->getFloat("posy");
+        float radius = enemy_json->getFloat("radius");
+        Vec2 pos = Vec2(posx, posy);
+        auto enemy = EnemyModel::alloc(pos,radius);
+        enemy-> setName(ENEMY_NAME);
+        enemy-> setDebugColor(DEBUG_COLOR);
+        _enemies.push_back(enemy);
+    }
+    
+    return _enemies;
+}
+
 
 std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr<cugl::JsonValue> &platforms){
     for (int i = 0; i < platforms->size(); i++) {
@@ -92,6 +134,22 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr
     return _tiles;
 }
 
+std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared_ptr<cugl::JsonValue> &platforms){
+    for (int i = 0; i < platforms->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
+        float x = platfor->getFloat("posx");
+        float y = platfor->getFloat("posy");
+        int type = platfor->getInt("type");
+        float angle = platfor->getFloat("angle");
+        string file_name = platfor->getString("texture");
+        std::shared_ptr<Tile> t = Tile::alloc(x, y, angle, type);
+        t->setFile(file_name);
+        _irregular_tiles.push_back(t);
+    }
+
+    return _irregular_tiles;
+}
+
 
 std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::JsonValue> &lumia){
     float lumx = lumia->getFloat("posx");
@@ -101,9 +159,7 @@ std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::
     _lumia = LumiaModel::alloc(lumiaPos,radius);
     _lumia-> setName(LUMIA_NAME);
     _lumia-> setDebugColor(DEBUG_COLOR);
-    _lumia-> setSplitting(false);
     _lumia-> setFixedRotation(false);
     
     return  _lumia;
 }
-
