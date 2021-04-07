@@ -5,33 +5,39 @@
         "xBound": 30,
         "yBound" : 20,
         "lumia": {
-            "posx": 10,
+            "posx": 4.5,
             "posy": 17,
             "radius": 1
         },
         "enemies": [
             {
             "posx": 10,
-            "posy": 3,
+            "posy": 5,
             "radius": 0.7
+            }
+        ],
+        "energies": [
+            {
+            "posx": 10,
+            "posy": 11.5
             }
         ],
         "platforms": [],
         "plants": [
             {
                 "posx": 16.5,
-                "posy": 2,
-                "angle": 180
+                "posy": 1.5,
+                "angle": 0
             },
             {
                 "posx": 21,
-                "posy": 8.6,
-                "angle": 180
+                "posy": 8.1,
+                "angle": 0
             },
             {
-                "posx": 26,
-                "posy": 4,
-                "angle": -90
+                "posx": 26.5,
+                "posy": 3.5,
+                "angle": 90
             }
                 ],
         "energies": [],
