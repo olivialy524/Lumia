@@ -5,7 +5,9 @@
         "y_anchor": ["layout", "y_anchor"],
         "x_offset": ["layout", "x_offset"],
         "y_offset": ["layout", "y_offset"],
-        "label_x_offset": ["children", "up", "children", "label", "layout", "x_offset"]
+        "label_x_offset": ["children", "up", "children", "label", "layout", "x_offset"],
+        "texture": ["children", "up", "data", "texture"],
+        "text_color": ["children", "up", "children", "label", "data", "foreground"]
     },
     "contents"  : {
         "type"   : "Button",
@@ -17,14 +19,14 @@
             "up"       : {
                 "type"   : "Image",
                 "data"   : {
-                    "texture"  : "levelbutton",
-                    "size"     : [100, 100]
+                    "texture"  : "level_incomplete",
+                    "size"     : [90, 90]
                 },
                 "format"    : {
                     "type"  : "Anchored"
                 },
                 "children": {
-                    "patch" : {
+                    "levelpatch" : {
                         "type"   : "NinePatch",
                         "data"   : {
                             "visible": false
@@ -37,9 +39,9 @@
                     "label" : {
                         "type"   : "Label",
                         "data"   : {
-                            "font"       : "orbitron",
+                            "font"       : "orbitronblack",
                             "text"       : "1",
-                            "foreground" : [179,158,125,255],
+                            "foreground" : [255, 255, 255, 255],
                             "halign"     : "center",
                             "valign"     : "middle"
                         },

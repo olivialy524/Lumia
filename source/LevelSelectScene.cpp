@@ -46,24 +46,33 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     
 
     auto levelbuttons = layer->getChildren();
-    int count = 0;
+    int count = -2;
 
     for (auto it = levelbuttons.begin(); it != levelbuttons.end(); ++it) {
-        if (count == 0) {
-            // first child is a label
+        if (count < 0) {
+            // first 3 children are not buttons
             count++;
             continue;
         }
+
         std::shared_ptr<scene2::Button> butt = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[butt->getName()] = butt;
-        butt->addListener([=](const std::string& name, bool down) {
-            this->_active = down;
-            _nextScene = "game";
-            _selectedLevel = "json/level" + std::to_string(count) + ".json";
-        });
+        if (butt->getName() == "settings") {
+            butt->addListener([=](const std::string& name, bool down) {
+                this->_active = down;
+                _nextScene = "settings";
+            });
+        } else {
+            butt->addListener([=](const std::string& name, bool down) {
+                this->_active = down;
+                _nextScene = "game";
+                _selectedLevel = "json/level" + std::to_string(count) + ".json";
+            });
+        }
+        
         count++;
     }
-
+    
     setActive(_active);
     
     // XNA nostalgia

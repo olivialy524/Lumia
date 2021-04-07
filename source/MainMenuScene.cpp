@@ -44,22 +44,15 @@ bool MainMenuScene::init(const std::shared_ptr<AssetManager>& assets) {
     layer->doLayout(); // This rearranges the children to fit the screen
     addChild(layer);
     
-    std::shared_ptr<cugl::scene2::Button> playbutton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("mainmenu_play"));
-    playbutton->addListener([=](const std::string& name, bool down) {
+    _button = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("mainmenu_play"));
+    _button->addListener([=](const std::string& name, bool down) {
         this->_active = down;
         _nextScene = "levelselect";
     });
-    _buttons[playbutton->getName()] = playbutton;
 
-    std::shared_ptr<cugl::scene2::Button> closebutton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("mainmenu_close"));
-    closebutton->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
-        CULog("Shutting down");
-        Application::get()->quit();
-    });
-    _buttons[closebutton->getName()] = closebutton;
-
-    setActive(_active);
+    if (_active) {
+        _button->activate();
+    }
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -70,7 +63,7 @@ bool MainMenuScene::init(const std::shared_ptr<AssetManager>& assets) {
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void MainMenuScene::dispose() {
-    _buttons.clear();
+    _button = nullptr;
     _assets = nullptr;
     Scene2::dispose();
 }
@@ -82,12 +75,10 @@ void MainMenuScene::dispose() {
  */
 void MainMenuScene::setActive(bool value) {
     _active = value;
-    for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
-        if (value && !it->second->isActive()) {
-            it->second->activate();
-        } else {
-            it->second->deactivate();
-        }
+    if (value && !_button->isActive()) {
+        _button->activate();
+    } else if (!value && _button->isActive()) {
+        _button->deactivate();
     }
 }
 

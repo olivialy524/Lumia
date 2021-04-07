@@ -1,29 +1,37 @@
 //
-//  UIButtonScene.h
+//  UISliderScene.h
 //  UI Demo
 //
-//  This module shows off a basic button.  The button is backed by a NinePatch
-//  so it can resize dynamically.  It changes the text on a click.
+//  This module shows off a slider.  CUGL sliders are omnidirectional, using
+//  a bounding rectangle to describe the path.  While they can support fancy
+//  graphics, this one is a minimal implementation.
 //
 //  Author: Walker White
 //  Version: 1/20/18
 //
-#ifndef __MAIN_MENU_SCENE_H__
-#define __MAIN_MENU_SCENE_H__
+#ifndef __SETTINGS_SCENE_H__
+#define __SETTINGS_SCENE_H__
+
 #include <cugl/cugl.h>
 
 /**
- * A scene for demoing a simple button
+ * A scene for demoing a slider
  */
-class MainMenuScene : public cugl::Scene2 {
+class SettingsScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
-
-    std::shared_ptr<cugl::scene2::Button> _button;
+    
+    std::shared_ptr<cugl::scene2::Slider> _musicSlider;
+    std::shared_ptr<cugl::scene2::Slider> _effectSlider;
+    std::shared_ptr<cugl::scene2::Button> _close;
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
+    /** Volume to set music level to */
+    float _musicVolume;
+    /** Volume to set sound effect level to */
+    float _effectVolume;
     
 public:
 #pragma mark -
@@ -34,7 +42,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    MainMenuScene() : _nextScene("") {}
+    SettingsScene() : _musicVolume(1.0f), _effectVolume(1.0f) {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -42,7 +50,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~MainMenuScene() { dispose(); }
+    ~SettingsScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -62,8 +70,8 @@ public:
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
     
-    static std::shared_ptr<MainMenuScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
-        std::shared_ptr<MainMenuScene> result = std::make_shared<MainMenuScene>();
+    static std::shared_ptr<SettingsScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
+        std::shared_ptr<SettingsScene> result = std::make_shared<SettingsScene>();
         return (result->init(assets) ? result : nullptr);
     }
     
@@ -77,6 +85,11 @@ public:
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; };
 
+    /** Returns the set music volumd */
+    float getMusicVolume() { return _musicVolume; };
+
+    /** Returns the set sound effect volume */
+    float getEffectVolume() { return _effectVolume; };
 };
 
-#endif /* __MAIN_MENU_SCENE_H__ */
+#endif /* __SETTINGS_SCENE_H__ */

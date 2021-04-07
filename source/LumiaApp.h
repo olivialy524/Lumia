@@ -11,6 +11,8 @@
 #include "LoadingScene.h"
 #include "LevelSelectScene.h"
 #include "MainMenuScene.h"
+#include "SettingsScene.h"
+#include "InputController.h"
 
 /**
  * This class represents the application root for the platform demo.
@@ -21,6 +23,7 @@ protected:
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
+
     // Player modes
     /** The primary controller for the game world */
     GameScene _gameplay;
@@ -30,6 +33,8 @@ protected:
     LevelSelectScene _levelSelect;
     /** The controller for the main menu screen */
     MainMenuScene _mainMenu;
+    /** The controller for the settings screen */
+    SettingsScene _settings;
     /** The currently active scene */
     cugl::Scene2* _currentScene;
     

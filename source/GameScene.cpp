@@ -218,7 +218,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     }
    
     _assets = assets;
-    _input.init(getBounds());
+    _input.init();
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
@@ -234,10 +234,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
-      beginContact(contact);
+        beginContact(contact);
     };
     _world->onEndContact = [this](b2Contact* contact) {
-      endContact(contact);
+        endContact(contact);
     };
   
     // IMPORTANT: SCALING MUST BE UNIFORM
@@ -280,6 +280,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     setDebug(false);
     
     getCamera()->setPositionX(_avatar->getAvatarPos().x);
@@ -505,7 +507,6 @@ void GameScene::update(float dt) {
         checkWin();
     }
     
-
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
             removeLumia(lumia);

@@ -198,6 +198,7 @@
     <ClInclude Include="..\..\source\MainMenuScene.h" />
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
+    <ClInclude Include="..\..\source\SettingsScene.h" />
     <ClInclude Include="..\..\source\Tile.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -216,6 +217,7 @@
     <ClCompile Include="..\..\source\MainMenuScene.cpp" />
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
+    <ClCompile Include="..\..\source\SettingsScene.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>

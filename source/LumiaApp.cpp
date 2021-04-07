@@ -31,6 +31,7 @@ void LumiaApp::onStartup() {
     Input::activate<Touchscreen>();
 #else
     Input::activate<Mouse>();
+    Input::get<Mouse>()->setPointerAwareness(Mouse::PointerAwareness::DRAG);
 #endif
     
     _assets->attach<Font>(FontLoader::alloc()->getHook());
@@ -132,9 +133,16 @@ void LumiaApp::update(float timestep) {
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
 
-        // should actually be main menu but is level select for now
+        _gameplay.init(_assets, "json/level1.json");
+        _gameplay.setActive(false);
+        _levelSelect.init(_assets);
+        _levelSelect.setActive(false);
+        _settings.init(_assets);
+        _settings.setActive(false);
+        
         // we have finished loading assets, go to main menu
         _mainMenu.init(_assets);
+        _mainMenu.setActive(true);
         _currentScene = &_mainMenu;
         _loaded = true;
     } else {
@@ -153,7 +161,7 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(false);
                 nextScene = dynamic_cast<MainMenuScene*>(_currentScene)->getNextScene();
                 if (nextScene == "levelselect") {
-                    _levelSelect.init(_assets);
+                    _levelSelect.setActive(true);
                     _currentScene = &_levelSelect;
                 }
             } else if (_currentScene->getName() == "levelselect") {
@@ -161,7 +169,19 @@ void LumiaApp::update(float timestep) {
                 nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
                 if (nextScene == "game") {
                     _gameplay.init(_assets, dynamic_cast<LevelSelectScene*>(_currentScene)->getSelectedLevel());
+                    _gameplay.setMusicVolume(_settings.getMusicVolume() / 100.0f);
+                    _gameplay.setEffectVolume(_settings.getEffectVolume() / 100.0f);
                     _currentScene = &_gameplay;
+                } else if (nextScene == "settings") {
+                    _settings.setActive(true);
+                    _currentScene = &_settings;
+                }
+            } else if(_currentScene->getName() == "settings") {
+                _settings.setActive(false);
+                nextScene = dynamic_cast<SettingsScene*>(_currentScene)->getNextScene();
+                if (nextScene == "levelselect") {
+                    _levelSelect.setActive(true);
+                    _currentScene = &_levelSelect;
                 }
             }
         } else {
