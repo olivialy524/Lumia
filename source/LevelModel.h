@@ -18,7 +18,7 @@ private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Tile>> _tiles;
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
-    std::vector<std::shared_ptr<Tile>> _iregular_tiles;
+    std::vector<std::shared_ptr<Tile>> _irregular_tiles;
     std::shared_ptr<LumiaModel> _lumia;
     
     float _xBound;
@@ -66,6 +66,15 @@ public:
         return (result->init(file) ? result : nullptr);
     }
     
+    LevelModel() {};
+    
+    /**
+     * Destroys this LumiaModel, releasing all resources.
+     */
+    virtual ~LevelModel(void) { dispose(); }
+    
+    void dispose();
+    
     
 #pragma mark Level Attributes
     
@@ -95,7 +104,7 @@ public:
     }
         
     std::vector<std::shared_ptr<Tile>> getIrregularTile(){
-        return _iregular_tiles;
+        return _irregular_tiles;
     }
     
     void resetLevel(const std::string& file){
@@ -111,24 +120,7 @@ public:
     bool preload(const std::shared_ptr<cugl::JsonValue>& json) override;
     
     
-#pragma mark Constructors
-    LevelModel() {};
-    
-    /**
-     * Destroys this LumiaModel, releasing all resources.
-     */
-    virtual ~LevelModel(void) { dispose(); }
-    
-    void dispose();
-    
-    
 };
-
-
-
-
-
-
 
 
 #endif /* LevelModel_h */
