@@ -163,6 +163,7 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
+    _lastPosition = getPosition();
     WheelObstacle::update(dt);
     
     if (_sceneNode != nullptr && !isRemoved()) {

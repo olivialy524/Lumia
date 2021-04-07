@@ -2,6 +2,8 @@
 {
     "level":
     {
+        "xBound": 30,
+        "yBound" : 20,
         "lumia": {
             "posx": 2.5,
             "posy": 17,

@@ -62,8 +62,9 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
         
         // Gameplay attributes
         _velocity = Vec2::ZERO;
-        
+        setGravityScale(0.1f);
         _radius = radius;
+        _removed = false;
         return true;
     }
     return false;
@@ -165,6 +166,7 @@ void EnemyModel::update(float dt) {
     _lastPosition = getPosition() * _drawScale;
     WheelObstacle::update(dt);
     
+    setLinearVelocity(_velocity);
     if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());
