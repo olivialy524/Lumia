@@ -67,7 +67,7 @@ using namespace cugl;
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
-#define CAMERA_SHIFT 0.15f
+#define CAMERA_SHIFT 0.3f
 
 
 
@@ -168,7 +168,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
-    
     _level = assets->get<LevelModel>("json/newlevel.json");
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -470,6 +469,7 @@ void GameScene::populate() {
 
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
+    cout << "energies" << energies->size() <<endl;
     for (int i = 0; i < energies->size(); i++) {
         std::shared_ptr<cugl::JsonValue> energy = energies->get(i);
         float ex = energy->getFloat("posx");
@@ -765,8 +765,8 @@ void GameScene::setFailure(bool value) {
 
 
 void GameScene::createEnergy(Vec2 pos) {
-    std::shared_ptr<Texture> image = _assets->get<Texture>(EARTH_TEXTURE);
-    cugl::Size size = Size(2, 2);
+    std::shared_ptr<Texture> image = _assets->get<Texture>("energy");
+    cugl::Size size = Size(1, 1);
     std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
 
     nrg->setGravityScale(0);
@@ -778,8 +778,8 @@ void GameScene::createEnergy(Vec2 pos) {
     cugl::Poly2 poly = Poly2(rectangle);
 
     std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, poly);
-    sprite->setScale(_scale);
+    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
+//    sprite->setScale(_scale);
     nrg->setNode(sprite);
 
     addObstacle(nrg, sprite, 0);
