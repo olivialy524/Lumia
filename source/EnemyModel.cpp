@@ -1,11 +1,14 @@
 //
-//  LMDudeModel.cpp
-//  This file will be used as reference for building the body of the main character Lumia
-//  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
-//  Version: 3/5/21
+//  EnemyModel.cpp
+//  Lumia
 //
-#include "LumiaModel.h"
-#include "LumiaNode.h"
+//  Created by Olivia Li on 4/5/21.
+//  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
+//
+
+#include <stdio.h>
+#include "EnemyNode.h"
+#include "EnemyModel.h"
 #include <cugl/scene2/graph/CUPolygonNode.h>
 #include <cugl/scene2/graph/CUTexturedNode.h>
 #include <cugl/assets/CUAssetManager.h>
@@ -16,12 +19,12 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting) {
+void EnemyModel::setTextures(const std::shared_ptr<Texture>& texture) {
     
-    _sceneNode = scene2::SceneNode::allocWithBounds(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
+    _sceneNode = scene2::SceneNode::allocWithBounds(Size(texture->getWidth()/5.0f,texture->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-   _node = LumiaNode::alloc(splitting, 4, 5, 20);
-    auto scale =  getRadius()*2/(splitting->getHeight()/4.0f/_drawScale);
+   _node = EnemyNode::alloc(texture, 4, 5, 20);
+    auto scale =  getRadius()*2/(texture->getHeight()/4.0f/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
   
@@ -47,9 +50,8 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
+bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
-    _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
         setDensity(.1 / radius);
@@ -59,10 +61,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         setFixedRotation(false);
         
         // Gameplay attributes
-        _isGrounded = false;
-        _state = Idle;
         _velocity = Vec2::ZERO;
-        _isLaunching = false;
         
         _radius = radius;
         return true;
@@ -80,7 +79,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
  *
  * This is the primary method to override for custom physics objects
  */
-void LumiaModel::createFixtures() {
+void EnemyModel::createFixtures() {
     if (_body == nullptr) {
         return;
     }
@@ -103,7 +102,7 @@ void LumiaModel::createFixtures() {
  *
  * This is the primary method to override for custom physics objects.
  */
-void LumiaModel::releaseFixtures() {
+void EnemyModel::releaseFixtures() {
     if (_body != nullptr) {
         WheelObstacle::releaseFixtures();
         return;
@@ -121,7 +120,7 @@ void LumiaModel::releaseFixtures() {
  * Any assets owned by this object will be immediately released.  Once
  * disposed, a LumiaModel may not be used until it is initialized again.
  */
-void LumiaModel::dispose() {
+void EnemyModel::dispose() {
     _node = nullptr;
     _sensorNode = nullptr;
 }
@@ -131,27 +130,27 @@ void LumiaModel::dispose() {
  *
  * This method should be called after the force attribute is set.
  */
-void LumiaModel::applyForce() {
+void EnemyModel::applyForce() {
     if (!isActive()) {
         return;
     }
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
-    if (isLaunching() && isGrounded()) {
-        b2Vec2 force(getVelocity().x, getVelocity().y);
-        _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-    }
-    if (!isLaunching() && isGrounded()) {
-        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
-        b2Vec2 forceX(-getDamping() * getVX(), 0);
-        _body->ApplyForce(forceX, _body->GetPosition(), true);
-    }
-
-    // put a cap on maximum velocity Lumia can have
-    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
-        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
-        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
-    }
+//    if (isLaunching() && isGrounded()) {
+//        b2Vec2 force(getVelocity().x, getVelocity().y);
+//        _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
+//    }
+//    if (!isLaunching() && isGrounded()) {
+//        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
+//        b2Vec2 forceX(-getDamping() * getVX(), 0);
+//        _body->ApplyForce(forceX, _body->GetPosition(), true);
+//    }
+//
+//    // put a cap on maximum velocity Lumia can have
+//    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
+//        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
+//        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+//    }
 }
 
 
@@ -162,7 +161,8 @@ void LumiaModel::applyForce() {
  *
  * @param delta Number of seconds since last animation frame
  */
-void LumiaModel::update(float dt) {
+void EnemyModel::update(float dt) {
+    _lastPosition = getPosition() * _drawScale;
     WheelObstacle::update(dt);
     
     if (_sceneNode != nullptr && !isRemoved()) {
@@ -181,7 +181,7 @@ void LumiaModel::update(float dt) {
  * This is very useful when the fixtures have a very different shape than
  * the texture (e.g. a circular shape attached to a square texture).
  */
-void LumiaModel::resetDebug() {
+void EnemyModel::resetDebug() {
     WheelObstacle::resetDebug();
 
     PolyFactory factory;
@@ -198,6 +198,6 @@ void LumiaModel::resetDebug() {
 
 
 
-void LumiaModel::setDrawScale(float scale){
+void EnemyModel::setDrawScale(float scale){
     _drawScale = scale;
 }

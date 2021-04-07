@@ -19,6 +19,9 @@
 		3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
+		3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
+		3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
+		3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
 		613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
@@ -28,6 +31,12 @@
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
+		C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E67261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
+		C79D7E68261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
+		C79D7E69261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -148,12 +157,19 @@
 		3A9D6A51260C3DF700898D04 /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
 		3A9D6A5B260C415D00898D04 /* Tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
 		3A9D6A62260C417100898D04 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
+		3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileDataModel.h; sourceTree = "<group>"; };
+		3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileDataModel.cpp; sourceTree = "<group>"; };
 		613C1CB225FA90CD00B213B8 /* Plant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plant.h; sourceTree = "<group>"; };
 		613C1CB625FA90D800B213B8 /* Plant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
 		613E8D202602A93800900A39 /* EnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnergyModel.h; sourceTree = "<group>"; };
 		613E8D242602A94D00900A39 /* EnergyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyModel.cpp; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LumiaNode.cpp; sourceTree = "<group>"; };
+		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
+		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
+		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
+		C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyNode.cpp; sourceTree = "<group>"; };
+		C79D7E70261BD616007DDD42 /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -341,6 +357,13 @@
 				3A9D6A51260C3DF700898D04 /* LevelModel.cpp */,
 				3A9D6A5B260C415D00898D04 /* Tile.cpp */,
 				3A9D6A62260C417100898D04 /* Tile.h */,
+				C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */,
+				C79D7E64261BA3CB007DDD42 /* EnemyModel.h */,
+				C79D7E65261BA3DB007DDD42 /* EnemyNode.h */,
+				C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */,
+				C79D7E70261BD616007DDD42 /* GraphNode.h */,
+				3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */,
+				3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -605,10 +628,13 @@
 			files = (
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
 				EBB4B5622040A2FE00238092 /* InputController.cpp in Sources */,
+				C79D7E68261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */,
+				3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LumiaApp.cpp in Sources */,
 				C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
@@ -625,10 +651,13 @@
 			files = (
 				EB5D20A523FC77C8007D16CD /* main.cpp in Sources */,
 				EB5D20A923FC77C8007D16CD /* InputController.cpp in Sources */,
+				C79D7E69261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */,
+				3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LumiaApp.cpp in Sources */,
 				C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */,
 				3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
@@ -645,10 +674,13 @@
 			files = (
 				EBB4B55B2040912400238092 /* LumiaModel.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
+				C79D7E67261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */,
+				3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55D2040912400238092 /* InputController.cpp in Sources */,
 				EBB4B5582040912400238092 /* LumiaApp.cpp in Sources */,
 				3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,

@@ -5,6 +5,30 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
+        "tile1": {
+            "file":     "textures/tile1.png"
+        },
+        "tile2": {
+            "file":     "textures/tile2.png"
+        },
+        "tile3": {
+            "file":     "textures/tile3.png"
+        },
+        "tile4": {
+            "file":     "textures/tile4.png"
+        },
+        "tile5": {
+            "file":     "textures/tile5.png"
+        },
+        "tile6": {
+            "file":     "textures/tile6.png"
+        },
+        "tile7": {
+            "file":     "textures/tile7.png"
+        },
+        "energy": {
+            "file":     "textures/energy.png"
+        },
         "lumia": {
             "file":      "textures/lumia.png"
         },
@@ -18,7 +42,10 @@
             "file": "textures/background.png"
         },
         "split": {
-            "file": "textures/split.png"
+            "file": "textures/lumia-splitting.png"
+        },
+        "enemy":{
+            "file": "textures/enemy-3d.png"
         }
 	},
     "sounds": {

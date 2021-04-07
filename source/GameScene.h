@@ -12,10 +12,10 @@
 #include <unordered_set>
 #include <vector>
 #include "InputController.h"
-#include "LumiaModel.h"
-#include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "GraphNode.h"
+#include "TileDataModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -34,6 +34,9 @@ protected:
     std::shared_ptr<cugl::JsonValue> _leveljson;
     
     std::shared_ptr<LevelModel> _level;
+    
+    std::shared_ptr<TileDataModel> _tileManager;
+    
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -62,6 +65,8 @@ protected:
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
+    /** References to the Lumia bodies */
+    std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
 
@@ -84,6 +89,9 @@ protected:
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
 
+    Vec2 _linVelocityData;
+    
+    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -95,6 +103,8 @@ protected:
       
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    
+    std::unordered_map<Node, NodeState> _graph;
 
 #pragma mark Internal Object Management
     /**
@@ -245,7 +255,7 @@ public:
      *
      * @return true if the level is completed.
      */
-    bool isComplete( ) const { return _complete; }
+    bool isComplete() const { return _complete; }
     
     /**
      * Sets whether the level is completed.
@@ -317,7 +327,10 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
+    
+    void removeAvatarNode();
 
+    void deactivateAvatarPhysics();
     /**
      * Resets the status of the game so that we can play again.
      */

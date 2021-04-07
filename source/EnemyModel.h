@@ -1,20 +1,20 @@
 //
-//  LMLumiaModel.h
+//  EnemyModel.h
+//  Lumia
+//
+//  Created by Olivia Li on 4/5/21.
+//  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
+//
 
-//  This file will be used as reference for building the body of the main character Lumia
-//
-//  This file is based on the CS 4152 PlatformDemo by Walker White and Anthony Perello
-//  Version: 3/5/21
-//
-#ifndef __LUMIA_MODEL_H__
-#define __LUMIA_MODEL_H__
+#ifndef EnemyModel_h
+#define EnemyModel_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
-#include "LumiaNode.h"
+#include "EnemyNode.h"
 
-#pragma mark Lumia Model
+#pragma mark Enemy Model
 /**
 * Player avatar for the plaform game.
 *
@@ -22,7 +22,7 @@
 * experience, using a rectangular shape for a character will regularly snag
 * on a platform.  The round shapes on the end caps lead to smoother movement.
 */
-class LumiaModel : public cugl::physics2::WheelObstacle {
+class EnemyModel : public cugl::physics2::WheelObstacle {
 #pragma mark Constants and Enums
 protected:
 #define SIGNUM(x)  ((x > 0) - (x < 0))
@@ -42,62 +42,54 @@ protected:
     static constexpr float LUMIA_MAXVELOCITY = 30.0f;
 
 public:
-    enum LumiaState {
+    enum EnemyState {
         /** When Lumia is still or rolling */
-        Idle,
+        Wander,
         /** When Lumia is splitting */
-        Splitting,
+        Chasing,
         /** When Lumia is merging */
-        Merging
+        Fleeing
     };
 
     
 #pragma mark Attributes
     
 private:
-	/** This macro disables the copy constructor (not allowed on physics objects) */
-	CU_DISALLOW_COPY_AND_ASSIGN(LumiaModel);
+    /** This macro disables the copy constructor (not allowed on physics objects) */
+    CU_DISALLOW_COPY_AND_ASSIGN(EnemyModel);
 
 protected:
-	/** The current velocity of Lumia */
-	cugl::Vec2 _velocity;
-    /** Whether we are actively launching */
-    bool _isLaunching;
-	/** Whether our feet are on the ground */
-	bool _isGrounded;
-    /** Whether Lumia is splitting into two */
-    bool _isSplitting;
-    /** Whether Lumia is merging nearby bodies together */
-    bool _isMerging;
-    /* Whether or not the Lumia body is due to be or has been removed */
-    bool _removed;
+    /** The current velocity of Lumia */
+    cugl::Vec2 _velocity;
     /** Radius of Lumia's body */
     float _radius;
-	/** Ground sensor to represent our feet */
-	b2Fixture*  _sensorFixture;
-	/** Reference to the sensor name (since a constant cannot have a pointer) */
-	std::string _sensorName;
-	/** The node for debugging the sensor */
-	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
+    /** Ground sensor to represent our feet */
+    b2Fixture*  _sensorFixture;
+    /** Reference to the sensor name (since a constant cannot have a pointer) */
+    std::string _sensorName;
+    /** The node for debugging the sensor */
+    std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
-	/** The scene graph node for Lumia. */
-	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<LumiaNode> _node;
+    /** The scene graph node for Lumia. */
+    std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
+    std::shared_ptr<EnemyNode> _node;
 
-	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
-	float _drawScale;
+    /** The scale between the physics world and the screen (MUST BE UNIFORM) */
+    float _drawScale;
     
-    /** The current state of this Lumia*/
-    LumiaState _state;
+    /** The current state of this enemy*/
+    EnemyState _state;
+    
+    Vec2 _lastPosition;
 
-	/**
-	* Redraws the outline of the physics fixtures to the debug node
-	*
-	* The debug node is use to outline the fixtures attached to this object.
-	* This is very useful when the fixtures have a very different shape than
-	* the texture (e.g. a circular shape attached to a square texture).
-	*/
-	virtual void resetDebug() override;
+    /**
+    * Redraws the outline of the physics fixtures to the debug node
+    *
+    * The debug node is use to outline the fixtures attached to this object.
+    * This is very useful when the fixtures have a very different shape than
+    * the texture (e.g. a circular shape attached to a square texture).
+    */
+    virtual void resetDebug() override;
 
 public:
     
@@ -108,13 +100,13 @@ public:
      * This constructor does not initialize any of the Lumia values beyond
      * the defaults.  To use a LumiaModel, you must call init().
      */
-    LumiaModel() : cugl::physics2::WheelObstacle() { }
+    EnemyModel() : cugl::physics2::WheelObstacle() { }
     
     
     /**
      * Destroys this LumiaModel, releasing all resources.
      */
-    virtual ~LumiaModel(void) { dispose(); }
+    virtual ~EnemyModel(void) { dispose(); }
     
     /**
      * Disposes all resources and assets of this LumiaModel
@@ -196,88 +188,88 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting);
+    void setTextures(const std::shared_ptr<cugl::Texture>& texture);
 
     void setDrawScale(float scale);
     
 #pragma mark -
 #pragma mark Static Constructors
-	/**
-	 * Creates a new Lumia at the origin.
-	 *
-	 * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
-	 *
-	 * The scene graph is completely decoupled from the physics system.
-	 * The node does not have to be the same size as the physics body. We
-	 * only guarantee that the scene graph node is positioned correctly
-	 * according to the drawing scale.
-	 *
-	 * @return  A newly allocated LumiaModel at the origin
-	 */
-	static std::shared_ptr<LumiaModel> alloc() {
-		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
-		return (result->init() ? result : nullptr);
-	}
-
-	/**
-	 * Creates a new Lumia at the given position.
-	 *
-	 * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
-	 *
-	 * The scene graph is completely decoupled from the physics system.
-	 * The node does not have to be the same size as the physics body. We
-	 * only guarantee that the scene graph node is positioned correctly
-	 * according to the drawing scale.
-	 *
-     * @param pos   Initial position in world coordinates
-	 *
-	 * @return  A newly allocated LumiaModel at the given position
-	 */
-	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos) {
-		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
-		return (result->init(pos) ? result : nullptr);
-	}
+    /**
+     * Creates a new Lumia at the origin.
+     *
+     * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @return  A newly allocated LumiaModel at the origin
+     */
+    static std::shared_ptr<EnemyModel> alloc() {
+        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
+        return (result->init() ? result : nullptr);
+    }
 
     /**
-	 * Creates a new Lumia at the given position.
-	 *
-     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
-	 *
- 	 * The scene graph is completely decoupled from the physics system.
-	 * The node does not have to be the same size as the physics body. We
-	 * only guarantee that the scene graph node is positioned correctly
-	 * according to the drawing scale.
-	 *
-	 * @param pos   Initial position in world coordinates
-     * @param size  The size of the Lumia in world units
-	 *
-	 * @return  A newly allocated LumiaModel at the given position with the given scale
-	 */
-	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius) {
-		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
-		return (result->init(pos, radius) ? result : nullptr);
-	}
+     * Creates a new Lumia at the given position.
+     *
+     * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
+     *
+     * @return  A newly allocated LumiaModel at the given position
+     */
+    static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos) {
+        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
+        return (result->init(pos) ? result : nullptr);
+    }
 
-	/**
-	 * Creates a new Lumia at the given position.
-	 *
-	 * The Lumia is sized according to the given drawing scale.
-	 *
-	 * The scene graph is completely decoupled from the physics system.
-	 * The node does not have to be the same size as the physics body. We
-	 * only guarantee that the scene graph node is positioned correctly
-	 * according to the drawing scale.
-	 *
-	 * @param pos   Initial position in world coordinates
+    /**
+     * Creates a new Lumia at the given position.
+     *
+     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
+     *
+      * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
      * @param size  The size of the Lumia in world units
-	 * @param scale The drawing scale (world to screen)
-	 *
-	 * @return  A newly allocated LumiaModel at the given position with the given scale
-	 */
-	static std::shared_ptr<LumiaModel> alloc(const cugl::Vec2& pos, float radius, float scale) {
-		std::shared_ptr<LumiaModel> result = std::make_shared<LumiaModel>();
-		return (result->init(pos, radius, scale) ? result : nullptr);
-	}
+     *
+     * @return  A newly allocated LumiaModel at the given position with the given scale
+     */
+    static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos, float radius) {
+        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
+        return (result->init(pos, radius) ? result : nullptr);
+    }
+
+    /**
+     * Creates a new Lumia at the given position.
+     *
+     * The Lumia is sized according to the given drawing scale.
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
+     * @param size  The size of the Lumia in world units
+     * @param scale The drawing scale (world to screen)
+     *
+     * @return  A newly allocated LumiaModel at the given position with the given scale
+     */
+    static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos, float radius, float scale) {
+        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
+        return (result->init(pos, radius, scale) ? result : nullptr);
+    }
     
 
 #pragma mark -
@@ -291,7 +283,7 @@ public:
      *
      * @return the scene graph node representing this LumiaModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
+    const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
     
     
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
@@ -314,7 +306,7 @@ public:
      *
      * @param node  The scene graph node representing this LumiaModel, which has been added to the world node already.
      */
-	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
+    void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
         _sceneNode = node;
         _sceneNode->setPosition(getPosition() * _drawScale);
     }
@@ -330,42 +322,14 @@ public:
      * @return velocity of Lumia.
      */
     cugl::Vec2 getVelocity() const { return _velocity; }
-
-    /**
-     * Returns current position of Lumia (used for trajectory prediction).
-     *
-     * @return position of Lumia.
-     */
-    b2Vec2 getPos() const { return _body->GetPosition(); }
     
+    cugl::Vec2 getLastPosition() const {return _lastPosition;}
     
-    Vec2 getAvatarPos() const {
-        return Vec2(getPosition().x*_drawScale, getPosition().y*_drawScale);
-        
-    }
-    
-    void setState(LumiaState state){
+    void setState(EnemyState state){
         _state = state;
-        LumiaNode::LumiaAnimState s;
-        switch (_state){
-            case LumiaState::Idle:{
-                s = LumiaNode::LumiaAnimState::Idle;
-                break;
-            }
-            case LumiaState::Splitting:{
-                _sceneNode->setAngle(0.0f);
-                s = LumiaNode::LumiaAnimState::Splitting;
-                break;
-            }
-            case LumiaState::Merging:{
-                s = LumiaNode::LumiaAnimState::Merging;
-                break;
-            }
-        }
-        _node->setAnimState(s);
     }
     
-    LumiaState getState(){
+    EnemyState getState(){
         return _state;
     }
     
@@ -377,56 +341,6 @@ public:
      * @param value velocity of Lumia.
      */
     void setVelocity(cugl::Vec2 value) { _velocity = value; }
-
-    /**
-     * Returns true if the Lumia is actively launching.
-     *
-     * @return true if the Lumia is actively launching.
-     */
-    bool isLaunching() const { return _isLaunching; }
-
-    /**
-     * Sets whether the Lumia is actively launching.
-     *
-     * @param value whether the Lumia is actively launching.
-     */
-    void setLaunching(bool value) { _isLaunching = value; }
-    
-    bool isDoneSplitting() const {return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;}
-    
-    /**
-     * Sets whether the Lumia is actively merging.
-     *
-     * @param value whether the Lumia is actively merging.
-     */
-    void setMerging(bool value) { _isMerging = value; }
-    
-    bool isMerging() const {return _isMerging;}
-    
-    
-    /**
-     * Returns true if the Lumia is on the ground.
-     *
-     * @return true if the Lumia is on the ground.
-     */
-    bool isGrounded() const { return _isGrounded; }
-    
-    /**
-     * Sets whether the Lumia is on the ground.
-     *
-     * @param value whether the Lumia is on the ground.
-     */
-    void setGrounded(bool value) { _isGrounded = value; }
-    
-    /**
-     * Returns how much force to apply to get the Lumia moving
-     *
-     * Multiply this by the input to get the movement value.
-     *
-     * @return how much force to apply to get the Lumia moving
-     */
-    float getForce() const { return LUMIA_FORCE; }
-    
     /**
      * Returns ow hard the brakes are applied to get a Lumia to stop moving
      *
@@ -449,11 +363,6 @@ public:
      * @return the name of the ground sensor
      */
     std::string* getSensorName() { return &_sensorName; }
-
-    void setRemoved(bool value) { _removed = value; }
-
-    /* Returns whether or not this energy item is due to be or has been removed */
-    bool getRemoved() { return _removed; }
 
     
 #pragma mark -
@@ -493,4 +402,5 @@ public:
     void applyForce();
 };
 
-#endif /* __LM_LUMIA_MODEL_H__ */
+
+#endif /* EnemyModel_h */
