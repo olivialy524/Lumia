@@ -186,8 +186,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\BackgroundNode.h" />
+    <ClInclude Include="..\..\source\EnemyModel.h" />
+    <ClInclude Include="..\..\source\EnemyNode.h" />
     <ClInclude Include="..\..\source\EnergyModel.h" />
     <ClInclude Include="..\..\source\GameScene.h" />
+    <ClInclude Include="..\..\source\GraphNode.h" />
     <ClInclude Include="..\..\source\InputController.h" />
     <ClInclude Include="..\..\source\LevelModel.h" />
     <ClInclude Include="..\..\source\LevelSelectScene.h" />
@@ -200,10 +203,13 @@
     <ClInclude Include="..\..\source\PlantNode.h" />
     <ClInclude Include="..\..\source\SettingsScene.h" />
     <ClInclude Include="..\..\source\Tile.h" />
+    <ClInclude Include="..\..\source\TileDataModel.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\BackgroundNode.cpp" />
+    <ClCompile Include="..\..\source\EnemyModel.cpp" />
+    <ClCompile Include="..\..\source\EnemyNode.cpp" />
     <ClCompile Include="..\..\source\EnergyModel.cpp" />
     <ClCompile Include="..\..\source\GameScene.cpp" />
     <ClCompile Include="..\..\source\InputController.cpp" />
@@ -219,6 +225,7 @@
     <ClCompile Include="..\..\source\PlantNode.cpp" />
     <ClCompile Include="..\..\source\SettingsScene.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />
+    <ClCompile Include="..\..\source\TileDataModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Lumia.rc" />

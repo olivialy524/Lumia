@@ -49,7 +49,7 @@ void LumiaApp::onStartup() {
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     //load in the json file
-    _assets->loadAsync<LevelModel>("json/newlevel.json", "json/newlevel.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     Application::onStartup(); // YOU MUST END with call to parent
 }
