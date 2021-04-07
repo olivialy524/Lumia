@@ -8,6 +8,7 @@
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
+#include <string>
 #ifndef Tile_h
 #define Tile_h
 
@@ -17,6 +18,9 @@ private:
     float _width;
     float _x;
     float _y;
+    float _angle;
+    int _type;
+    string _filename;
     
 public:
     
@@ -35,6 +39,15 @@ public:
         result->setY(y);
         result->setHeight(height);
         result->setWidth(width);
+        return result? result: nullptr;
+    }
+    
+    static std::shared_ptr<Tile> alloc(float x, float y, float angle, int type){
+        std::shared_ptr<Tile> result = std::make_shared<Tile>();
+        result->setX(x);
+        result->setY(y);
+        result->setAngle(angle);
+        result->setType(type);
         return result? result: nullptr;
     }
     
@@ -68,6 +81,30 @@ public:
     float getHeight(){
         return _height;
     }
+    
+    void setAngle(float angle){
+        _angle = angle;
+    }
+    
+    float getAngle(){
+        return _angle;
+    }
+    void setType(int type){
+        _type = type;
+    }
+    
+    int getType(){
+        return _type;
+    }
+    
+    void setFile(string file){
+        _filename = file;
+    }
+    
+    string getFile(){
+        return _filename;
+    }
+
 };
 
 #endif /* Tile_h */

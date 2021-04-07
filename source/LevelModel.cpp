@@ -30,6 +30,22 @@
 #include <stdio.h>
 #include "LevelModel.h"
 
+
+
+void LevelModel::dispose(){
+    _lumia->dispose();
+    _lumia = nullptr;
+    for (const std::shared_ptr<EnemyModel> &e : _enemies) {
+        e->dispose();
+    }
+    _enemies.clear();
+    
+    for (const std::shared_ptr<Plant> &p : _plants) {
+        p->dispose();
+    }
+    _plants.clear();
+}
+
 bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     if (json == nullptr) {
         // NOLINTNEXTLINE idk why but clang-tidy is complaining
@@ -44,9 +60,11 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
     std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
+    std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createPlants(plants_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
+    createIrregular(irregular_tile_json);
     createEnemies(enemies_json);
 
     return true;
@@ -114,6 +132,22 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr
     return _tiles;
 }
 
+std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared_ptr<cugl::JsonValue> &platforms){
+    for (int i = 0; i < platforms->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> platfor = platforms->get(i);
+        float x = platfor->getFloat("posx");
+        float y = platfor->getFloat("posy");
+        int type = platfor->getInt("type");
+        float angle = platfor->getFloat("angle");
+        string file_name = platfor->getString("texture");
+        std::shared_ptr<Tile> t = Tile::alloc(x, y, angle, type);
+        t->setFile(file_name);
+        _iregular_tiles.push_back(t);
+    }
+
+    return _iregular_tiles;
+}
+
 
 std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::JsonValue> &lumia){
     float lumx = lumia->getFloat("posx");
@@ -127,4 +161,3 @@ std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::
     
     return  _lumia;
 }
-

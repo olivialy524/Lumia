@@ -80,7 +80,7 @@ protected:
     /** The current state of this enemy*/
     EnemyState _state;
     
-    Vec2 _lastPositon;
+    Vec2 _lastPosition;
 
     /**
     * Redraws the outline of the physics fixtures to the debug node

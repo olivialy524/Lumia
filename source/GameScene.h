@@ -15,6 +15,7 @@
 #include "EnergyModel.h"
 #include "LevelModel.h"
 #include "GraphNode.h"
+#include "TileDataModel.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -33,6 +34,9 @@ protected:
     std::shared_ptr<cugl::JsonValue> _leveljson;
     
     std::shared_ptr<LevelModel> _level;
+    
+    std::shared_ptr<TileDataModel> _tileManager;
+    
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -65,8 +69,6 @@ protected:
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
-    /** Reference to the player avatar */
-    std::shared_ptr<LumiaNode> _avatarNode;
 
     /** Information representing a Lumia to create */
     struct LumiaBody {

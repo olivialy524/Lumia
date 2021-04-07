@@ -18,6 +18,7 @@ private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Tile>> _tiles;
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
+    std::vector<std::shared_ptr<Tile>> _iregular_tiles;
     std::shared_ptr<LumiaModel> _lumia;
     
     float _xBound;
@@ -29,6 +30,8 @@ private:
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);
     
     std::vector<shared_ptr<EnemyModel>> createEnemies(const std::shared_ptr<cugl::JsonValue>& enemies);
+    
+    std::vector<std::shared_ptr<Tile>> createIrregular(const std::shared_ptr<cugl::JsonValue>& tiles);
     
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
@@ -63,6 +66,7 @@ public:
         return (result->init(file) ? result : nullptr);
     }
     
+    
 #pragma mark Level Attributes
     
     float getXBound(){
@@ -85,14 +89,19 @@ public:
         return _plants;
     }
     
+    
     std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
         return _enemies;
     }
-    
-    void resetLevel(const std::string& file){
-        preload(_levelJson);
+        
+    std::vector<std::shared_ptr<Tile>> getIrregularTile(){
+        return _iregular_tiles;
     }
     
+    void resetLevel(const std::string& file){
+        dispose();
+        preload(_levelJson);
+    }
     
     bool preload(const std::string& file) override {
         std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::allocWithAsset(file);
@@ -102,9 +111,15 @@ public:
     bool preload(const std::shared_ptr<cugl::JsonValue>& json) override;
     
     
+#pragma mark Constructors
     LevelModel() {};
     
-    virtual ~LevelModel() = default;
+    /**
+     * Destroys this LumiaModel, releasing all resources.
+     */
+    virtual ~LevelModel(void) { dispose(); }
+    
+    void dispose();
     
     
 };
