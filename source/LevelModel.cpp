@@ -88,7 +88,7 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         float posx = plant_json ->getFloat("posx");
         float posy = plant_json->getFloat("posy");
         float ang = (plant_json->getFloat("angle"))*M_PI/180;
-        cugl::Size size  = Size(0.48f, 0.27f);
+        cugl::Size size  = Size(0.5f, 0.5f);
         std::shared_ptr<Plant> plant = Plant::alloc(Vec2(posx,posy), size);
         
         //set body parameters
@@ -117,7 +117,7 @@ std::vector<std::shared_ptr<EnergyModel>> LevelModel::createEnergies(const std::
         std::shared_ptr<cugl::JsonValue> energy_json = energies->get(i);
         float posx = energy_json->getFloat("posx");
         float posy = energy_json->getFloat("posy");
-        cugl::Size size = Size(1.0f, 1.0f);
+        cugl::Size size = Size(0.65f, 0.65f);
         std::shared_ptr<EnergyModel> energy = EnergyModel::alloc(Vec2(posx, posy), size);
 
         //set body parameters
