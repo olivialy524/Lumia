@@ -136,11 +136,6 @@ GameScene::GameScene() : Scene2(),
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
 
-    _jsonr = cugl::JsonReader::alloc(level);
-
-    std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
-    _leveljson = jv->get("level");
-    
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
 
@@ -443,19 +438,21 @@ void GameScene::populate() {
         
     }
  
-
-    
-
 #pragma mark : Energy
-    std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
-    cout << "energies" << energies->size() <<endl;
-    for (int i = 0; i < energies->size(); i++) {
-        std::shared_ptr<cugl::JsonValue> energy = energies->get(i);
-        float ex = energy->getFloat("posx");
-        float ey = energy->getFloat("posy");
-        Vec2 epos = Vec2(ex, ey);
-        createEnergy(epos);
+    vector<std::shared_ptr<EnergyModel>> energies = _level->getEnergies();
+    for (int i = 0; i < energies.size(); i++) {
+        std::shared_ptr<Texture> image = _assets->get<Texture>("energy");
+        std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
+        energies[i]->setNode(_sceneNode);
+        _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+        std::shared_ptr<EnergyNode> sprite = EnergyNode::alloc(image);
+        sprite->setAnchor(Vec2::ANCHOR_CENTER);
+        _sceneNode->addChild(sprite);
+        energies[i]->setVX(0);
+        addObstacle(energies[i], _sceneNode, 0);
+        _energyList.push_front(energies[i]);
     }
+
 #pragma mark : Plants
     vector<std::shared_ptr<Plant>> plants = _level->getPlants();
     for (int i = 0; i < plants.size(); i++) {
@@ -471,6 +468,7 @@ void GameScene::populate() {
         addObstacle(plants[i], _sceneNode, 0);
         _plantList.push_front(plants[i]);
     }
+
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
@@ -487,7 +485,6 @@ void GameScene::populate() {
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
     
 #pragma mark : Enemies
-    
     vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
     for (int i = 0; i < enemies.size(); i++) {
         
@@ -538,8 +535,8 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](physics2::Obstacle* obs){
             if(!obs->isRemoved()){
-            weak->setPosition(obs->getPosition()*_scale);
-            weak->setAngle(obs->getAngle());
+                weak->setPosition(obs->getPosition()*_scale);
+                weak->setAngle(obs->getAngle());
             }
         });
     }
@@ -799,29 +796,6 @@ void GameScene::setFailure(bool value) {
 		_losenode->setVisible(false);
 		_countdown = -1;
 	}
-}
-
-
-void GameScene::createEnergy(Vec2 pos) {
-    std::shared_ptr<Texture> image = _assets->get<Texture>("energy");
-    cugl::Size size = Size(1, 1);
-    std::shared_ptr<EnergyModel> nrg = EnergyModel::alloc(pos, size);
-
-    nrg->setGravityScale(0);
-    nrg->setBodyType(b2_staticBody);
-    nrg->setSensor(true);
-    nrg->setName(ENERGY_NAME);
-
-    cugl::Rect rectangle = Rect(pos, size);
-    cugl::Poly2 poly = Poly2(rectangle);
-
-    std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-    std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image);
-//    sprite->setScale(_scale);
-    nrg->setNode(sprite);
-
-    addObstacle(nrg, sprite, 0);
-    _energyList.push_back(nrg);
 }
 
 void GameScene::checkWin() {

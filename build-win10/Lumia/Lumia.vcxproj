@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\source\EnemyModel.h" />
     <ClInclude Include="..\..\source\EnemyNode.h" />
     <ClInclude Include="..\..\source\EnergyModel.h" />
+    <ClInclude Include="..\..\source\EnergyNode.h" />
     <ClInclude Include="..\..\source\GameScene.h" />
     <ClInclude Include="..\..\source\GraphNode.h" />
     <ClInclude Include="..\..\source\InputController.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\..\source\EnemyModel.cpp" />
     <ClCompile Include="..\..\source\EnemyNode.cpp" />
     <ClCompile Include="..\..\source\EnergyModel.cpp" />
+    <ClCompile Include="..\..\source\EnergyNode.cpp" />
     <ClCompile Include="..\..\source\GameScene.cpp" />
     <ClCompile Include="..\..\source\InputController.cpp" />
     <ClCompile Include="..\..\source\LevelModel.cpp" />

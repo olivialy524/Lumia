@@ -93,7 +93,7 @@ public:
      * @param node  The scene graph node representing this Bullet, which has
      *              been added to the world node already.
      */
-    void setLampNode(const std::shared_ptr<PlantNode>& node) {
+    void setPlantNode(const std::shared_ptr<PlantNode>& node) {
         _plantNode = node;
         _node->addChild(_plantNode);
     }

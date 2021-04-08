@@ -12,10 +12,12 @@
 #include "EnemyModel.h"
 #include "Plant.h"
 #include "Tile.h"
+#include "EnergyModel.h"
 
 class LevelModel : public cugl::Asset {
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
+    std::vector<std::shared_ptr<EnergyModel>> _energies;
     std::vector<std::shared_ptr<Tile>> _tiles;
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
     std::vector<std::shared_ptr<Tile>> _irregular_tiles;
@@ -26,6 +28,8 @@ private:
     float _yBound;
     
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
+
+    std::vector<std::shared_ptr<EnergyModel>> createEnergies(const std::shared_ptr<cugl::JsonValue>& energies);
     
     std::vector<std::shared_ptr<Tile>> createTiles(const std::shared_ptr<cugl::JsonValue>& tiles);
     
@@ -66,7 +70,7 @@ public:
         return (result->init(file) ? result : nullptr);
     }
     
-    LevelModel() {};
+    LevelModel() : _xBound(0.0f), _yBound(0.0f) {};
     
     /**
      * Destroys this LumiaModel, releasing all resources.
@@ -97,7 +101,10 @@ public:
     std::vector<std::shared_ptr<Plant>> getPlants(){
         return _plants;
     }
-    
+
+    std::vector<std::shared_ptr<EnergyModel>> getEnergies() {
+        return _energies;
+    }
     
     std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
         return _enemies;

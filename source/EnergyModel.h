@@ -9,17 +9,18 @@
 #define EnergyModel_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
+#include "EnergyNode.h"
 
 class EnergyModel : public cugl::physics2::BoxObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on physics objects) */
     CU_DISALLOW_COPY_AND_ASSIGN(EnergyModel);
 protected:
-    float _scale;
+    float _drawScale;
     /* Whether or not this energy item is due to be or has been removed */
     bool _removed;
-    std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> _node;
+    std::shared_ptr<EnergyNode> _energyNode;
+    std::shared_ptr<cugl::scene2::SceneNode> _node;
 public:
     EnergyModel() : cugl::physics2::BoxObstacle() { }
 
@@ -48,11 +49,21 @@ public:
         return (result->init(pos, size) ? result : nullptr);
     }
     
-    std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
+    std::shared_ptr<cugl::scene2::SceneNode> getNode() {
         return _node;
     }
-    void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
+
+    void setEnergyNode(const std::shared_ptr<EnergyNode>& node) {
+        _energyNode = node;
+        _node->addChild(_energyNode);
+    }
+
+    void setNode(std::shared_ptr<cugl::scene2::SceneNode> n) {
         _node = n;
+    }
+
+    void setDrawScale(float scale) {
+        _drawScale = scale;
     }
 
     void setRemoved(bool value) { _removed = value; }

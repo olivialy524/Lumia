@@ -7,6 +7,7 @@
 //
 
 #define PLANT_NAME       "plant"
+#define ENERGY_NAME       "energy"
 #define PLATFORM_NAME    "platform"
 #define LUMIA_NAME       "lumia"
 #define ENEMY_NAME       "enemy"
@@ -44,6 +45,12 @@ void LevelModel::dispose(){
         p->dispose();
     }
     _plants.clear();
+
+    for (const std::shared_ptr<EnergyModel>& en : _energies) {
+        en->dispose();
+    }
+    _energies.clear();
+
     _irregular_tiles.clear();
     _tiles.clear();
 }
@@ -59,11 +66,13 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     _xBound = _leveljson->getFloat("xBound");
     _yBound = _leveljson->getFloat("yBound");
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
+    std::shared_ptr<cugl::JsonValue> energies_json = _leveljson->get("energies");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
     std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createPlants(plants_json);
+    createEnergies(energies_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
     createIrregular(irregular_tile_json);
@@ -100,6 +109,33 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
     }
     
     return _plants;
+}
+
+std::vector<std::shared_ptr<EnergyModel>> LevelModel::createEnergies(const std::shared_ptr<cugl::JsonValue>& energies) {
+
+    for (int i = 0; i < energies->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> energy_json = energies->get(i);
+        float posx = energy_json->getFloat("posx");
+        float posy = energy_json->getFloat("posy");
+        cugl::Size size = Size(1.0f, 1.0f);
+        std::shared_ptr<EnergyModel> energy = EnergyModel::alloc(Vec2(posx, posy), size);
+
+        //set body parameters
+        energy->setBodyType(b2_staticBody);
+        energy->setFriction(0.0f);
+        energy->setRestitution(0.0f);
+        energy->setName(ENERGY_NAME);
+        energy->setDensity(0);
+        energy->setBullet(false);
+        energy->setGravityScale(0);
+        energy->setSensor(true);
+        energy->setDebugColor(DEBUG_COLOR);
+        energy->setVX(0);
+
+        _energies.push_back(energy);
+    }
+
+    return _energies;
 }
 
 std::vector<std::shared_ptr<EnemyModel>> LevelModel::createEnemies(const std::shared_ptr<cugl::JsonValue> &enemies){

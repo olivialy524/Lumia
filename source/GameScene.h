@@ -29,10 +29,6 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
-    std::shared_ptr<cugl::JsonReader> _jsonr;
-    
-    std::shared_ptr<cugl::JsonValue> _leveljson;
-    
     std::shared_ptr<LevelModel> _level;
     
     std::shared_ptr<TileDataModel> _tileManager;
@@ -355,8 +351,6 @@ public:
      */
     void reset();
 
-    void createEnergy(Vec2 pos);
-    
     void checkWin();
 
     /**
