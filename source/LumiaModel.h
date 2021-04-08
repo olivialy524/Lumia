@@ -42,7 +42,7 @@ protected:
     static constexpr float LUMIA_MAXVELOCITY = 30.0f;
 
 public:
-    enum LumiaState {
+    static enum LumiaState {
         /** When Lumia is still or rolling */
         Idle,
         /** When Lumia is splitting */
