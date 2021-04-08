@@ -13,8 +13,10 @@
 
 class Door : public cugl::physics2::PolygonObstacle {
 private:
-    
-    bool _open = false;
+    cugl::Vec2 _origpos;
+    cugl::Vec2 _newpos;
+    bool _opening = false;
+    bool _closing = false;
      std::shared_ptr<cugl::scene2::SceneNode> _scenenode;
      std::shared_ptr<cugl::scene2::PolygonNode> _node;
  public:
@@ -35,23 +37,10 @@ private:
          return (result->init(p) ? result : nullptr);
      }
     
-    void changeOpen() {
-        _open = !_open;
-        if (!_open) {
-            cout << "Closing Door \n";
-            getNode()->setColor(cugl::Color4(0,255,0,255));
-            setSensor(false);
-        }
-        else {
-            getNode()->setColor(cugl::Color4(0,0,0,0));
-            setSensor(true);
-    }
-    }
-     
-    bool getOpen() {
-        return _open;
-    }
+    void Open(float scale);
 
+    void Close(float scale);
+    
      std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
          return _node;
      }
@@ -68,6 +57,38 @@ private:
          _scenenode = scene;
      }
 
+    cugl::Vec2 getOriginalPos() {
+        return _origpos;
+    }
+    
+    void setOriginalPos(cugl::Vec2 op) {
+        _origpos = op;
+    }
+    
+    cugl::Vec2 getNewPos() {
+        return _newpos;
+    }
+    
+    void setNewPos(cugl::Vec2 np) {
+        _newpos = np;
+    }
+    
+    bool getOpening() {
+        return _opening;
+    }
+    
+    void setOpening(bool open) {
+        _opening = open;
+    }
+    
+    bool getClosing() {
+        return _closing;
+    }
+    
+    void setClosing(bool close) {
+        _closing = close;
+    }
+    
  };
 
 

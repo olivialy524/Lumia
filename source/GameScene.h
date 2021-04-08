@@ -294,6 +294,7 @@ public:
 
     void processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
     
+    void processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
 	/**
 	* Processes the start of a collision
 	*

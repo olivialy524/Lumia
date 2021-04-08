@@ -418,35 +418,43 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         _plantList.push_front(plants[i]);
     }
 #pragma mark : Buttons & Doors
-    std::shared_ptr<cugl::JsonValue> buttons = _leveljson->get("buttons");
-    std::shared_ptr<cugl::JsonValue> doors = _leveljson->get("doors");
-    for (int i = 0; i < buttons->size(); i++) {
-        std::shared_ptr<cugl::JsonValue> door = doors->get(i);
-        float x = door->getFloat("blx");
-         float y = door->getFloat("bly");
+    std::shared_ptr<cugl::JsonValue> buttondoors = _leveljson->get("buttondoors");
+    for (int i = 0; i < buttondoors->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> buttondoor = buttondoors->get(i);
+        std::shared_ptr<cugl::JsonValue> button = buttondoor->get("button");
+        std::shared_ptr<cugl::JsonValue> door = buttondoor->get("door");
+        float ox = door->getFloat("oblx");
+         float oy = door->getFloat("obly");
+        float nx = door->getFloat("nblx");
+        float ny = door->getFloat("nbly");
          float wid = door->getFloat("width");
          float hgt = door->getFloat("height");
-     Rect rectangle = Rect(x,y,wid,hgt);
+     Rect rectangle = Rect(ox,oy,wid,hgt);
      std::shared_ptr<Door> d;
      Poly2 platform(rectangle,false);
      SimpleTriangulator triangulator;
      triangulator.set(platform);
      triangulator.calculate();
      platform.setIndices(triangulator.getTriangulation());
-     platform.setGeometry(Geometry::SOLID);
-     d = Door::alloc(cugl::Vec2(x,y), platform);
-     d->setDensity(BASIC_DENSITY);
-     d->setBodyType(b2_staticBody);
+        platform.setGeometry(Geometry::SOLID);
+        cugl::Vec2 orpos = cugl::Vec2(ox,oy);
+     d = Door::alloc(orpos, platform);
+        d->setOriginalPos(orpos);
+        d->setNewPos(cugl::Vec2(nx,ny));
+     d->setDensity(10000);
+     //d->setBodyType(b2_staticBody);
+        d->setGravityScale(0);
      d->setRestitution(BASIC_RESTITUTION);
+        d->setAnchor(Vec2(0,0));
      d->setDebugColor(DEBUG_COLOR);
         d->setName("door " + toString(i));
      platform *= _scale;
      image = _assets->get<Texture>(EARTH_TEXTURE);
      sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+        sprite->setAnchor(Vec2(0,0));
      d->setNode(sprite);
      addObstacle(d,sprite,1);
      _doorList.push_front(d);
-        std::shared_ptr<cugl::JsonValue> button = buttons->get(i);
         float bx = button->getFloat("posx");
         float by = button->getFloat("posy");
         std::shared_ptr<Button> b;
@@ -458,7 +466,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         b->setName("button");
         image = _assets->get<Texture>(EARTH_TEXTURE);
         b->setDoor(d);
-        rectangle = Rect(x,y,1,1);
+        rectangle = Rect(bx,by,1,1);
         Poly2 buttonp(rectangle,false);
         triangulator.calculate();
         buttonp.setIndices(triangulator.getTriangulation());
@@ -467,6 +475,7 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
         sprite->setScale(_scale);
         b->setNode(sprite);
+        //b->setSensor(true);
         addObstacle(b,sprite,1);
         _buttonList.push_front(b);
     }
@@ -576,13 +585,16 @@ void GameScene::update(float dt) {
         }
         _energiesToRemove.clear();
     }
-    if (_doorsToOpen.size() > 0) {
-        for (const std::shared_ptr<Door>& door : _doorsToOpen) {
-            if (!door->getOpen()) {
-            door->changeOpen();
-            }
+    for (auto & door : _doorList) {
+        cout << "Door position x: " << door->getPosition().x << "\n";
+        cout << "Door position y: " << door->getPosition().y << "\n";
+        door->setAngle(0);
+        if (door->getOpening()) {
+            door->Open(_scale);
         }
-        _doorsToOpen.clear();
+        else if (door->getClosing()) {
+            door->Close(_scale);
+        }
     }
 
     if(_input.didSwitch()){
@@ -914,7 +926,12 @@ void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lum
     _lumiasToCreate.push_back(lumiaNew);
 }
 void GameScene::processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
-        _doorsToOpen.push_back(button->getDoor());
+    button->getDoor()->setOpening(true);
+    button->getDoor()->setClosing(false);
+}
+void GameScene::processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
+    button->getDoor()->setOpening(false);
+    button->getDoor()->setClosing(true);
 }
 
 
@@ -987,6 +1004,14 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
+        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd2) {
+                    processButtonLumiaCollision(lumia, button);
+                    break;
+                }
+            }
+        }
         
         // handle collision between two Lumias
         if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
@@ -1034,8 +1059,8 @@ void GameScene::endContact(b2Contact* contact) {
 	void* fd1 = fix1->GetUserData();
 	void* fd2 = fix2->GetUserData();
 
-	void* bd1 = body1->GetUserData();
-	void* bd2 = body2->GetUserData();
+    physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
+    physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
     
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
@@ -1045,6 +1070,22 @@ void GameScene::endContact(b2Contact* contact) {
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
+            }
+        }
+        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd1) {
+                    processButtonLumiaEnding(lumia, button);
+                    break;
+                }
+            }
+        }
+        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd2) {
+                    processButtonLumiaEnding(lumia, button);
+                    break;
+                }
             }
         }
     }
