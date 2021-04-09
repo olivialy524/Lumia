@@ -77,6 +77,8 @@ protected:
         bool isAvatar;
         /** The velocity to spawn the Lumia body with */
         cugl::Vec2 vel;
+        /** The angular velocity to spawn the Lumia body with */
+        float angularVel;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -88,9 +90,6 @@ protected:
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
     
-    Vec2 _linVelocityData;
-    
-    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -365,7 +364,7 @@ public:
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(int sizeLevel, Vec2 pos, bool isAvatar,Vec2 vel);
+    std::shared_ptr<LumiaModel> createLumia(int sizeLevel, Vec2 pos, bool isAvatar, Vec2 vel, float angularVel);
 
     /**
     * Removes the input Lumia from the world.
