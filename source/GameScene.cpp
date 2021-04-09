@@ -653,7 +653,7 @@ void GameScene::update(float dt) {
     
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
-            if (_avatar->isDoneSplitting()) {
+            if (_avatar->isDoneSplitting() && _world->inBounds(_avatar.get())) {
                 int currentSizeLevel = _avatar->getSizeLevel();
                 Vec2 pos = _avatar->getPosition();
                 Vec2 offset = Vec2(0.5f + LumiaModel::sizeLevels[currentSizeLevel].radius, 0.0f);
@@ -706,7 +706,7 @@ void GameScene::update(float dt) {
                 createLumia(newSize, pos + offset, currentVel.x >= 0, splitVel1);
                 createLumia(newSize, pos - offset, currentVel.x < 0, splitVel2);
                 
-            } else if (!_avatar->isRemoved()) {
+            } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
                 }
