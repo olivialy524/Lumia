@@ -136,7 +136,7 @@
             "door" :{
                 "oblx": 8,
                 "obly": 14,
-                "nblx": 9,
+                "nblx": 10,
                 "nbly": 14,
                 "width": 2,
                 "height": 1

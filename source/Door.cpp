@@ -17,7 +17,6 @@ void Door::Close(float scale) {
     if (!getClosing() || getPosition() == getOriginalPos()) {
     return;
     }
-    cout << "closing \n";
     cugl::Vec2 cpos = getPosition();
     cugl::Vec2 dir = -cugl::Vec2(getOriginalPos(),getNewPos());
     dir.normalize();
