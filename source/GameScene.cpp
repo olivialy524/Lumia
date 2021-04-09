@@ -38,17 +38,6 @@ using namespace cugl;
 #define DEFAULT_HEIGHT  18.0f
 
 #pragma mark -
-#pragma mark Gameplay Constants
-/** The minimum size a Lumia can be before it is killed */
-#define MIN_LUMIA_RADIUS 0.25f
-/** The amount of size a Lumia will lose when lighting up a magical plant */
-#define PLANT_SIZE_COST 0.25f
-/** The amount of size a Lumia will gain when consuming an energy item */
-#define ENERGY_SIZE_INC 1.0f
-/** The ratio of size Lumia is split into */
-#define LUMIA_SPLIT_RATIO 1.4f
-
-#pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
 #define DEFAULT_GRAVITY -13.0f
