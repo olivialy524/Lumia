@@ -13,6 +13,7 @@
 #include <cugl/physics2/CUCapsuleObstacle.h>
 #include <cugl/scene2/graph/CUWireNode.h>
 #include "EnemyNode.h"
+#include "LumiaModel.h"
 
 #pragma mark Enemy Model
 /**
@@ -40,6 +41,7 @@ protected:
     static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
     static constexpr float LUMIA_MAXVELOCITY = 30.0f;
+    
 
 public:
     enum EnemyState {
@@ -81,6 +83,12 @@ protected:
     EnemyState _state;
     
     Vec2 _lastPosition;
+    
+    LumiaModel* target;
+    
+    bool _removed;
+    
+    bool _inCoolDown;
 
     /**
     * Redraws the outline of the physics fixtures to the debug node
@@ -108,6 +116,7 @@ public:
      */
     virtual ~EnemyModel(void) { dispose(); }
     
+    void setVelocity();
     /**
      * Disposes all resources and assets of this LumiaModel
      *
@@ -325,6 +334,14 @@ public:
     
     cugl::Vec2 getLastPosition() const {return _lastPosition;}
     
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
+    }
+    
     void setState(EnemyState state){
         _state = state;
     }
@@ -364,7 +381,12 @@ public:
      */
     std::string* getSensorName() { return &_sensorName; }
 
-    
+    void setRemoved(bool value){
+        _removed =value;
+    }
+    bool getRemoved(){
+        return _removed;
+    }
 #pragma mark -
 #pragma mark Physics Methods
     /**
