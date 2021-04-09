@@ -565,9 +565,7 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (!_failed && !_complete) {
-        checkWin();
-    }
+    
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
             removeLumia(lumia);
@@ -581,6 +579,7 @@ void GameScene::update(float dt) {
         }
         _enemiesToRemove.clear();
     }
+
     if (_lumiasToCreate.size() > 0) {
         for (const LumiaBody& lumia : _lumiasToCreate) {
             createLumia(lumia.sizeLevel, lumia.position, lumia.isAvatar, lumia.vel);
@@ -739,7 +738,7 @@ void GameScene::update(float dt) {
             
     }
 
-    ticks ++;
+    ticks++;
 
     if (ticks % 100 == 0){
         for (auto & enemy : _enemyList){
@@ -792,6 +791,10 @@ void GameScene::update(float dt) {
 		setFailure(true);
 	}
     
+    if (!_failed && !_complete) {
+        checkWin();
+    }
+
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
 		_countdown--;
