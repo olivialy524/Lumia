@@ -31,11 +31,13 @@ void LumiaApp::onStartup() {
     Input::activate<Touchscreen>();
 #else
     Input::activate<Mouse>();
+    Input::get<Mouse>()->setPointerAwareness(Mouse::PointerAwareness::DRAG);
 #endif
     
     _assets->attach<Font>(FontLoader::alloc()->getHook());
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
+    _assets->attach<WidgetValue>(WidgetLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook());
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
     _assets->attach<TileDataModel>(GenericLoader<TileDataModel>::alloc()->getHook());
@@ -47,7 +49,7 @@ void LumiaApp::onStartup() {
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     //load in the json file
-    _assets->loadAsync<LevelModel>("json/newlevel.json", "json/newlevel.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -129,10 +131,61 @@ void LumiaApp::update(float timestep) {
         _loading.update(0.01f);
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
-        _gameplay.init(_assets);
+
+        _gameplay.init(_assets, "json/level1.json");
+        _gameplay.setActive(false);
+        _levelSelect.init(_assets);
+        _levelSelect.setActive(false);
+        _settings.init(_assets);
+        _settings.setActive(false);
+        
+        // we have finished loading assets, go to main menu
+        _mainMenu.init(_assets);
+        _mainMenu.setActive(true);
+        _currentScene = &_mainMenu;
         _loaded = true;
     } else {
-        _gameplay.update(timestep);
+        // Screens:
+        // Main menu -> settings/level select/exit
+        // Settings -> main menu/gameplay
+        // Level select -> main menu/gameplay
+        // Gameplay / gameoverlay -> mainmenu
+        // Pause -> gameplay
+        // Loading -> mainmenu
+        // Game Over -> gameplay/mainmenu
+
+        if (!_currentScene->isActive()) {
+            string nextScene;
+            if (_currentScene->getName() == "mainmenu") {
+                _mainMenu.setActive(false);
+                nextScene = dynamic_cast<MainMenuScene*>(_currentScene)->getNextScene();
+                if (nextScene == "levelselect") {
+                    _levelSelect.setActive(true);
+                    _currentScene = &_levelSelect;
+                }
+            } else if (_currentScene->getName() == "levelselect") {
+                _levelSelect.setActive(false);
+                nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
+                if (nextScene == "game") {
+                    _gameplay.init(_assets, dynamic_cast<LevelSelectScene*>(_currentScene)->getSelectedLevel());
+                    _gameplay.setMusicVolume(_settings.getMusicVolume() / 100.0f);
+                    _gameplay.setEffectVolume(_settings.getEffectVolume() / 100.0f);
+                    _currentScene = &_gameplay;
+                } else if (nextScene == "settings") {
+                    _settings.setActive(true);
+                    _currentScene = &_settings;
+                }
+            } else if(_currentScene->getName() == "settings") {
+                _settings.setActive(false);
+                nextScene = dynamic_cast<SettingsScene*>(_currentScene)->getNextScene();
+                if (nextScene == "levelselect") {
+                    _levelSelect.setActive(true);
+                    _currentScene = &_levelSelect;
+                }
+            }
+        } else {
+            _currentScene->update(timestep);
+        }
     }
 }
 
@@ -149,7 +202,7 @@ void LumiaApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
     } else {
-        _gameplay.render(_batch);
+        _currentScene->render(_batch);
     }
 }
 

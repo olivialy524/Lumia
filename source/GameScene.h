@@ -79,6 +79,8 @@ protected:
         float radius;
         /** Whether or not the Lumia body should be controlled by the player */
         bool isAvatar;
+        /** The velocity to spawn the Lumia body with */
+        cugl::Vec2 vel;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -101,7 +103,11 @@ protected:
     bool _failed;
     /** Countdown active for winning or losing */
     int _countdown;
-      
+    /** Volume level for game music */
+    float _musicVolume;
+    /** Volume level for sound effects */
+    float _effectVolume;
+
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     
@@ -189,10 +195,11 @@ public:
      * with the Box2d coordinates.  This initializer uses the default scale.
      *
      * @param assets    The (loaded) assets for this game mode
+     * @param level     The level to be loaded into the game world
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, string level);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -287,6 +294,20 @@ public:
 	* @param value whether the level is failed.
 	*/
 	void setFailure(bool value);
+
+    /**
+    * Sets the volume of game music
+    * 
+    * @param value the volume of game music
+    */
+    void setMusicVolume(float value) { _musicVolume = value; };
+
+    /**
+    * Sets the volume of sound effects
+    *
+    * @param value the volume of sound effects
+    */
+    void setEffectVolume(float value) { _effectVolume = value; };
     
 #pragma mark -
 #pragma mark Collision Handling
@@ -343,18 +364,14 @@ public:
      */
     void reset();
 
-    void createPlant(float posx, float posy, int nplant, float ang);
-    
     void createEnergy(Vec2 pos);
-    
-    void createSplitter(Vec2 pos);
     
     void checkWin();
 
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar);
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar,Vec2 vel);
 
     /**
     * Removes the input Lumia from the world.
@@ -371,7 +388,11 @@ public:
     */
     void removeEnergy(std::shared_ptr<EnergyModel> energy);
     
+    /** Gives nearby Lumia velocity towards player avatar so they merge on contact */
     void mergeLumiasNearby();
+
+    /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
+    void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
 
     /**
      * Calculates trajectory point one timestep into future

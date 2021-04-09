@@ -32,9 +32,6 @@ using namespace cugl;
 #define SCENE_WIDTH 1024
 #define SCENE_HEIGHT 576
 
-/** This is the aspect ratio for physics */
-#define SCENE_ASPECT 9.0/16.0
-
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
@@ -57,8 +54,6 @@ using namespace cugl;
 #define DEFAULT_GRAVITY -13.0f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
-/** The density for a bullet */
-#define HEAVY_DENSITY   10.0f
 /** Friction of most platforms */
 #define BASIC_FRICTION  0.4f
 /** The restitution for all physics objects */
@@ -67,10 +62,6 @@ using namespace cugl;
 #define EXIT_COUNT      240
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
-
-#define CAMERA_SHIFT 0.3f
-
-
 
 
 #pragma mark -
@@ -83,8 +74,6 @@ using namespace cugl;
 #define ENEMY_TEXTURE   "enemy"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
-/** The name of a wall (for object identification) */
-#define WALL_NAME       "wall"
 
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
@@ -103,31 +92,12 @@ using namespace cugl;
 #define LOSE_MESSAGE    "FAILURE!"
 /** The color of the lose message */
 #define LOSE_COLOR      Color4::RED
-/** The key the basic game music */
-#define GAME_MUSIC      "game"
-/** The key the victory game music */
-#define WIN_MUSIC       "win"
-/** The key the failure game music */
-#define LOSE_MUSIC      "lose"
-/** The sound effect for firing a bullet */
-#define PEW_EFFECT      "pew"
-/** The sound effect for a bullet collision */
-#define POP_EFFECT      "pop"
-/** The sound effect for jumping */
-#define JUMP_EFFECT     "jump"
-/** The volume for the music */
-#define MUSIC_VOLUME    0.7f
-/** The volume for sound effects */
-#define EFFECT_VOLUME   0.8f
 
-#define CAMERA_SPEED 3.0f
+#define CAMERA_SPEED 4.0f
 
-#define BACKGROUND_IMAGE "background"
+#define CAMERA_SHIFT 0.3f
 
 #define LEVEL_NAME "json/techlevel"
-
-/** Opacity of the physics outlines */
-#define DEBUG_OPACITY   192
 
 
 
@@ -164,13 +134,17 @@ GameScene::GameScene() : Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    _jsonr = cugl::JsonReader::alloc("json/newlevel.json");
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
+    setName("game");
+
+    _jsonr = cugl::JsonReader::alloc(level);
 
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
-    _level = assets->get<LevelModel>("json/newlevel.json");
+    
+    _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
+
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -222,7 +196,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     }
    
     _assets = assets;
-    _input.init(getBounds());
+    _input.init();
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
@@ -238,10 +212,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
-      beginContact(contact);
+        beginContact(contact);
     };
     _world->onEndContact = [this](b2Contact* contact) {
-      endContact(contact);
+        endContact(contact);
     };
   
     // IMPORTANT: SCALING MUST BE UNIFORM
@@ -285,12 +259,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
+
+    setActive(true);
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
     return true;
@@ -383,6 +361,7 @@ void GameScene::populate() {
 //    }
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
+
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
     for (int i = 0; i < platforms.size(); i++) {
@@ -608,7 +587,7 @@ void GameScene::update(float dt) {
     }
     if (_lumiasToCreate.size() > 0) {
         for (const LumiaBody& lumia : _lumiasToCreate) {
-            createLumia(lumia.radius, lumia.position, lumia.isAvatar);
+            createLumia(lumia.radius, lumia.position, lumia.isAvatar, lumia.vel);
         }
         _lumiasToCreate.clear();
     }
@@ -620,10 +599,25 @@ void GameScene::update(float dt) {
         _energiesToRemove.clear();
     }
 
+    // check if Lumia bodies fell out of the level, and remove as needed
+    for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
+        if (lumia->getY() < 0) {
+            if (lumia == _avatar) {
+                std::shared_ptr<LumiaModel> temp = _avatar;
+                switchToNearestLumia(_avatar);
+                _lumiasToRemove.push_back(temp);
+                temp->setRemoved(true);
+            } else {
+                _lumiasToRemove.push_back(lumia);
+                lumia->setRemoved(true);
+            }
+        }
+    }
+
     if(_input.didSwitch()){
         cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
 
-        for (auto & lumia : _lumiaList) {
+        for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation);
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
@@ -684,9 +678,53 @@ void GameScene::update(float dt) {
                 float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
                 Vec2 pos = _avatar->getPosition();
                 Vec2 offset = Vec2(0.5f + radius, 0.0f);
+
+                // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
+                // http://www.iforce2d.net/b2dtut/world-querying
+                std::shared_ptr<LumiaModel> temp = _avatar;
+                Vec2 currentVel = _linVelocityData;
+                Vec2 splitVel1 = Vec2::ZERO;
+                Vec2 splitVel2 = Vec2::ZERO;
+
+                if (IN_RANGE(currentVel.x, -1, 1) && currentVel.y > 0) {
+                    // Lumia velocity is North
+                    splitVel1 = Vec2(currentVel.x - 1.0f, currentVel.y);
+                    splitVel2 = Vec2(currentVel.x + 1.0f, currentVel.y);
+                } else if (currentVel.x > 1 && currentVel.y > 1) {
+                    // Lumia velocity is North East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x > 0 && IN_RANGE(currentVel.y, -1, 1)) {
+                    // Lumia velocity is East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x > 0 && currentVel.y < -1) {
+                    // Lumia velocity is South East
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (IN_RANGE(currentVel.x, -1, 1) && currentVel.y < 0) {
+                    // Lumia velocity is South
+                    splitVel1 = Vec2(currentVel.x - 1.0f, currentVel.y);
+                    splitVel2 = Vec2(currentVel.x + 1.0f, currentVel.y);
+                } else if (currentVel.x < -1 && currentVel.y < -1) {
+                    // Lumia velocity is South West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x < 0 && IN_RANGE(currentVel.y, -1, 1)) {
+                    // Lumia velocity is West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                } else if (currentVel.x < -1 && currentVel.y < 1) {
+                    // Lumia velocity is North West
+                    splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
+                    splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
+                }
+
+                CULog("current: (%f, %f)", currentVel.x, currentVel.y);
+                CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeAvatarNode();
-                createLumia(radius, pos + offset, true);
-                createLumia(radius, pos - offset, false);
+                createLumia(radius, pos + offset, true, splitVel1);
+                createLumia(radius, pos - offset, false, splitVel2);
                 
             }else if(!_avatar->isRemoved()){
                 float radius = _avatar->getRadius() / LUMIA_SPLIT_RATIO;
@@ -757,7 +795,7 @@ void GameScene::update(float dt) {
 	_world->garbageCollect();
 
 	// Record failure if necessary.
-	if (!_failed && _avatar->getY() < 0 || _lumiaList.size() == 0) {
+	if (!_failed && _lumiaList.size() == 0) {
 		setFailure(true);
 	}
     
@@ -845,15 +883,16 @@ void GameScene::checkWin() {
 /**
  * Add a new Lumia to the world.
  */
-std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar) {
+std::shared_ptr<LumiaModel> GameScene::createLumia(float radius, Vec2 pos, bool isAvatar, Vec2 vel) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, radius, _scale);
+    lumia->setDebugColor(DEBUG_COLOR);
+    lumia->setName(LUMIA_NAME);
+    lumia->setFixedRotation(false);
+    lumia->setDensity(0.1f / radius);
+    lumia->setLinearVelocity(vel);
     lumia-> setTextures(image, splitting);
-    lumia-> setDebugColor(DEBUG_COLOR);
-    lumia-> setName(LUMIA_NAME);
-    lumia-> setFixedRotation(false);
-    lumia-> setDensity(0.1f / radius);
     if (isAvatar){
     lumia-> setLinearVelocity(_linVelocityData);
 //    lumia-> setAngularVelocity(_angVelocityData);
@@ -941,7 +980,7 @@ void GameScene::removeEnergy(shared_ptr<EnergyModel> energy) {
     energy->markRemoved(true);
 }
 
-void GameScene::mergeLumiasNearby(){
+void GameScene::mergeLumiasNearby() {
     Vec2 avatarPos = _avatar->getPosition();
 
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
@@ -957,6 +996,26 @@ void GameScene::mergeLumiasNearby(){
             Vec2 distance = avatarPos-lumiaPos;
             lumia->setLinearVelocity(distance.normalize().scale(5.0f));
         }
+    }
+}
+
+void GameScene::switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia) {
+    float minDistance = FLT_MAX;
+    std::shared_ptr<LumiaModel> closestLumia = NULL;
+    for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
+        if (lumiaOther == lumia) {
+            continue;
+        }
+
+        float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestLumia = lumiaOther;
+        }
+    }
+
+    if (closestLumia != NULL) {
+        _avatar = closestLumia;
     }
 }
 
@@ -985,7 +1044,12 @@ void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_pt
     // Lumia body remains if above min size, otherwise kill Lumia body
     if (newRadius >= MIN_LUMIA_RADIUS) {
         Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - PLANT_SIZE_COST);
-        struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+        struct LumiaBody lumiaNew = {
+            newPosition,
+            newRadius,
+            lumia == _avatar,
+            lumia->getVelocity()
+        };
 
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
@@ -993,23 +1057,7 @@ void GameScene::processPlantLumiaCollision(float newRadius, const std::shared_pt
     } else {
         // if avatar is killed, player is given control of nearest Lumia body
         if (lumia == _avatar) {
-            float minDistance = FLT_MAX;
-            std::shared_ptr<LumiaModel> closestLumia = NULL;
-            for (const std::shared_ptr<LumiaModel>& lumiaOther : _lumiaList) {
-                if (lumiaOther == lumia) {
-                    continue;
-                }
-
-                float distance = lumia->getPosition().distanceSquared(lumiaOther->getPosition());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestLumia = lumiaOther;
-                }
-            }
-
-            if (closestLumia != NULL) {
-                _avatar = closestLumia;
-            }
+            switchToNearestLumia(lumia);
         }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
@@ -1057,7 +1105,12 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 
     float newRadius = lumia->getRadius() + ENERGY_SIZE_INC;
     Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + ENERGY_SIZE_INC);
-    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar };
+    struct LumiaBody lumiaNew = {
+        newPosition,
+        newRadius,
+        lumia == _avatar,
+        lumia->getVelocity()
+    };
 
     _lumiasToRemove.push_back(lumia);
     lumia->setRemoved(true);
@@ -1066,8 +1119,13 @@ void GameScene::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> e
 
 void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2) {
     float newRadius = (lumia->getRadius() + lumia2->getRadius()) / LUMIA_SPLIT_RATIO;
-    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + (newRadius - lumia->getRadius()));
-    struct LumiaBody lumiaNew = { newPosition, newRadius, lumia == _avatar || lumia2 == _avatar };
+    Vec2 newPosition = Vec2((lumia->getPosition().x + lumia2->getPosition().x) / 2, lumia->getPosition().y + (newRadius - lumia->getRadius()));
+    struct LumiaBody lumiaNew = {
+        newPosition,
+        newRadius,
+        lumia == _avatar || lumia2 == _avatar,
+        (lumia->getVelocity() + lumia2->getVelocity()) / 2
+    };
 
     _lumiasToRemove.push_back(lumia);
     lumia->setRemoved(true);
