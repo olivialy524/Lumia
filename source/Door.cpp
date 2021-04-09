@@ -13,7 +13,7 @@ void Door::dispose() {
     _scenenode = nullptr;
 }
 
-void Door::Close(float scale) {
+void Door::Close() {
     if (!getClosing() || getPosition() == getOriginalPos()) {
     return;
     }
@@ -21,15 +21,14 @@ void Door::Close(float scale) {
     cugl::Vec2 dir = -cugl::Vec2(getOriginalPos(),getNewPos());
     dir.normalize();
     setLinearVelocity(dir*2);
-    _node->setPosition(getX()*scale,getY()*scale);
-    if (std::abs((cpos.x)-getOriginalPos().x) <= .1 && std::abs((cpos.y)-getOriginalPos().y) <= .1) {
+    if (cpos.distanceSquared(getOriginalPos()) <= .01) {
         setLinearVelocity(0,0);
         setPosition(getOriginalPos().x,getOriginalPos().y);
         setClosing(false);
     }
 }
 
-void Door::Open(float scale) {
+void Door::Open() {
     if (!getOpening() || getPosition() == getNewPos()) {
     return;
     }
@@ -37,8 +36,7 @@ void Door::Open(float scale) {
     cugl::Vec2 dir = cugl::Vec2(getOriginalPos(),getNewPos());
     dir.normalize();
     setLinearVelocity(dir*2);
-    _node->setPosition(getX()*scale,getY()*scale);
-    if (std::abs((cpos.x)-getNewPos().x) <= .1 && std::abs((cpos.y)-getNewPos().y) <= .1) {
+    if (cpos.distanceSquared(getNewPos()) <= .01) {
         setLinearVelocity(0,0);
         setPosition(getNewPos().x,getNewPos().y);
         setOpening(false);

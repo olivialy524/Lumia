@@ -37,9 +37,9 @@ private:
          return (result->init(p) ? result : nullptr);
      }
     
-    void Open(float scale);
+    void Open();
 
-    void Close(float scale);
+    void Close();
     
      std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
          return _node;

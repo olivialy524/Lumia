@@ -334,6 +334,15 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
+    for (const std::shared_ptr<Door> & d: _doorList) {
+        d->dispose();
+    }
+    _doorList.clear();
+    
+    for (const std::shared_ptr<Button> & b: _buttonList) {
+        b->dispose();
+    }
+    _buttonList.clear();
     _lumiasToRemove.clear();
     _lumiasToCreate.clear();
     _energiesToRemove.clear();
@@ -418,64 +427,29 @@ std::shared_ptr<scene2::PolygonNode> sprite;
         _plantList.push_front(plants[i]);
     }
 #pragma mark : Buttons & Doors
-    std::shared_ptr<cugl::JsonValue> buttondoors = _leveljson->get("buttondoors");
-    for (int i = 0; i < buttondoors->size(); i++) {
-        std::shared_ptr<cugl::JsonValue> buttondoor = buttondoors->get(i);
-        std::shared_ptr<cugl::JsonValue> button = buttondoor->get("button");
-        std::shared_ptr<cugl::JsonValue> door = buttondoor->get("door");
-        float ox = door->getFloat("oblx");
-         float oy = door->getFloat("obly");
-        float nx = door->getFloat("nblx");
-        float ny = door->getFloat("nbly");
-         float wid = door->getFloat("width");
-         float hgt = door->getFloat("height");
-     Rect rectangle = Rect(ox,oy,wid,hgt);
-     std::shared_ptr<Door> d;
-     Poly2 platform(rectangle,false);
-     SimpleTriangulator triangulator;
-     triangulator.set(platform);
-     triangulator.calculate();
-     platform.setIndices(triangulator.getTriangulation());
-        platform.setGeometry(Geometry::SOLID);
-        cugl::Vec2 orpos = cugl::Vec2(ox,oy);
-     d = Door::alloc(orpos, platform);
-        d->setOriginalPos(orpos);
-        d->setNewPos(cugl::Vec2(nx,ny));
+    std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
+    std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
+    for (int i = 0; i < buttons.size(); i++) {
+        std::shared_ptr<Button> b = buttons[i];
+        std::shared_ptr<Door> d = doors[i];
      d->setDensity(10000);
      //d->setBodyType(b2_staticBody);
-        d->setGravityScale(0);
-     d->setRestitution(BASIC_RESTITUTION);
-        d->setAnchor(Vec2(0,0));
-     d->setDebugColor(DEBUG_COLOR);
         d->setName("door " + toString(i));
-     platform *= _scale;
+        Poly2 platform = d->getPolygon();
+        platform *= _scale;
      image = _assets->get<Texture>(EARTH_TEXTURE);
      sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         sprite->setAnchor(Vec2(0,0));
      d->setNode(sprite);
      addObstacle(d,sprite,1);
      _doorList.push_front(d);
-        float bx = button->getFloat("posx");
-        float by = button->getFloat("posy");
-        std::shared_ptr<Button> b;
-        b = Button::alloc(Vec2(bx,by), Size(1,1));
-        b->setDensity(BASIC_DENSITY);
-        b->setBodyType(b2_staticBody);
-        b->setRestitution(BASIC_RESTITUTION);
-        b->setDebugColor(DEBUG_COLOR);
         b->setName("button");
         image = _assets->get<Texture>(EARTH_TEXTURE);
-        b->setDoor(d);
-        rectangle = Rect(bx,by,1,1);
-        Poly2 buttonp(rectangle,false);
-        triangulator.calculate();
-        buttonp.setIndices(triangulator.getTriangulation());
-        buttonp.setGeometry(Geometry::SOLID);
-        std::shared_ptr<cugl::scene2::PolygonNode> pn = cugl::scene2::PolygonNode::alloc(rectangle);
-        std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
-        sprite->setScale(_scale);
+        Rect rectangle = Rect(b->getX(),b->getY(),1,1);
+        Poly2 plat(rectangle);
+        plat *= _scale;
+        sprite = scene2::PolygonNode::allocWithTexture(image,plat);
         b->setNode(sprite);
-        //b->setSensor(true);
         addObstacle(b,sprite,1);
         _buttonList.push_front(b);
     }
@@ -563,8 +537,6 @@ void GameScene::update(float dt) {
     if (!_failed && !_complete) {
         checkWin();
     }
-    
-
     if (_lumiasToRemove.size() > 0) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiasToRemove) {
             removeLumia(lumia);
@@ -588,11 +560,12 @@ void GameScene::update(float dt) {
     for (auto & door : _doorList) {
         door->setAngle(0);
         if (door->getOpening()) {
-            door->Open(_scale);
+            door->Open();
         }
         else if (door->getClosing()) {
-            door->Close(_scale);
+            door->Close();
         }
+        door->getNode()->setPosition(door->getPosition()*_scale);
     }
 
     if(_input.didSwitch()){
