@@ -432,7 +432,13 @@ public:
      */
     void setLaunching(bool value) { _isLaunching = value; }
     
-    bool isDoneSplitting() const {return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;}
+    bool isDoneSplitting() const {
+        if (_node!=nullptr){
+            return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;
+        }
+        return false;
+        
+    }
     
     
     /**

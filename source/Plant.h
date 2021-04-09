@@ -87,12 +87,6 @@ public:
      */
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
     
-    /**
-     * Sets the scene graph node representing this Bullet.
-     *
-     * @param node  The scene graph node representing this Bullet, which has
-     *              been added to the world node already.
-     */
     void setPlantNode(const std::shared_ptr<PlantNode>& node) {
         _plantNode = node;
         _node->addChild(_plantNode);
@@ -102,6 +96,13 @@ public:
         _node = node;
     }
     
+    /**
+     * Sets the textures for this lumia.
+     *
+     * @param lumia      The texture for the lumia filmstrip
+     */
+    void setTextures(const std::shared_ptr<cugl::Texture>& plant, float angle);
+
     
     /**
      * Sets the ratio of the Bullet sprite to the physics body
@@ -118,6 +119,14 @@ public:
     void setDrawScale(float scale) {
         _drawScale = scale;
     }
+    /**
+     * Updates the object's physics state (NOT GAME LOGIC).
+     *
+     * We use this method to reset cooldowns.
+     *
+     * @param delta Number of seconds since last animation frame
+     */
+    void update(float dt) override;
 
 #pragma mark -
 #pragma mark State Methods
@@ -127,10 +136,14 @@ public:
     }
     void lightUp() {
         _isLit = true;
+        _plantNode->setAnimState(PlantNode::PlantAnimState::Lit);
     }
     
     void lightDown() {
         _isLit = false;
+        if (_plantNode!=nullptr){
+        _plantNode->setAnimState(PlantNode::PlantAnimState::Dark);
+        }
     }
 };
 

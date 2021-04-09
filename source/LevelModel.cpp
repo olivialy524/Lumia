@@ -89,7 +89,7 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         float posx = plant_json ->getFloat("posx");
         float posy = plant_json->getFloat("posy");
         float ang = (plant_json->getFloat("angle"))*M_PI/180.0f;
-        cugl::Size size  = Size(0.5f, 0.5f);
+        cugl::Size size  = Size(0.6f, 0.35f);
         std::shared_ptr<Plant> plant = Plant::alloc(Vec2(posx,posy), size);
         
         //set body parameters
