@@ -33,7 +33,7 @@ protected:
     
     int _frameCount;
 
-    int ANIMATION_INTERVAL = 1.5f;
+    int ANIMATION_INTERVAL = 1;
 public:
     
     cugl::Color4 _stint;
