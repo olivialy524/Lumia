@@ -6,14 +6,14 @@
         "yBound" : 20,
         "lumia": {
             "posx": 4.5,
-            "posy": 17,
-            "radius": 1
+            "posy": 5,
+            "sizelevel": 2
         },
         "enemies": [
             {
-            "posx": 10,
-            "posy": 5,
-            "radius": 0.7
+                "posx": 10,
+                "posy": 5,
+                "radius": 0.7
             }
         ],
         "energies": [
