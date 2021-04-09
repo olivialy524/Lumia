@@ -586,8 +586,6 @@ void GameScene::update(float dt) {
         _energiesToRemove.clear();
     }
     for (auto & door : _doorList) {
-        cout << "Door position x: " << door->getPosition().x << "\n";
-        cout << "Door position y: " << door->getPosition().y << "\n";
         door->setAngle(0);
         if (door->getOpening()) {
             door->Open(_scale);
