@@ -138,13 +138,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) 
     setName("game");
 
     _jsonr = cugl::JsonReader::alloc(level);
-
     std::shared_ptr<cugl::JsonValue> jv = _jsonr->readJson();
     _leveljson = jv->get("level");
     
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
-
+    
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
 }
 
@@ -254,7 +253,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_debugnode, 2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
-   
 
     populate();
     _active = true;
@@ -442,9 +440,6 @@ void GameScene::populate() {
         
     }
  
-
-    
-
 #pragma mark : Energy
     std::shared_ptr<cugl::JsonValue> energies = _leveljson->get("energies");
     cout << "energies" << energies->size() <<endl;
@@ -457,19 +452,16 @@ void GameScene::populate() {
     }
 #pragma mark : Plants
     vector<std::shared_ptr<Plant>> plants = _level->getPlants();
+    image = _assets->get<Texture>("lamp");
     for (int i = 0; i < plants.size(); i++) {
-        std::shared_ptr<Texture> image = _assets->get<Texture>("lamp");
-        std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
-        plants[i]->setNode(_sceneNode);
-        _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-        std::shared_ptr<PlantNode> sprite = PlantNode::alloc(image);
-        sprite->setAnchor(Vec2::ANCHOR_CENTER);
-        sprite->setAngle(plants[i]->getAngle());
-        _sceneNode->addChild(sprite);
-        plants[i]->setVX(0);
-        addObstacle(plants[i], _sceneNode, 0);
-        _plantList.push_front(plants[i]);
+        auto plant = plants[i];
+        plant->setDrawScale(_scale);
+        plant->setTextures(image, plant->getAngle());
+        plant->setVX(0);
+        addObstacle(plant, plant->getNode(), 0);
+        _plantList.push_front(plant);
     }
+    
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
@@ -479,7 +471,7 @@ void GameScene::populate() {
     _avatar-> setName(LUMIA_NAME);
 	_avatar-> setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
-    Vec2 lumiaPos = _avatar->getPosition();
+//    Vec2 lumiaPos = _avatar->getPosition();
 //    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
@@ -488,9 +480,9 @@ void GameScene::populate() {
 #pragma mark : Enemies
     
     vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
+    
+    image = _assets->get<Texture>(ENEMY_TEXTURE);
     for (int i = 0; i < enemies.size(); i++) {
-        
-        image = _assets->get<Texture>(ENEMY_TEXTURE);
         auto enemy = enemies[i];
         enemy-> setDrawScale(_scale);
         enemy-> setTextures(image);

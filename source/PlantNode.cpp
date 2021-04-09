@@ -14,12 +14,17 @@
 
 void PlantNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
-    
-//    cugl::Mat4 translation_mat = cugl::Mat4::createTranslation( SHADOW_OFFSET, SHADOW_OFFSET, 0.0f);
-//
-//    AnimationNode::draw(batch,transform*translation_mat,_stint);
-//    AnimationNode::draw(batch,transform,tint);
-    PolygonNode::draw(batch,transform,tint);
+    switch (_state){
+        case Dark:{
+            setFrame(0);
+            break;
+        }
+        case Lit:{
+            setFrame(1);
+            break;
+        }
+    }
+    AnimationNode::draw(batch,transform,tint);
     
 }
 
