@@ -209,6 +209,17 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="Lumia.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cugl\build-win10\CUGL\CUGL.vcxproj">
+      <Project>{60c028a4-977f-44e9-a709-d79a153d6f69}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\..\source\BackgroundNode.cpp" />
     <ClCompile Include="..\..\source\EnemyModel.cpp" />
     <ClCompile Include="..\..\source\EnemyNode.cpp" />
@@ -230,17 +241,6 @@
     <ClCompile Include="..\..\source\SettingsScene.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />
     <ClCompile Include="..\..\source\TileDataModel.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Lumia.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\cugl\build-win10\CUGL\CUGL.vcxproj">
-      <Project>{60c028a4-977f-44e9-a709-d79a153d6f69}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
