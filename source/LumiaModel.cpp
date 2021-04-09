@@ -52,7 +52,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(.1 / radius);
+        setDensity(.15 / radius);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
@@ -163,6 +163,7 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
+    _lastPosition = getPosition();
     WheelObstacle::update(dt);
     
     if (_sceneNode != nullptr && !isRemoved()) {

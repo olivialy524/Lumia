@@ -83,6 +83,8 @@ protected:
 	/** The scene graph node for Lumia. */
 	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<LumiaNode> _node;
+    
+    Vec2 _lastPosition;
 
 	/** The scale between the physics world and the screen (MUST BE UNIFORM) */
 	float _drawScale;
@@ -342,6 +344,10 @@ public:
     Vec2 getAvatarPos() const {
         return Vec2(getPosition().x*_drawScale, getPosition().y*_drawScale);
         
+    }
+    
+    Vec2 getLastPosition() const {
+        return _lastPosition;
     }
     
     void setState(LumiaState state){

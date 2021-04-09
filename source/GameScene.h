@@ -16,6 +16,7 @@
 #include "LevelModel.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
+//#include "PathFindingController.h"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -84,7 +85,9 @@ protected:
     std::list<LumiaBody> _lumiasToCreate;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
-
+    /** List of Lumia bodies to remove in next update step */
+    std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
+    
     Vec2 _linVelocityData;
     
     float _angVelocityData;
@@ -106,6 +109,9 @@ protected:
     
     std::unordered_map<Node, NodeState> _graph;
 
+    int ticks;
+    
+    
 #pragma mark Internal Object Management
     /**
      * Lays out the game geography.
@@ -304,7 +310,10 @@ public:
 
     /** Processes a collision between Lumia and a magical plant */
     void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
-
+    
+    /** Processes a collision between Lumia and a magical plant */
+    void processEnemyLumiaCollision(float newRadius, const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia, bool destroyEnemy);
+    
     /** Processes a collision between Lumia and an energy item */
     void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
 
@@ -364,7 +373,8 @@ public:
     * @param  lumia the Lumia to remove
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
-
+    
+    void removeEnemy(std::shared_ptr<EnemyModel> enemy);
     /**
     * Removes the input energy item from the world.
     *
