@@ -54,7 +54,7 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(.1 / radius);
+        setDensity(0.1f / radius);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);

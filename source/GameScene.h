@@ -71,8 +71,8 @@ protected:
     struct LumiaBody {
         /** The position to spawn the Lumia body at */
         cugl::Vec2 position;
-        /** The radius of the Lumia body */
-        float radius;
+        /** The size level of the Lumia body */
+        int sizeLevel;
         /** Whether or not the Lumia body should be controlled by the player */
         bool isAvatar;
         /** The velocity to spawn the Lumia body with */
@@ -309,10 +309,10 @@ public:
 #pragma mark Collision Handling
 
     /** Processes a collision between Lumia and a magical plant */
-    void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
+    void processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia);
     
     /** Processes a collision between Lumia and a magical plant */
-    void processEnemyLumiaCollision(float newRadius, const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia, bool destroyEnemy);
+    void processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia);
     
     /** Processes a collision between Lumia and an energy item */
     void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
@@ -365,7 +365,7 @@ public:
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar,Vec2 vel);
+    std::shared_ptr<LumiaModel> createLumia(int sizeLevel, Vec2 pos, bool isAvatar,Vec2 vel);
 
     /**
     * Removes the input Lumia from the world.

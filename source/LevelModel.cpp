@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include "LevelModel.h"
+#include "LumiaModel.h"
 
 
 
@@ -87,7 +88,7 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         std::shared_ptr<cugl::JsonValue> plant_json = plants->get(i);
         float posx = plant_json ->getFloat("posx");
         float posy = plant_json->getFloat("posy");
-        float ang = (plant_json->getFloat("angle"))*M_PI/180;
+        float ang = (plant_json->getFloat("angle"))*M_PI/180.0f;
         cugl::Size size  = Size(0.5f, 0.5f);
         std::shared_ptr<Plant> plant = Plant::alloc(Vec2(posx,posy), size);
         
@@ -190,12 +191,14 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared
 std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::JsonValue> &lumia){
     float lumx = lumia->getFloat("posx");
     float lumy = lumia->getFloat("posy");
-    float radius = lumia->getFloat("radius");// change to value from jso
+    int sizeLevel = lumia->getInt("sizelevel");
     Vec2 lumiaPos = Vec2(lumx,lumy);
-    _lumia = LumiaModel::alloc(lumiaPos,radius);
-    _lumia-> setName(LUMIA_NAME);
-    _lumia-> setDebugColor(DEBUG_COLOR);
-    _lumia-> setFixedRotation(false);
+    _lumia = LumiaModel::alloc(lumiaPos, LumiaModel::sizeLevels[sizeLevel].radius);
+    _lumia->setName(LUMIA_NAME);
+    _lumia->setDebugColor(DEBUG_COLOR);
+    _lumia->setFixedRotation(false);
+    _lumia->setDensity(LumiaModel::sizeLevels[sizeLevel].density);
+    _lumia->setSizeLevel(sizeLevel);
     
     return  _lumia;
 }
