@@ -145,11 +145,12 @@ std::vector<std::shared_ptr<EnemyModel>> LevelModel::createEnemies(const std::sh
         std::shared_ptr<cugl::JsonValue> enemy_json = enemies->get(i);
         float posx = enemy_json ->getFloat("posx");
         float posy = enemy_json->getFloat("posy");
-        float radius = enemy_json->getFloat("radius");
+        int sizeLevel = enemy_json->getInt("sizelevel");
         Vec2 pos = Vec2(posx, posy);
-        auto enemy = EnemyModel::alloc(pos,radius);
-        enemy-> setName(ENEMY_NAME);
-        enemy-> setDebugColor(DEBUG_COLOR);
+        auto enemy = EnemyModel::alloc(pos, LumiaModel::sizeLevels[sizeLevel].radius);
+        enemy->setName(ENEMY_NAME);
+        enemy->setDebugColor(DEBUG_COLOR);
+        enemy->setSizeLevel(sizeLevel);
         _enemies.push_back(enemy);
     }
     

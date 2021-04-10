@@ -473,11 +473,11 @@ void GameScene::populate() {
     image = _assets->get<Texture>(ENEMY_TEXTURE);
     for (int i = 0; i < enemies.size(); i++) {
         std::shared_ptr<EnemyModel> enemy = enemies[i];
-        enemy-> setDrawScale(_scale);
-        enemy-> setTextures(image);
-        enemy-> setName(ENEMY_TEXTURE);
-        enemy-> setDebugColor(DEBUG_COLOR);
-        addObstacle(enemy,enemy->getSceneNode(), 3);
+        enemy->setDrawScale(_scale);
+        enemy->setTextures(image);
+        enemy->setName(ENEMY_TEXTURE);
+        enemy->setDebugColor(DEBUG_COLOR);
+        addObstacle(enemy, enemy->getSceneNode(), 3);
 //        Vec2 enemyPos = enemy->getPosition();
 //        _graph[{Vec2(floor(enemyPos.x), floor(enemyPos.y))}] = NodeState::Enemy;
         _enemyList.push_back(enemy);
@@ -743,16 +743,16 @@ void GameScene::update(float dt) {
             float dist = numeric_limits<float>::infinity();
             for (auto & lumia : _lumiaList){
                 Vec2 lumiaPos = lumia->getPosition();
-                if (enemyPos.distanceSquared(lumiaPos)<dist){
+                if (enemyPos.distanceSquared(lumiaPos) < dist){
                     dist = enemyPos.distanceSquared(lumiaPos);
                     closestLumia = lumia;
                 }
             }
-            if (dist < 50.0f) {
-                //set lumia velocity to move toward avatar
 
+            if (dist < 50.0f) {
+                //set enemy velocity to move away or towards closest Lumia
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
-                if (closestLumia->getRadius() >= enemy->getRadius() * 1.4f) {
+                if (closestLumia->getSizeLevel() >= enemy->getSizeLevel()) {
                     enemy->setVelocity(-distance.normalize() * 1.5f);
                 } else {
                     enemy->setVelocity(distance.normalize() * 1.5f);
@@ -1034,9 +1034,7 @@ void GameScene::processPlantLumiaCollision(int newSize, const std::shared_ptr<Lu
 
 void GameScene::processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy, const std::shared_ptr<LumiaModel> lumia) {
     enemy->setInCoolDown(true);
-    float lumiaRadius = lumia->getRadius();
-    float enemyRadius = enemy->getRadius();
-    bool destroyEnemy = lumiaRadius >= enemyRadius * 1.4f;
+    bool destroyEnemy = lumia->getSizeLevel() >= enemy->getSizeLevel();
     enemy->setVelocity(Vec2::ZERO);
 
     if (destroyEnemy) {

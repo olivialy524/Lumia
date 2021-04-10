@@ -13,7 +13,7 @@
             {
                 "posx": 10,
                 "posy": 5,
-                "radius": 0.7
+                "sizelevel": 2
             }
         ],
         "energies": [

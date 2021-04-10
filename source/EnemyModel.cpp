@@ -54,18 +54,20 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(0.1f / radius);
-        setFriction(0.1f);
-        // add bounciness to Lumia
-        setRestitution(LUMIA_RESTITUTION);
-        setFixedRotation(false);
-        
         // Gameplay attributes
         _velocity = Vec2::ZERO;
-        setGravityScale(0.1f);
         _radius = radius;
         _removed = false;
         _inCoolDown = false;
+        _sizeLevel = 2;
+
+        setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
+        setFriction(0.1f);
+        // add bounciness to enemy
+        setRestitution(ENEMY_RESTITUTION);
+        setFixedRotation(false);
+        setGravityScale(0.1f);
+
         return true;
     }
     return false;
@@ -88,11 +90,11 @@ void EnemyModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = LUMIA_DENSITY;
+    sensorDef.density = ENEMY_DENSITY;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.2f;
+    sensorShape.m_radius = _radius * 1.1f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
@@ -198,8 +200,6 @@ void EnemyModel::resetDebug() {
     _sensorNode->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
     _debug->addChild(_sensorNode);
 }
-
-
 
 void EnemyModel::setDrawScale(float scale){
     _drawScale = scale;

@@ -32,24 +32,24 @@ protected:
 #define DEBUG_COLOR     Color4::YELLOW
 
     /** The base density of the character */
-    static constexpr float LUMIA_DENSITY = 0.10f;
+    static constexpr float ENEMY_DENSITY = 0.10f;
     /** The restitution of the character */
-    static constexpr float LUMIA_RESTITUTION = 0.45f;
+    static constexpr float ENEMY_RESTITUTION = 0.45f;
     /** The factor to multiply by the input */
-    static constexpr float LUMIA_FORCE = 20.0f;
+    static constexpr float ENEMY_FORCE = 20.0f;
     /** The amount to slow the character down */
-    static constexpr float LUMIA_DAMPING = 3.0f;
+    static constexpr float ENEMY_DAMPING = 3.0f;
     /** The maximum character speed */
-    static constexpr float LUMIA_MAXVELOCITY = 30.0f;
+    static constexpr float ENEMY_MAXVELOCITY = 30.0f;
     
 
 public:
     enum EnemyState {
-        /** When Lumia is still or rolling */
+        /** When enemy is wandering around */
         Wander,
-        /** When Lumia is splitting */
+        /** When enemy is chasing after Lumia */
         Chasing,
-        /** When Lumia is merging */
+        /** When enemy is fleeing from Lumia */
         Fleeing
     };
 
@@ -61,10 +61,12 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(EnemyModel);
 
 protected:
-    /** The current velocity of Lumia */
+    /** The current velocity of the enemy */
     cugl::Vec2 _velocity;
-    /** Radius of Lumia's body */
+    /** Radius of the enemy's body */
     float _radius;
+    /** The size level of the enemy */
+    int _sizeLevel;
     /** Ground sensor to represent our feet */
     b2Fixture*  _sensorFixture;
     /** Reference to the sensor name (since a constant cannot have a pointer) */
@@ -72,7 +74,7 @@ protected:
     /** The node for debugging the sensor */
     std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
-    /** The scene graph node for Lumia. */
+    /** The scene graph node for the enemy. */
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<EnemyNode> _node;
 
@@ -103,7 +105,7 @@ public:
     
 #pragma mark Hidden Constructors
     /**
-     * Creates a degenerate Lumia object.
+     * Creates a degenerate enemy object.
      *
      * This constructor does not initialize any of the Lumia values beyond
      * the defaults.  To use a LumiaModel, you must call init().
@@ -112,21 +114,20 @@ public:
     
     
     /**
-     * Destroys this LumiaModel, releasing all resources.
+     * Destroys this EnemyModel, releasing all resources.
      */
     virtual ~EnemyModel(void) { dispose(); }
     
-    void setVelocity();
     /**
-     * Disposes all resources and assets of this LumiaModel
+     * Disposes all resources and assets of this EnemyModel
      *
      * Any assets owned by this object will be immediately released.  Once
-     * disposed, a LumiaModel may not be used until it is initialized again.
+     * disposed, a EnemyModel may not be used until it is initialized again.
      */
     void dispose();
     
     /**
-     * Initializes a new Lumia at the origin.
+     * Initializes a new enemy at the origin.
      *
      * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
      *
@@ -140,9 +141,9 @@ public:
     virtual bool init() override { return init(cugl::Vec2::ZERO, 1.0f, 1.0f); }
     
     /**
-     * Initializes a new Lumia at the given position.
+     * Initializes a new enemy at the given position.
      *
-     * The Lumia is unit square scaled so that 1 pixel = 1 Box2d unit
+     * The enemy is unit square scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -158,7 +159,7 @@ public:
     /**
      * Initializes a new Lumia at the given position.
      *
-     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
+     * The enemy has the given size, scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -175,9 +176,9 @@ public:
     }
     
     /**
-     * Initializes a new Lumia at the given position.
+     * Initializes a new enemy at the given position.
      *
-     * The Lumia is sized according to the given drawing scale.
+     * The enemy is sized according to the given drawing scale.
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -193,9 +194,9 @@ public:
     virtual bool init(const cugl::Vec2& pos, float radius, float scale);
     
     /**
-     * Sets the textures for this lumia.
+     * Sets the textures for this enemy.
      *
-     * @param lumia      The texture for the lumia filmstrip
+     * @param texture      The texture for the enemy filmstrip
      */
     void setTextures(const std::shared_ptr<cugl::Texture>& texture);
 
@@ -204,16 +205,16 @@ public:
 #pragma mark -
 #pragma mark Static Constructors
     /**
-     * Creates a new Lumia at the origin.
+     * Creates a new enemy at the origin.
      *
-     * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
+     * The enemy is a unit square scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
      * only guarantee that the scene graph node is positioned correctly
      * according to the drawing scale.
      *
-     * @return  A newly allocated LumiaModel at the origin
+     * @return  A newly allocated EnemyModel at the origin
      */
     static std::shared_ptr<EnemyModel> alloc() {
         std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
@@ -221,9 +222,9 @@ public:
     }
 
     /**
-     * Creates a new Lumia at the given position.
+     * Creates a new enemy at the given position.
      *
-     * The Lumia is a unit square scaled so that 1 pixel = 1 Box2d unit
+     * The enemy is a unit square scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -232,7 +233,7 @@ public:
      *
      * @param pos   Initial position in world coordinates
      *
-     * @return  A newly allocated LumiaModel at the given position
+     * @return  A newly allocated EnemyModel at the given position
      */
     static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos) {
         std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
@@ -240,29 +241,9 @@ public:
     }
 
     /**
-     * Creates a new Lumia at the given position.
+     * Creates a new enemy at the given position.
      *
-     * The Lumia has the given size, scaled so that 1 pixel = 1 Box2d unit
-     *
-      * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @param pos   Initial position in world coordinates
-     * @param size  The size of the Lumia in world units
-     *
-     * @return  A newly allocated LumiaModel at the given position with the given scale
-     */
-    static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos, float radius) {
-        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
-        return (result->init(pos, radius) ? result : nullptr);
-    }
-
-    /**
-     * Creates a new Lumia at the given position.
-     *
-     * The Lumia is sized according to the given drawing scale.
+     * The enemy has the given size, scaled so that 1 pixel = 1 Box2d unit
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -270,10 +251,30 @@ public:
      * according to the drawing scale.
      *
      * @param pos   Initial position in world coordinates
-     * @param size  The size of the Lumia in world units
+     * @param radius  The size of the enemy in world units
+     *
+     * @return  A newly allocated EnemyModel at the given position with the given scale
+     */
+    static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos, float radius) {
+        std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
+        return (result->init(pos, radius) ? result : nullptr);
+    }
+
+    /**
+     * Creates a new enemy at the given position.
+     *
+     * The enemy is sized according to the given drawing scale.
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
+     * @param radius  The size of the enemy in world units
      * @param scale The drawing scale (world to screen)
      *
-     * @return  A newly allocated LumiaModel at the given position with the given scale
+     * @return  A newly allocated EnemyModel at the given position with the given scale
      */
     static std::shared_ptr<EnemyModel> alloc(const cugl::Vec2& pos, float radius, float scale) {
         std::shared_ptr<EnemyModel> result = std::make_shared<EnemyModel>();
@@ -284,13 +285,13 @@ public:
 #pragma mark -
 #pragma mark Animation
     /**
-     * Returns the scene graph node representing this LumiaModel.
+     * Returns the scene graph node representing this EnemyModel.
      *
      * By storing a reference to the scene graph node, the model can update
      * the node to be in sync with the physics info. It does this via the
      * {@link Obstacle#update(float)} method.
      *
-     * @return the scene graph node representing this LumiaModel.
+     * @return the scene graph node representing this EnemyModel.
      */
     const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
     
@@ -298,10 +299,10 @@ public:
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
 
     /**
-     * Sets the scene graph node representing this LumiaModel.
+     * Sets the scene graph node representing this EnemyModel.
      *
      * Note that this method also handles creating the nodes for the body parts
-     * of this LumiaModel. Since the obstacles are decoupled from the scene graph,
+     * of this EnemyModel. Since the obstacles are decoupled from the scene graph,
      * initialization (which creates the obstacles) occurs prior to the call to
      * this method. Therefore, to be drawn to the screen, the nodes of the attached
      * bodies must be added here.
@@ -324,15 +325,17 @@ public:
 #pragma mark -
 #pragma mark Attribute Properties
     /**
-     * Returns current velocity of Lumia.
+     * Returns current velocity of enemy.
      *
-     * This is the result of drag-and-release input.
-     *
-     * @return velocity of Lumia.
+     * @return velocity of enemy.
      */
     cugl::Vec2 getVelocity() const { return _velocity; }
     
-    cugl::Vec2 getLastPosition() const {return _lastPosition;}
+    cugl::Vec2 getLastPosition() const { return _lastPosition; }
+
+    int getSizeLevel() { return _sizeLevel; }
+
+    void setSizeLevel(int value) { _sizeLevel = value; }
     
     void setInCoolDown(bool value){
         _inCoolDown = value;
@@ -351,26 +354,25 @@ public:
     }
     
     /**
-     * Sets velocity of Lumia.
+     * Sets velocity of enemy.
      *
-     * This is the result of drag-and-release input.
-     *
-     * @param value velocity of Lumia.
+     * @param value velocity of enemy.
      */
     void setVelocity(cugl::Vec2 value) { _velocity = value; }
+
     /**
-     * Returns ow hard the brakes are applied to get a Lumia to stop moving
+     * Returns how hard the brakes are applied to get an enemy to stop moving
      *
-     * @return ow hard the brakes are applied to get a Lumia to stop moving
+     * @return how hard the brakes are applied to get an enemy to stop moving
      */
-    float getDamping() const { return LUMIA_DAMPING; }
+    float getDamping() const { return ENEMY_DAMPING; }
     
     /**
-     * Returns the upper limit on Lumia's velocity.
+     * Returns the upper limit on enemys velocity.
      *
-     * @return the upper limit on Lumia'v velocity.
+     * @return the upper limit on enemy's velocity.
      */
-    float getMaxVelocity() const { return LUMIA_MAXVELOCITY; }
+    float getMaxVelocity() const { return ENEMY_MAXVELOCITY; }
     
     /**
      * Returns the name of the ground sensor
