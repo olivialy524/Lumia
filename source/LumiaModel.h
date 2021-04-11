@@ -25,10 +25,10 @@
 class LumiaModel : public cugl::physics2::WheelObstacle {
 #pragma mark Constants and Enums
 protected:
-#define SIGNUM(x)  ((x > 0) - (x < 0))
+    #define SIGNUM(x)  ((x > 0) - (x < 0))
     
-/** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::YELLOW
+    /** Debug color for the sensor */
+    #define DEBUG_COLOR     Color4::YELLOW
 
     /** The base density of the character */
     static constexpr float LUMIA_DENSITY = 0.10f;
@@ -39,7 +39,7 @@ protected:
     /** The amount to slow the character down */
     static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
-    static constexpr float LUMIA_MAXVELOCITY = 30.0f;
+    static constexpr float LUMIA_MAXVELOCITY = 20.0f;
 
 public:
     enum LumiaState {
@@ -50,6 +50,15 @@ public:
         /** When Lumia is merging */
         Merging
     };
+
+    struct LumiaSize {
+        /** Size of Lumia body */
+        float radius;
+        /** Density of Lumia body */
+        float density;
+    };
+
+    static std::vector<LumiaSize> sizeLevels;
 
     
 #pragma mark Attributes
@@ -67,8 +76,6 @@ protected:
 	bool _isGrounded;
     /** Whether Lumia is splitting into two */
     bool _isSplitting;
-    /** Whether Lumia is merging nearby bodies together */
-    bool _isMerging;
     /* Whether or not the Lumia body is due to be or has been removed */
     bool _removed;
     /** Radius of Lumia's body */
@@ -91,6 +98,9 @@ protected:
     
     /** The current state of this Lumia*/
     LumiaState _state;
+
+    /** The current size level of this Lumia body */
+    int _sizeLevel;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -375,6 +385,30 @@ public:
         return _state;
     }
     
+    /** Returns the next biggest size level this Lumia body can grow to */
+    int getBiggerSizeLevel() { 
+        if (_sizeLevel == LumiaModel::sizeLevels.size() - 1) {
+            return _sizeLevel;
+        } else {
+            return _sizeLevel + 1;
+        }
+    };
+
+    /** Returns the next smallest size level this Lumia body can grow to */
+    int getSmallerSizeLevel() {
+        if (_sizeLevel == 0) {
+            return _sizeLevel;
+        } else {
+            return _sizeLevel - 1;
+        }
+    };
+
+    /** Returns size level of this Lumia body */
+    int getSizeLevel() { return _sizeLevel; };
+
+    /** Sets size level of this Lumia body */
+    void setSizeLevel(int value) { _sizeLevel = value; };
+
     /**
      * Sets velocity of Lumia.
      *
@@ -405,15 +439,6 @@ public:
         return false;
         
     }
-    
-    /**
-     * Sets whether the Lumia is actively merging.
-     *
-     * @param value whether the Lumia is actively merging.
-     */
-    void setMerging(bool value) { _isMerging = value; }
-    
-    bool isMerging() const {return _isMerging;}
     
     
     /**
@@ -505,4 +530,4 @@ public:
     void applyForce();
 };
 
-#endif /* __LM_LUMIA_MODEL_H__ */
+#endif /* __LUMIA_MODEL_H__ */

@@ -47,7 +47,6 @@ protected:
     /** Reference to node of donut idle face */
     std::shared_ptr<cugl::scene2::AnimationNode> _splittingAnimation;
 
-    
 public:
     
     cugl::Color4 _stint;

@@ -10,13 +10,13 @@ using namespace cugl;
 
 #define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
 
-#define X_ADJUST_FACTOR 17.0f
-#define Y_ADJUST_FACTOR 8.0f
+#define X_ADJUST_FACTOR 34.0f
+#define Y_ADJUST_FACTOR 16.0f
 
 #pragma mark Input Constants
 
 /** Maximum allowed Lumia launch velocity */
-#define MAXIMUM_LAUNCH_VELOCITY 70.0f
+#define MAXIMUM_LAUNCH_VELOCITY 20.0f
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
@@ -204,6 +204,18 @@ void InputController::clear() {
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
 
+cugl::Vec2 InputController::calculateLaunch(cugl::Vec2 rawDrag) {
+    rawDrag.x = -rawDrag.x / X_ADJUST_FACTOR;
+    rawDrag.y = rawDrag.y / Y_ADJUST_FACTOR;
+
+    // end position of touch was sufficiently far from start of touch, register as drag-and-release
+    if (rawDrag.lengthSquared() > pow(MAXIMUM_LAUNCH_VELOCITY, 2)) {
+        rawDrag = rawDrag.normalize().scale(MAXIMUM_LAUNCH_VELOCITY);
+    }
+
+    return rawDrag;
+}
+
 /**
  * Callback for the beginning of a touch event
  *
@@ -230,13 +242,8 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
         _switchInputted = true;
     } else {
         _dragging = false;
-        
-        // end position of touch was sufficiently far from start of touch, register as drag-and-release
-        finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-        finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
 
-        finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
-        finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+        finishDrag = calculateLaunch(finishDrag);
 
         _inputLaunch = finishDrag;
         _launchInputted = true;
@@ -257,11 +264,7 @@ void InputController::mouseMovedCB(const MouseEvent& event, const Vec2& previous
     if (currentDrag.lengthSquared() >= 625.0f) {
         _dragging = true;
 
-        currentDrag.x = RANGE_CLAMP(-currentDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-        currentDrag.y = RANGE_CLAMP(currentDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-
-        currentDrag.x = currentDrag.x / X_ADJUST_FACTOR;
-        currentDrag.y = currentDrag.y / Y_ADJUST_FACTOR;
+        currentDrag = calculateLaunch(currentDrag);
 
         _plannedLaunch = currentDrag;
     }
@@ -313,12 +316,7 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     } else {
         _dragging = false;
 
-        // end position of touch was sufficiently far from start of touch, register as drag-and-release
-        finishDrag.x = RANGE_CLAMP(-finishDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-        finishDrag.y = RANGE_CLAMP(finishDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-
-        finishDrag.x = finishDrag.x / X_ADJUST_FACTOR;
-        finishDrag.y = finishDrag.y / Y_ADJUST_FACTOR;
+        finishDrag = calculateLaunch(finishDrag);
 
         _inputLaunch = finishDrag;
         _launchInputted = true;
@@ -353,11 +351,7 @@ void InputController::touchesMovedCB(const TouchEvent& event, const Vec2& previo
     if (currentDrag.lengthSquared() >= 625.0f) {
         _dragging = true;
 
-        currentDrag.x = RANGE_CLAMP(-currentDrag.x, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-        currentDrag.y = RANGE_CLAMP(currentDrag.y, -MAXIMUM_LAUNCH_VELOCITY, MAXIMUM_LAUNCH_VELOCITY);
-
-        currentDrag.x = currentDrag.x / X_ADJUST_FACTOR;
-        currentDrag.y = currentDrag.y / Y_ADJUST_FACTOR;
+        currentDrag = calculateLaunch(currentDrag);
 
         _plannedLaunch = currentDrag;
     }

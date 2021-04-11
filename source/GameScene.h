@@ -14,10 +14,11 @@
 #include "InputController.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "Button.h"
+#include "Door.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
 //#include "PathFindingController.h"
-
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -29,10 +30,6 @@ class GameScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
-    std::shared_ptr<cugl::JsonReader> _jsonr;
-    
-    std::shared_ptr<cugl::JsonValue> _leveljson;
     
     std::shared_ptr<LevelModel> _level;
     
@@ -66,6 +63,10 @@ protected:
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
+    
+    std::list<std::shared_ptr<Button>> _buttonList;
+    
+    std::list<std::shared_ptr<Door>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
@@ -75,12 +76,14 @@ protected:
     struct LumiaBody {
         /** The position to spawn the Lumia body at */
         cugl::Vec2 position;
-        /** The radius of the Lumia body */
-        float radius;
+        /** The size level of the Lumia body */
+        int sizeLevel;
         /** Whether or not the Lumia body should be controlled by the player */
         bool isAvatar;
         /** The velocity to spawn the Lumia body with */
         cugl::Vec2 vel;
+        /** The angular velocity to spawn the Lumia body with */
+        float angularVel;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -89,12 +92,12 @@ protected:
     std::list<LumiaBody> _lumiasToCreate;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
+    
+    std::list<std::shared_ptr<Door>> _doorsToOpen;
+
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
     
-    Vec2 _linVelocityData;
-    
-    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -313,10 +316,10 @@ public:
 #pragma mark Collision Handling
 
     /** Processes a collision between Lumia and a magical plant */
-    void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
+    void processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia);
     
     /** Processes a collision between Lumia and a magical plant */
-    void processEnemyLumiaCollision(float newRadius, const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia, bool destroyEnemy);
+    void processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia);
     
     /** Processes a collision between Lumia and an energy item */
     void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
@@ -324,6 +327,9 @@ public:
     /** Processes a collision between Lumia and another Lumia */
     void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
 
+    void processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
+    
+    void processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
 	/**
 	* Processes the start of a collision
 	*
@@ -364,14 +370,12 @@ public:
      */
     void reset();
 
-    void createEnergy(Vec2 pos);
-    
     void checkWin();
 
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar,Vec2 vel);
+    std::shared_ptr<LumiaModel> createLumia(int sizeLevel, Vec2 pos, bool isAvatar, Vec2 vel, float angularVel);
 
     /**
     * Removes the input Lumia from the world.
