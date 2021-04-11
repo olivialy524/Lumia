@@ -22,6 +22,6 @@ bool EnergyModel::init(const cugl::Vec2 pos, cugl::Size size) {
 
 void EnergyModel::dispose() {
     _node = nullptr;
-    _sceneNode = nullptr;
+    _energyNode = nullptr;
 }
 

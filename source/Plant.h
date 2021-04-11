@@ -87,7 +87,14 @@ public:
      */
     const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
     
+    void setPlantNode(const std::shared_ptr<PlantNode>& node) {
+        _plantNode = node;
+        _node->addChild(_plantNode);
+    }
     
+    void setNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
+        _node = node;
+    }
     
     /**
      * Sets the textures for this lumia.

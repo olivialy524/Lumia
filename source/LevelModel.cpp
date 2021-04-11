@@ -7,6 +7,7 @@
 //
 
 #define PLANT_NAME       "plant"
+#define ENERGY_NAME       "energy"
 #define PLATFORM_NAME    "platform"
 #define LUMIA_NAME       "lumia"
 #define ENEMY_NAME       "enemy"
@@ -29,6 +30,7 @@
 
 #include <stdio.h>
 #include "LevelModel.h"
+#include "LumiaModel.h"
 
 
 
@@ -37,6 +39,7 @@ void LevelModel::dispose(){
     _lumia = nullptr;
     _enemies.clear();
     _plants.clear();
+    _energies.clear();
     _buttons.clear();
     _doors.clear();
     _irregular_tiles.clear();
@@ -54,6 +57,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     _xBound = _leveljson->getFloat("xBound");
     _yBound = _leveljson->getFloat("yBound");
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
+    std::shared_ptr<cugl::JsonValue> energies_json = _leveljson->get("energies");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
     std::shared_ptr<cugl::JsonValue> buttondoor_json = _leveljson->get("buttondoors");
@@ -61,6 +65,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createButtonsAndDoors(buttondoor_json);
     createPlants(plants_json);
+    createEnergies(energies_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
     createIrregular(irregular_tile_json);
@@ -75,8 +80,8 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         std::shared_ptr<cugl::JsonValue> plant_json = plants->get(i);
         float posx = plant_json ->getFloat("posx");
         float posy = plant_json->getFloat("posy");
-        float ang = (plant_json->getFloat("angle"))*M_PI/180;
-        cugl::Size size  = Size(0.60f, 0.35f);
+        float ang = (plant_json->getFloat("angle"))*M_PI/180.0f;
+        cugl::Size size  = Size(0.6f, 0.35f);
         std::shared_ptr<Plant> plant = Plant::alloc(Vec2(posx,posy), size);
         
         //set body parameters
@@ -98,17 +103,45 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
     return _plants;
 }
 
+std::vector<std::shared_ptr<EnergyModel>> LevelModel::createEnergies(const std::shared_ptr<cugl::JsonValue>& energies) {
+
+    for (int i = 0; i < energies->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> energy_json = energies->get(i);
+        float posx = energy_json->getFloat("posx");
+        float posy = energy_json->getFloat("posy");
+        cugl::Size size = Size(0.65f, 0.65f);
+        std::shared_ptr<EnergyModel> energy = EnergyModel::alloc(Vec2(posx, posy), size);
+
+        //set body parameters
+        energy->setBodyType(b2_staticBody);
+        energy->setFriction(0.0f);
+        energy->setRestitution(0.0f);
+        energy->setName(ENERGY_NAME);
+        energy->setDensity(0);
+        energy->setBullet(false);
+        energy->setGravityScale(0);
+        energy->setSensor(true);
+        energy->setDebugColor(DEBUG_COLOR);
+        energy->setVX(0);
+
+        _energies.push_back(energy);
+    }
+
+    return _energies;
+}
+
 std::vector<std::shared_ptr<EnemyModel>> LevelModel::createEnemies(const std::shared_ptr<cugl::JsonValue> &enemies){
     
     for (int i=0; i< enemies->size(); i++){
         std::shared_ptr<cugl::JsonValue> enemy_json = enemies->get(i);
         float posx = enemy_json ->getFloat("posx");
         float posy = enemy_json->getFloat("posy");
-        float radius = enemy_json->getFloat("radius");
+        int sizeLevel = enemy_json->getInt("sizelevel");
         Vec2 pos = Vec2(posx, posy);
-        auto enemy = EnemyModel::alloc(pos,radius);
-        enemy-> setName(ENEMY_NAME);
-        enemy-> setDebugColor(DEBUG_COLOR);
+        auto enemy = EnemyModel::alloc(pos, LumiaModel::sizeLevels[sizeLevel].radius);
+        enemy->setName(ENEMY_NAME);
+        enemy->setDebugColor(DEBUG_COLOR);
+        enemy->setSizeLevel(sizeLevel);
         _enemies.push_back(enemy);
     }
     
@@ -150,12 +183,14 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared
 std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::JsonValue> &lumia){
     float lumx = lumia->getFloat("posx");
     float lumy = lumia->getFloat("posy");
-    float radius = lumia->getFloat("radius");// change to value from jso
+    int sizeLevel = lumia->getInt("sizelevel");
     Vec2 lumiaPos = Vec2(lumx,lumy);
-    _lumia = LumiaModel::alloc(lumiaPos,radius);
-    _lumia-> setName(LUMIA_NAME);
-    _lumia-> setDebugColor(DEBUG_COLOR);
-    _lumia-> setFixedRotation(false);
+    _lumia = LumiaModel::alloc(lumiaPos, LumiaModel::sizeLevels[sizeLevel].radius);
+    _lumia->setName(LUMIA_NAME);
+    _lumia->setDebugColor(DEBUG_COLOR);
+    _lumia->setFixedRotation(false);
+    _lumia->setDensity(LumiaModel::sizeLevels[sizeLevel].density);
+    _lumia->setSizeLevel(sizeLevel);
     
     return  _lumia;
 }
