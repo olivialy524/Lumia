@@ -1081,7 +1081,7 @@ void GameScene::processPlantLumiaCollision(int newSize, const std::shared_ptr<Lu
 
 void GameScene::processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy, const std::shared_ptr<LumiaModel> lumia) {
     enemy->setInCoolDown(true);
-    bool destroyEnemy = lumia->getSizeLevel() >= enemy->getSizeLevel();
+    bool destroyEnemy = lumia->getSizeLevel() > enemy->getSizeLevel();
     enemy->setVelocity(Vec2::ZERO);
 
     if (destroyEnemy) {
