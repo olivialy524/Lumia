@@ -9,6 +9,10 @@
 #include <cugl/cugl.h>
 #include "GameScene.h"
 #include "LoadingScene.h"
+#include "LevelSelectScene.h"
+#include "MainMenuScene.h"
+#include "SettingsScene.h"
+#include "InputController.h"
 
 /**
  * This class represents the application root for the platform demo.
@@ -19,11 +23,20 @@ protected:
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
+
     // Player modes
     /** The primary controller for the game world */
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    /** The controller for the level select screen */
+    LevelSelectScene _levelSelect;
+    /** The controller for the main menu screen */
+    MainMenuScene _mainMenu;
+    /** The controller for the settings screen */
+    SettingsScene _settings;
+    /** The currently active scene */
+    cugl::Scene2* _currentScene;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;

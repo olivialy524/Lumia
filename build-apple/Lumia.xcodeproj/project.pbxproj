@@ -19,6 +19,9 @@
 		3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
+		3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
+		3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
+		3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
 		613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
 		613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613C1CB625FA90D800B213B8 /* Plant.cpp */; };
@@ -34,6 +37,27 @@
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
+		C729A1CF261FEAB300BD1C5A /* SettingsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */; };
+		C729A1D0261FEAB300BD1C5A /* SettingsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */; };
+		C729A1D1261FEAB300BD1C5A /* SettingsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */; };
+		C729A1D7261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1D5261FEACC00BD1C5A /* MainMenuScene.cpp */; };
+		C729A1D8261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1D5261FEACC00BD1C5A /* MainMenuScene.cpp */; };
+		C729A1D9261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1D5261FEACC00BD1C5A /* MainMenuScene.cpp */; };
+		C729A1DE261FEADE00BD1C5A /* widgets in Resources */ = {isa = PBXBuildFile; fileRef = C729A1DD261FEADE00BD1C5A /* widgets */; };
+		C729A1DF261FEADE00BD1C5A /* widgets in Resources */ = {isa = PBXBuildFile; fileRef = C729A1DD261FEADE00BD1C5A /* widgets */; };
+		C729A1E0261FEADE00BD1C5A /* widgets in Resources */ = {isa = PBXBuildFile; fileRef = C729A1DD261FEADE00BD1C5A /* widgets */; };
+		C729A1E6261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */; };
+		C729A1E7261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */; };
+		C729A1E8261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */; };
+		C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
+		C79D7E67261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
+		C79D7E68261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
+		C79D7E69261BA3EF007DDD42 /* EnemyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */; };
+		C79D7E84261D5453007DDD42 /* PathFindingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E83261D5453007DDD42 /* PathFindingController.cpp */; };
+		C79D7E85261D5453007DDD42 /* PathFindingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E83261D5453007DDD42 /* PathFindingController.cpp */; };
+		C79D7E86261D5453007DDD42 /* PathFindingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E83261D5453007DDD42 /* PathFindingController.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -154,6 +178,8 @@
 		3A9D6A51260C3DF700898D04 /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
 		3A9D6A5B260C415D00898D04 /* Tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
 		3A9D6A62260C417100898D04 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
+		3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileDataModel.h; sourceTree = "<group>"; };
+		3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileDataModel.cpp; sourceTree = "<group>"; };
 		613C1CB225FA90CD00B213B8 /* Plant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plant.h; sourceTree = "<group>"; };
 		613C1CB625FA90D800B213B8 /* Plant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
 		613E8D202602A93800900A39 /* EnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnergyModel.h; sourceTree = "<group>"; };
@@ -164,6 +190,20 @@
 		6144346F26194A1900F597E4 /* Door.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Door.cpp; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LumiaNode.cpp; sourceTree = "<group>"; };
+		C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsScene.cpp; sourceTree = "<group>"; };
+		C729A1CE261FEAB300BD1C5A /* SettingsScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsScene.h; sourceTree = "<group>"; };
+		C729A1D5261FEACC00BD1C5A /* MainMenuScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainMenuScene.cpp; sourceTree = "<group>"; };
+		C729A1D6261FEACC00BD1C5A /* MainMenuScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuScene.h; sourceTree = "<group>"; };
+		C729A1DD261FEADE00BD1C5A /* widgets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = widgets; sourceTree = "<group>"; };
+		C729A1E4261FEB2300BD1C5A /* LevelSelectScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectScene.h; sourceTree = "<group>"; };
+		C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
+		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
+		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
+		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
+		C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyNode.cpp; sourceTree = "<group>"; };
+		C79D7E70261BD616007DDD42 /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
+		C79D7E83261D5453007DDD42 /* PathFindingController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathFindingController.cpp; sourceTree = "<group>"; };
+		C79D7E8D261D546A007DDD42 /* PathFindingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathFindingController.h; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -326,6 +366,12 @@
 		EBB1AC281DF8C75400C353B0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */,
+				C729A1E4261FEB2300BD1C5A /* LevelSelectScene.h */,
+				C729A1D5261FEACC00BD1C5A /* MainMenuScene.cpp */,
+				C729A1D6261FEACC00BD1C5A /* MainMenuScene.h */,
+				C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */,
+				C729A1CE261FEAB300BD1C5A /* SettingsScene.h */,
 				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
 				EBB4B54C2040912400238092 /* LumiaApp.h */,
 				EBB4B5492040912400238092 /* LumiaApp.cpp */,
@@ -355,6 +401,15 @@
 				3A9D6A51260C3DF700898D04 /* LevelModel.cpp */,
 				3A9D6A5B260C415D00898D04 /* Tile.cpp */,
 				3A9D6A62260C417100898D04 /* Tile.h */,
+				C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */,
+				C79D7E64261BA3CB007DDD42 /* EnemyModel.h */,
+				C79D7E65261BA3DB007DDD42 /* EnemyNode.h */,
+				C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */,
+				C79D7E70261BD616007DDD42 /* GraphNode.h */,
+				3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */,
+				3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */,
+				C79D7E83261D5453007DDD42 /* PathFindingController.cpp */,
+				C79D7E8D261D546A007DDD42 /* PathFindingController.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -363,6 +418,7 @@
 		EBB1AC2E1DF8C81D00C353B0 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				C729A1DD261FEADE00BD1C5A /* widgets */,
 				EB3B95851E25B1FA00314284 /* sounds */,
 				EB59D52B1E25281300A93BB5 /* fonts */,
 				EB59D52C1E25281300A93BB5 /* json */,
@@ -572,6 +628,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C729A1DF261FEADE00BD1C5A /* widgets in Resources */,
 				EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */,
 				EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */,
 				EB5D211923FC7F72007D16CD /* DeviceMargins.plist in Resources */,
@@ -587,6 +644,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C729A1E0261FEADE00BD1C5A /* widgets in Resources */,
 				EB5D206D23FC7509007D16CD /* Landscape.storyboard in Resources */,
 				EB5D206E23FC7509007D16CD /* Portrait.storyboard in Resources */,
 				EB5D211A23FC7F72007D16CD /* DeviceMargins.plist in Resources */,
@@ -602,6 +660,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C729A1DE261FEADE00BD1C5A /* widgets in Resources */,
 				EB3B95861E25B1FA00314284 /* sounds in Resources */,
 				EB59D52E1E25281300A93BB5 /* fonts in Resources */,
 				EB59D5301E25281300A93BB5 /* textures in Resources */,
@@ -619,19 +678,26 @@
 			files = (
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
 				EBB4B5622040A2FE00238092 /* InputController.cpp in Sources */,
+				C79D7E68261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB825FA90D800B213B8 /* Plant.cpp in Sources */,
 				6144346D26194A0E00F597E4 /* Button.cpp in Sources */,
+				3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LumiaApp.cpp in Sources */,
 				C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */,
+				C729A1E7261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
+				C729A1D0261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
 				6144347126194A1900F597E4 /* Door.cpp in Sources */,
+				C79D7E85261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFD25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */,
+				C729A1D8261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,19 +707,26 @@
 			files = (
 				EB5D20A523FC77C8007D16CD /* main.cpp in Sources */,
 				EB5D20A923FC77C8007D16CD /* InputController.cpp in Sources */,
+				C79D7E69261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB925FA90D800B213B8 /* Plant.cpp in Sources */,
 				6144346E26194A0E00F597E4 /* Button.cpp in Sources */,
+				3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LumiaApp.cpp in Sources */,
 				C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */,
+				C729A1E8261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
+				C729A1D1261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
 				6144347226194A1900F597E4 /* Door.cpp in Sources */,
+				C79D7E86261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFE25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */,
+				C729A1D9261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,19 +736,26 @@
 			files = (
 				EBB4B55B2040912400238092 /* LumiaModel.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
+				C79D7E67261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
 				613C1CB725FA90D800B213B8 /* Plant.cpp in Sources */,
 				6144346C26194A0D00F597E4 /* Button.cpp in Sources */,
+				3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55D2040912400238092 /* InputController.cpp in Sources */,
 				EBB4B5582040912400238092 /* LumiaApp.cpp in Sources */,
+				C729A1E6261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */,
+				C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
+				C729A1CF261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
 				6144347026194A1900F597E4 /* Door.cpp in Sources */,
+				C79D7E84261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LoadingScene.cpp in Sources */,
 				3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */,
+				C729A1D7261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

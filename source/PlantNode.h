@@ -12,20 +12,36 @@
 #include <cugl/cugl.h>
 using namespace cugl;
 
-class PlantNode : public cugl::scene2::PolygonNode {
+class PlantNode : public cugl::scene2::AnimationNode {
 public:
     
-    float SHADOW_OFFSET;
+    enum PlantAnimState {
+        Dark,
+        Lit
+    };
+
+    
+protected:
+    PlantAnimState _state;
+public:
     
     
-    PlantNode() : PolygonNode() {
-    }
+    PlantNode() : _state(Dark), AnimationNode() {}
 
     ~PlantNode() { dispose(); }
-
-    static std::shared_ptr<PlantNode> alloc(const std::shared_ptr<Texture>& texture) {
+    
+    void setAnimState(PlantAnimState state){
+        _state = state;
+    }
+    
+    PlantAnimState getAnimState(){
+        return _state;
+    }
+ 
+    static std::shared_ptr<PlantNode> alloc(const std::shared_ptr<Texture>& texture,
+                                                int rows, int cols, int size) {
         std::shared_ptr<PlantNode> node = std::make_shared<PlantNode>();
-        return (node->initWithTexture(texture) ? node : nullptr);
+        return (node->initWithFilmstrip(texture,rows,cols,size) ? node : nullptr);
     }
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,

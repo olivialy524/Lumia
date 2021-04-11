@@ -117,9 +117,10 @@ public:
      *
      * @return the position of the camera
      */
-    void setPosition(float tx, float ty) {
+    void setPosition(float tx, float ty, float tz) {
         _position.x = tx;
         _position.y = ty;
+        _position.z = tz;
     }
     
     void setPosition(Vec2 pos) {
@@ -130,6 +131,7 @@ public:
     void setPositionX(float tx){
         _position.x = tx;
     }
+    
     /**
      * Returns the unit length direction vector of the camera
      *

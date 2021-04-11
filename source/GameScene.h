@@ -12,13 +12,13 @@
 #include <unordered_set>
 #include <vector>
 #include "InputController.h"
-#include "LumiaModel.h"
-#include "Plant.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
 #include "Button.h"
 #include "Door.h"
-
+#include "GraphNode.h"
+#include "TileDataModel.h"
+//#include "PathFindingController.h"
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -36,6 +36,9 @@ protected:
     std::shared_ptr<cugl::JsonValue> _leveljson;
     
     std::shared_ptr<LevelModel> _level;
+    
+    std::shared_ptr<TileDataModel> _tileManager;
+    
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -68,6 +71,8 @@ protected:
     std::list<std::shared_ptr<Button>> _buttonList;
     
     std::list<std::shared_ptr<Door>> _doorList;
+    /** References to the Lumia bodies */
+    std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
 
@@ -79,6 +84,8 @@ protected:
         float radius;
         /** Whether or not the Lumia body should be controlled by the player */
         bool isAvatar;
+        /** The velocity to spawn the Lumia body with */
+        cugl::Vec2 vel;
     };
 
     /** List of Lumia bodies to remove in next update step */
@@ -90,6 +97,12 @@ protected:
     
     std::list<std::shared_ptr<Door>> _doorsToOpen;
 
+    /** List of Lumia bodies to remove in next update step */
+    std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
+    
+    Vec2 _linVelocityData;
+    
+    float _angVelocityData;
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
@@ -98,10 +111,19 @@ protected:
     bool _failed;
     /** Countdown active for winning or losing */
     int _countdown;
-      
+    /** Volume level for game music */
+    float _musicVolume;
+    /** Volume level for sound effects */
+    float _effectVolume;
+
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    
+    std::unordered_map<Node, NodeState> _graph;
 
+    int ticks;
+    
+    
 #pragma mark Internal Object Management
     /**
      * Lays out the game geography.
@@ -181,10 +203,11 @@ public:
      * with the Box2d coordinates.  This initializer uses the default scale.
      *
      * @param assets    The (loaded) assets for this game mode
+     * @param level     The level to be loaded into the game world
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, string level);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -251,7 +274,7 @@ public:
      *
      * @return true if the level is completed.
      */
-    bool isComplete( ) const { return _complete; }
+    bool isComplete() const { return _complete; }
     
     /**
      * Sets whether the level is completed.
@@ -279,13 +302,30 @@ public:
 	* @param value whether the level is failed.
 	*/
 	void setFailure(bool value);
+
+    /**
+    * Sets the volume of game music
+    * 
+    * @param value the volume of game music
+    */
+    void setMusicVolume(float value) { _musicVolume = value; };
+
+    /**
+    * Sets the volume of sound effects
+    *
+    * @param value the volume of sound effects
+    */
+    void setEffectVolume(float value) { _effectVolume = value; };
     
 #pragma mark -
 #pragma mark Collision Handling
 
     /** Processes a collision between Lumia and a magical plant */
     void processPlantLumiaCollision(float newRadius, const std::shared_ptr<LumiaModel> lumia);
-
+    
+    /** Processes a collision between Lumia and a magical plant */
+    void processEnemyLumiaCollision(float newRadius, const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia, bool destroyEnemy);
+    
     /** Processes a collision between Lumia and an energy item */
     void processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia);
 
@@ -326,24 +366,23 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
+    
+    void removeAvatarNode();
 
+    void deactivateAvatarPhysics();
     /**
      * Resets the status of the game so that we can play again.
      */
     void reset();
 
-    void createPlant(float posx, float posy, int nplant, float ang);
-    
     void createEnergy(Vec2 pos);
-    
-    void createSplitter(Vec2 pos);
     
     void checkWin();
 
     /**
     * Adds a new Lumia to the world.
     */
-    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar);
+    std::shared_ptr<LumiaModel> createLumia(float radius, Vec2 pos, bool isAvatar,Vec2 vel);
 
     /**
     * Removes the input Lumia from the world.
@@ -351,7 +390,8 @@ public:
     * @param  lumia the Lumia to remove
     */
     void removeLumia(std::shared_ptr<LumiaModel> lumia);
-
+    
+    void removeEnemy(std::shared_ptr<EnemyModel> enemy);
     /**
     * Removes the input energy item from the world.
     *
@@ -359,7 +399,11 @@ public:
     */
     void removeEnergy(std::shared_ptr<EnergyModel> energy);
     
+    /** Gives nearby Lumia velocity towards player avatar so they merge on contact */
     void mergeLumiasNearby();
+
+    /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
+    void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
 
     /**
      * Calculates trajectory point one timestep into future

@@ -79,31 +79,6 @@
                         "absolute" : true
                     }
                 },
-                "play"  : {
-                    "type"   : "Button",
-                    "data"   : {
-                        "upnode"   : "up",
-                        "pushable" : [144,280,240,184,280,144,320,184,416,280,320,376,280,416,184,376],
-                        "visible"  : false,
-                        "pushsize" : true,
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 0.8
-                    },
-                    "children" : {
-                        "up"       : {
-                            "type"   : "Image",
-                            "data"   : {
-                                "texture"  : "play"
-                            }
-                        }
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "y_offset" : -115,
-                        "absolute" : true
-                    }
-                },
                 "bar"  : {
                     "type"   : "Progress",
                     "data"   : {

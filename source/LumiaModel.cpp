@@ -16,11 +16,12 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& lumia) {
-    _sceneNode = scene2::SceneNode::allocWithBounds(lumia->getSize());
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting) {
+    
+    _sceneNode = scene2::SceneNode::allocWithBounds(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-   _node = LumiaNode::alloc(lumia, 1, 1, 1);
-    auto scale =  getRadius()*2/(lumia->getWidth()/_drawScale);
+   _node = LumiaNode::alloc(splitting, 4, 5, 20);
+    auto scale =  getRadius()*2/(splitting->getHeight()/4.0f/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
   
@@ -51,7 +52,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(.1 / radius);
+        setDensity(.15 / radius);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
@@ -162,9 +163,10 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
+    _lastPosition = getPosition();
     WheelObstacle::update(dt);
     
-    if (_sceneNode != nullptr) {
+    if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());
     }
