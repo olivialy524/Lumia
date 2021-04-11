@@ -37,21 +37,11 @@
 void LevelModel::dispose(){
     _lumia->dispose();
     _lumia = nullptr;
-    for (const std::shared_ptr<EnemyModel> &e : _enemies) {
-        e->dispose();
-    }
     _enemies.clear();
-    
-    for (const std::shared_ptr<Plant> &p : _plants) {
-        p->dispose();
-    }
     _plants.clear();
-
-    for (const std::shared_ptr<EnergyModel>& en : _energies) {
-        en->dispose();
-    }
     _energies.clear();
-
+    _buttons.clear();
+    _doors.clear();
     _irregular_tiles.clear();
     _tiles.clear();
 }
@@ -70,8 +60,10 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> energies_json = _leveljson->get("energies");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
+    std::shared_ptr<cugl::JsonValue> buttondoor_json = _leveljson->get("buttondoors");
     std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
+    createButtonsAndDoors(buttondoor_json);
     createPlants(plants_json);
     createEnergies(energies_json);
     createTiles(tiles_json);
@@ -108,7 +100,6 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         
         _plants.push_back(plant);
     }
-    
     return _plants;
 }
 
@@ -203,3 +194,62 @@ std::shared_ptr<LumiaModel> LevelModel::createLumia(const std::shared_ptr<cugl::
     
     return  _lumia;
 }
+
+std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std::shared_ptr<cugl::JsonValue>& buttonsAndDoors) {
+    for (int i = 0; i < buttonsAndDoors->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> buttondoor = buttonsAndDoors->get(i);
+        std::shared_ptr<cugl::JsonValue> button = buttondoor->get("button");
+        std::shared_ptr<cugl::JsonValue> door = buttondoor->get("door");
+        float ox = door->getFloat("oblx");
+        float oy = door->getFloat("obly");
+        float nx = door->getFloat("nblx");
+        float ny = door->getFloat("nbly");
+        float wid = door->getFloat("width");
+        float hgt = door->getFloat("height");
+        Rect rectangle = Rect(ox,oy,wid,hgt);
+        std::shared_ptr<Door> d;
+        Poly2 platform(rectangle,false);
+        SimpleTriangulator triangulator;
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+        cugl::Vec2 orpos = cugl::Vec2(ox,oy);
+        d = Door::alloc(orpos, platform);
+        d->setOriginalPos(orpos);
+        d->setNewPos(cugl::Vec2(nx,ny));
+        d->setDensity(10000);
+         //d->setBodyType(b2_staticBody);
+        d->setGravityScale(0);
+        d->setRestitution(BASIC_RESTITUTION);
+        d->setAnchor(Vec2(0,0));
+        d->setDebugColor(DEBUG_COLOR);
+        /**
+        d->setName("door " + toString(i));
+     platform *= _scale;
+     image = _assets->get<Texture>(EARTH_TEXTURE);
+     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+        sprite->setAnchor(Vec2(0,0));
+     d->setNode(sprite);
+     addObstacle(d,sprite,1); */
+        _doors.push_back(d);
+        float bx = button->getFloat("posx");
+        float by = button->getFloat("posy");
+        std::shared_ptr<Button> b;
+        b = Button::alloc(Vec2(bx,by), Size(1,1));
+        b->setDensity(BASIC_DENSITY);
+        b->setBodyType(b2_staticBody);
+        b->setRestitution(BASIC_RESTITUTION);
+        b->setDebugColor(DEBUG_COLOR);
+        //image = _assets->get<Texture>(EARTH_TEXTURE);
+        b->setDoor(d);
+        //std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
+        //sprite->setScale(_scale);
+        //b->setNode(sprite);
+        //b->setSensor(true);
+        //addObstacle(b,sprite,1);
+        _buttons.push_back(b);
+    }
+    return _buttons;
+}
+

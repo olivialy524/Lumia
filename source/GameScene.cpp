@@ -304,6 +304,15 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
+    for (const std::shared_ptr<Door> & d: _doorList) {
+        d->dispose();
+    }
+    _doorList.clear();
+    
+    for (const std::shared_ptr<Button> & b: _buttonList) {
+        b->dispose();
+    }
+    _buttonList.clear();
     
     for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
         enemy->dispose();
@@ -451,7 +460,35 @@ void GameScene::populate() {
         addObstacle(plant, plant->getNode(), 0);
         _plantList.push_front(plant);
     }
-
+    
+#pragma mark : Buttons & Doors
+    std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
+    std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
+    for (int i = 0; i < buttons.size(); i++) {
+        std::shared_ptr<Button> b = buttons[i];
+        std::shared_ptr<Door> d = doors[i];
+     d->setDensity(10000);
+     //d->setBodyType(b2_staticBody);
+        d->setName("door " + toString(i));
+        Poly2 platform = d->getPolygon();
+        platform *= _scale;
+     image = _assets->get<Texture>(EARTH_TEXTURE);
+     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+        sprite->setAnchor(Vec2(0,0));
+     d->setNode(sprite);
+     addObstacle(d,sprite,1);
+     _doorList.push_front(d);
+        b->setName("button");
+        image = _assets->get<Texture>(EARTH_TEXTURE);
+        Rect rectangle = Rect(b->getX(),b->getY(),1,1);
+        Poly2 plat(rectangle);
+        plat *= _scale;
+        sprite = scene2::PolygonNode::allocWithTexture(image,plat);
+        b->setNode(sprite);
+        addObstacle(b,sprite,1);
+        _buttonList.push_front(b);
+    }
+    
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
@@ -577,6 +614,16 @@ void GameScene::update(float dt) {
             removeEnergy(energy);
         }
         _energiesToRemove.clear();
+    }
+    for (auto & door : _doorList) {
+        door->setAngle(0);
+        if (door->getOpening()) {
+            door->Open();
+        }
+        else if (door->getClosing()) {
+            door->Close();
+        }
+        door->getNode()->setPosition(door->getPosition()*_scale);
     }
 
     // check if Lumia bodies fell out of the level, and remove as needed
@@ -1127,6 +1174,15 @@ void GameScene::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lum
     }
     
 }
+void GameScene::processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
+    button->getDoor()->setOpening(true);
+    button->getDoor()->setClosing(false);
+}
+void GameScene::processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
+    button->getDoor()->setOpening(false);
+    button->getDoor()->setClosing(true);
+}
+
 
 
 /**
@@ -1202,6 +1258,22 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
+        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd1) {
+                    processButtonLumiaCollision(lumia, button);
+                    break;
+                }
+            }
+        }
+        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd2) {
+                    processButtonLumiaCollision(lumia, button);
+                    break;
+                }
+            }
+        }
         // handle collision between two Lumias
         else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
@@ -1248,8 +1320,8 @@ void GameScene::endContact(b2Contact* contact) {
 	void* fd1 = fix1->GetUserData();
 	void* fd2 = fix2->GetUserData();
 
-	void* bd1 = body1->GetUserData();
-	void* bd2 = body2->GetUserData();
+    physics2::Obstacle* bd1 = (physics2::Obstacle*)body1->GetUserData();
+    physics2::Obstacle* bd2 = (physics2::Obstacle*)body2->GetUserData();
 
     
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
@@ -1259,6 +1331,22 @@ void GameScene::endContact(b2Contact* contact) {
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
+            }
+        }
+        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd1) {
+                    processButtonLumiaEnding(lumia, button);
+                    break;
+                }
+            }
+        }
+        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+            for (const std::shared_ptr<Button>& button : _buttonList) {
+                if (button.get() == bd2) {
+                    processButtonLumiaEnding(lumia, button);
+                    break;
+                }
             }
         }
     }

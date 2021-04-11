@@ -14,10 +14,11 @@
 #include "InputController.h"
 #include "EnergyModel.h"
 #include "LevelModel.h"
+#include "Button.h"
+#include "Door.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
 //#include "PathFindingController.h"
-
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -62,6 +63,10 @@ protected:
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<LumiaModel>> _lumiaList;
+    
+    std::list<std::shared_ptr<Button>> _buttonList;
+    
+    std::list<std::shared_ptr<Door>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
@@ -87,6 +92,9 @@ protected:
     std::list<LumiaBody> _lumiasToCreate;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
+    
+    std::list<std::shared_ptr<Door>> _doorsToOpen;
+
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
     
@@ -319,6 +327,9 @@ public:
     /** Processes a collision between Lumia and another Lumia */
     void processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2);
 
+    void processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
+    
+    void processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
 	/**
 	* Processes the start of a collision
 	*

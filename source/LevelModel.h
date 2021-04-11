@@ -13,7 +13,8 @@
 #include "Plant.h"
 #include "Tile.h"
 #include "EnergyModel.h"
-
+#include "Button.h"
+#include "Door.h"
 class LevelModel : public cugl::Asset {
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
@@ -22,6 +23,8 @@ private:
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
     std::vector<std::shared_ptr<Tile>> _irregular_tiles;
     std::shared_ptr<LumiaModel> _lumia;
+    std::vector<std::shared_ptr<Button>> _buttons;
+    std::vector<std::shared_ptr<Door>> _doors;
     
     float _xBound;
     
@@ -39,6 +42,7 @@ private:
     
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
+    std::vector<std::shared_ptr<Button>> createButtonsAndDoors(const std::shared_ptr<cugl::JsonValue>& buttonsAndDoors);
     std::shared_ptr<cugl::JsonValue> _levelJson;
     
 public:
@@ -105,7 +109,14 @@ public:
     std::vector<std::shared_ptr<EnergyModel>> getEnergies() {
         return _energies;
     }
+        
+    std::vector<std::shared_ptr<Button>> getButtons() {
+        return _buttons;
+    }
     
+    std::vector<std::shared_ptr<Door>> getDoors() {
+        return _doors;
+    }
     std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
         return _enemies;
     }
