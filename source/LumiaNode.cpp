@@ -10,15 +10,24 @@
 
 #include "LumiaNode.h"
 
+bool LumiaNode::init(const std::shared_ptr<cugl::Texture> &idleAnimation,
+                     const std::shared_ptr<cugl::Texture> &splittingAnimation){
+    _idleAnimation = AnimationNode::alloc(idleAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
+    _idleAnimation
+    return true;
+}
 
 void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     
     switch (_state){
         case LumiaAnimState::Idle:{
+            _frameCount %= IDLE_ANIMATION_INTERVAL;
+            
             break;
         }
         case LumiaAnimState::Splitting:{
+            _frameCount %= SPLIT_ANIMATION_INTERVAL;
             if (_frameCount == 0){
                 int frame = AnimationNode::getFrame() + 1;
                 AnimationNode::setFrame(frame);
@@ -28,14 +37,11 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
             }
             break;
         }
-        case LumiaAnimState::Merging:{
-            break;
-        }
-        case LumiaAnimState::SplitFinished:{
+        default:{
             break;
         }
     }
-    _frameCount = (_frameCount + 1) % ANIMATION_INTERVAL;
+    _frameCount++;
     
     AnimationNode::draw(batch, transform, tint);
     

@@ -32,8 +32,22 @@ protected:
     LumiaAnimState _state;
     
     int _frameCount;
+    
+    const int IDLE_ANIMATION_INTERVAL = 5;
+    
+    const int SPLIT_ANIMATION_INTERVAL = 1;
+    
+    const int ANIMATION_ROWS = 4;
+    
+    const int ANIMATION_COLS = 5;
+    
+    const int ANIMATION_SIZE = 20;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _idleAnimation;
+    /** Reference to node of donut idle face */
+    std::shared_ptr<cugl::scene2::AnimationNode> _splittingAnimation;
 
-    int ANIMATION_INTERVAL = 1.5f;
+    
 public:
     
     cugl::Color4 _stint;
@@ -41,6 +55,12 @@ public:
     LumiaNode() : _state(Idle), _frameCount(0), AnimationNode() {}
 
     ~LumiaNode() { dispose(); }
+    
+    /**
+     * Init child nodes of donut node
+     */
+    bool init(const std::shared_ptr<cugl::Texture> &idleAnimation,
+              const std::shared_ptr<cugl::Texture> &splittingAnimation);
     
     void setAnimState(LumiaAnimState state){
         _state = state;
