@@ -10,6 +10,11 @@
 
 #include "LumiaNode.h"
 
+void LumiaNode::dispose(){
+    _idleAnimation = nullptr;
+    _splittingAnimation = nullptr;
+}
+
 bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
                      const std::shared_ptr<cugl::Texture> &splittingAnimation,
                      float radius,
@@ -24,7 +29,6 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     addChild(_idleAnimation);
     
     _splittingAnimation = cugl::scene2::AnimationNode::alloc(splittingAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
-    setScale(scale);
     _splittingAnimation->setAnchor(Vec2::ANCHOR_CENTER);
     _splittingAnimation->setFrame(0);
     addChild(_splittingAnimation);

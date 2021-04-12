@@ -89,7 +89,6 @@ protected:
 
 	/** The scene graph node for Lumia. */
 	std::shared_ptr<LumiaNode> _sceneNode;
-//    std::shared_ptr<LumiaNode> _node;
     
     Vec2 _lastPosition;
 

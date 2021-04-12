@@ -910,8 +910,6 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     lumia->setLinearVelocity(vel);
     lumia->setAngularVelocity(angularVel);
     lumia->setTextures(image, splitting);
-//    shared_ptr<cugl::scene2::SceneNode> lumiaNode = std::shared_ptr<cugl::scene2::SceneNode>(lumia->getSceneNode());
-//    lumiaNode->initWithPosition(0.0f, 0.0f);
     lumia->setSizeLevel(sizeLevel);
 
     addObstacle(lumia, lumia->getSceneNode(), 5);

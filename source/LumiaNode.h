@@ -55,6 +55,7 @@ public:
 
     ~LumiaNode() { dispose(); }
     
+    void dispose();
     /**
      * Init child nodes of Lumia node
      */
