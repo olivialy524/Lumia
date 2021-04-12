@@ -52,6 +52,9 @@
 		C729A2002620E26700BD1C5A /* EnergyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */; };
 		C729A2012620E26700BD1C5A /* EnergyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */; };
 		C729A2022620E26700BD1C5A /* EnergyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */; };
+		C729A25C2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
+		C729A25D2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
+		C729A25E2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
 		C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
@@ -202,6 +205,8 @@
 		C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectScene.cpp; sourceTree = "<group>"; };
 		C729A1FB2620E26700BD1C5A /* EnergyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnergyNode.h; sourceTree = "<group>"; };
 		C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyNode.cpp; sourceTree = "<group>"; };
+		C729A25B2624002500BD1C5A /* CollisionController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionController.cpp; sourceTree = "<group>"; };
+		C729A2622624019800BD1C5A /* CollisionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollisionController.h; sourceTree = "<group>"; };
 		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
 		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
 		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
@@ -417,6 +422,8 @@
 				3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */,
 				C79D7E83261D5453007DDD42 /* PathFindingController.cpp */,
 				C79D7E8D261D546A007DDD42 /* PathFindingController.h */,
+				C729A25B2624002500BD1C5A /* CollisionController.cpp */,
+				C729A2622624019800BD1C5A /* CollisionController.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -691,6 +698,7 @@
 				3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LumiaApp.cpp in Sources */,
 				C729A2012620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C729A25D2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				C729A1E7261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */,
@@ -721,6 +729,7 @@
 				3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LumiaApp.cpp in Sources */,
 				C729A2022620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C729A25E2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */,
 				C729A1E8261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */,
@@ -751,6 +760,7 @@
 				3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55D2040912400238092 /* InputController.cpp in Sources */,
 				C729A2002620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C729A25C2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				EBB4B5582040912400238092 /* LumiaApp.cpp in Sources */,
 				C729A1E6261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */,
