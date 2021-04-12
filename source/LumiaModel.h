@@ -88,8 +88,7 @@ protected:
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
 	/** The scene graph node for Lumia. */
-	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<LumiaNode> _node;
+	std::shared_ptr<LumiaNode> _sceneNode;
     
     Vec2 _lastPosition;
 
@@ -303,34 +302,8 @@ public:
      *
      * @return the scene graph node representing this LumiaModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
+	const std::shared_ptr<LumiaNode>& getSceneNode() { return _sceneNode; }
     
-    
-    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
-
-    /**
-     * Sets the scene graph node representing this LumiaModel.
-     *
-     * Note that this method also handles creating the nodes for the body parts
-     * of this LumiaModel. Since the obstacles are decoupled from the scene graph,
-     * initialization (which creates the obstacles) occurs prior to the call to
-     * this method. Therefore, to be drawn to the screen, the nodes of the attached
-     * bodies must be added here.
-     *
-     * The bubbler also uses the world node when adding bubbles to the scene, so
-     * the input node must be added to the world BEFORE this method is called.
-     *
-     * By storing a reference to the scene graph node, the model can update
-     * the node to be in sync with the physics info. It does this via the
-     * {@link Obstacle#update(float)} method.
-     *
-     * @param node  The scene graph node representing this LumiaModel, which has been added to the world node already.
-     */
-	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _sceneNode = node;
-        _sceneNode->setPosition(getPosition() * _drawScale);
-    }
-
     
 #pragma mark -
 #pragma mark Attribute Properties
@@ -378,7 +351,7 @@ public:
                 break;
             }
         }
-        _node->setAnimState(s);
+        _sceneNode->setAnimState(s);
     }
     
     LumiaState getState(){
@@ -433,8 +406,8 @@ public:
     void setLaunching(bool value) { _isLaunching = value; }
     
     bool isDoneSplitting() const {
-        if (_node!=nullptr){
-            return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;
+        if (_sceneNode!=nullptr){
+            return _sceneNode->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;
         }
         return false;
         
