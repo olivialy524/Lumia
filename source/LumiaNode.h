@@ -71,7 +71,7 @@ public:
  
     static std::shared_ptr<LumiaNode> alloc(Size size) {
         std::shared_ptr<LumiaNode> node = std::make_shared<LumiaNode>();
-        return (node->allocWithBounds(size) ? node : nullptr);
+        return (node->initWithBounds(size) ? node : nullptr);
     }
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,

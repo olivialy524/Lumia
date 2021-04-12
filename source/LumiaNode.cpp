@@ -16,14 +16,16 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
                      float drawScale){
     auto scale = radius*2/(idleAnimation->getHeight()/4.0f/drawScale);
     _idleAnimation = cugl::scene2::AnimationNode::alloc(idleAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
-    _idleAnimation->setScale(scale);
+    setScale(scale);
     _idleAnimation->setAnchor(Vec2::ZERO);
+    Vec2 offset = Vec2(splittingAnimation->getWidth()/5.0f - idleAnimation->getWidth()/5.0f ,splittingAnimation->getHeight()/4.0f - idleAnimation->getHeight()/4.0f);
+    _idleAnimation->setPosition(offset/2);
     _idleAnimation->setFrame(0);
     addChild(_idleAnimation);
     
     _splittingAnimation = cugl::scene2::AnimationNode::alloc(splittingAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
-    _splittingAnimation->setScale(scale);
-    _splittingAnimation->setAnchor(Vec2::ZERO);
+    setScale(scale);
+    _splittingAnimation->setAnchor(Vec2::ANCHOR_CENTER);
     _splittingAnimation->setFrame(0);
     addChild(_splittingAnimation);
     
