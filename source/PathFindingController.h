@@ -63,9 +63,13 @@ public:
 #pragma mark -
 #pragma mark Change Path Finding States
     
-    void  changeStateIfApplicable(EnemyModel* e);
+    void changeGraphNode(float x, float y, NodeState node);
     
-    void  update(float dt, std::list<std::shared_ptr<EnemyModel>>& _enemyList, std::list<std::shared_ptr<LumiaModel>>& _lumiaList);
+    void findPath(std::shared_ptr<EnemyModel> e);
+    
+    void changeStateIfApplicable(std::shared_ptr<EnemyModel> e);
+    
+    void update(float dt, std::list<std::shared_ptr<EnemyModel>>& _enemyList, std::list<std::shared_ptr<LumiaModel>>& _lumiaList);
 
     /**
      * Clears any buffered inputs so that we may start fresh.
