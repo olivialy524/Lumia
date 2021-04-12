@@ -21,13 +21,6 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
     _sceneNode = LumiaNode::alloc(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode->setTextures(idle, splitting, getRadius(), _drawScale);
-//   _node = LumiaNode::alloc(splitting, 4, 5, 20);
-//    auto scale =  getRadius()*2/(splitting->getHeight()/4.0f/_drawScale);
-//   _node->setScale(scale);
-//   _node->setAnchor(Vec2::ANCHOR_CENTER);
-//
-//   _node->setFrame(0);
-//   _sceneNode->addChild(_node);
 }
 
 #pragma mark Constructors
