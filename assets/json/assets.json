@@ -30,7 +30,7 @@
             "file": "textures/energy.png"
         },
         "lumia": {
-            "file": "textures/lumia.png"
+            "file": "textures/lumia-idle.png"
         },
         "lamp": {
             "file": "textures/lamp.png"

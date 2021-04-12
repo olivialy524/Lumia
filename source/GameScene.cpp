@@ -502,7 +502,10 @@ void GameScene::populate() {
 //    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
-	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
+    
+    shared_ptr<cugl::scene2::SceneNode> lumiaNode = std::shared_ptr<cugl::scene2::SceneNode>(_avatar->getSceneNode());
+    lumiaNode->initWithPosition(0.0f, 0.0f);
+	addObstacle(_avatar,lumiaNode, 4); // Put this at the very front
     
 #pragma mark : Enemies
     vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
@@ -910,9 +913,11 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     lumia->setLinearVelocity(vel);
     lumia->setAngularVelocity(angularVel);
     lumia->setTextures(image, splitting);
+    shared_ptr<cugl::scene2::SceneNode> lumiaNode = std::shared_ptr<cugl::scene2::SceneNode>(lumia->getSceneNode());
+    lumiaNode->initWithPosition(0.0f, 0.0f);
     lumia->setSizeLevel(sizeLevel);
 
-    addObstacle(lumia, lumia->getSceneNode(), 5);
+    addObstacle(lumia, lumiaNode, 5);
     
     _lumiaList.push_back(lumia);
     std::unordered_set<b2Fixture*> fixtures;

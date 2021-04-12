@@ -10,28 +10,65 @@
 
 #include "LumiaNode.h"
 
-bool LumiaNode::init(const std::shared_ptr<cugl::Texture> &idleAnimation,
-                     const std::shared_ptr<cugl::Texture> &splittingAnimation){
-    _idleAnimation = AnimationNode::alloc(idleAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
-    _idleAnimation
+bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
+                     const std::shared_ptr<cugl::Texture> &splittingAnimation,
+                     float radius,
+                     float drawScale){
+    auto scale = radius*2/(idleAnimation->getHeight()/4.0f/drawScale);
+    _idleAnimation = cugl::scene2::AnimationNode::alloc(idleAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
+    _idleAnimation->setScale(scale);
+    _idleAnimation->setAnchor(Vec2::ZERO);
+    _idleAnimation->setFrame(0);
+    addChild(_idleAnimation);
+    
+    _splittingAnimation = cugl::scene2::AnimationNode::alloc(splittingAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
+    _splittingAnimation->setScale(scale);
+    _splittingAnimation->setAnchor(Vec2::ZERO);
+    _splittingAnimation->setFrame(0);
+    addChild(_splittingAnimation);
+    
+    setAnimState(Idle);
     return true;
+}
+
+void LumiaNode::setAnimState(LumiaAnimState state){
+    switch (state){
+        case Splitting:
+        case SplitFinished:{
+            _splittingAnimation->setVisible(true);
+            _idleAnimation->setVisible(false);
+            break;
+        }
+        default:{
+            _splittingAnimation->setVisible(false);
+            _idleAnimation->setVisible(true);
+            break;
+        }
+    }
+    _state = state;
+
 }
 
 void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     
     switch (_state){
-        case LumiaAnimState::Idle:{
+        case Idle:{
             _frameCount %= IDLE_ANIMATION_INTERVAL;
+            if (_frameCount == 0){
+                int frame = _idleAnimation->getFrame() + 1 >= ANIMATION_SIZE ? 0 : _idleAnimation->getFrame() + 1 ;
+                _idleAnimation->setFrame(frame);
+            }
             
             break;
         }
-        case LumiaAnimState::Splitting:{
+        case Splitting:{
             _frameCount %= SPLIT_ANIMATION_INTERVAL;
+            
             if (_frameCount == 0){
-                int frame = AnimationNode::getFrame() + 1;
-                AnimationNode::setFrame(frame);
-                if (frame == 19){
+                int frame = _splittingAnimation->getFrame() + 1;
+                _splittingAnimation->setFrame(frame);
+                if (frame == ANIMATION_SIZE - 1){
                     setAnimState(LumiaAnimState::SplitFinished);
                 }
             }
@@ -43,6 +80,6 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
     }
     _frameCount++;
     
-    AnimationNode::draw(batch, transform, tint);
+    SceneNode::draw(batch, transform, tint);
     
 }

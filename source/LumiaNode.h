@@ -13,7 +13,7 @@
 
 using namespace cugl;
 
-class LumiaNode : public cugl::scene2::AnimationNode {
+class LumiaNode : public cugl::scene2::SceneNode {
 #pragma mark Constants and Enums
 public:
     enum LumiaAnimState {
@@ -33,7 +33,7 @@ protected:
     
     int _frameCount;
     
-    const int IDLE_ANIMATION_INTERVAL = 5;
+    const int IDLE_ANIMATION_INTERVAL = 10;
     
     const int SPLIT_ANIMATION_INTERVAL = 1;
     
@@ -51,28 +51,27 @@ public:
     
     cugl::Color4 _stint;
     
-    LumiaNode() : _state(Idle), _frameCount(0), AnimationNode() {}
+    LumiaNode() : _state(Idle), _frameCount(0), SceneNode() {}
 
     ~LumiaNode() { dispose(); }
     
     /**
-     * Init child nodes of donut node
+     * Init child nodes of Lumia node
      */
-    bool init(const std::shared_ptr<cugl::Texture> &idleAnimation,
-              const std::shared_ptr<cugl::Texture> &splittingAnimation);
+    bool setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
+              const std::shared_ptr<cugl::Texture> &splittingAnimation,
+              float radius,
+              float drawScale);
     
-    void setAnimState(LumiaAnimState state){
-        _state = state;
-    }
+    void setAnimState(LumiaAnimState state);
     
     LumiaAnimState getAnimState(){
         return _state;
     }
  
-    static std::shared_ptr<LumiaNode> alloc(const std::shared_ptr<Texture>& texture,
-                                                int rows, int cols, int size) {
+    static std::shared_ptr<LumiaNode> alloc(Size size) {
         std::shared_ptr<LumiaNode> node = std::make_shared<LumiaNode>();
-        return (node->initWithFilmstrip(texture,rows,cols,size) ? node : nullptr);
+        return (node->allocWithBounds(size) ? node : nullptr);
     }
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
