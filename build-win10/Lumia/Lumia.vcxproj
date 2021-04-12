@@ -186,6 +186,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\BackgroundNode.h" />
+    <ClInclude Include="..\..\source\Button.h" />
+    <ClInclude Include="..\..\source\CollisionController.h" />
+    <ClInclude Include="..\..\source\Door.h" />
     <ClInclude Include="..\..\source\EnemyModel.h" />
     <ClInclude Include="..\..\source\EnemyNode.h" />
     <ClInclude Include="..\..\source\EnergyModel.h" />
@@ -221,6 +224,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\BackgroundNode.cpp" />
+    <ClCompile Include="..\..\source\Button.cpp" />
+    <ClCompile Include="..\..\source\CollisionController.cpp" />
+    <ClCompile Include="..\..\source\Door.cpp" />
     <ClCompile Include="..\..\source\EnemyModel.cpp" />
     <ClCompile Include="..\..\source\EnemyNode.cpp" />
     <ClCompile Include="..\..\source\EnergyModel.cpp" />
