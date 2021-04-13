@@ -8,26 +8,28 @@
 
 #ifndef PathFindingController_h
 #define PathFindingController_h
-#include "GraphNode.h"
 #include "EnemyModel.h"
 #include "LumiaModel.h"
+#include "GraphNode.h"
 
 class PathFindingController {
-protected:
-    float xBound;
     
-    float yBound;
+protected:
+    
+    float _xBound;
+    
+    float _yBound;
     
     std::unordered_map<Node, NodeState> _graph;
     
-    int ticks;
+    int _ticks;
     
     const int NUM_TICKS;
 public:
 #pragma mark -
 #pragma mark Constructors
     /**
-     * Creates a new input controller.
+     * Creates a new  path finding controller
      *
      * This constructor does NOT do any initialzation.  It simply allocates the
      * object. This makes it safe to use this class without a pointer.
@@ -35,14 +37,14 @@ public:
     PathFindingController(); // Don't initialize.  Allow stack based
     
     /**
-     * Disposes of this input controller, releasing all listeners.
+     * Disposes of this  path finding controller
      */
     ~PathFindingController() { dispose(); }
     
     /**
-     * Deactivates this input controller, releasing all listeners.
+     * Deactivates this path finding controller
      *
-     * This method will not dispose of the input controller. It can be reused
+     * This method will not dispose of the  path finding controller. It can be reused
      * once it is reinitialized.
      */
     void dispose();
@@ -65,6 +67,10 @@ public:
     
     void changeGraphNode(float x, float y, NodeState node);
     
+    void changeGraphNode(Vec2 pos, NodeState node){
+        changeGraphNode(pos.x, pos.y, node);
+    }
+    
     void findPath(std::shared_ptr<EnemyModel> e);
     
     void changeStateIfApplicable(std::shared_ptr<EnemyModel> e);
@@ -75,5 +81,6 @@ public:
      * Clears any buffered inputs so that we may start fresh.
      */
     void clear();
+};
     
 #endif /* PathFindingController_h */

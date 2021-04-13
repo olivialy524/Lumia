@@ -17,9 +17,8 @@
 #include "LevelModel.h"
 #include "Button.h"
 #include "Door.h"
-#include "GraphNode.h"
 #include "TileDataModel.h"
-//#include "PathFindingController.h"
+#include "PathFindingController.h"
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -41,6 +40,8 @@ protected:
     InputController _input;
     
     CollisionController _collisionController;
+    
+    PathFindingController _path;
     
     float _cameraTargetX;
     
@@ -91,8 +92,6 @@ protected:
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
-    
-    std::unordered_map<Node, NodeState> _graph;
 
     int ticks;
     

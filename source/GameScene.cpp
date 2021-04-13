@@ -178,6 +178,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _assets = assets;
     _input.init();
     _collisionController.init();
+    _path.init(_level->getXBound(), _level->getYBound());
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
@@ -261,6 +262,7 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _collisionController.dispose();
+        _path.dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -286,7 +288,6 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     _sensorFixtureMap.clear();
-    _graph.clear();
     for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
         l->dispose();
     }
@@ -317,6 +318,7 @@ void GameScene::reset() {
     }
     _enemyList.clear();
     _collisionController.clearStates();
+    _path.clear();
 
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
@@ -339,13 +341,6 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-//    float xBound = _level->getXBound();
-//    float yBound = _level->getYBound();
-//    for (int i = 0; i < xBound; i++){
-//        for (int j = 0; j < yBound; j++){
-//            _graph[{Vec2(i, j)}] = NodeState::Void;
-//        }
-//    }
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
 
@@ -493,8 +488,8 @@ void GameScene::populate() {
     _avatar->setName(LUMIA_NAME);
 	_avatar->setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
-//    Vec2 lumiaPos = _avatar->getPosition();
-//    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
+    Vec2 lumiaPos = _avatar->getPosition();
+    _path.changeGraphNode(lumiaPos.x, lumiaPos.y, NodeState::Lumia);
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
@@ -509,10 +504,10 @@ void GameScene::populate() {
         enemy->setTextures(image);
         enemy->setName(ENEMY_TEXTURE);
         enemy->setDebugColor(DEBUG_COLOR);
-        addObstacle(enemy, enemy->getSceneNode(), 3);
-//        Vec2 enemyPos = enemy->getPosition();
-//        _graph[{Vec2(floor(enemyPos.x), floor(enemyPos.y))}] = NodeState::Enemy;
+        Vec2 enemyPos = enemy->getPosition();
+        _path.changeGraphNode(enemyPos.x, enemyPos.y, NodeState::Enemy);
         _enemyList.push_back(enemy);
+        addObstacle(enemy, enemy->getSceneNode(), 3);
     }
     
 }
@@ -800,19 +795,6 @@ void GameScene::update(float dt) {
             enemy->setInCoolDown(false);
         }
     }
-//    for (auto & lumia : _lumiaList){
-//        Vec2 lastPos = lumia->getLastPosition();
-//        _graph[{Vec2(floor(lastPos.x), floor(lastPos.y))}] = NodeState::Void;
-//        Vec2 curPos = lumia->getPosition();
-//        _graph[{Vec2(floor(curPos.x), floor(curPos.y))}] = NodeState::Lumia;
-//    }
-//
-//    for (auto & enemy : _enemyList){
-//        Vec2 lastPos = enemy->getLastPosition();
-//        _graph[{Vec2(floor(lastPos.x), floor(lastPos.y))}] = NodeState::Void;
-//        Vec2 curPos = enemy->getPosition();
-//        _graph[{Vec2(floor(curPos.x), floor(curPos.y))}] = NodeState::Enemy;
-//    }
 	// Turn the physics engine crank.
 	_world->update(dt);
 

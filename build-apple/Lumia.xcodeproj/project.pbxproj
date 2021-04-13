@@ -207,11 +207,11 @@
 		C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyNode.cpp; sourceTree = "<group>"; };
 		C729A25B2624002500BD1C5A /* CollisionController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionController.cpp; sourceTree = "<group>"; };
 		C729A2622624019800BD1C5A /* CollisionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollisionController.h; sourceTree = "<group>"; };
+		C729A27B2626384B00BD1C5A /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
 		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
 		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
 		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
 		C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyNode.cpp; sourceTree = "<group>"; };
-		C79D7E70261BD616007DDD42 /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
 		C79D7E83261D5453007DDD42 /* PathFindingController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathFindingController.cpp; sourceTree = "<group>"; };
 		C79D7E8D261D546A007DDD42 /* PathFindingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathFindingController.h; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -417,13 +417,13 @@
 				C79D7E64261BA3CB007DDD42 /* EnemyModel.h */,
 				C79D7E65261BA3DB007DDD42 /* EnemyNode.h */,
 				C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */,
-				C79D7E70261BD616007DDD42 /* GraphNode.h */,
 				3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */,
 				3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */,
 				C79D7E83261D5453007DDD42 /* PathFindingController.cpp */,
 				C79D7E8D261D546A007DDD42 /* PathFindingController.h */,
 				C729A25B2624002500BD1C5A /* CollisionController.cpp */,
 				C729A2622624019800BD1C5A /* CollisionController.h */,
+				C729A27B2626384B00BD1C5A /* GraphNode.h */,
 			);
 			name = Source;
 			path = ../source;
