@@ -86,7 +86,7 @@ protected:
     
     Vec2 _lastPosition;
     
-    LumiaModel* target;
+    std::shared_ptr<LumiaModel> _target;
     
     bool _removed;
     
@@ -351,6 +351,14 @@ public:
     
     EnemyState getState(){
         return _state;
+    }
+    
+    void setTarget(std::shared_ptr<LumiaModel> & lumia){
+        _target = lumia;
+    }
+    
+    std::shared_ptr<LumiaModel> & getTarget(){
+        return _target;
     }
     
     /**

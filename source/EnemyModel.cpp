@@ -67,6 +67,7 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
         setRestitution(ENEMY_RESTITUTION);
         setFixedRotation(false);
         setGravityScale(0.1f);
+        _state = Wander;
 
         return true;
     }

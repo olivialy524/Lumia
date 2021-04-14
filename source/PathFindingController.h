@@ -14,6 +14,8 @@
 
 class PathFindingController {
     
+    
+#pragma mark Attributes and Constants
 protected:
     
     float _xBound;
@@ -21,13 +23,19 @@ protected:
     float _yBound;
     
     std::unordered_map<Node, NodeState> _graph;
+    std::unordered_map<Node, float> cost_so_far;
+    std::unordered_map<Node, Node> came_from;
     
     int _ticks;
     
     const int NUM_TICKS;
-public:
+    
+    const int CHASE_DIST;
+    
 #pragma mark -
 #pragma mark Constructors
+    
+public:
     /**
      * Creates a new  path finding controller
      *
@@ -50,13 +58,7 @@ public:
     void dispose();
     
     /**
-     * Initializes the input control for the given bounds
-     *
-     * The bounds are the bounds of the scene graph.  This is necessary because
-     * the bounds of the scene graph do not match the bounds of the display.
-     * This allows the input device to do the proper conversion for us.
-     *
-     * @param bounds    the scene graph bounds
+     * Inititialize the graph used in path finding
      *
      * @return true if the controller was initialized successfully
      */
@@ -64,6 +66,20 @@ public:
     
 #pragma mark -
 #pragma mark Change Path Finding States
+protected:
+    bool isValid(Node n);
+    
+    bool isVoid(Node n);
+    /**
+     * A* search pathfinding for enemy used to move toward the target Lumia
+     */
+    void findPath(std::shared_ptr<EnemyModel> e);
+    
+    void setEnemyTarget(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
+    
+    void changeStateIfApplicable(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
+    
+public:
     
     void changeGraphNode(float x, float y, NodeState node);
     
@@ -71,11 +87,7 @@ public:
         changeGraphNode(pos.x, pos.y, node);
     }
     
-    void findPath(std::shared_ptr<EnemyModel> e);
-    
-    void changeStateIfApplicable(std::shared_ptr<EnemyModel> e);
-    
-    void update(float dt, std::list<std::shared_ptr<EnemyModel>>& _enemyList, std::list<std::shared_ptr<LumiaModel>>& _lumiaList);
+    void update(float dt, std::list<std::shared_ptr<EnemyModel>>& enemyList, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
 
     /**
      * Clears any buffered inputs so that we may start fresh.
