@@ -108,8 +108,6 @@ void PathFindingController::findPath(std::shared_ptr<EnemyModel> e){
             }
       }
     }
-    CULog("x %f", came_from[cur].x);
-    CULog("y %f", came_from[cur].y);
     Vec2 nextStep = getPosFromNode(came_from[cur]);
     Vec2 dir = nextStep-curPos;
     e->setVelocity(dir.normalize() * 2.0f);
@@ -123,7 +121,7 @@ void PathFindingController::setEnemyTarget(std::shared_ptr<EnemyModel> enemy, st
     Vec2 enemyPos = enemy->getPosition();
     float dist = closestLumia == nullptr ? numeric_limits<float>::infinity() : enemyPos.distanceSquared(closestLumia->getPosition());
     for (auto & lumia : lumiaList){
-        if (lumia == closestLumia){
+        if (lumia == closestLumia || lumia->getRemoved()){
             continue;
         }
         Vec2 lumiaPos = lumia->getPosition();
@@ -145,7 +143,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
     
     switch (e->getState()){
         case EnemyModel::EnemyState::Wander:{
-            CULog("wander");
             e->setVelocity(Vec2::ZERO);
             if (dist <= CHASE_DIST){
 
@@ -154,7 +151,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Chasing:{
-            CULog("chase");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -165,7 +161,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Fleeing:{
-            CULog("flee");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -193,12 +188,13 @@ void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyMode
         Vec2 curPos = enemy->getPosition();
         changeGraphNode(curPos, NodeState::Enemy);
         auto target =enemy->getTarget();
-        if (target==nullptr || target ->isRemoved() || _ticks % 100){
+        enemy->setVelocity(Vec2::ZERO);
+        if (target==nullptr || target ->isRemoved() || _ticks % 150){
             setEnemyTarget(enemy, lumiaList);
         }
     }
     
-    if (_ticks % 80 != 0){
+    if (_ticks % NUM_TICKS != 0){
         return;
     }
     for (auto & e : enemyList){
