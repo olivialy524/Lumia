@@ -18,13 +18,7 @@ class PathFindingController {
 #pragma mark Attributes and Constants
 protected:
     
-    float _xBound;
-    
-    float _yBound;
-    
     std::unordered_map<Node, NodeState> _graph;
-    std::unordered_map<Node, float> cost_so_far;
-    std::unordered_map<Node, Node> came_from;
     
     int _ticks;
     
@@ -67,20 +61,31 @@ public:
 #pragma mark -
 #pragma mark Change Path Finding States
 protected:
+    /**
+     * true if the node is in the graph
+     */
     bool isValid(Node n);
-    
+    /**
+     * true if the node is walkable
+     */
     bool isVoid(Node n);
     /**
      * A* search pathfinding for enemy used to move toward the target Lumia
      */
     void findPath(std::shared_ptr<EnemyModel> e);
-    
+    /**
+     * set the target Lumia for the enemy
+     */
     void setEnemyTarget(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
-    
+    /**
+     * change the state of the enemy
+     */
     void changeStateIfApplicable(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
     
 public:
-    
+    /**
+     * change a node in the graph
+     */
     void changeGraphNode(float x, float y, NodeState node);
     
     void changeGraphNode(Vec2 pos, NodeState node){
@@ -90,7 +95,7 @@ public:
     void update(float dt, std::list<std::shared_ptr<EnemyModel>>& enemyList, std::list<std::shared_ptr<LumiaModel>>& lumiaList);
 
     /**
-     * Clears any buffered inputs so that we may start fresh.
+     * Clears any graph states so that we may start fresh.
      */
     void clear();
 };

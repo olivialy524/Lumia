@@ -12,7 +12,7 @@
 #pragma mark -
 #pragma mark Constructors
 /**
- * Creates a new input controller.
+ * Creates a new path finding controller.
  *
  * This constructor does NOT do any initialzation.  It simply allocates the
  * object. This makes it safe to use this class without a pointer.
@@ -68,6 +68,8 @@ void PathFindingController::changeGraphNode(float x, float y, NodeState node){
 void PathFindingController::findPath(std::shared_ptr<EnemyModel> e){
 // A* search algorithm for enemy
     std::priority_queue<Node, vector<Node>, Node_Compare> frontier;
+    std::unordered_map<Node, float> cost_so_far;
+    std::unordered_map<Node, Node> came_from;
     Vec2 targetPos = e -> getTarget() -> getPosition();
     Vec2 curPos = e->getPosition();
     Node goal = getNodeFromPos(targetPos);
@@ -110,8 +112,6 @@ void PathFindingController::findPath(std::shared_ptr<EnemyModel> e){
     Vec2 nextStep = getPosFromNode(came_from[cur]);
     Vec2 dir = nextStep-curPos;
     e->setVelocity(dir.normalize() * 2.0f);
-    came_from.clear();
-    cost_so_far.clear();
     
 }
 
@@ -146,7 +146,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
     
     switch (e->getState()){
         case EnemyModel::EnemyState::Wander:{
-            CULog("wander");
             e->setVelocity(Vec2::ZERO);
             if (dist <= CHASE_DIST){
 
@@ -155,7 +154,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Chasing:{
-            CULog("chase");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -166,7 +164,6 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Fleeing:{
-            CULog("flee");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -205,7 +202,7 @@ void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyMode
             setEnemyTarget(enemy, lumiaList);
         }
         
-        if (_ticks % 50 == 0){
+        if (_ticks % NUM_TICKS == 0){
             changeStateIfApplicable(enemy, lumiaList);
             enemy->setInCoolDown(false);
             
@@ -218,6 +215,4 @@ void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyMode
  */
 void PathFindingController::clear(){
     _graph.clear();
-    came_from.clear();
-    cost_so_far.clear();
 }
