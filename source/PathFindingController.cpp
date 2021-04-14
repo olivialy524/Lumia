@@ -116,11 +116,11 @@ void PathFindingController::findPath(std::shared_ptr<EnemyModel> e){
 }
 
 void PathFindingController::setEnemyTarget(std::shared_ptr<EnemyModel> enemy, std::list<std::shared_ptr<LumiaModel> > &lumiaList){
-    std::shared_ptr<LumiaModel> closestLumia = enemy -> getTarget();
+    std::shared_ptr<LumiaModel> closestLumia;
     Vec2 enemyPos = enemy->getPosition();
-    float dist = closestLumia == nullptr ? numeric_limits<float>::infinity() : enemyPos.distanceSquared(closestLumia->getPosition());
+    float dist = numeric_limits<float>::infinity();
     for (auto & lumia : lumiaList){
-        if (lumia == closestLumia || lumia->getRemoved()){
+        if (lumia->isRemoved()){
             continue;
         }
         Vec2 lumiaPos = lumia->getPosition();
@@ -135,8 +135,9 @@ void PathFindingController::setEnemyTarget(std::shared_ptr<EnemyModel> enemy, st
 
 void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList){
     std::shared_ptr<LumiaModel> closestLumia = e -> getTarget();
-    if (closestLumia ->isRemoved()){
+    if (closestLumia == nullptr || closestLumia -> isRemoved()){
         e->setState(EnemyModel::Wander);
+        return;
     }
     Vec2 lumiaPos = closestLumia->getPosition();
     Vec2 enemyPos = e->getPosition();
@@ -179,7 +180,7 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
 }
 
 void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyModel>>& enemyList, std::list<std::shared_ptr<LumiaModel>>& lumiaList){
-    _ticks = (_ticks + 1) % NUM_TICKS;
+    _ticks++;
     
     for (auto & lumia : lumiaList){
         if (lumia->isRemoved()){
@@ -200,11 +201,11 @@ void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyMode
         Vec2 curPos = enemy->getPosition();
         changeGraphNode(curPos, NodeState::Enemy);
         auto target =enemy->getTarget();
-        if (target==nullptr || target ->isRemoved() || _ticks == 0){
+        if (target==nullptr || target ->isRemoved() || _ticks % 100 == 0){
             setEnemyTarget(enemy, lumiaList);
         }
         
-        if (_ticks==0){
+        if (_ticks % 50 == 0){
             changeStateIfApplicable(enemy, lumiaList);
             enemy->setInCoolDown(false);
             

@@ -92,9 +92,6 @@ protected:
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
-
-    int ticks;
-    
     
 #pragma mark Internal Object Management
     /**

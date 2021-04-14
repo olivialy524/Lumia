@@ -768,35 +768,6 @@ void GameScene::update(float dt) {
     }
     _path.update(dt, _enemyList, _lumiaList);
 
-//    ticks++;
-//
-//    if (ticks % 100 == 0){
-//        for (auto & enemy : _enemyList){
-//            std::shared_ptr<LumiaModel> closestLumia;
-//            Vec2 enemyPos = enemy->getPosition();
-//            float dist = numeric_limits<float>::infinity();
-//            for (auto & lumia : _lumiaList){
-//                Vec2 lumiaPos = lumia->getPosition();
-//                if (enemyPos.distanceSquared(lumiaPos) < dist){
-//                    dist = enemyPos.distanceSquared(lumiaPos);
-//                    closestLumia = lumia;
-//                }
-//            }
-//
-//            if (dist < 50.0f) {
-//                //set enemy velocity to move away or towards closest Lumia
-//                Vec2 distance = closestLumia->getPosition() - enemyPos;
-//                if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
-//                    enemy->setVelocity(-distance.normalize() * 1.5f);
-//                } else {
-//                    enemy->setVelocity(distance.normalize() * 1.5f);
-//                }
-//            } else {
-//                enemy->setVelocity(Vec2::ZERO);
-//            }
-//            enemy->setInCoolDown(false);
-//        }
-//    }
 	// Turn the physics engine crank.
 	_world->update(dt);
 
