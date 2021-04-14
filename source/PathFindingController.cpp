@@ -19,7 +19,7 @@
  */
 PathFindingController::PathFindingController():
 _ticks(0),
-NUM_TICKS(100),
+NUM_TICKS(50),
 CHASE_DIST(50)
 {}
 
@@ -84,7 +84,6 @@ void PathFindingController::findPath(std::shared_ptr<EnemyModel> e){
         cur = frontier.top();
         frontier.pop();
         if (_graph[cur]==NodeState::Lumia){
-            CULog("found lumia");
             break;
         }
         
@@ -136,6 +135,9 @@ void PathFindingController::setEnemyTarget(std::shared_ptr<EnemyModel> enemy, st
 
 void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> e, std::list<std::shared_ptr<LumiaModel>>& lumiaList){
     std::shared_ptr<LumiaModel> closestLumia = e -> getTarget();
+    if (closestLumia ->isRemoved()){
+        e->setState(EnemyModel::Wander);
+    }
     Vec2 lumiaPos = closestLumia->getPosition();
     Vec2 enemyPos = e->getPosition();
     float dist = enemyPos.distanceSquared(lumiaPos);
@@ -143,6 +145,7 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
     
     switch (e->getState()){
         case EnemyModel::EnemyState::Wander:{
+            CULog("wander");
             e->setVelocity(Vec2::ZERO);
             if (dist <= CHASE_DIST){
 
@@ -151,6 +154,7 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Chasing:{
+            CULog("chase");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -161,6 +165,7 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
             break;
         }
         case EnemyModel::EnemyState::Fleeing:{
+            CULog("flee");
             if (dist > CHASE_DIST){
                 e->setState(EnemyModel::Wander);
             } else if(closestLumia->getSizeLevel() > e-> getSizeLevel()){
@@ -174,9 +179,12 @@ void PathFindingController::changeStateIfApplicable(std::shared_ptr<EnemyModel> 
 }
 
 void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyModel>>& enemyList, std::list<std::shared_ptr<LumiaModel>>& lumiaList){
-    _ticks = _ticks ++;
+    _ticks = (_ticks + 1) % NUM_TICKS;
     
     for (auto & lumia : lumiaList){
+        if (lumia->isRemoved()){
+            continue;
+        }
         Vec2 lastPos = lumia->getLastPosition();
         changeGraphNode(lastPos, NodeState::Void);
         Vec2 curPos = lumia->getPosition();
@@ -185,21 +193,22 @@ void PathFindingController::update(float dt, std::list<std::shared_ptr<EnemyMode
     for (auto & enemy : enemyList){
         Vec2 lastPos = enemy->getLastPosition();
         changeGraphNode(lastPos, NodeState::Void);
+        
+        if (enemy -> getRemoved()){
+            continue;
+        }
         Vec2 curPos = enemy->getPosition();
         changeGraphNode(curPos, NodeState::Enemy);
         auto target =enemy->getTarget();
-        enemy->setVelocity(Vec2::ZERO);
-        if (target==nullptr || target ->isRemoved() || _ticks % 150){
+        if (target==nullptr || target ->isRemoved() || _ticks == 0){
             setEnemyTarget(enemy, lumiaList);
         }
-    }
-    
-    if (_ticks % NUM_TICKS != 0){
-        return;
-    }
-    for (auto & e : enemyList){
-        changeStateIfApplicable(e, lumiaList);
-        e->setInCoolDown(false);
+        
+        if (_ticks==0){
+            changeStateIfApplicable(enemy, lumiaList);
+            enemy->setInCoolDown(false);
+            
+        }
     }
 }
 

@@ -885,7 +885,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     lumia->setAngularVelocity(angularVel);
     lumia->setTextures(image, splitting);
     lumia->setSizeLevel(sizeLevel);
-
+    _path.changeGraphNode(pos, NodeState::Lumia);
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
     _lumiaList.push_back(lumia);
@@ -904,6 +904,7 @@ void GameScene::deactivateAvatarPhysics() {
     if (_avatar->isRemoved()) {
         return;
     }
+    _path.changeGraphNode(_avatar->getPosition(), NodeState::Void);
     _sensorFixtureMap.erase(_avatar.get());
     _avatar->markRemoved(true);
 }
@@ -925,6 +926,7 @@ void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
     }
     _sensorFixtureMap.erase(lumia.get());
     _worldnode->removeChild(lumia->getSceneNode());
+    _path.changeGraphNode(lumia->getPosition(), NodeState::Void);
 
     std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
     if (position != _lumiaList.end())
@@ -941,6 +943,7 @@ void GameScene::removeEnemy(shared_ptr<EnemyModel> enemy) {
         return;
     }
     _worldnode->removeChild(enemy->getSceneNode());
+    _path.changeGraphNode(enemy->getPosition(), NodeState::Void);
 
     std::list<shared_ptr<EnemyModel>>::iterator position = std::find(_enemyList.begin(), _enemyList.end(), enemy);
     if (position != _enemyList.end())
