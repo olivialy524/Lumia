@@ -25,10 +25,10 @@
 class LumiaModel : public cugl::physics2::WheelObstacle {
 #pragma mark Constants and Enums
 protected:
-#define SIGNUM(x)  ((x > 0) - (x < 0))
+    #define SIGNUM(x)  ((x > 0) - (x < 0))
     
-/** Debug color for the sensor */
-#define DEBUG_COLOR     Color4::YELLOW
+    /** Debug color for the sensor */
+    #define DEBUG_COLOR     Color4::YELLOW
 
     /** The base density of the character */
     static constexpr float LUMIA_DENSITY = 0.10f;
@@ -39,7 +39,7 @@ protected:
     /** The amount to slow the character down */
     static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
-    static constexpr float LUMIA_MAXVELOCITY = 30.0f;
+    static constexpr float LUMIA_MAXVELOCITY = 20.0f;
 
 public:
     enum LumiaState {
@@ -50,6 +50,15 @@ public:
         /** When Lumia is merging */
         Merging
     };
+
+    struct LumiaSize {
+        /** Size of Lumia body */
+        float radius;
+        /** Density of Lumia body */
+        float density;
+    };
+
+    static std::vector<LumiaSize> sizeLevels;
 
     
 #pragma mark Attributes
@@ -67,8 +76,6 @@ protected:
 	bool _isGrounded;
     /** Whether Lumia is splitting into two */
     bool _isSplitting;
-    /** Whether Lumia is merging nearby bodies together */
-    bool _isMerging;
     /* Whether or not the Lumia body is due to be or has been removed */
     bool _removed;
     /** Radius of Lumia's body */
@@ -81,8 +88,7 @@ protected:
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
 	/** The scene graph node for Lumia. */
-	std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<LumiaNode> _node;
+	std::shared_ptr<LumiaNode> _sceneNode;
     
     Vec2 _lastPosition;
 
@@ -91,6 +97,9 @@ protected:
     
     /** The current state of this Lumia*/
     LumiaState _state;
+
+    /** The current size level of this Lumia body */
+    int _sizeLevel;
 
 	/**
 	* Redraws the outline of the physics fixtures to the debug node
@@ -293,34 +302,8 @@ public:
      *
      * @return the scene graph node representing this LumiaModel.
      */
-	const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
+	const std::shared_ptr<LumiaNode>& getSceneNode() { return _sceneNode; }
     
-    
-    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
-
-    /**
-     * Sets the scene graph node representing this LumiaModel.
-     *
-     * Note that this method also handles creating the nodes for the body parts
-     * of this LumiaModel. Since the obstacles are decoupled from the scene graph,
-     * initialization (which creates the obstacles) occurs prior to the call to
-     * this method. Therefore, to be drawn to the screen, the nodes of the attached
-     * bodies must be added here.
-     *
-     * The bubbler also uses the world node when adding bubbles to the scene, so
-     * the input node must be added to the world BEFORE this method is called.
-     *
-     * By storing a reference to the scene graph node, the model can update
-     * the node to be in sync with the physics info. It does this via the
-     * {@link Obstacle#update(float)} method.
-     *
-     * @param node  The scene graph node representing this LumiaModel, which has been added to the world node already.
-     */
-	void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _sceneNode = node;
-        _sceneNode->setPosition(getPosition() * _drawScale);
-    }
-
     
 #pragma mark -
 #pragma mark Attribute Properties
@@ -368,13 +351,37 @@ public:
                 break;
             }
         }
-        _node->setAnimState(s);
+        _sceneNode->setAnimState(s);
     }
     
     LumiaState getState(){
         return _state;
     }
     
+    /** Returns the next biggest size level this Lumia body can grow to */
+    int getBiggerSizeLevel() { 
+        if (_sizeLevel == LumiaModel::sizeLevels.size() - 1) {
+            return _sizeLevel;
+        } else {
+            return _sizeLevel + 1;
+        }
+    };
+
+    /** Returns the next smallest size level this Lumia body can grow to */
+    int getSmallerSizeLevel() {
+        if (_sizeLevel == 0) {
+            return _sizeLevel;
+        } else {
+            return _sizeLevel - 1;
+        }
+    };
+
+    /** Returns size level of this Lumia body */
+    int getSizeLevel() { return _sizeLevel; };
+
+    /** Sets size level of this Lumia body */
+    void setSizeLevel(int value) { _sizeLevel = value; };
+
     /**
      * Sets velocity of Lumia.
      *
@@ -399,21 +406,12 @@ public:
     void setLaunching(bool value) { _isLaunching = value; }
     
     bool isDoneSplitting() const {
-        if (_node!=nullptr){
-            return _node->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;
+        if (_sceneNode!=nullptr){
+            return _sceneNode->getAnimState() == LumiaNode::LumiaAnimState::SplitFinished;
         }
         return false;
         
     }
-    
-    /**
-     * Sets whether the Lumia is actively merging.
-     *
-     * @param value whether the Lumia is actively merging.
-     */
-    void setMerging(bool value) { _isMerging = value; }
-    
-    bool isMerging() const {return _isMerging;}
     
     
     /**
@@ -505,4 +503,4 @@ public:
     void applyForce();
 };
 
-#endif /* __LM_LUMIA_MODEL_H__ */
+#endif /* __LUMIA_MODEL_H__ */

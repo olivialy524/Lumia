@@ -164,6 +164,9 @@ public:
      * @return The planned input launch
      */
     cugl::Vec2& getPlannedLaunch() { return _plannedLaunch; }
+    
+    /** Converts raw drag input to launch velocity */
+    cugl::Vec2 calculateLaunch(cugl::Vec2 rawDrag);
 
     /**
      * Returns whether or not the player is dragging their mouse/finger.

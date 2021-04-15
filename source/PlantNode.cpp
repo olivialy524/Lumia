@@ -19,11 +19,30 @@ void PlantNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
             setFrame(0);
             break;
         }
+        case LightingUp:{
+            _frameCount %= LIGHT_UP_ANIMATION_INTERVAL;
+            if (_frameCount == 0){
+                int frame = getFrame() + 1;
+                setFrame(frame);
+                if (frame == LIT_ANIMATION_END){
+                    setAnimState(PlantAnimState::Lit);
+                }
+            }
+            break;
+        }
         case Lit:{
-            setFrame(1);
+            _frameCount %= LIT_ANIMATION_INTERVAL;
+            if (_frameCount == 0){
+                int frame = getFrame() + (_frameIncreasing ? 1 : -1);
+                setFrame(frame);
+                if (frame == LIT_ANIMATION_END || frame == LIT_ANIMATION_START){
+                    _frameIncreasing = !_frameIncreasing;
+                }
+            }
             break;
         }
     }
+    _frameCount ++;
     AnimationNode::draw(batch,transform,tint);
     
 }

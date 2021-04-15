@@ -122,6 +122,27 @@
             }
         ],
         "energies": [
+            {
+            "posx": 10,
+            "posy": 10
+            }
+            ],
+        "buttondoors": [
+            {
+            "button" :{
+            "posx": 20,
+            "posy": 13.5
+            },
+            "door" :{
+                "oblx": 8,
+                "obly": 14,
+                "nblx": 10,
+                "nbly": 14,
+                "width": 2,
+                "height": 1
+            }
+            
+            }
         ]
     }
 }

@@ -18,15 +18,9 @@ using namespace cugl;
 
 void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting) {
     
-    _sceneNode = scene2::SceneNode::allocWithBounds(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
+    _sceneNode = LumiaNode::alloc(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-   _node = LumiaNode::alloc(splitting, 4, 5, 20);
-    auto scale =  getRadius()*2/(splitting->getHeight()/4.0f/_drawScale);
-   _node->setScale(scale);
-   _node->setAnchor(Vec2::ANCHOR_CENTER);
-  
-   _node->setFrame(0);
-   _sceneNode->addChild(_node);
+    _sceneNode->setTextures(idle, splitting, getRadius(), _drawScale);
 }
 
 #pragma mark Constructors
@@ -47,24 +41,33 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
+struct LumiaModel::LumiaSize size0 = { 0.51f, 0.6f };
+struct LumiaModel::LumiaSize size1 = { 0.71f, 0.35f };
+struct LumiaModel::LumiaSize size2 = { 1.0f, 0.25f };
+struct LumiaModel::LumiaSize size3 = { 1.4f, 0.15f };
+std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3 };
+
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
     _removed = false;
     
     if (WheelObstacle::init(pos,radius)) {
-        setDensity(.15 / radius);
+        // Gameplay attributes
+        _isGrounded = false;
+        _state = Idle;
+        _sizeLevel = 2;
+        _velocity = Vec2::ZERO;
+        _isLaunching = false;
+        _removed = false;
+
+        _radius = radius;
+
+        setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
         setFriction(0.1f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(false);
         
-        // Gameplay attributes
-        _isGrounded = false;
-        _state = Idle;
-        _velocity = Vec2::ZERO;
-        _isLaunching = false;
-        
-        _radius = radius;
         return true;
     }
     return false;
@@ -87,11 +90,11 @@ void LumiaModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = LUMIA_DENSITY;
+    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.2f;
+    sensorShape.m_radius = _radius * 1.1f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
@@ -122,7 +125,7 @@ void LumiaModel::releaseFixtures() {
  * disposed, a LumiaModel may not be used until it is initialized again.
  */
 void LumiaModel::dispose() {
-    _node = nullptr;
+    _sceneNode = nullptr;
     _sensorNode = nullptr;
 }
 
