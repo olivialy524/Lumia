@@ -27,11 +27,11 @@ protected:
     
     int _frameCount;
     
-    const int LIGHT_UP_ANIMATION_INTERVAL = 1;
+    const int LIGHT_UP_ANIMATION_INTERVAL = 2;
     
-    const int LIT_ANIMATION_INTERVAL = 15;
+    const int LIT_ANIMATION_INTERVAL = 18;
     
-    const int LIT_ANIMATION_START = 1;
+    const int LIT_ANIMATION_START = 3;
     
     const int LIT_ANIMATION_END = 5;
     
