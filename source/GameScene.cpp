@@ -438,15 +438,12 @@ void GameScene::populate() {
     vector<std::shared_ptr<EnergyModel>> energies = _level->getEnergies();
     image = _assets->get<Texture>("energy");
     for (int i = 0; i < energies.size(); i++) {
-        std::shared_ptr<scene2::SceneNode> _sceneNode = scene2::SceneNode::allocWithBounds(image->getSize());
-        energies[i]->setNode(_sceneNode);
-        _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-        std::shared_ptr<EnergyNode> sprite = EnergyNode::alloc(image);
-        sprite->setAnchor(Vec2::ANCHOR_CENTER);
-        _sceneNode->addChild(sprite);
-        energies[i]->setVX(0);
-        addObstacle(energies[i], _sceneNode, 0);
-        _energyList.push_front(energies[i]);
+        auto energy = energies[i];
+        energy->setVX(0);
+        energy->setDrawScale(_scale);
+        energy->setTextures(image);
+        addObstacle(energy, energy->getNode(), 0);
+        _energyList.push_front(energy);
     }
 
 #pragma mark : Plants
