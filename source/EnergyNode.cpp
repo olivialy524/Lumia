@@ -9,17 +9,17 @@
 #include <stdio.h>
 
 #include "EnergyNode.h"
-#define SHADOW_OFFSET   10.0f
-
 
 void EnergyNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     
-//    cugl::Mat4 translation_mat = cugl::Mat4::createTranslation( SHADOW_OFFSET, SHADOW_OFFSET, 0.0f);
-//
-//    AnimationNode::draw(batch,transform*translation_mat,_stint);
-//    AnimationNode::draw(batch,transform,tint);
-    PolygonNode::draw(batch,transform,tint);
+    _frameCount %= ANIMATION_INTERVAL;
+    if (_frameCount == 0){
+        int frame = getFrame() + 1 >= ANIMATION_COLS ? 0 : getFrame() + 1 ;
+        setFrame(frame);
+    }
+    _frameCount++;
+    AnimationNode::draw(batch,transform,tint);
     
 }
 
