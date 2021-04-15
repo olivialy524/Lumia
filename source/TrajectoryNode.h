@@ -12,22 +12,50 @@
 #include <string>
 #include <cugl/cugl.h>
 
-using namespace cugl
+using namespace cugl;
 
-class TrajectoryNode : public scene2::TextureNode {
+class TrajectoryNode : public scene2::PolygonNode {
     
     
 protected:
    
+    std::vector<Vec2> _points;
+    float end_alpha = 0.4f;
     
 
 public:
     ~TrajectoryNode() { dispose(); }
     
-    TrjectoryNode(): TextureNode(){}
+    TrajectoryNode(): scene2::PolygonNode(){}
     
     
+    void setTextures(const std::shared_ptr<cugl::Texture> &dot_texture){
+        setTexture(dot_texture);
+    };
     
+    
+    static std::shared_ptr<TrajectoryNode> alloc(std::shared_ptr<cugl::Texture> t) {
+        std::shared_ptr<TrajectoryNode> node = std::make_shared<TrajectoryNode>();
+        return (node->initWithTexture(t) ? node : nullptr);
+        
+    }
 
-}
+    void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
+              const cugl::Mat4& transform, cugl::Color4 tint) override;
+    
+    void setPoints(std::vector<Vec2> points){
+        _points = points;
+    }
+    
+    void setEndAlpha(float f){
+        end_alpha = f;
+    }
+    
+    void clearPoints(){
+        _points.clear();
+    }
+
+};
   
+
+#endif /* Tile_h */

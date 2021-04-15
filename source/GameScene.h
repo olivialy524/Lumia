@@ -74,6 +74,8 @@ protected:
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
+    
+    std::vector<Vec2> _trajectory;
 
     
     /** Whether we have completed this "game" */

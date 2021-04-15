@@ -26,6 +26,9 @@
         "tile7": {
             "file": "textures/tile7.png"
         },
+        "dot": {
+            "file": "textures/circle.png"
+        },
         "energy": {
             "file": "textures/energy.png"
         },

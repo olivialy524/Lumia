@@ -9,6 +9,7 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
 #include "BackgroundNode.h"
+#include "TrajectoryNode.h"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -348,6 +349,7 @@ void GameScene::populate() {
 //    }
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
+    
 
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
@@ -511,6 +513,25 @@ void GameScene::populate() {
 //        _graph[{Vec2(floor(enemyPos.x), floor(enemyPos.y))}] = NodeState::Enemy;
         _enemyList.push_back(enemy);
     }
+    
+    
+#pragma mark trajectory
+    image = _assets->get<Texture>("dot");
+    std::shared_ptr<TrajectoryNode> trajectory = TrajectoryNode::alloc(image);
+    vector<Vec2> points = {
+        Vec2(1.0f, 1.0f),
+        Vec2(2.0f, 2.0f),
+        Vec2(3.0f, 3.0f),
+        Vec2(4.0f, 4.0f),
+        Vec2(5.0f, 5.0f),
+    };
+    
+    for (int i= 0; i< points.size(); i++){
+        points[i] *= _scale;
+    }
+    trajectory->setPoints(points);
+    trajectory->setPosition(0.0, 0.0f);
+    _worldnode->addChild(trajectory);
     
 }
 
