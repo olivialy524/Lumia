@@ -136,7 +136,7 @@ public:
     }
     void lightUp() {
         _isLit = true;
-        _plantNode->setAnimState(PlantNode::PlantAnimState::Lit);
+        _plantNode->setAnimState(PlantNode::PlantAnimState::LightingUp);
     }
     
     void lightDown() {
