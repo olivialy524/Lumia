@@ -17,16 +17,30 @@ public:
     
     enum PlantAnimState {
         Dark,
+        LightingUp,
         Lit
     };
 
     
 protected:
     PlantAnimState _state;
+    
+    int _frameCount;
+    
+    const int LIGHT_UP_ANIMATION_INTERVAL = 1;
+    
+    const int LIT_ANIMATION_INTERVAL = 15;
+    
+    const int LIT_ANIMATION_START = 1;
+    
+    const int LIT_ANIMATION_END = 5;
+    
+    bool _frameIncreasing;
+    
 public:
     
     
-    PlantNode() : _state(Dark), AnimationNode() {}
+    PlantNode() : _state(Dark), _frameCount(0), _frameIncreasing(false), AnimationNode() {}
 
     ~PlantNode() { dispose(); }
     

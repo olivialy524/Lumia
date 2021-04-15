@@ -12,13 +12,14 @@
 
 void Plant::setTextures(const std::shared_ptr<Texture>& plant, float angle) {
     
-    _node = scene2::SceneNode::allocWithBounds(Size(plant->getWidth(),plant->getHeight()/2.0f));
+    _node = scene2::SceneNode::allocWithBounds(Size(plant->getWidth()/3.0f + 0.5f,plant->getHeight()/2.0f + 0.5f));
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setAngle(angle);
-    _plantNode = PlantNode::alloc(plant, 2, 1, 2);
-    auto scale =  getWidth()/(plant->getWidth()/_drawScale);
+    _plantNode = PlantNode::alloc(plant, 2, 3, 6);
+    auto scale =  getWidth()/(plant->getWidth()/2.8f/_drawScale);
     _plantNode->setScale(scale);
     _plantNode->setAnchor(Vec2::ANCHOR_CENTER);
+//    _plantNode->setPosition(Vec2::ZERO);
   
     _node->addChild(_plantNode);
 }
