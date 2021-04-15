@@ -53,15 +53,8 @@ public:
         return _node;
     }
 
-    void setEnergyNode(const std::shared_ptr<EnergyNode>& node) {
-        _energyNode = node;
-        _node->addChild(_energyNode);
-    }
-
-    void setNode(std::shared_ptr<cugl::scene2::SceneNode> n) {
-        _node = n;
-    }
-
+    void setTextures(const std::shared_ptr<Texture>& texture);
+    
     void setDrawScale(float scale) {
         _drawScale = scale;
     }
