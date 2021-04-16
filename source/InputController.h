@@ -293,7 +293,7 @@ public:
      * @param previous The previous position of the touch
      * @param focus	Whether the listener currently has focus
      */
-    void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
+    void touchesDraggedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
   
 };
 

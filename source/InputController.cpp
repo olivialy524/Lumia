@@ -123,7 +123,7 @@ bool InputController::init() {
         this->touchEndedCB(event,focus);
     });
     touch->addMotionListener(LISTENER_KEY, [=](const TouchEvent& event, const Vec2& previous, bool focus) {
-        this->touchesMovedCB(event, previous, focus);
+        this->touchesDraggedCB(event, previous, focus);
     });
 	
 #endif
@@ -344,15 +344,17 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
  * @param previous The previous position of the touch
  * @param focus	Whether the listener currently has focus
  */
-void InputController::touchesMovedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
-    Vec2 currentDrag = event.position - _dclick;
+void InputController::touchesDraggedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
+    if (_touchids.size() == 1) {
+        Vec2 currentDrag = event.position - _dclick;
 
-    // only register player as dragging if sufficiently far from initial click/touch
-    if (currentDrag.lengthSquared() >= 625.0f) {
-        _dragged = true;
+        // only register player as dragging if sufficiently far from initial click/touch
+        if (currentDrag.lengthSquared() >= 625.0f) {
+            _dragged = true;
 
-        currentDrag = calculateLaunch(currentDrag);
+            currentDrag = calculateLaunch(currentDrag);
 
-        _plannedLaunch = currentDrag;
+            _plannedLaunch = currentDrag;
+        }
     }
 }
