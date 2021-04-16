@@ -81,6 +81,8 @@ protected:
     cugl::Vec2 _inputLaunch;
     /** Whether the player is dragging */
     bool _dragging;
+    /** Whether the player is dragging */
+    bool _dragged;
     /** The planned launch velocity produced by player input drag */
     cugl::Vec2 _plannedLaunch;
   
@@ -173,7 +175,7 @@ public:
      *
      * @return whether or not the player is dragging their mouse/finger
      */
-    bool isDragging() { return _dragging; }
+    bool isDragging() { return _dragged; }
 
     /**
      * Returns the attempted input switch tap/click location.
@@ -258,7 +260,7 @@ public:
      * @param previous The previous position of the touch
      * @param focus	Whether the listener currently has focus
      */
-    void mouseMovedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
+    void mouseDraggedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
 
     /**
      * Callback for the beginning of a touch event

@@ -20,7 +20,7 @@ class TrajectoryNode : public scene2::PolygonNode {
 protected:
    
     std::vector<Vec2> _points;
-    float end_alpha = 0.4f;
+    float _endAlpha = 0.4f;
     
 
 public:
@@ -28,6 +28,7 @@ public:
     
     TrajectoryNode(): scene2::PolygonNode(){}
     
+    void dispose() override;
     
     void setTextures(const std::shared_ptr<cugl::Texture> &dot_texture){
         setTexture(dot_texture);
@@ -47,8 +48,12 @@ public:
         _points = points;
     }
     
+    void addPoint(Vec2 point){
+        _points.push_back(point);
+    }
+    
     void setEndAlpha(float f){
-        end_alpha = f;
+        _endAlpha = f;
     }
     
     void clearPoints(){

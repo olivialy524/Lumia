@@ -20,6 +20,8 @@
 #include "GraphNode.h"
 #include "TileDataModel.h"
 //#include "PathFindingController.h"
+#include "TrajectoryNode.h"
+#include "TrajectoryCallback.h"
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -75,7 +77,7 @@ protected:
     /** Reference to the player avatar */
     std::shared_ptr<LumiaModel> _avatar;
     
-    std::vector<Vec2> _trajectory;
+    std::shared_ptr<TrajectoryNode> _trajectoryNode;
 
     
     /** Whether we have completed this "game" */
@@ -98,8 +100,8 @@ protected:
 
     int ticks;
     
-    
 #pragma mark Internal Object Management
+    
     /**
      * Lays out the game geography.
      *

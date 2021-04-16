@@ -9,7 +9,6 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
 #include "BackgroundNode.h"
-#include "TrajectoryNode.h"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -199,7 +198,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->onEndContact = [this](b2Contact* contact) {
         endContact(contact);
     };
-  
+    
+    
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -262,6 +262,7 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _collisionController.dispose();
+        _trajectoryNode->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -318,6 +319,7 @@ void GameScene::reset() {
     }
     _enemyList.clear();
     _collisionController.clearStates();
+    _trajectoryNode->dispose();
 
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
@@ -517,21 +519,21 @@ void GameScene::populate() {
     
 #pragma mark trajectory
     image = _assets->get<Texture>("dot");
-    std::shared_ptr<TrajectoryNode> trajectory = TrajectoryNode::alloc(image);
-    vector<Vec2> points = {
-        Vec2(1.0f, 1.0f),
-        Vec2(2.0f, 2.0f),
-        Vec2(3.0f, 3.0f),
-        Vec2(4.0f, 4.0f),
-        Vec2(5.0f, 5.0f),
-    };
-    
-    for (int i= 0; i< points.size(); i++){
-        points[i] *= _scale;
-    }
-    trajectory->setPoints(points);
-    trajectory->setPosition(0.0, 0.0f);
-    _worldnode->addChild(trajectory);
+    _trajectoryNode = TrajectoryNode::alloc(image);
+//    vector<Vec2> points = {
+//        Vec2(1.0f, 1.0f),
+//        Vec2(2.0f, 2.0f),
+//        Vec2(3.0f, 3.0f),
+//        Vec2(4.0f, 4.0f),
+//        Vec2(5.0f, 5.0f),
+//    };
+//
+//    for (int i= 0; i< points.size(); i++){
+//        points[i] *= _scale;
+//    }
+//    _trajectoryNode->setPoints(points);
+    _trajectoryNode->setPosition(0.0, 0.0f);
+    _worldnode->addChild(_trajectoryNode);
     
 }
 
@@ -664,21 +666,25 @@ void GameScene::update(float dt) {
             }
         }
     }
+  
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-	//if (_avatar->isGrounded() && _input.isDragging()) {
-	//	glColor3f(1, 1, 1);
-	//	glBegin(GL_LINES);
-	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
-	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world, dt);
-	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
-	//	}
-	//	glEnd();
-	//}
+    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 9 == 0){
+        _trajectoryNode->clearPoints();
+    }
+    
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 9 == 0) {
+        Vec2 startPos = _avatar->getPosition();
+        float m = _avatar->getMass();
+		for (int i = 0; i < 30; i+=5) { // three seconds at 60fps
+            Vec2 plannedImpulse =_input.getPlannedLaunch() / m;
+			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, plannedImpulse, i, _world, dt);
+            _trajectoryNode->addPoint(trajectoryPosition * _scale);
+		}
+	}
+      
 
-    //glEnable(GL_POINT_SMOOTH);
-    //glPointSize(5);
     float cameraWidth = getCamera()->getViewport().size.width;
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
@@ -853,6 +859,8 @@ void GameScene::update(float dt) {
 		reset();
 	}
 }
+
+
 
 /**
 * Sets whether the level is completed.
