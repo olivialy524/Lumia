@@ -612,6 +612,22 @@ void GameScene::update(float dt) {
         }
         door->getNode()->setPosition(door->getPosition()*_scale);
     }
+    
+    for (auto & button : _buttonList) {
+        button->incCD();
+        if (button->getPushedDown()) {
+            button->pushDown();
+            if (button->getCD() >= 30) {
+                button->resetCD();
+            }
+        }
+        else if (button->getCD() >= 5) {
+            button->pushUp();
+            button->resetCD();
+        }
+        button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
+        button->getNode()->setContentHeight(button->getHeight()*_scale);
+    }
 
     // check if Lumia bodies fell out of the level, and remove as needed
     for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
