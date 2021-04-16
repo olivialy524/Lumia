@@ -30,9 +30,9 @@ using namespace cugl;
 #define SCENE_HEIGHT 576
 
 /** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
+#define DEFAULT_WIDTH   50.0f
 /** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
+#define DEFAULT_HEIGHT  20.0f
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -426,8 +426,18 @@ void GameScene::populate() {
        
         _world->addObstacle(platobj);
         platobj->setDebugScene(_debugnode);
-        sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+        platobj->setPosition(t->getX(), t->getY());
+        sprite->setPosition(t->getX()*_scale, t->getY()* _scale);
         _worldnode->addChild(sprite, 1);
+        
+        cout <<"type" << t->getType()<< endl;
+        cout <<"angle" << t->getAngle()<< endl;
+//        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
+        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
+        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
+        for (int i = 0; i< grid_data.size(); i++ ){
+            cout << grid_data[i].x << "" << grid_data[i].y << endl;
+        }
         
     }
  
@@ -524,6 +534,9 @@ void GameScene::populate() {
         Vec2(3.0f, 3.0f),
         Vec2(4.0f, 4.0f),
         Vec2(5.0f, 5.0f),
+        Vec2(10.8f, 4.92f),
+        Vec2(10.8f, 7.89f),
+        
     };
     
     for (int i= 0; i< points.size(); i++){
