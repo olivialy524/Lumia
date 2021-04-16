@@ -58,6 +58,9 @@ private:
     /** The touch id(s) of fingers on the screen */
     std::unordered_set<Uint64> _touchids;
   
+    /** Maximum allowed Lumia launch velocity */
+    float MAXIMUM_LAUNCH_VELOCITY = 20.0f;
+    
 protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
@@ -231,6 +234,10 @@ public:
 	 * @return true if the exit button was pressed.
 	 */
 	bool didExit() const { return _exitPressed; }
+    
+    float getMaximumLaunchVelocity(){
+        return MAXIMUM_LAUNCH_VELOCITY;
+    }
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks

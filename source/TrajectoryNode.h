@@ -53,7 +53,11 @@ public:
     }
     
     void setEndAlpha(float f){
-        _endAlpha = f;
+        if (f > 1.0f){
+            _endAlpha = 1.0f;
+        }else{
+            _endAlpha = f;
+        }
     }
     
     void clearPoints(){

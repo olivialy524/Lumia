@@ -21,7 +21,6 @@
 #include "TileDataModel.h"
 //#include "PathFindingController.h"
 #include "TrajectoryNode.h"
-#include "TrajectoryCallback.h"
 /**
  * This class is the primary gameplay constroller for the demo.
  *

@@ -520,18 +520,6 @@ void GameScene::populate() {
 #pragma mark trajectory
     image = _assets->get<Texture>("dot");
     _trajectoryNode = TrajectoryNode::alloc(image);
-//    vector<Vec2> points = {
-//        Vec2(1.0f, 1.0f),
-//        Vec2(2.0f, 2.0f),
-//        Vec2(3.0f, 3.0f),
-//        Vec2(4.0f, 4.0f),
-//        Vec2(5.0f, 5.0f),
-//    };
-//
-//    for (int i= 0; i< points.size(); i++){
-//        points[i] *= _scale;
-//    }
-//    _trajectoryNode->setPoints(points);
     _trajectoryNode->setPosition(0.0, 0.0f);
     _worldnode->addChild(_trajectoryNode);
     
@@ -670,18 +658,21 @@ void GameScene::update(float dt) {
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 9 == 0){
+    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 8 == 0){
         _trajectoryNode->clearPoints();
     }
     
-	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 9 == 0) {
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 8 == 0) {
         Vec2 startPos = _avatar->getPosition();
         float m = _avatar->getMass();
-		for (int i = 0; i < 30; i+=5) { // three seconds at 60fps
-            Vec2 plannedImpulse =_input.getPlannedLaunch() / m;
-			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, plannedImpulse, i, _world, dt);
+        Vec2 plannedImpulse = _input.getPlannedLaunch();
+        Vec2 initialVelocity = plannedImpulse / m;
+		for (int i = 1; i < 35; i+=5) {
+			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i, _world, dt);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}
+        float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input.getMaximumLaunchVelocity(), 2);
+        _trajectoryNode->setEndAlpha(endAlpha);
 	}
       
 

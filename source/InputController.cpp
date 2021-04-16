@@ -15,8 +15,6 @@ using namespace cugl;
 
 #pragma mark Input Constants
 
-/** Maximum allowed Lumia launch velocity */
-#define MAXIMUM_LAUNCH_VELOCITY 20.0f
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
