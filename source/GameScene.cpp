@@ -198,7 +198,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->onEndContact = [this](b2Contact* contact) {
         endContact(contact);
     };
-  
+    
+    
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -261,6 +262,7 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _collisionController.dispose();
+        _trajectoryNode->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -317,6 +319,7 @@ void GameScene::reset() {
     }
     _enemyList.clear();
     _collisionController.clearStates();
+    _trajectoryNode->dispose();
 
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
@@ -348,6 +351,7 @@ void GameScene::populate() {
 //    }
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
+    
 
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
@@ -512,6 +516,13 @@ void GameScene::populate() {
         _enemyList.push_back(enemy);
     }
     
+    
+#pragma mark trajectory
+    image = _assets->get<Texture>("dot");
+    _trajectoryNode = TrajectoryNode::alloc(image);
+    _trajectoryNode->setPosition(0.0, 0.0f);
+    _worldnode->addChild(_trajectoryNode);
+    
 }
 
 /**
@@ -643,21 +654,28 @@ void GameScene::update(float dt) {
             }
         }
     }
+  
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-	//if (_avatar->isGrounded() && _input.isDragging()) {
-	//	glColor3f(1, 1, 1);
-	//	glBegin(GL_LINES);
-	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
-	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world, dt);
-	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
-	//	}
-	//	glEnd();
-	//}
+    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 8 == 0){
+        _trajectoryNode->clearPoints();
+    }
+    
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 8 == 0) {
+        Vec2 startPos = _avatar->getPosition();
+        float m = _avatar->getMass();
+        Vec2 plannedImpulse = _input.getPlannedLaunch();
+        Vec2 initialVelocity = plannedImpulse / m;
+		for (int i = 1; i < 35; i+=5) {
+			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i, _world, dt);
+            _trajectoryNode->addPoint(trajectoryPosition * _scale);
+		}
+        float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input.getMaximumLaunchVelocity(), 2);
+        _trajectoryNode->setEndAlpha(endAlpha);
+	}
+      
 
-    //glEnable(GL_POINT_SMOOTH);
-    //glPointSize(5);
     float cameraWidth = getCamera()->getViewport().size.width;
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
@@ -832,6 +850,8 @@ void GameScene::update(float dt) {
 		reset();
 	}
 }
+
+
 
 /**
 * Sets whether the level is completed.

@@ -15,8 +15,6 @@ using namespace cugl;
 
 #pragma mark Input Constants
 
-/** Maximum allowed Lumia launch velocity */
-#define MAXIMUM_LAUNCH_VELOCITY 20.0f
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
@@ -60,7 +58,9 @@ _keyMerge(false),
 _switched(false),
 _switchInputted(false),
 _launched(false),
-_launchInputted(false)
+_launchInputted(false),
+_dragged(false),
+_dragging(false)
 {
 }
 
@@ -77,7 +77,7 @@ void InputController::dispose() {
         Mouse* mouse = Input::get<Mouse>();
         mouse->removePressListener(LISTENER_KEY);
         mouse->removeReleaseListener(LISTENER_KEY);
-        mouse->removeMotionListener(LISTENER_KEY);
+        mouse->removeDragListener(LISTENER_KEY);
 #else
         Touchscreen* touch = Input::get<Touchscreen>();
         touch->removeBeginListener(LISTENER_KEY);
@@ -111,8 +111,8 @@ bool InputController::init() {
     mouse->addReleaseListener(LISTENER_KEY, [=](const MouseEvent& event, Uint8 clicks, bool focus) {
         this->mouseReleasedCB(event, clicks, focus);
     });
-    mouse->addMotionListener(LISTENER_KEY, [=](const MouseEvent& event, const Vec2& previous, bool focus) {
-        this->mouseMovedCB(event, previous, focus);
+    mouse->addDragListener(LISTENER_KEY, [=](const MouseEvent& event, const Vec2& previous, bool focus) {
+        this->mouseDraggedCB(event, previous, focus);
     });
 #else
     Touchscreen* touch = Input::get<Touchscreen>();
@@ -123,7 +123,7 @@ bool InputController::init() {
         this->touchEndedCB(event,focus);
     });
     touch->addMotionListener(LISTENER_KEY, [=](const TouchEvent& event, const Vec2& previous, bool focus) {
-        this->touchesMovedCB(event, previous, focus);
+        this->touchesDraggedCB(event, previous, focus);
     });
 	
 #endif
@@ -193,6 +193,7 @@ void InputController::clear() {
     _launched = false;
     _switched = false;
     _dragging = false;
+    _dragged = false;
 
     _inputLaunch = Vec2::ZERO;
     _inputSwitch = Vec2::ZERO;
@@ -241,11 +242,11 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
         _inputSwitch = event.position;
         _switchInputted = true;
     } else {
-        _dragging = false;
+        _dragged = false;
 
         finishDrag = calculateLaunch(finishDrag);
 
-        _inputLaunch = finishDrag;
+        _inputLaunch = _plannedLaunch;
         _launchInputted = true;
     }
 }
@@ -257,12 +258,11 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
  * @param previous The previous position of the touch
  * @param focus	Whether the listener currently has focus
  */
-void InputController::mouseMovedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
+void InputController::mouseDraggedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
     Vec2 currentDrag = event.position - _dclick;
-
     // only register player as dragging if sufficiently far from initial click/touch
     if (currentDrag.lengthSquared() >= 625.0f) {
-        _dragging = true;
+        _dragged = true;
 
         currentDrag = calculateLaunch(currentDrag);
 
@@ -314,7 +314,7 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
         _inputSwitch = event.position;
         _switchInputted = true;
     } else {
-        _dragging = false;
+        _dragged = false;
 
         finishDrag = calculateLaunch(finishDrag);
 
@@ -344,15 +344,17 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
  * @param previous The previous position of the touch
  * @param focus	Whether the listener currently has focus
  */
-void InputController::touchesMovedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
-    Vec2 currentDrag = event.position - _dclick;
+void InputController::touchesDraggedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
+    if (_touchids.size() == 1) {
+        Vec2 currentDrag = event.position - _dclick;
 
-    // only register player as dragging if sufficiently far from initial click/touch
-    if (currentDrag.lengthSquared() >= 625.0f) {
-        _dragging = true;
+        // only register player as dragging if sufficiently far from initial click/touch
+        if (currentDrag.lengthSquared() >= 625.0f) {
+            _dragged = true;
 
-        currentDrag = calculateLaunch(currentDrag);
+            currentDrag = calculateLaunch(currentDrag);
 
-        _plannedLaunch = currentDrag;
+            _plannedLaunch = currentDrag;
+        }
     }
 }
