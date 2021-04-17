@@ -29,6 +29,7 @@ using namespace cugl;
 bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     setName("levelselect");
 
+    
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
     dimen *= SCENE_WIDTH/dimen.width; // Lock the game to a reasonable resolution
@@ -54,22 +55,22 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
             count++;
             continue;
         }
-
-        std::shared_ptr<scene2::Button> butt = std::dynamic_pointer_cast<scene2::Button>(*it);
-        _buttons[butt->getName()] = butt;
-        if (butt->getName() == "settings") {
-            butt->addListener([=](const std::string& name, bool down) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
+        _buttons[button->getName()] = button;
+        if (button->getName() == "settings") {
+            button->addListener([=](const std::string& name, bool down) {
                 this->_active = down;
                 _nextScene = "settings";
             });
         } else {
-            butt->addListener([=](const std::string& name, bool down) {
+            button->addListener([=](const std::string& name, bool down) {
                 this->_active = down;
                 _nextScene = "game";
                 _selectedLevel = "json/level" + std::to_string(count) + ".json";
+
             });
         }
-        
+        button->activate();
         count++;
     }
     
@@ -104,4 +105,3 @@ void LevelSelectScene::setActive(bool value) {
         }
     }
 }
-

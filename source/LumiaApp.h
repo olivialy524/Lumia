@@ -19,6 +19,14 @@
  */
 class LumiaApp : public cugl::Application {
 protected:
+    enum CurrentScene{
+        Loading,
+        Main,
+        LevelSelect,
+        Settings,
+        Game
+    };
+    
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
@@ -35,11 +43,8 @@ protected:
     MainMenuScene _mainMenu;
     /** The controller for the settings screen */
     SettingsScene _settings;
-    /** The currently active scene */
-    cugl::Scene2* _currentScene;
-    
-    /** Whether or not we have finished loading all assets */
-    bool _loaded;
+    /** The current scene of the game*/
+    CurrentScene _scene;
     
 public:
 #pragma mark Constructors
@@ -52,7 +57,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    LumiaApp() : cugl::Application(), _loaded(false) {}
+    LumiaApp() : cugl::Application(), _scene(Loading) {}
     
     /**
      * Disposes of this application, releasing all resources.
