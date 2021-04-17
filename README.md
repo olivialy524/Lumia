@@ -7,6 +7,7 @@ Lumia is a golf platformer mobile game. The objective of finishing the level is 
 - tap on the Lumia body to switch control
 - 2 finger tap to split controlling Lumia
 - 3 finger tap/ hold to merge nearby Lumias to the controlling Lumia
+- 4 finger tap to reset level (used for debug only)
 
 ## Notes
 *[Updated: 04/11/2021 for Alpha Release]*
