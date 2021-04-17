@@ -58,6 +58,9 @@ private:
     /** The touch id(s) of fingers on the screen */
     std::unordered_set<Uint64> _touchids;
   
+    /** Maximum allowed Lumia launch velocity */
+    float MAXIMUM_LAUNCH_VELOCITY = 20.0f;
+    
 protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
@@ -81,6 +84,8 @@ protected:
     cugl::Vec2 _inputLaunch;
     /** Whether the player is dragging */
     bool _dragging;
+    /** Whether the player is dragging */
+    bool _dragged;
     /** The planned launch velocity produced by player input drag */
     cugl::Vec2 _plannedLaunch;
   
@@ -173,7 +178,7 @@ public:
      *
      * @return whether or not the player is dragging their mouse/finger
      */
-    bool isDragging() { return _dragging; }
+    bool isDragging() { return _dragged; }
 
     /**
      * Returns the attempted input switch tap/click location.
@@ -229,6 +234,10 @@ public:
 	 * @return true if the exit button was pressed.
 	 */
 	bool didExit() const { return _exitPressed; }
+    
+    float getMaximumLaunchVelocity(){
+        return MAXIMUM_LAUNCH_VELOCITY;
+    }
 
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
@@ -258,7 +267,7 @@ public:
      * @param previous The previous position of the touch
      * @param focus	Whether the listener currently has focus
      */
-    void mouseMovedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
+    void mouseDraggedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
 
     /**
      * Callback for the beginning of a touch event
@@ -284,7 +293,7 @@ public:
      * @param previous The previous position of the touch
      * @param focus	Whether the listener currently has focus
      */
-    void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
+    void touchesDraggedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
   
 };
 

@@ -141,8 +141,11 @@ void LumiaModel::applyForce() {
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
+        setGravityScale(0.0f);
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
+    }else{
+        setGravityScale(1.0f);
     }
     if (!isLaunching() && isGrounded()) {
         // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
