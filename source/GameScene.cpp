@@ -626,7 +626,7 @@ void GameScene::update(float dt) {
             button->resetCD();
         }
         button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
-        button->getNode()->setContentHeight(button->getHeight()*_scale);
+        //button->getNode()->setContentHeight(button->getHeight()*_scale);
     }
 
     // check if Lumia bodies fell out of the level, and remove as needed
