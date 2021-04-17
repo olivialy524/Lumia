@@ -42,7 +42,6 @@ void LumiaApp::onStartup() {
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
     _assets->attach<TileDataModel>(GenericLoader<TileDataModel>::alloc()->getHook());
     // Create a "loading" screen
-    _loaded = false;
     _loading.init(_assets);
     
     // Que up the other assets
@@ -68,6 +67,9 @@ void LumiaApp::onStartup() {
 void LumiaApp::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
+    _settings.dispose();
+    _levelSelect.dispose();
+    _mainMenu.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -127,64 +129,70 @@ void LumiaApp::onResume() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void LumiaApp::update(float timestep) {
-    if (!_loaded && _loading.isActive()) {
-        _loading.update(0.01f);
-    } else if (!_loaded) {
-        _loading.dispose(); // Disables the input listeners in this mode
-
-        _gameplay.init(_assets, "json/level1.json");
-        _gameplay.setActive(false);
-        _levelSelect.init(_assets);
-        _levelSelect.setActive(false);
-        _settings.init(_assets);
-        _settings.setActive(false);
-        
-        // we have finished loading assets, go to main menu
-        _mainMenu.init(_assets);
-        _mainMenu.setActive(true);
-        _currentScene = &_mainMenu;
-        _loaded = true;
-    } else {
-        // Screens:
-        // Main menu -> settings/level select/exit
-        // Settings -> main menu/gameplay
-        // Level select -> main menu/gameplay
-        // Gameplay / gameoverlay -> mainmenu
-        // Pause -> gameplay
-        // Loading -> mainmenu
-        // Game Over -> gameplay/mainmenu
-
-        if (!_currentScene->isActive()) {
-            string nextScene;
-            if (_currentScene->getName() == "mainmenu") {
-                _mainMenu.setActive(false);
-                nextScene = dynamic_cast<MainMenuScene*>(_currentScene)->getNextScene();
-                if (nextScene == "levelselect") {
-                    _levelSelect.setActive(true);
-                    _currentScene = &_levelSelect;
-                }
-            } else if (_currentScene->getName() == "levelselect") {
-                _levelSelect.setActive(false);
-                nextScene = dynamic_cast<LevelSelectScene*>(_currentScene)->getNextScene();
-                if (nextScene == "game") {
-                    _gameplay.init(_assets, dynamic_cast<LevelSelectScene*>(_currentScene)->getSelectedLevel());
-                    _gameplay.setMusicVolume(_settings.getMusicVolume() / 100.0f);
-                    _gameplay.setEffectVolume(_settings.getEffectVolume() / 100.0f);
-                    _currentScene = &_gameplay;
-                } else if (nextScene == "settings") {
-                    _settings.setActive(true);
-                    _currentScene = &_settings;
-                }
-            } else if(_currentScene->getName() == "settings") {
+    switch (_scene){
+        case Loading:{
+            if (_loading.isActive()){
+                _loading.update(0.01f);
+            }else{
+                _scene = Main;
+                _loading.dispose();
+                _mainMenu.init(_assets);
+                _mainMenu.setActive(true);
+                _settings.init(_assets);
                 _settings.setActive(false);
-                nextScene = dynamic_cast<SettingsScene*>(_currentScene)->getNextScene();
-                if (nextScene == "levelselect") {
+            }
+            return;
+        }
+        case Main:{
+            if (_mainMenu.isActive()){
+                _mainMenu.update(timestep);
+            }else{
+                _mainMenu.dispose();
+                string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
+                if (nextScene ==  "levelselect"){
+                    _scene = LevelSelect;
+                    _levelSelect.init(_assets);
                     _levelSelect.setActive(true);
-                    _currentScene = &_levelSelect;
                 }
             }
-        } else {
-            _currentScene->update(timestep);
+            return;
+            
+        }
+        case LevelSelect:{
+            if (_levelSelect.isActive()){
+                    _levelSelect.update(timestep);
+            }else{
+                string nextScene = _levelSelect.getNextScene();
+                if (nextScene ==  "game"){
+                    _scene = Game;
+                    _gameplay.init(_assets, _levelSelect.getSelectedLevel());
+                    _gameplay.setActive(true);
+                    _levelSelect.setActive(false);
+                }else if (nextScene == "settings") {
+                    _levelSelect.setActive(false);
+                    _scene = Settings;
+                    _settings.setActive(true);
+                }
+            }
+            return;
+        }
+        case Game:{
+            _gameplay.update(timestep);
+            return;
+        }
+        case Settings:{
+            if (_settings.isActive()){
+                    _settings.update(timestep);
+            }else{
+                string nextScene = _settings.getNextScene();
+                if (nextScene == "levelselect") {
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                    _settings.setActive(false);
+                }
+            }
+            return;
+            
         }
     }
 }
@@ -199,10 +207,29 @@ void LumiaApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void LumiaApp::draw() {
-    if (!_loaded) {
-        _loading.render(_batch);
-    } else {
-        _currentScene->render(_batch);
+    switch (_scene){
+        case Loading:{
+            _loading.render(_batch);
+            break;
+        }
+        case Main:{
+            _mainMenu.render(_batch);
+            break;
+        }
+        case LevelSelect:{
+            _levelSelect.render(_batch);
+            break;
+        }
+        case Settings:{
+            _settings.render(_batch);
+            break;
+        }
+        case Game:{
+            _gameplay.render(_batch);
+            break;
+        }
+        
     }
+        
 }
 

@@ -50,6 +50,11 @@ public:
      */
     virtual void dispose() override;
     
+    void resetAttributes(){
+        _nextScene = "";
+        _selectedLevel = "";
+    }
+    
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -80,6 +85,7 @@ public:
 
     /** Returns the string representing the next scene to transition to */
     string getSelectedLevel() { return _selectedLevel; };
+    
 };
 
 #endif /* __LEVEL_SELECT_SCENE_H__ */
