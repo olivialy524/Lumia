@@ -147,4 +147,5 @@ public:
      */
     virtual void draw() override;
 };
-#endif /* __PF_APP_H__ */
+
+#endif /* __LUMIA_APP_H__ */

@@ -755,20 +755,38 @@ void GameScene::update(float dt) {
                 CULog("current: (%f, %f)", currentVel.x, currentVel.y);
                 CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeAvatarNode();
-                int newSize = _avatar->getSmallerSizeLevel();
-                createLumia(newSize,
-                    pos + offset,
-                    currentVel.x >= 0,
-                    splitVel1,
-                    currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
-                );
-                createLumia(newSize,
-                    pos - offset,
-                    currentVel.x < 0,
-                    splitVel2,
-                    currentVel.x < 0 ? currentAngularVel : -currentAngularVel
-                );
-                
+                if ((currentSizeLevel + 1) % 2 == 0) {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                } else {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+                    int newSize2 = newSize + 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize2,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                }
             } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
@@ -1152,7 +1170,7 @@ void GameScene::beginContact(b2Contact* contact) {
         // handle collision between two Lumias
         else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd1 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
@@ -1160,7 +1178,7 @@ void GameScene::beginContact(b2Contact* contact) {
             break;
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd2 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
