@@ -86,23 +86,25 @@ void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<Enemy
 }
 
 void CollisionController::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
-    _energiesToRemove.push_back(energy);
-    energy->setRemoved(true);
+    if (lumia->getSizeLevel() < LumiaModel::sizeLevels.size() - 1) {
+        _energiesToRemove.push_back(energy);
+        energy->setRemoved(true);
 
-    int newSize = lumia->getBiggerSizeLevel();
-    float radiusDiff = LumiaModel::sizeLevels[newSize].radius - LumiaModel::sizeLevels[lumia->getSizeLevel()].radius;
-    Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + radiusDiff);
-    struct LumiaBody lumiaNew = {
-        newPosition,
-        newSize,
-        isAvatar,
-        lumia->getLinearVelocity(),
-        lumia->getAngularVelocity()
-    };
+        int newSize = lumia->getBiggerSizeLevel();
+        float radiusDiff = LumiaModel::sizeLevels[newSize].radius - LumiaModel::sizeLevels[lumia->getSizeLevel()].radius;
+        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y + radiusDiff);
+        struct LumiaBody lumiaNew = {
+            newPosition,
+            newSize,
+            isAvatar,
+            lumia->getLinearVelocity(),
+            lumia->getAngularVelocity()
+        };
 
-    _lumiasToRemove.push_back(lumia);
-    lumia->setRemoved(true);
-    _lumiasToCreate.push_back(lumiaNew);
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+        _lumiasToCreate.push_back(lumiaNew);
+    }
 }
 
 void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<LumiaModel> lumia2, bool isAvatar) {
@@ -118,15 +120,15 @@ void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<Lumia
             float newX = ((lumia->getPosition().x + lumia2->getPosition().x) / 2) + 0.5 + LumiaModel::sizeLevels[newSize2].radius;
             float newY = lumia->getPosition().y + (LumiaModel::sizeLevels[newSize2].radius - LumiaModel::sizeLevels[lumia->getSizeLevel()].radius);
             Vec2 newPosition = Vec2(newX, newY);
-            struct LumiaBody lumiaNew = {
+            struct LumiaBody lumiaNew2 = {
                 newPosition,
-                newSize,
+                newSize2,
                 false,
                 (lumia->getLinearVelocity() + lumia2->getLinearVelocity()) / 2,
                 lumia->getAngularVelocity()
             };
 
-            _lumiasToCreate.push_back(lumiaNew);
+            _lumiasToCreate.push_back(lumiaNew2);
         }
 
         float newX = (lumia->getPosition().x + lumia2->getPosition().x) / 2;
@@ -139,7 +141,7 @@ void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<Lumia
             (lumia->getLinearVelocity() + lumia2->getLinearVelocity()) / 2,
             lumia->getAngularVelocity()
         };
-
+        
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
         _lumiasToRemove.push_back(lumia2);
