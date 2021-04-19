@@ -14,22 +14,26 @@ void Button::dispose() {
     _sceneNode = nullptr;
 }
 
-void Button::pushDown() {
+void Button::pushDown(float scale) {
     if (getHeight() <= getNormHeight()/4) {
         return;
     }
     setHeight(getHeight() - .01);
+    _node->setContentHeight(_node->getContentHeight() - .01*sqrt(scale));
     setPosition(getPosition().x, getPosition().y-.005);
+    _node->setPosition(_node->getPositionX(), _node->getPositionY()-.005*scale);
     if (getHeight() <= getNormHeight()/4) {
         setHeight(getNormHeight()/4);
     }
 }
-void Button::pushUp() {
+void Button::pushUp(float scale) {
 if (getHeight() >= getNormHeight()) {
     return;
 }
 setHeight(getHeight() + .01);
+_node->setContentHeight(_node->getContentHeight() + .01*sqrt(scale));
     setPosition(getPosition().x, getPosition().y+.005);
+    _node->setPosition(_node->getPosition().x, _node->getPosition().y+.005*scale);
 if (getHeight() >= getNormHeight()) {
     setHeight(getNormHeight());
 }

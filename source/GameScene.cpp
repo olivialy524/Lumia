@@ -616,16 +616,18 @@ void GameScene::update(float dt) {
     for (auto & button : _buttonList) {
         button->incCD();
         if (button->getPushedDown()) {
-            button->pushDown();
+            button->pushDown(_scale);
             if (button->getCD() >= 30) {
                 button->resetCD();
             }
         }
         else if (button->getCD() >= 5) {
-            button->pushUp();
+            button->pushUp(_scale);
             button->resetCD();
         }
-        button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
+        cout << "Button Position y: " << button->getPosition().y << "\n";
+        cout << "Node Position y: " << button->getNode()->getPositionY() << "\n";
+        //button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
         //button->getNode()->setContentHeight(button->getHeight()*_scale);
     }
 

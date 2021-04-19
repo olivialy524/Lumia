@@ -75,7 +75,7 @@ public:
     void setPushedDown(bool p) {
         _pushedDown = p;
     }
-    void pushDown();
+    void pushDown(float scale);
     
     int getCD() {
         return _cooldown;
@@ -88,7 +88,7 @@ public:
     void resetCD() {
         _cooldown = 0;
     }
-    void pushUp();
+    void pushUp(float scale);
     
 };
 
