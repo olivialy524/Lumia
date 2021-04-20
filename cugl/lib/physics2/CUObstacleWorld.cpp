@@ -48,6 +48,7 @@
 #include <Box2D/Collision/b2Collision.h>
 #include <cugl/physics2/CUObstacleWorld.h>
 #include <cugl/physics2/CUObstacle.h>
+#include <iostream>
 
 using namespace cugl;
 using namespace cugl::physics2;
@@ -256,6 +257,15 @@ bool ObstacleWorld::init(const Rect bounds, const Vec2 gravity) {
  * param obj The obstacle to add
  */
 void ObstacleWorld::addObstacle(const std::shared_ptr<Obstacle>& obj) {
+    if (!inBounds(obj.get())){
+//        CULog(obj->getPosition());
+//        CULog(_bounds.origin.x);
+        std::cout << "pos" << obj->getPosition().x <<"," << obj->getPosition().y <<std::endl;
+        std::cout << "bound" << _bounds.origin.x <<"," << _bounds.origin.y <<std::endl;
+        std::cout << "bound" << _bounds.size.width <<"," << _bounds.size.height <<std::endl;
+        
+        
+    }
     CUAssertLog(inBounds(obj.get()), "Obstacle is not in bounds");
     _objects.push_back(obj);
     obj->activatePhysics(*_world);
