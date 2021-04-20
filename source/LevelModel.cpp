@@ -7,7 +7,8 @@
 //
 
 #define PLANT_NAME       "plant"
-#define ENERGY_NAME       "energy"
+#define SPIKE_NAME       "spike"
+#define ENERGY_NAME      "energy"
 #define PLATFORM_NAME    "platform"
 #define LUMIA_NAME       "lumia"
 #define ENEMY_NAME       "enemy"
@@ -39,6 +40,7 @@ void LevelModel::dispose(){
     _lumia = nullptr;
     _enemies.clear();
     _plants.clear();
+    _spikes.clear();
     _energies.clear();
     _buttons.clear();
     _doors.clear();
@@ -57,6 +59,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     _xBound = _leveljson->getFloat("xBound");
     _yBound = _leveljson->getFloat("yBound");
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
+    std::shared_ptr<cugl::JsonValue> spikes_json = _leveljson->get("spikes");
     std::shared_ptr<cugl::JsonValue> energies_json = _leveljson->get("energies");
     std::shared_ptr<cugl::JsonValue> tiles_json = _leveljson->get("platforms");
     std::shared_ptr<cugl::JsonValue> lumia_json = _leveljson->get("lumia");
@@ -65,6 +68,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     createButtonsAndDoors(buttondoor_json);
     createPlants(plants_json);
+    createSpikes(spikes_json);
     createEnergies(energies_json);
     createTiles(tiles_json);
     createLumia(lumia_json);
@@ -101,6 +105,34 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         _plants.push_back(plant);
     }
     return _plants;
+}
+
+std::vector<std::shared_ptr<SpikeModel>> LevelModel::createSpikes(const std::shared_ptr<cugl::JsonValue>& spikes) {
+
+    for (int i = 0; i < spikes->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> spike_json = spikes->get(i);
+        float posx = spike_json->getFloat("posx");
+        float posy = spike_json->getFloat("posy");
+        float ang = (spike_json->getFloat("angle")) * M_PI / 180.0f;
+        cugl::Size size = Size(0.5f, 0.5f);
+        std::shared_ptr<SpikeModel> spike = SpikeModel::alloc(Vec2(posx, posy), size);
+
+        //set body parameters
+        spike->setBodyType(b2_staticBody);
+        spike->setAngle(ang);
+        spike->setFriction(0.0f);
+        spike->setRestitution(0.0f);
+        spike->setName(SPIKE_NAME);
+        spike->setDensity(0);
+        spike->setBullet(false);
+        spike->setGravityScale(0);
+        spike->setSensor(false);
+        spike->setDebugColor(DEBUG_COLOR);
+        spike->setVX(0);
+
+        _spikes.push_back(spike);
+    }
+    return _spikes;
 }
 
 std::vector<std::shared_ptr<EnergyModel>> LevelModel::createEnergies(const std::shared_ptr<cugl::JsonValue>& energies) {

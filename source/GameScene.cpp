@@ -60,6 +60,9 @@ using namespace cugl;
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 
+/** The name of a spike (for object identification) */
+#define SPIKE_NAME       "spike"
+
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
@@ -456,6 +459,18 @@ void GameScene::populate() {
         addObstacle(plant, plant->getNode(), 0);
         _plantList.push_front(plant);
     }
+
+#pragma mark : Spikes
+    vector<std::shared_ptr<SpikeModel>> spikes = _level->getSpikes();
+    image = _assets->get<Texture>("lamp");
+    for (int i = 0; i < spikes.size(); i++) {
+        auto spike = spikes[i];
+        spike->setDrawScale(_scale);
+        spike->setTextures(image, spike->getAngle());
+        spike->setVX(0);
+        addObstacle(spike, spike->getNode(), 0);
+        _spikeList.push_front(spike);
+    }
     
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
@@ -786,8 +801,6 @@ void GameScene::update(float dt) {
             
     }
 
-    ticks++;
-
     if (ticks % 100 == 0){
         for (auto & enemy : _enemyList){
             std::shared_ptr<LumiaModel> closestLumia;
@@ -815,6 +828,8 @@ void GameScene::update(float dt) {
             enemy->setInCoolDown(false);
         }
     }
+
+    ticks++;
 //    for (auto & lumia : _lumiaList){
 //        Vec2 lastPos = lumia->getLastPosition();
 //        _graph[{Vec2(floor(lastPos.x), floor(lastPos.y))}] = NodeState::Void;
@@ -1100,6 +1115,11 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd2)->lightUp();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
+        // handle collision between spike and Lumia
+        } else if (bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get()) {
+            _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+        } else if (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get()) {
+            _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
         }
         // handle collision between enemy and Lumia
         else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get()) {

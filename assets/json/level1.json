@@ -39,7 +39,14 @@
                 "posy": 3.5,
                 "angle": 90
             }
-                ],
+        ],
+        "spikes": [
+            {
+                "posx": 13,
+                "posy": 1.5,
+                "angle": 0
+            }
+        ],
         "buttondoors": [
             {
             "button" :{

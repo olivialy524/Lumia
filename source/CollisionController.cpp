@@ -48,6 +48,32 @@ void CollisionController::processPlantLumiaCollision(int newSize, const std::sha
     }
 }
 
+void CollisionController::processSpikeLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
+    // Lumia body remains if above min size, otherwise kill Lumia body
+    if (lumia->getSizeLevel() != newSize) {
+        float radiusDiff = LumiaModel::sizeLevels[lumia->getSizeLevel()].radius - LumiaModel::sizeLevels[newSize].radius;
+        Vec2 newPosition = Vec2(lumia->getPosition().x, lumia->getPosition().y - radiusDiff);
+        struct LumiaBody lumiaNew = {
+            newPosition,
+            newSize,
+            isAvatar,
+            lumia->getLinearVelocity(),
+            lumia->getAngularVelocity()
+        };
+
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+        _lumiasToCreate.push_back(lumiaNew);
+    } else {
+        // if avatar is killed, player is given control of nearest Lumia body
+        if (isAvatar) {
+            _switchLumia = true;
+        }
+        _lumiasToRemove.push_back(lumia);
+        lumia->setRemoved(true);
+    }
+}
+
 void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
     enemy->setInCoolDown(true);
     bool destroyEnemy = lumia->getSizeLevel() > enemy->getSizeLevel();

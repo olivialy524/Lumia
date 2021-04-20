@@ -85,6 +85,9 @@ public:
     /** Processes a collision between Lumia and a magical plant */
     void processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar);
 
+    /** Processes a collision between Lumia and a spike */
+    void processSpikeLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar);
+
     /** Processes a collision between Lumia and a magical plant */
     void processEnemyLumiaCollision(const std::shared_ptr<EnemyModel> enemy,const std::shared_ptr<LumiaModel> lumia, bool isAvatar);
 
