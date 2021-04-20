@@ -326,7 +326,8 @@ void GameScene::reset() {
     }
     _enemyList.clear();
     _collisionController.clearStates();
-
+    setMusicVolume(.7);
+    setEffectVolume(.7);
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
     setComplete(false);
@@ -334,8 +335,6 @@ void GameScene::reset() {
     float cameraWidth = getCamera()->getViewport().size.width;
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
-    setMusicVolume(.7);
-    setEffectVolume(.7);
 }
 
 /**
