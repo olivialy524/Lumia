@@ -708,7 +708,7 @@ void GameScene::update(float dt) {
     if(!_avatar->isRemoved()){
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
-        }else if (_input.didSplit()){
+        }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
