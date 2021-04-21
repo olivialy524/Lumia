@@ -117,6 +117,12 @@
     <ClInclude Include="..\..\source\TrajectoryNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\StickyWallModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\StickyWallNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico">
@@ -202,6 +208,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\TrajectoryNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\StickyWallModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\StickyWallNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
