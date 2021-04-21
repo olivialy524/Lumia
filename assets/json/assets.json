@@ -5,6 +5,11 @@
             "wrapS": "repeat",
             "wrapT": "repeat"
         },
+        "sticky-wall": {
+            "file": "textures/sticky_placeholder.png",
+            "wrapS": "repeat",
+            "wrapT": "repeat"
+        },
         "avatar-indicator":{
             "file": "textures/avatar_indicator.png"
         },

@@ -14,6 +14,7 @@
 #include "EnergyModel.h"
 #include "Button.h"
 #include "Door.h"
+#include "StickyWallModel.h"
 
 class CollisionController {
 public:
@@ -40,6 +41,10 @@ protected:
     std::list<std::shared_ptr<LumiaModel>> _lumiasToRemove;
     /** List of Lumia bodies to create in next update step */
     std::list<LumiaBody> _lumiasToCreate;
+    /** List of Lumia bodies to stick in next update step */
+    std::list<std::shared_ptr<LumiaModel>> _lumiasToStick;
+    /** List of Lumia bodies to Unstick in next update step */
+    std::list<std::shared_ptr<LumiaModel>> _lumiasToUnstick;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
     
@@ -98,6 +103,10 @@ public:
 
     void processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
     
+    void processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall);
+    
+    void processStickyWallLumiaEnding(const std::shared_ptr<LumiaModel> lumia);
+    
     void clearStates();
     
     void addLumiaToRemove(std::shared_ptr<LumiaModel> lumia){
@@ -112,6 +121,14 @@ public:
     
     std::list<LumiaBody> getLumiasToCreate(){
         return _lumiasToCreate;
+    }
+    
+    std::list<std::shared_ptr<LumiaModel>> getLumiasToStick(){
+        return _lumiasToStick;
+    }
+
+    std::list<std::shared_ptr<LumiaModel>> getLumiasToUnstick(){
+        return _lumiasToUnstick;
     }
     
     std::list<std::shared_ptr<EnergyModel>> getEnergiesToRemove(){

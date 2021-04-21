@@ -57,6 +57,8 @@ using namespace cugl;
 /** The key for the win door texture in the asset manager */
 #define LUMIA_TEXTURE   "lumia"
 
+#define STICKY_TEXTURE  "sticky-wall"
+
 #define ENEMY_TEXTURE   "enemy"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
@@ -81,7 +83,7 @@ using namespace cugl;
 
 #define CAMERA_SPEED 4.0f
 
-#define CAMERA_SHIFT 0.3f
+#define CAMERA_SHIFT 0.15f
 
 #define LEVEL_NAME "json/techlevel"
 
@@ -208,7 +210,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
-    _scale *= 1.2f;
+    _scale *= 2.0f;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -479,22 +481,21 @@ void GameScene::populate() {
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
     std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
+    image = _assets->get<Texture>(EARTH_TEXTURE);
     for (int i = 0; i < buttons.size(); i++) {
         std::shared_ptr<Button> b = buttons[i];
         std::shared_ptr<Door> d = doors[i];
-     d->setDensity(10000);
+        d->setDensity(10000);
      //d->setBodyType(b2_staticBody);
         d->setName("door " + toString(i));
         Poly2 platform = d->getPolygon();
         platform *= _scale;
-     image = _assets->get<Texture>(EARTH_TEXTURE);
-     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
+        sprite = scene2::PolygonNode::allocWithTexture(image,platform);
         sprite->setAnchor(Vec2(0,0));
-     d->setNode(sprite);
-     addObstacle(d,sprite,1);
-     _doorList.push_front(d);
+        d->setNode(sprite);
+        addObstacle(d,sprite,1);
+        _doorList.push_front(d);
         b->setName("button");
-        image = _assets->get<Texture>(EARTH_TEXTURE);
         Rect rectangle = Rect(b->getX(),b->getY(),1,1);
         Poly2 plat(rectangle);
         plat *= _scale;
@@ -503,7 +504,16 @@ void GameScene::populate() {
         addObstacle(b,sprite,1);
         _buttonList.push_front(b);
     }
-    
+#pragma mark : Sticky Walls
+    std::vector<std::shared_ptr<StickyWallModel>> stickyWalls = _level->getStickyWalls();
+    image = _assets->get<Texture>(STICKY_TEXTURE);
+    for (int i = 0; i < stickyWalls.size(); i++) {
+        std::shared_ptr<StickyWallModel> s = stickyWalls[i];
+        s->setDrawScale(_scale);
+        s->setTextures(image);
+        s->setDebugColor(DEBUG_COLOR);
+        addObstacle(s, s->getSceneNode(), 1);
+    }
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
@@ -627,6 +637,14 @@ void GameScene::update(float dt) {
     
     for (const std::shared_ptr<EnemyModel>& enemy : _collisionController.getEnemiesToRemove()) {
         removeEnemy(enemy);
+    }
+    
+    for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToStick()) {
+        lumia->setOnStickyWall(true);
+    }
+    
+    for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToUnstick()) {
+        lumia->unStick();
     }
 
     for (const CollisionController::LumiaBody& lumia : _collisionController.getLumiasToCreate()) {
@@ -1205,7 +1223,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+        else if (bd1->getName() == "button" && bd2 == lumia.get()) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1213,7 +1231,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+        else if (bd2->getName() == "button" && bd1 == lumia.get()) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1238,7 +1256,14 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-
+        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"){
+            _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd2);
+            
+        }
+        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"){
+            _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd1);
+            
+        }
         // handle detection of Lumia and ground
         if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
             (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
@@ -1288,13 +1313,21 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+        else if (bd2->getName() == "button" && bd1 == lumia.get()) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
                     break;
                 }
             }
+        }
+        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"){
+            _collisionController.processStickyWallLumiaEnding(lumia);
+            
+        }
+        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"){
+            _collisionController.processStickyWallLumiaEnding(lumia);
+            
         }
     }
 }
