@@ -77,6 +77,8 @@ protected:
     std::shared_ptr<LumiaModel> _avatar;
     
     std::shared_ptr<TrajectoryNode> _trajectoryNode;
+    
+    std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
 
     
     /** Whether we have completed this "game" */
@@ -376,4 +378,4 @@ public:
 
   };
 
-#endif /* __LM_GAME_SCENE_H__ */
+#endif /* __GAME_SCENE_H__ */

@@ -42,10 +42,12 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
 struct LumiaModel::LumiaSize size0 = { 0.51f, 0.6f };
-struct LumiaModel::LumiaSize size1 = { 0.71f, 0.35f };
-struct LumiaModel::LumiaSize size2 = { 1.0f, 0.25f };
-struct LumiaModel::LumiaSize size3 = { 1.4f, 0.15f };
-std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3 };
+struct LumiaModel::LumiaSize size1 = { 0.69f, 0.40f };
+struct LumiaModel::LumiaSize size2 = { 0.83f, 0.37f };
+struct LumiaModel::LumiaSize size3 = { 1.0f, 0.25f };
+struct LumiaModel::LumiaSize size4 = { 1.2f, 0.19f };
+struct LumiaModel::LumiaSize size5 = { 1.44f, 0.15f };
+std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3, size4, size5 };
 
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     _drawScale = scale;
