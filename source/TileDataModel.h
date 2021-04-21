@@ -12,13 +12,18 @@
 #include <iostream>
 #include "Tile.h"
 #include <cugl/cugl.h>
+#include <math.h>
 using namespace cugl;
 
 
 class TileDataModel : public cugl::Asset {
 private:
     vector<vector<Vec2>> _tiles;
-    vector<vector<Vec2>> _griddata;
+//    vector<vector<Vec2>> _griddata;
+    vector<vector<Vec2>> _griddata0;
+    vector<vector<Vec2>> _griddata90;
+    vector<vector<Vec2>> _griddata180;
+    vector<vector<Vec2>> _griddata270;
   
 public:
     
@@ -56,12 +61,25 @@ public:
     }
     
     vector<Vec2> getTileGridData(int type){
-        return _griddata[type];
+        return _griddata0[type];
     }
     
     vector<Vec2> getTileGridData(int type, float angle){
+        auto points =  _griddata0[type];
         
-        return vector<Vec2>();
+        vector<Vec2> res;
+        
+        for (int i=0; i < points.size(); i++){
+            float x = points[i].x;
+            float y = points[i].y;
+            float res_x = cos(angle) * x - sin(angle) * y;
+            float res_y = sin(angle) * x + cos(angle) * y;
+            res_x = roundf(res_x * 100) / 100;
+            res_y = roundf(res_y * 100) / 100;
+            res.push_back(Vec2(res_x, res_y));
+        }
+        
+        return res;
     }
     
     bool preload(const std::string& file) override {
