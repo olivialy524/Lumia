@@ -5,6 +5,9 @@
             "wrapS": "repeat",
             "wrapT": "repeat"
         },
+        "avatar-indicator":{
+            "file": "textures/avatar_indicator.png"
+        },
         "tile1": {
             "file": "textures/tile1.png"
         },
@@ -25,6 +28,9 @@
         },
         "tile7": {
             "file": "textures/tile7.png"
+        },
+        "dot": {
+            "file": "textures/circle.png"
         },
         "energy": {
             "file": "textures/energy.png"

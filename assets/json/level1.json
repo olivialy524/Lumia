@@ -7,19 +7,19 @@
         "lumia": {
             "posx": 4.5,
             "posy": 5,
-            "sizelevel": 2
+            "sizelevel": 3
         },
         "enemies": [
             {
                 "posx": 10,
                 "posy": 5,
-                "sizelevel": 1
+                "sizelevel": 2
             }
         ],
         "energies": [
             {
-            "posx": 10,
-            "posy": 11.5
+            	"posx": 10,
+            	"posy": 11.5
             }
         ],
         "platforms": [],

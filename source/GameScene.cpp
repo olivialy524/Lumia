@@ -29,9 +29,9 @@ using namespace cugl;
 #define SCENE_HEIGHT 576
 
 /** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
+#define DEFAULT_WIDTH   50.0f
 /** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
+#define DEFAULT_HEIGHT  20.0f
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -51,6 +51,7 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Asset Constants
+#define AVATAR_INDICATOR "avatar-indicator"
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
@@ -198,7 +199,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->onEndContact = [this](b2Contact* contact) {
         endContact(contact);
     };
-  
+    
+    
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -261,6 +263,8 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _collisionController.dispose();
+        _trajectoryNode->dispose();
+        _avatarIndicatorNode->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -317,6 +321,7 @@ void GameScene::reset() {
     }
     _enemyList.clear();
     _collisionController.clearStates();
+    _trajectoryNode->dispose();
 
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
@@ -348,6 +353,7 @@ void GameScene::populate() {
 //    }
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
+    
 
 #pragma mark : Platforms
     std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
@@ -424,8 +430,19 @@ void GameScene::populate() {
        
         _world->addObstacle(platobj);
         platobj->setDebugScene(_debugnode);
-        sprite->setPosition(platform.getBounds().getMidX(), platform.getBounds().getMidY());
+        platobj->setPosition(t->getX(), t->getY());
+        sprite->setPosition(t->getX()*_scale, t->getY()* _scale);
         _worldnode->addChild(sprite, 1);
+        
+        
+//        cout <<"type" << t->getType()<< endl;
+//        cout <<"angle" << t->getAngle()<< endl;
+//////        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
+////        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
+//        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
+//        for (int i = 0; i< grid_data.size(); i++ ){
+//            cout << grid_data[i].x << "" << grid_data[i].y << endl;
+//        }
         
     }
  
@@ -512,6 +529,23 @@ void GameScene::populate() {
         _enemyList.push_back(enemy);
     }
     
+    
+#pragma mark trajectory
+    image = _assets->get<Texture>("dot");
+
+    _trajectoryNode = TrajectoryNode::alloc(image);
+    _trajectoryNode->setPosition(0.0, 0.0f);
+    _worldnode->addChild(_trajectoryNode);
+
+#pragma mark Avatar Indicator
+    image = _assets->get<Texture>(AVATAR_INDICATOR);
+    _avatarIndicatorNode = scene2::PolygonNode::allocWithTexture(image);
+    Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.3f)) * _scale;
+    _avatarIndicatorNode->setPosition(pos);
+    _avatarIndicatorNode->setVisible(false);
+    Color4f tint = Color4f(1,1,1,0.6f);
+    _avatarIndicatorNode->setColor(tint);
+    _worldnode->addChild(_avatarIndicatorNode);
 }
 
 /**
@@ -661,21 +695,34 @@ void GameScene::update(float dt) {
             }
         }
     }
+    if (_lumiaList.size() > 1){
+        Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.8f)) * _scale;
+        _avatarIndicatorNode->setVisible(true);
+        _avatarIndicatorNode->setPosition(pos);
+    }else{
+        _avatarIndicatorNode->setVisible(false);
+    }
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-	//if (_avatar->isGrounded() && _input.isDragging()) {
-	//	glColor3f(1, 1, 1);
-	//	glBegin(GL_LINES);
-	//	for (int i = 0; i < 180; i++) { // three seconds at 60fps
-	//		Vec2 trajectoryPosition = getTrajectoryPoint(_avatar->getPosition(), _input.getPlannedLaunch(), i, _world, dt);
-	//		glVertex2f(trajectoryPosition.x, trajectoryPosition.y);
-	//	}
-	//	glEnd();
-	//}
+    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 8 == 0){
+        _trajectoryNode->clearPoints();
+    }
+    
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 8 == 0) {
+        Vec2 startPos = _avatar->getPosition();
+        float m = _avatar->getMass();
+        Vec2 plannedImpulse = _input.getPlannedLaunch();
+        Vec2 initialVelocity = plannedImpulse / m;
+		for (int i = 1; i < 35; i+=5) {
+			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i, _world, dt);
+            _trajectoryNode->addPoint(trajectoryPosition * _scale);
+		}
+        float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input.getMaximumLaunchVelocity(), 2);
+        _trajectoryNode->setEndAlpha(endAlpha);
+	}
+      
 
-    //glEnable(GL_POINT_SMOOTH);
-    //glPointSize(5);
     float cameraWidth = getCamera()->getViewport().size.width;
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
@@ -696,7 +743,7 @@ void GameScene::update(float dt) {
     if(!_avatar->isRemoved()){
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
-        }else if (_input.didSplit()){
+        }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
@@ -755,20 +802,38 @@ void GameScene::update(float dt) {
                 CULog("current: (%f, %f)", currentVel.x, currentVel.y);
                 CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeAvatarNode();
-                int newSize = _avatar->getSmallerSizeLevel();
-                createLumia(newSize,
-                    pos + offset,
-                    currentVel.x >= 0,
-                    splitVel1,
-                    currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
-                );
-                createLumia(newSize,
-                    pos - offset,
-                    currentVel.x < 0,
-                    splitVel2,
-                    currentVel.x < 0 ? currentAngularVel : -currentAngularVel
-                );
-                
+                if ((currentSizeLevel + 1) % 2 == 0) {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                } else {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+                    int newSize2 = newSize + 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize2,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                }
             } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
@@ -850,6 +915,8 @@ void GameScene::update(float dt) {
 		reset();
 	}
 }
+
+
 
 /**
 * Sets whether the level is completed.
@@ -1150,7 +1217,7 @@ void GameScene::beginContact(b2Contact* contact) {
         // handle collision between two Lumias
         else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd1 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
@@ -1158,7 +1225,7 @@ void GameScene::beginContact(b2Contact* contact) {
             break;
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd2 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
