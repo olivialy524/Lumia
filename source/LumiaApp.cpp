@@ -25,6 +25,7 @@ using namespace cugl;
 void LumiaApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
+    _UIbatch = SpriteBatch::alloc();
     
     // Start-up basic input
 #ifdef CU_TOUCH_SCREEN
@@ -49,7 +50,11 @@ void LumiaApp::onStartup() {
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     //load in the json file
     _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level3.json", "json/level2.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level4.json", "json/level2.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
+    
     Application::onStartup(); // YOU MUST END with call to parent
 }
 
@@ -72,6 +77,7 @@ void LumiaApp::onShutdown() {
     _mainMenu.dispose();
     _assets = nullptr;
     _batch = nullptr;
+    _UIbatch = nullptr;
     
     // Shutdown input
 #ifdef CU_TOUCH_SCREEN
@@ -177,7 +183,13 @@ void LumiaApp::update(float timestep) {
             return;
         }
         case Game:{
+            if (_gameplay.isActive()){
             _gameplay.update(timestep);
+            }else{
+                _gameplay.dispose();
+                _scene = LevelSelect;
+                _levelSelect.setActive(true);
+            }
             return;
         }
         case Settings:{
@@ -225,7 +237,7 @@ void LumiaApp::draw() {
             break;
         }
         case Game:{
-            _gameplay.render(_batch);
+            _gameplay.render_game(_batch, _UIbatch);
             break;
         }
         

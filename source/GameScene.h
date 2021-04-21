@@ -37,6 +37,7 @@ protected:
     
     std::shared_ptr<TileDataModel> _tileManager;
     
+    
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     InputController _input;
@@ -50,6 +51,10 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _backbuttonNode;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _backbutton;
     /** Reference to the win message label */
     std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */
@@ -79,6 +84,8 @@ protected:
     std::shared_ptr<LumiaModel> _avatar;
     
     std::shared_ptr<TrajectoryNode> _trajectoryNode;
+    
+    std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
 
     
     /** Whether we have completed this "game" */
@@ -229,6 +236,10 @@ public:
     
 #pragma mark -
 #pragma mark State Access
+    
+    std::vector<std::shared_ptr<cugl::scene2::SceneNode>> _UIelements;
+    void render_game(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<SpriteBatch>& UIbatch);
+
     /**
      * Returns true if debug mode is active.
      *
@@ -380,4 +391,6 @@ public:
 
   };
 
-#endif /* __LM_GAME_SCENE_H__ */
+
+#endif /* __GAME_SCENE_H__ */
+
