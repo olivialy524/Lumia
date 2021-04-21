@@ -36,7 +36,7 @@
 
 void LevelModel::dispose(){
     _lumia->dispose();
-    _lumia = nullptr;
+//    _lumia = nullptr;
     _enemies.clear();
     _plants.clear();
     _energies.clear();

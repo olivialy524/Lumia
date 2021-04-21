@@ -104,7 +104,8 @@ GameScene::GameScene() : Scene2(),
 	_world(nullptr),
 	_avatar(nullptr),
 	_complete(false),
-	_debug(false)
+	_debug(false),
+    _didSwitchLevelSelect(false)
 {    
 }
 
@@ -124,7 +125,7 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
-
+    
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     
@@ -177,7 +178,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-   
+    
     _assets = assets;
     _input.init();
     _collisionController.init();
@@ -235,6 +236,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
     
+    _didSwitchLevelSelect = false;
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
     addChild(bkgNode);
@@ -313,6 +315,7 @@ void GameScene::dispose() {
         _debug = false;
         _UIelements.clear();
         Scene2::dispose();
+        setActive(false);
     }
 }
 
@@ -661,7 +664,7 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){setActive(false); CULog("here");}
+    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         removeLumia(lumia);
