@@ -121,6 +121,10 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\SpikeNode.h">
+    <ClInclude Include="..\..\source\StickyWallModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\StickyWallNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -214,6 +218,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\SpikeNode.cpp">
+    <ClCompile Include="..\..\source\StickyWallModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\StickyWallNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
