@@ -152,6 +152,16 @@ void CollisionController::processButtonLumiaEnding(const std::shared_ptr<LumiaMo
     button->getDoor()->setClosing(true);
 }
 
+void CollisionController::processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall){
+    Vec2 wallPos = stickyWall->getPosition();
+    lumia->stick(wallPos);
+}
+
+
+void CollisionController::processStickyWallLumiaEnding(const std::shared_ptr<LumiaModel> lumia){
+    lumia->unStick();
+}
+
 void CollisionController::dispose(){
     clearStates();
 }

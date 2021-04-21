@@ -44,6 +44,7 @@ void LevelModel::dispose(){
     _doors.clear();
     _irregular_tiles.clear();
     _tiles.clear();
+    _stickyWalls.clear();
 }
 
 bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
@@ -63,6 +64,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> buttondoor_json = _leveljson->get("buttondoors");
     std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
+    std::shared_ptr<cugl::JsonValue> sticky_walls_json = _leveljson->get("sticky_walls");
     createButtonsAndDoors(buttondoor_json);
     createPlants(plants_json);
     createEnergies(energies_json);
@@ -70,6 +72,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     createLumia(lumia_json);
     createIrregular(irregular_tile_json);
     createEnemies(enemies_json);
+    createStickyWalls(sticky_walls_json);
 
     return true;
 };
@@ -101,6 +104,30 @@ std::vector<std::shared_ptr<Plant>> LevelModel::createPlants(const std::shared_p
         _plants.push_back(plant);
     }
     return _plants;
+}
+
+std::vector<std::shared_ptr<StickyWallModel>> LevelModel::createStickyWalls(const std::shared_ptr<cugl::JsonValue> &stickyWalls){
+    
+    for (int i=0; i< stickyWalls->size(); i++){
+        std::shared_ptr<cugl::JsonValue> stickyWalls_json = stickyWalls->get(i);
+        float posx = stickyWalls_json ->getFloat("posx");
+        float posy = stickyWalls_json->getFloat("posy");
+        float ang = (stickyWalls_json->getFloat("angle"));
+        float height = stickyWalls_json->getFloat("height");
+        float width = stickyWalls_json->getFloat("width");
+        
+        Rect rectangle = Rect(posx,posy,width,height);
+        Poly2 platform(rectangle,false);
+        SimpleTriangulator triangulator;
+        triangulator.set(platform);
+        triangulator.calculate();
+        platform.setIndices(triangulator.getTriangulation());
+        platform.setGeometry(Geometry::SOLID);
+        std::shared_ptr<StickyWallModel> stickyWall = StickyWallModel::alloc(Vec2(posx,posy), platform, ang);
+        
+        _stickyWalls.push_back(stickyWall);
+    }
+    return _stickyWalls;
 }
 
 std::vector<std::shared_ptr<EnergyModel>> LevelModel::createEnergies(const std::shared_ptr<cugl::JsonValue>& energies) {

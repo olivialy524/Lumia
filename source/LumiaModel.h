@@ -109,6 +109,11 @@ protected:
 	* the texture (e.g. a circular shape attached to a square texture).
 	*/
 	virtual void resetDebug() override;
+    
+    bool _isOnStickyWall;
+    
+    Vec2 _stickDirection;
+    
 
 public:
     
@@ -376,6 +381,7 @@ public:
         }
     };
 
+    
     /** Returns size level of this Lumia body */
     int getSizeLevel() { return _sizeLevel; };
 
@@ -413,7 +419,20 @@ public:
         
     }
     
+    bool isOnStickyWall() {
+        return _isOnStickyWall;
+    }
     
+    void setOnStickyWall(bool value){
+        _isOnStickyWall = value;
+    }
+    
+    void stick(Vec2 wallPos);
+    
+    void unStick(){
+        setOnStickyWall(false);
+        _stickDirection = Vec2::ZERO;
+    }
     /**
      * Returns true if the Lumia is on the ground.
      *

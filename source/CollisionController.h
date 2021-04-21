@@ -14,6 +14,7 @@
 #include "EnergyModel.h"
 #include "Button.h"
 #include "Door.h"
+#include "StickyWallModel.h"
 
 class CollisionController {
 public:
@@ -97,6 +98,10 @@ public:
     void processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
 
     void processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button);
+    
+    void processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall);
+    
+    void processStickyWallLumiaEnding(const std::shared_ptr<LumiaModel> lumia);
     
     void clearStates();
     
