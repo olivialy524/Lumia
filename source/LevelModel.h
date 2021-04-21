@@ -16,6 +16,8 @@
 #include "Button.h"
 #include "Door.h"
 #include "SpikeModel.h"
+#include "StickyWallModel.h"
+
 
 class LevelModel : public cugl::Asset {
 private:
@@ -28,6 +30,7 @@ private:
     std::shared_ptr<LumiaModel> _lumia;
     std::vector<std::shared_ptr<Button>> _buttons;
     std::vector<std::shared_ptr<Door>> _doors;
+    std::vector<std::shared_ptr<StickyWallModel>> _stickyWalls;
     
     float _xBound;
     
@@ -48,6 +51,9 @@ private:
     std::shared_ptr<LumiaModel> createLumia(const std::shared_ptr<cugl::JsonValue>& lumia);
     
     std::vector<std::shared_ptr<Button>> createButtonsAndDoors(const std::shared_ptr<cugl::JsonValue>& buttonsAndDoors);
+    
+    std::vector<std::shared_ptr<StickyWallModel>> createStickyWalls(const std::shared_ptr<cugl::JsonValue>& stickyWalls);
+    
     std::shared_ptr<cugl::JsonValue> _levelJson;
     
 public:
@@ -132,6 +138,10 @@ public:
         
     std::vector<std::shared_ptr<Tile>> getIrregularTile(){
         return _irregular_tiles;
+    }
+    
+    std::vector<std::shared_ptr<StickyWallModel>> getStickyWalls(){
+        return _stickyWalls;
     }
     
     void resetLevel(const std::string& file){

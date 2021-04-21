@@ -61,7 +61,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         _velocity = Vec2::ZERO;
         _isLaunching = false;
         _removed = false;
-
+        _isOnStickyWall = false;
         _radius = radius;
 
         setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
@@ -139,6 +139,15 @@ void LumiaModel::dispose() {
 void LumiaModel::applyForce() {
     if (!isActive()) {
         return;
+    }
+    
+    if (isOnStickyWall() && !isLaunching()){
+        setLinearVelocity(Vec2::ZERO);
+        setAngularVelocity(0.0f);
+        b2Vec2 force(_stickDirection.x, _stickDirection.y);
+        _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
+    } else if (isOnStickyWall() && isLaunching()){
+        setOnStickyWall(false);
     }
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body

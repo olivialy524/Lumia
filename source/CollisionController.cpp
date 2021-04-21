@@ -19,6 +19,8 @@ void CollisionController::clearStates(){
     _doorsToOpen.clear();
     _enemiesToRemove.clear();
     _energiesToRemove.clear();
+    _lumiasToStick.clear();
+    _lumiasToUnstick.clear();
     _switchLumia = false;
 }
 
@@ -188,6 +190,21 @@ void CollisionController::processButtonLumiaEnding(const std::shared_ptr<LumiaMo
     button->getDoor()->setClosing(true);
         button->setPushedDown(false);
         button->resetCD();
+}
+
+void CollisionController::processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall){
+    if (!lumia->getRemoved() && !lumia->isOnStickyWall()){
+        lumia->setStickDirection(-stickyWall->getSurfaceNorm());
+        
+        _lumiasToStick.push_back(lumia);
+    }
+}
+
+
+void CollisionController::processStickyWallLumiaEnding(const std::shared_ptr<LumiaModel> lumia){
+    if (!lumia->getRemoved() && lumia->isOnStickyWall()){
+        _lumiasToUnstick.push_back(lumia);
+    }
 }
 
 void CollisionController::dispose(){
