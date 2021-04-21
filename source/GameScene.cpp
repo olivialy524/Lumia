@@ -51,6 +51,7 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Asset Constants
+#define AVATAR_INDICATOR "avatar-indicator"
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
@@ -263,6 +264,7 @@ void GameScene::dispose() {
         _input.dispose();
         _collisionController.dispose();
         _trajectoryNode->dispose();
+        _avatarIndicatorNode->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -522,7 +524,16 @@ void GameScene::populate() {
     _trajectoryNode = TrajectoryNode::alloc(image);
     _trajectoryNode->setPosition(0.0, 0.0f);
     _worldnode->addChild(_trajectoryNode);
-    
+
+#pragma mark Avatar Indicator
+    image = _assets->get<Texture>(AVATAR_INDICATOR);
+    _avatarIndicatorNode = scene2::PolygonNode::allocWithTexture(image);
+    Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.3f)) * _scale;
+    _avatarIndicatorNode->setPosition(pos);
+    _avatarIndicatorNode->setVisible(false);
+    Color4f tint = Color4f(1,1,1,0.6f);
+    _avatarIndicatorNode->setColor(tint);
+    _worldnode->addChild(_avatarIndicatorNode);
 }
 
 /**
@@ -654,7 +665,13 @@ void GameScene::update(float dt) {
             }
         }
     }
-  
+    if (_lumiaList.size() > 1){
+        Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.8f)) * _scale;
+        _avatarIndicatorNode->setVisible(true);
+        _avatarIndicatorNode->setPosition(pos);
+    }else{
+        _avatarIndicatorNode->setVisible(false);
+    }
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
