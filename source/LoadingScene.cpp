@@ -82,7 +82,7 @@ void LoadingScene::update(float progress) {
         if (_progress >= 1) {
             _progress = 1.0f;
             _bar->setVisible(false);
-            _brand->setVisible(false);
+//            _brand->setVisible(false);
             _active = false;
         }
         _bar->setProgress(_progress);

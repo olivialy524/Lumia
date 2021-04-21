@@ -48,6 +48,7 @@ private:
     /** Whether the merge key is down */
     bool  _keyMerge;
 
+    bool  _keyBack;
     // MOUSE + TOUCH SUPPORT
     /** Whether the mouse or finger was tapped */
     bool  _switchInputted;
@@ -70,6 +71,7 @@ protected:
     /** Whether the exit action was chosen. */
     bool _exitPressed;
     
+    bool _backPressed;
     /** Whether the split action was chosen. */
     bool _splitPressed;
     /** Whether the merge action was chosen. */
@@ -221,6 +223,7 @@ public:
      */
 	bool didReset() const { return _resetPressed; }
 
+    bool didGoBack() const { return _backPressed; }
     /**
      * Returns true if the player wants to go toggle the debug mode.
      *

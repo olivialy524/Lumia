@@ -22,6 +22,8 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<cugl::scene2::PolygonNode> _node;
     int _cooldown;
+    float _normHeight;
+    bool _pushedDown = false;
 public:
     Button() : cugl::physics2::BoxObstacle() { }
 
@@ -41,6 +43,7 @@ public:
 
     static std::shared_ptr<Button> alloc(const cugl::Vec2& pos, cugl::Size size) {
         std::shared_ptr<Button> result = std::make_shared<Button>();
+        result->setNormHeight(size.getIHeight());
         return (result->init(pos, size) ? result : nullptr);
     }
     
@@ -51,6 +54,13 @@ public:
         _node = n;
     }
     
+    float getNormHeight() {
+        return _normHeight;
+    }
+    
+    void setNormHeight(float h) {
+        _normHeight = h;
+    }
     std::shared_ptr<Door> getDoor() {
         return _door;
     }
@@ -58,6 +68,27 @@ public:
     void setDoor(std::shared_ptr<Door> d) {
         _door = d;
     }
+    bool getPushedDown() {
+        return _pushedDown;
+    }
+    
+    void setPushedDown(bool p) {
+        _pushedDown = p;
+    }
+    void pushDown(float scale);
+    
+    int getCD() {
+        return _cooldown;
+    }
+    
+    void incCD() {
+        _cooldown++;
+    }
+    
+    void resetCD() {
+        _cooldown = 0;
+    }
+    void pushUp(float scale);
     
 };
 

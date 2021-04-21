@@ -64,25 +64,22 @@ public:
         return _griddata0[type];
     }
     
-    vector<Vec2> getTileGridData(int type, float plt_angle){
-        auto angle = fmod (plt_angle + 6.28f, 6.28f);
-        angle = roundf(angle * 100) / 100;
+    vector<Vec2> getTileGridData(int type, float angle){
+        auto points =  _griddata0[type];
         
-        if (angle == 0.0f){
-            return _griddata0[type];
-            
-        }else if (angle == 1.57f){
-            return _griddata90[type];
-             
-        }else if (angle == 3.14){
-            return _griddata180[type];
-            
-        }else if (angle == 4.17){
-            return _griddata270[type];
-            
-        }else{
-            return _griddata0[type];
+        vector<Vec2> res;
+        
+        for (int i=0; i < points.size(); i++){
+            float x = points[i].x;
+            float y = points[i].y;
+            float res_x = cos(angle) * x - sin(angle) * y;
+            float res_y = sin(angle) * x + cos(angle) * y;
+            res_x = roundf(res_x * 100) / 100;
+            res_y = roundf(res_y * 100) / 100;
+            res.push_back(Vec2(res_x, res_y));
         }
+        
+        return res;
     }
     
     bool preload(const std::string& file) override {

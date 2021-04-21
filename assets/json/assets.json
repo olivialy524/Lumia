@@ -10,6 +10,9 @@
             "wrapS": "repeat",
             "wrapT": "repeat"
         },
+        "avatar-indicator":{
+            "file": "textures/avatar_indicator.png"
+        },
         "tile1": {
             "file": "textures/tile1.png"
         },
@@ -30,6 +33,9 @@
         },
         "tile7": {
             "file": "textures/tile7.png"
+        },
+        "tile8": {
+            "file": "textures/tile8.png"
         },
         "dot": {
             "file": "textures/circle.png"
@@ -288,7 +294,31 @@
                         	"text": "2",
                         	"x_offset": 350,
                         	"y_offset": -130,
-                        	"text_color": [0, 0, 0, 255]
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton3"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "3",
+                            "x_offset": 550,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton4"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "4",
+                            "x_offset": 720,
+                            "y_offset": 110,
+                            "texture": "level_complete"
                         }
                     }
                 }
