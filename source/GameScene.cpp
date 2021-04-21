@@ -433,14 +433,14 @@ void GameScene::populate() {
         _worldnode->addChild(sprite, 1);
         
         
-        cout <<"type" << t->getType()<< endl;
-        cout <<"angle" << t->getAngle()<< endl;
-////        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
-//        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
-        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
-        for (int i = 0; i< grid_data.size(); i++ ){
-            cout << grid_data[i].x << "" << grid_data[i].y << endl;
-        }
+//        cout <<"type" << t->getType()<< endl;
+//        cout <<"angle" << t->getAngle()<< endl;
+//////        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
+////        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
+//        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
+//        for (int i = 0; i< grid_data.size(); i++ ){
+//            cout << grid_data[i].x << "" << grid_data[i].y << endl;
+//        }
         
     }
  
