@@ -106,6 +106,8 @@ protected:
 
     int ticks;
     
+    bool _didSwitchLevelSelect;
+    
 #pragma mark Internal Object Management
     
     /**
@@ -280,6 +282,10 @@ public:
 	* @return true if the level is failed.
 	*/
 	bool isFailure() const { return _failed; }
+    
+    bool didSwitchLevelSelect(){
+        return _didSwitchLevelSelect;
+    }
 
 	/**
 	* Sets whether the level is failed.
