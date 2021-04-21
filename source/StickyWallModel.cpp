@@ -13,10 +13,8 @@ void StickyWallModel::setTextures(const std::shared_ptr<Texture>& texture){
     
     _sceneNode = scene2::SceneNode::allocWithBounds(Size(getWidth()*_drawscale,getHeight()*_drawscale));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _sceneNode->setAngle(getAngle());
     _node = StickyWallNode::alloc(texture, 1, 1, 1);
-    
-//    auto scale =  getWidth()/(texture->getWidth()/_drawscale);
-//    _sceneNode->setScale(scale);
     _node->setPolygon(Rect(getX()*_drawscale, getY()*_drawscale, getWidth()*_drawscale, getHeight()*_drawscale));
     _node->setAnchor(Vec2::ZERO);
     _node->setFrame(0);
@@ -34,6 +32,10 @@ bool StickyWallModel::init(const cugl::Vec2 pos, cugl::Poly2 p, float ang) {
         setGravityScale(0);
         setPosition(pos);
         setSensor(true);
+        
+        float nx = 1.0f * cos(ang) - 0.0f * sin(ang);
+        float ny = 1.0f * sin(ang) + 0.0f * cos(ang);
+        _surfaceNorm = Vec2(nx, ny);
         return true;
     }
     return false;

@@ -156,7 +156,8 @@ void CollisionController::processButtonLumiaEnding(const std::shared_ptr<LumiaMo
 
 void CollisionController::processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall){
     if (!lumia->getRemoved() && !lumia->isOnStickyWall()){
-        lumia->setStickDirection(stickyWall->getPosition());
+        lumia->setStickDirection(-stickyWall->getSurfaceNorm());
+        
         _lumiasToStick.push_back(lumia);
     }
 }

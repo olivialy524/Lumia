@@ -16,6 +16,7 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<StickyWallNode> _node;
     float _drawscale;
+    Vec2 _surfaceNorm;
     
 private:
     /** This macro disables the copy constructor (not allowed on physics objects) */
@@ -51,6 +52,10 @@ private:
     
     void setDrawScale(float scale) {
         _drawscale = scale;
+    }
+    
+    Vec2 getSurfaceNorm() const{
+        return _surfaceNorm;
     }
     
  };

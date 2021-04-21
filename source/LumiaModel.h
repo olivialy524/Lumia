@@ -432,9 +432,8 @@ public:
         _stickDirection = Vec2::ZERO;
     }
     
-    void setStickDirection(Vec2 wallPos){
-        Vec2 dir = wallPos-getPosition();
-        _stickDirection = dir.normalize() * 1.5f;
+    void setStickDirection(Vec2 dir){
+        _stickDirection = dir.normalize() * 0.6f;
     }
     /**
      * Returns true if the Lumia is on the ground.

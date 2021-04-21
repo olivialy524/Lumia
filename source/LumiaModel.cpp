@@ -142,10 +142,9 @@ void LumiaModel::applyForce() {
     if (isOnStickyWall() && !isLaunching()){
         setLinearVelocity(Vec2::ZERO);
         setAngularVelocity(0.0f);
-        b2Vec2 force(_stickDirection.x, 0.0f);
+        b2Vec2 force(_stickDirection.x, -_stickDirection.y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
     } else if (isOnStickyWall() && isLaunching()){
-        setGravityScale(1.0f);
         setOnStickyWall(false);
     }
     
