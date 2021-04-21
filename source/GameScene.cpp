@@ -659,8 +659,8 @@ void GameScene::update(float dt) {
             button->pushUp(_scale);
             button->resetCD();
         }
-        cout << "Button Position y: " << button->getPosition().y << "\n";
-        cout << "Node Position y: " << button->getNode()->getPositionY() << "\n";
+//        cout << "Button Position y: " << button->getPosition().y << "\n";
+//        cout << "Node Position y: " << button->getNode()->getPositionY() << "\n";
         //button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
         //button->getNode()->setContentHeight(button->getHeight()*_scale);
     }
