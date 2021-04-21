@@ -272,6 +272,38 @@ void GameScene::dispose() {
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
+        _level->dispose();
+        _sensorFixtureMap.clear();
+        _graph.clear();
+        for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
+            l->dispose();
+        }
+        _lumiaList.clear();
+        _avatar = nullptr;
+
+        for (const std::shared_ptr<Plant> &p : _plantList) {
+            p->dispose();
+        }
+        _plantList.clear();
+        
+        for (const std::shared_ptr<EnergyModel> &e : _energyList) {
+            e->dispose();
+        }
+        _energyList.clear();
+        for (const std::shared_ptr<Door> & d: _doorList) {
+            d->dispose();
+        }
+        _doorList.clear();
+        
+        for (const std::shared_ptr<Button> & b: _buttonList) {
+            b->dispose();
+        }
+        _buttonList.clear();
+        
+        for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
+            enemy->dispose();
+        }
+        _enemyList.clear();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
