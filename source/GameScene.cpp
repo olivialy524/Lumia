@@ -245,6 +245,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _complete = false;
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
+    _ticks = 0;
+    _lastSpikeCollision = NULL;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -323,6 +325,9 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
+
+    _ticks = 0;
+    _lastSpikeCollision = NULL;
 
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
@@ -685,11 +690,11 @@ void GameScene::update(float dt) {
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 8 == 0){
+    if (! (_avatar->isGrounded() && _input.isDragging()) || _ticks % 8 == 0){
         _trajectoryNode->clearPoints();
     }
     
-	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 8 == 0) {
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && _ticks % 8 == 0) {
         Vec2 startPos = _avatar->getPosition();
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input.getPlannedLaunch();
@@ -813,7 +818,7 @@ void GameScene::update(float dt) {
             
     }
 
-    if (ticks % 100 == 0){
+    if (_ticks % 100 == 0){
         for (auto & enemy : _enemyList){
             std::shared_ptr<LumiaModel> closestLumia;
             Vec2 enemyPos = enemy->getPosition();
@@ -841,7 +846,7 @@ void GameScene::update(float dt) {
         }
     }
 
-    ticks++;
+    _ticks++;
 //    for (auto & lumia : _lumiaList){
 //        Vec2 lastPos = lumia->getLastPosition();
 //        _graph[{Vec2(floor(lastPos.x), floor(lastPos.y))}] = NodeState::Void;
@@ -1129,9 +1134,21 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         // handle collision between spike and Lumia
         } else if (bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get()) {
-            _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            if (_lastSpikeCollision == NULL) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            } else if (_ticks - _lastSpikeCollision > 30) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            }
         } else if (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get()) {
-            _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            if (_lastSpikeCollision == NULL) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            } else if (_ticks - _lastSpikeCollision > 30) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            }
         }
         // handle collision between enemy and Lumia
         else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get()) {
@@ -1165,7 +1182,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+        else if (bd1->getName() == "button" && bd2 == lumia.get()) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1173,7 +1190,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        if (bd2->getName() == "button" && bd1 == lumia.get()) {
+        else if (bd2->getName() == "button" && bd1 == lumia.get()) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaCollision(lumia, button);

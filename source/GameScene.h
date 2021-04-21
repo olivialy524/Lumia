@@ -99,7 +99,9 @@ protected:
     
     std::unordered_map<Node, NodeState> _graph;
 
-    int ticks;
+    int _ticks;
+    /** Tick of last time a Lumia hit a spike */
+    int _lastSpikeCollision;
     
 #pragma mark Internal Object Management
     

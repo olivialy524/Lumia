@@ -114,7 +114,7 @@ std::vector<std::shared_ptr<SpikeModel>> LevelModel::createSpikes(const std::sha
         float posx = spike_json->getFloat("posx");
         float posy = spike_json->getFloat("posy");
         float ang = (spike_json->getFloat("angle")) * M_PI / 180.0f;
-        cugl::Size size = Size(0.5f, 0.5f);
+        cugl::Size size = Size(1.0f, 0.5f);
         std::shared_ptr<SpikeModel> spike = SpikeModel::alloc(Vec2(posx, posy), size);
 
         //set body parameters
@@ -126,7 +126,6 @@ std::vector<std::shared_ptr<SpikeModel>> LevelModel::createSpikes(const std::sha
         spike->setDensity(0);
         spike->setBullet(false);
         spike->setGravityScale(0);
-        spike->setSensor(false);
         spike->setDebugColor(DEBUG_COLOR);
         spike->setVX(0);
 
