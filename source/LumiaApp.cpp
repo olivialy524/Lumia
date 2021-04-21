@@ -51,8 +51,8 @@ void LumiaApp::onStartup() {
     //load in the json file
     _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
     _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level3.json", "json/level2.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level4.json", "json/level2.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level3.json", "json/level3.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level4.json", "json/level4.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
     Application::onStartup(); // YOU MUST END with call to parent
