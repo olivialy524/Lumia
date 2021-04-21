@@ -51,6 +51,7 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Asset Constants
+#define AVATAR_INDICATOR "avatar-indicator"
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
@@ -268,6 +269,7 @@ void GameScene::dispose() {
         _input.dispose();
         _collisionController.dispose();
         _trajectoryNode->dispose();
+        _avatarIndicatorNode->dispose();
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -540,7 +542,16 @@ void GameScene::populate() {
     _trajectoryNode = TrajectoryNode::alloc(image);
     _trajectoryNode->setPosition(0.0, 0.0f);
     _worldnode->addChild(_trajectoryNode);
-    
+
+#pragma mark Avatar Indicator
+    image = _assets->get<Texture>(AVATAR_INDICATOR);
+    _avatarIndicatorNode = scene2::PolygonNode::allocWithTexture(image);
+    Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.3f)) * _scale;
+    _avatarIndicatorNode->setPosition(pos);
+    _avatarIndicatorNode->setVisible(false);
+    Color4f tint = Color4f(1,1,1,0.6f);
+    _avatarIndicatorNode->setColor(tint);
+    _worldnode->addChild(_avatarIndicatorNode);
 }
 
 /**
@@ -642,6 +653,24 @@ void GameScene::update(float dt) {
         }
         door->getNode()->setPosition(door->getPosition()*_scale);
     }
+    
+    for (auto & button : _buttonList) {
+        button->incCD();
+        if (button->getPushedDown()) {
+            button->pushDown(_scale);
+            if (button->getCD() >= 30) {
+                button->resetCD();
+            }
+        }
+        else if (button->getCD() >= 5) {
+            button->pushUp(_scale);
+            button->resetCD();
+        }
+//        cout << "Button Position y: " << button->getPosition().y << "\n";
+//        cout << "Node Position y: " << button->getNode()->getPositionY() << "\n";
+        //button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
+        //button->getNode()->setContentHeight(button->getHeight()*_scale);
+    }
 
     // check if Lumia bodies fell out of the level, and remove as needed
     for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
@@ -673,7 +702,13 @@ void GameScene::update(float dt) {
             }
         }
     }
-  
+    if (_lumiaList.size() > 1){
+        Vec2 pos = (_avatar->getPosition() + Vec2(0.0f, _avatar->getRadius()+0.8f)) * _scale;
+        _avatarIndicatorNode->setVisible(true);
+        _avatarIndicatorNode->setPosition(pos);
+    }else{
+        _avatarIndicatorNode->setVisible(false);
+    }
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
@@ -774,20 +809,38 @@ void GameScene::update(float dt) {
                 CULog("current: (%f, %f)", currentVel.x, currentVel.y);
                 CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeAvatarNode();
-                int newSize = _avatar->getSmallerSizeLevel();
-                createLumia(newSize,
-                    pos + offset,
-                    currentVel.x >= 0,
-                    splitVel1,
-                    currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
-                );
-                createLumia(newSize,
-                    pos - offset,
-                    currentVel.x < 0,
-                    splitVel2,
-                    currentVel.x < 0 ? currentAngularVel : -currentAngularVel
-                );
-                
+                if ((currentSizeLevel + 1) % 2 == 0) {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                } else {
+                    int newSize = ((currentSizeLevel + 1) / 2) - 1;
+                    int newSize2 = newSize + 1;
+
+                    createLumia(newSize,
+                        pos + offset,
+                        currentVel.x >= 0,
+                        splitVel1,
+                        currentVel.x >= 0 ? currentAngularVel : -currentAngularVel
+                    );
+                    createLumia(newSize2,
+                        pos - offset,
+                        currentVel.x < 0,
+                        splitVel2,
+                        currentVel.x < 0 ? currentAngularVel : -currentAngularVel
+                    );
+                }
             } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
@@ -1171,7 +1224,7 @@ void GameScene::beginContact(b2Contact* contact) {
         // handle collision between two Lumias
         else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd1 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd1 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
@@ -1179,7 +1232,7 @@ void GameScene::beginContact(b2Contact* contact) {
             break;
         } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get()) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
-                if (lumia2.get() == bd2 && !lumia2->getRemoved()) {
+                if (lumia2.get() == bd2 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
                     break;
                 }
