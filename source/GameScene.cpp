@@ -199,7 +199,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         endContact(contact);
     };
     
-    
+    std::shared_ptr<Texture> button_tex = assets->get<Texture>("earth");
+    _backbuttonNode= cugl::scene2::PolygonNode::allocWithTexture(button_tex);
+    _backbutton = cugl::scene2::Button::alloc(_backbuttonNode);
+    _backbutton->setPosition(100, 0);
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -236,6 +239,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_debugnode, 2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
+//    addChild(button);
+    _UIelements.push_back(_backbuttonNode);
 
     populate();
     _active = true;
@@ -270,6 +275,7 @@ void GameScene::dispose() {
         _losenode = nullptr;
         _complete = false;
         _debug = false;
+        _UIelements.clear();
         Scene2::dispose();
     }
 }
@@ -602,6 +608,7 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
+    if (_input.didGoBack()){setActive(false); CULog("here");}
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         removeLumia(lumia);
@@ -1255,4 +1262,28 @@ Size GameScene::computeActiveSize() const {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;
+}
+
+
+void GameScene::render_game(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<SpriteBatch>& UIbatch){
+    Scene2::render(batch);
+    
+    
+//    Mat4 matrix = _camera->getProjection();
+////    matrix.scale(1, -1, 1);
+////
+////    _target->begin();
+//
+//    UIbatch->begin(matrix);
+////    UIbatch->setBlendFunc(_srcFactor, _dstFactor);
+////    UIbatch->setBlendEquation(_blendEquation);
+//
+//
+////    for(auto it = _UIelements.begin(); it != _UIelements.end(); ++it) {
+////        (*it)->render(UIbatch, Mat4::IDENTITY, _color);
+////    }
+//    _backbutton->render(UIbatch, Mat4::IDENTITY, _color );
+//
+//    UIbatch->end();
+//    _target->end();
 }

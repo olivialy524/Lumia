@@ -29,6 +29,8 @@ protected:
     
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
+    
+    std::shared_ptr<cugl::SpriteBatch> _UIbatch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
 
