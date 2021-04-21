@@ -129,12 +129,6 @@ void LumiaModel::dispose() {
     _sensorNode = nullptr;
 }
 
-void LumiaModel::stick(Vec2 wallPos){
-    setOnStickyWall(true);
-    Vec2 dir = wallPos-getPosition();
-    _stickDirection = dir.normalize() * 1.5f;
-}
-
 /**
  * Applies the force to the body of this Lumia
  *

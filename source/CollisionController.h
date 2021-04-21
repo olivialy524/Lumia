@@ -41,6 +41,10 @@ protected:
     std::list<std::shared_ptr<LumiaModel>> _lumiasToRemove;
     /** List of Lumia bodies to create in next update step */
     std::list<LumiaBody> _lumiasToCreate;
+    /** List of Lumia bodies to stick in next update step */
+    std::list<std::shared_ptr<LumiaModel>> _lumiasToStick;
+    /** List of Lumia bodies to Unstick in next update step */
+    std::list<std::shared_ptr<LumiaModel>> _lumiasToUnstick;
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
     
@@ -117,6 +121,14 @@ public:
     
     std::list<LumiaBody> getLumiasToCreate(){
         return _lumiasToCreate;
+    }
+    
+    std::list<std::shared_ptr<LumiaModel>> getLumiasToStick(){
+        return _lumiasToStick;
+    }
+
+    std::list<std::shared_ptr<LumiaModel>> getLumiasToUnstick(){
+        return _lumiasToUnstick;
     }
     
     std::list<std::shared_ptr<EnergyModel>> getEnergiesToRemove(){

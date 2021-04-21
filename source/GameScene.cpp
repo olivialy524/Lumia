@@ -620,6 +620,14 @@ void GameScene::update(float dt) {
     for (const std::shared_ptr<EnemyModel>& enemy : _collisionController.getEnemiesToRemove()) {
         removeEnemy(enemy);
     }
+    
+    for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToStick()) {
+        lumia->setOnStickyWall(true);
+    }
+    
+    for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToUnstick()) {
+        lumia->unStick();
+    }
 
     for (const CollisionController::LumiaBody& lumia : _collisionController.getLumiasToCreate()) {
         createLumia(lumia.sizeLevel, lumia.position, lumia.isAvatar, lumia.vel, lumia.angularVel);

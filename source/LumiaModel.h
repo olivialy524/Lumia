@@ -427,11 +427,14 @@ public:
         _isOnStickyWall = value;
     }
     
-    void stick(Vec2 wallPos);
-    
     void unStick(){
         setOnStickyWall(false);
         _stickDirection = Vec2::ZERO;
+    }
+    
+    void setStickDirection(Vec2 wallPos){
+        Vec2 dir = wallPos-getPosition();
+        _stickDirection = dir.normalize() * 1.5f;
     }
     /**
      * Returns true if the Lumia is on the ground.
