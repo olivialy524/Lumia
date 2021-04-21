@@ -18,6 +18,7 @@ using namespace cugl;
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
+#define BACK_KEY KeyCode::B
 #define DEBUG_KEY KeyCode::D
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
@@ -52,6 +53,7 @@ _splitPressed(false),
 _mergePressed(false),
 _keyReset(false),
 _keyDebug(false),
+_keyBack(false),
 _keyExit(false),
 _keySplit(false),
 _keyMerge(false),
@@ -149,6 +151,7 @@ void InputController::update(float dt) {
 
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
+    _keyBack  = keys->keyPressed(BACK_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
     _keyMerge  = keys->keyDown(MERGE_KEY);
@@ -156,6 +159,7 @@ void InputController::update(float dt) {
 
     _resetPressed = _keyReset;
     _mergePressed = _keyMerge;
+    _backPressed = _keyBack;
 
 #endif
     
@@ -173,6 +177,7 @@ void InputController::update(float dt) {
 #ifdef CU_TOUCH_SCREEN
     _keyExit = false;
     _keyReset = false;
+    _keyBack = false
     _keyDebug = false;
     _keySplit = false;
     _keyMerge = false;
@@ -291,7 +296,10 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
         _mergePressed = true;
     } else if (_touchids.size() == 4) {
         _resetPressed = true;
-    } else {
+    } else if (_touchids.size() == 5)// only temp
+    {
+        _backPressed = true;
+    }else {
         // invalid input
         return;
     }
