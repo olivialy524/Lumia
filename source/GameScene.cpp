@@ -769,8 +769,9 @@ void GameScene::update(float dt) {
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
 
             float radius = lumia->getRadius() * _scale; // world coordinates
-            if (IN_RANGE(tapLocationWorld.x, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
-                IN_RANGE(tapLocationWorld.y, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
+            CULog("%f", radius);
+            if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
+                IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
             }
         }
