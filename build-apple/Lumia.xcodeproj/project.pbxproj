@@ -37,6 +37,7 @@
 		6144347026194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
 		6144347126194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
 		6144347226194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
+		61E5C199263076B5002770D0 /* iOS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC381DF8C8B600C353B0 /* iOS-Info.plist */; };
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
@@ -229,7 +230,7 @@
 		C79D7E70261BD616007DDD42 /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
 		C79D7E83261D5453007DDD42 /* PathFindingController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathFindingController.cpp; sourceTree = "<group>"; };
 		C79D7E8D261D546A007DDD42 /* PathFindingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathFindingController.h; sourceTree = "<group>"; };
-		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB122DA01E281F4A0019E2D1 /* Luminosia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Luminosia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
@@ -382,7 +383,7 @@
 			isa = PBXGroup;
 			children = (
 				EBB1AC061DF8C6BC00C353B0 /* Lumia (Mac).app */,
-				EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */,
+				EB122DA01E281F4A0019E2D1 /* Luminosia.app */,
 				EB5D204D23FC73FF007D16CD /* Platformer.app */,
 			);
 			name = Products;
@@ -531,9 +532,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EB122D9F1E281F4A0019E2D1 /* Lumia (iOS) */ = {
+		EB122D9F1E281F4A0019E2D1 /* LumiaiOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "Lumia (iOS)" */;
+			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "LumiaiOS" */;
 			buildPhases = (
 				EB122D9C1E281F4A0019E2D1 /* Sources */,
 				EB122D9D1E281F4A0019E2D1 /* Frameworks */,
@@ -543,9 +544,9 @@
 			);
 			dependencies = (
 			);
-			name = "Lumia (iOS)";
+			name = LumiaiOS;
 			productName = "UIDemo (iOS)";
-			productReference = EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */;
+			productReference = EB122DA01E281F4A0019E2D1 /* Luminosia.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EB5D204C23FC73FF007D16CD /* Lumia (Sim) */ = {
@@ -593,7 +594,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = F2S98STJVH;
+						DevelopmentTeam = 6F38AKR3X8;
 						ProvisioningStyle = Automatic;
 					};
 					EB5D204C23FC73FF007D16CD = {
@@ -603,7 +604,7 @@
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = G6P7H83FK6;
+						DevelopmentTeam = 6F38AKR3X8;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -628,7 +629,7 @@
 			projectRoot = "";
 			targets = (
 				EBB1AC051DF8C6BC00C353B0 /* Lumia (Mac) */,
-				EB122D9F1E281F4A0019E2D1 /* Lumia (iOS) */,
+				EB122D9F1E281F4A0019E2D1 /* LumiaiOS */,
 				EB5D204C23FC73FF007D16CD /* Lumia (Sim) */,
 			);
 		};
@@ -665,6 +666,7 @@
 			files = (
 				C729A1DF261FEADE00BD1C5A /* widgets in Resources */,
 				EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */,
+				61E5C199263076B5002770D0 /* iOS-Info.plist in Resources */,
 				EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */,
 				EB5D211923FC7F72007D16CD /* DeviceMargins.plist in Resources */,
 				EB122DBB1E281F850019E2D1 /* iOS.xcassets in Resources */,
@@ -823,13 +825,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
-				PRODUCT_NAME = "Lumia (iOS)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_NAME = Luminosia;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -846,13 +848,13 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
-				PRODUCT_NAME = "Lumia (iOS)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_NAME = Luminosia;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1043,7 +1045,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.Platformer;
@@ -1058,7 +1060,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.Platformer;
@@ -1069,7 +1071,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "Lumia (iOS)" */ = {
+		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "LumiaiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB122DB51E281F4A0019E2D1 /* Debug */,

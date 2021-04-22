@@ -68,6 +68,10 @@ bool SettingsScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
+    
+    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+    
     return true;
 }
 

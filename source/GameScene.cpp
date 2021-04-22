@@ -87,6 +87,17 @@ using namespace cugl;
 
 #define LEVEL_NAME "json/techlevel"
 
+#define WIN_MUSIC "win"
+
+#define GAME_MUSIC "game"
+
+#define LOSE_MUSIC "lose"
+
+#define SPLIT_SOUND "jump"
+
+#define LIGHT_SOUND "pew"
+
+#define DIE_SOUND "pop"
 
 
 
@@ -248,8 +259,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    _musicVolume = 1.0f;
-    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -362,7 +371,10 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
-
+    
+    setMusicVolume(.7);
+    setEffectVolume(.7);
+    
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
     setComplete(false);
@@ -594,6 +606,9 @@ void GameScene::populate() {
     Color4f tint = Color4f(1,1,1,0.6f);
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
+    
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 /**
@@ -664,6 +679,8 @@ void GameScene::update(float dt) {
     if (_input.didGoBack()){setActive(false); CULog("here");}
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
+        AudioEngine::get()->play(DIE_SOUND,source, false, _effectVolume, true);
         removeLumia(lumia);
     }
     
@@ -802,6 +819,8 @@ void GameScene::update(float dt) {
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
             _avatar->setState(LumiaModel::LumiaState::Splitting);
+            std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
+            AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
         }
@@ -986,8 +1005,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -1006,8 +1025,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-//      AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
@@ -1216,11 +1235,15 @@ void GameScene::beginContact(b2Contact* contact) {
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
             }
         }
         // handle collision between enemy and Lumia

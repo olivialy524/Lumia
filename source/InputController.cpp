@@ -177,7 +177,7 @@ void InputController::update(float dt) {
 #ifdef CU_TOUCH_SCREEN
     _keyExit = false;
     _keyReset = false;
-    _keyBack = false
+    _keyBack = false;
     _keyDebug = false;
     _keySplit = false;
     _keyMerge = false;
