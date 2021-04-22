@@ -12,7 +12,15 @@
 
 void SpikeModel::setTextures(const std::shared_ptr<Texture>& spike, float angle) {
     
-    _node = scene2::SceneNode::allocWithBounds(Size(spike->getWidth()/3.0f,spike->getHeight()/2.0f));
+    _node = scene2::SceneNode::allocWithBounds(Size(spike->getWidth() / 9.0f, spike->getHeight()));
+    _node->setAnchor(Vec2::ANCHOR_CENTER);
+    _node->setAngle(angle);
+    _spikeNode = SpikeNode::alloc(spike, 1, 1, 1);
+    auto scale = getWidth() / (spike->getWidth() / 9.0f / _drawScale);
+    _node->setScale(scale);
+    _spikeNode->setAnchor(Vec2::ZERO);
+    _node->addChild(_spikeNode);
+    /*_node = scene2::SceneNode::allocWithBounds(Size(spike->getWidth()/3.0f,spike->getHeight()/2.0f));
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setAngle(angle);
     _spikeNode = SpikeNode::alloc(spike, 2, 3, 6);
@@ -20,7 +28,15 @@ void SpikeModel::setTextures(const std::shared_ptr<Texture>& spike, float angle)
     _node->setScale(scale);
     _spikeNode->setAnchor(Vec2::ZERO);
     _spikeNode->setPosition(Vec2(0.0f, spike->getHeight()/2.0f/5.0f));
-    _node->addChild(_spikeNode);
+    _node->addChild(_spikeNode);*/
+    //_node = scene2::SceneNode::allocWithBounds(Size(getWidth() * _drawScale, getHeight() * _drawScale));
+    //_node->setAnchor(Vec2::ANCHOR_CENTER);
+    //_node->setAngle(angle);
+    //_spikeNode = SpikeNode::alloc(spike, 1, 1, 1);
+    //_spikeNode->setPolygon(Rect(getX() * _drawScale, getY() * _drawScale, getWidth() * _drawScale, getHeight() * _drawScale));
+    //_spikeNode->setAnchor(Vec2::ZERO);
+    //_spikeNode->setFrame(0);
+    //_node->addChild(_spikeNode);
 }
 
 void SpikeModel::dispose() {

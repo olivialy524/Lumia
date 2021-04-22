@@ -274,57 +274,54 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
-    if (_active) {
-        _input.dispose();
-        _collisionController.dispose();
-        _trajectoryNode->dispose();
-        _avatarIndicatorNode->dispose();
-        _level->dispose();
-        _sensorFixtureMap.clear();
-        _graph.clear();
-        for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
-            l->dispose();
-        }
-        _lumiaList.clear();
-        _avatar = nullptr;
-
-        for (const std::shared_ptr<Plant> &p : _plantList) {
-            p->dispose();
-        }
-        _plantList.clear();
-        
-        for (const std::shared_ptr<EnergyModel> &e : _energyList) {
-            e->dispose();
-        }
-        _energyList.clear();
-
-        for (const std::shared_ptr<Door> & d: _doorList) {
-            d->dispose();
-        }
-        _doorList.clear();
-        
-        for (const std::shared_ptr<Button> & b: _buttonList) {
-            b->dispose();
-        }
-        _buttonList.clear();
-        
-        for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
-            enemy->dispose();
-        }
-        _enemyList.clear();
-        _world = nullptr;
-        _worldnode = nullptr;
-        _debugnode = nullptr;
-        _winnode = nullptr;
-        _losenode = nullptr;
-        _complete = false;
-        _failed = false;
-        _debug = false;
-        _didSwitchLevelSelect = false;
-        _UIelements.clear();
-        Scene2::dispose();
-        setActive(false);
+    _input.dispose();
+    _collisionController.dispose();
+    _trajectoryNode->dispose();
+    _avatarIndicatorNode->dispose();
+    _level->dispose();
+    _sensorFixtureMap.clear();
+    _graph.clear();
+    for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
+        l->dispose();
     }
+    _lumiaList.clear();
+    _avatar = nullptr;
+
+    for (const std::shared_ptr<Plant> &p : _plantList) {
+        p->dispose();
+    }
+    _plantList.clear();
+        
+    for (const std::shared_ptr<EnergyModel> &e : _energyList) {
+        e->dispose();
+    }
+    _energyList.clear();
+
+    for (const std::shared_ptr<Door> & d: _doorList) {
+        d->dispose();
+    }
+    _doorList.clear();
+        
+    for (const std::shared_ptr<Button> & b: _buttonList) {
+        b->dispose();
+    }
+    _buttonList.clear();
+        
+    for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
+        enemy->dispose();
+    }
+    _enemyList.clear();
+    _world = nullptr;
+    _worldnode = nullptr;
+    _debugnode = nullptr;
+    _winnode = nullptr;
+    _losenode = nullptr;
+    _complete = false;
+    _failed = false;
+    _debug = false;
+    _didSwitchLevelSelect = false;
+    _UIelements.clear();
+    Scene2::dispose();
 }
 
 
@@ -526,7 +523,7 @@ void GameScene::populate() {
 
 #pragma mark : Spikes
     vector<std::shared_ptr<SpikeModel>> spikes = _level->getSpikes();
-    image = _assets->get<Texture>("lamp");
+    image = _assets->get<Texture>(EARTH_TEXTURE);
     for (int i = 0; i < spikes.size(); i++) {
         auto spike = spikes[i];
         spike->setDrawScale(_scale);
