@@ -297,6 +297,7 @@ void GameScene::dispose() {
             e->dispose();
         }
         _energyList.clear();
+
         for (const std::shared_ptr<Door> & d: _doorList) {
             d->dispose();
         }
@@ -317,7 +318,9 @@ void GameScene::dispose() {
         _winnode = nullptr;
         _losenode = nullptr;
         _complete = false;
+        _failed = false;
         _debug = false;
+        _didSwitchLevelSelect = false;
         _UIelements.clear();
         Scene2::dispose();
         setActive(false);

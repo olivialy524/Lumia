@@ -169,12 +169,12 @@ void LumiaApp::update(float timestep) {
                     _levelSelect.update(timestep);
             }else{
                 string nextScene = _levelSelect.getNextScene();
-                if (nextScene ==  "game"){
+                if (nextScene == "game"){
                     _scene = Game;
                     _gameplay.init(_assets, _levelSelect.getSelectedLevel());
                     _gameplay.setActive(true);
                     _levelSelect.setActive(false);
-                }else if (nextScene == "settings") {
+                } else if (nextScene == "settings") {
                     _levelSelect.setActive(false);
                     _scene = Settings;
                     _settings.setActive(true);
