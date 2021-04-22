@@ -260,8 +260,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setMusicVolume(.7);
-    setEffectVolume(.7);
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -327,8 +325,7 @@ void GameScene::dispose() {
         Scene2::dispose();
         setActive(false);
     }
-    setMusicVolume(.7);
-    setEffectVolume(.7);
+
     std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
@@ -610,9 +607,6 @@ void GameScene::populate() {
     Color4f tint = Color4f(1,1,1,0.6f);
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
-    
-    //setMusicVolume(.7);
-    //setEffectVolume(.7);
     
     std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
