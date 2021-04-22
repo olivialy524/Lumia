@@ -259,6 +259,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     populate();
     _active = true;
+    _complete = true;
     setMusicVolume(.7);
     setEffectVolume(.7);
     setDebug(false);
