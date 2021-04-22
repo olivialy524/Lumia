@@ -260,6 +260,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
