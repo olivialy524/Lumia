@@ -100,7 +100,6 @@ using namespace cugl;
 #define DIE_SOUND "pop"
 
 
-
 #pragma mark -
 #pragma mark Constructors
 /**
@@ -115,7 +114,8 @@ GameScene::GameScene() : Scene2(),
 	_world(nullptr),
 	_avatar(nullptr),
 	_complete(false),
-	_debug(false)
+	_debug(false),
+    _didSwitchLevelSelect(false)
 {    
 }
 
@@ -135,7 +135,7 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
-
+    
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     
@@ -188,7 +188,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-   
+    
     _assets = assets;
     _input.init();
     _collisionController.init();
@@ -221,7 +221,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
-    _scale *= 1.0f;
+    _scale *= 1.7f;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -246,6 +246,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
     
+    _didSwitchLevelSelect = false;
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
     addChild(bkgNode);
@@ -258,7 +259,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     populate();
     _active = true;
-    _complete = false;
+    setMusicVolume(.7);
+    setEffectVolume(.7);
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -322,7 +324,12 @@ void GameScene::dispose() {
         _debug = false;
         _UIelements.clear();
         Scene2::dispose();
+        setActive(false);
     }
+    setMusicVolume(.7);
+    setEffectVolume(.7);
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 
@@ -371,10 +378,6 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
-    
-    setMusicVolume(.7);
-    setEffectVolume(.7);
-    
     _level->resetLevel(LEVEL_NAME);
     setFailure(false);
     setComplete(false);
@@ -607,6 +610,9 @@ void GameScene::populate() {
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
     
+    //setMusicVolume(.7);
+    //setEffectVolume(.7);
+    
     std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
@@ -676,7 +682,7 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){setActive(false); CULog("here");}
+    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
@@ -818,9 +824,9 @@ void GameScene::update(float dt) {
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
-            _avatar->setState(LumiaModel::LumiaState::Splitting);
             std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
             AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
+            _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
         }
@@ -1234,16 +1240,16 @@ void GameScene::beginContact(b2Contact* contact) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
-                _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
                 std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
                 AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
-                _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
                 std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
                 AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         }
         // handle collision between enemy and Lumia

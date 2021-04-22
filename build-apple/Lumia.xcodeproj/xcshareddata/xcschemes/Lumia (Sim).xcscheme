@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-               BuildableName = "Luminosia.app"
-               BlueprintName = "LumiaiOS"
+               BlueprintIdentifier = "EB5D204C23FC73FF007D16CD"
+               BuildableName = "Platformer.app"
+               BlueprintName = "Lumia (Sim)"
                ReferencedContainer = "container:Lumia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Luminosia.app"
-            BlueprintName = "LumiaiOS"
+            BlueprintIdentifier = "EB5D204C23FC73FF007D16CD"
+            BuildableName = "Platformer.app"
+            BlueprintName = "Lumia (Sim)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Luminosia.app"
-            BlueprintName = "LumiaiOS"
+            BlueprintIdentifier = "EB5D204C23FC73FF007D16CD"
+            BuildableName = "Platformer.app"
+            BlueprintName = "Lumia (Sim)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,7 +73,6 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
-      customArchiveName = "Lumia"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

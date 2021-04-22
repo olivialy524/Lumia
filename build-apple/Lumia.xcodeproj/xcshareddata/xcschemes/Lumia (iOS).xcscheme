@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-               BuildableName = "Luminosia.app"
-               BlueprintName = "LumiaiOS"
+               BuildableName = "Lumia (iOS).app"
+               BlueprintName = "Lumia (iOS)"
                ReferencedContainer = "container:Lumia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,6 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
+            BuildableName = "Lumia (iOS).app"
+            BlueprintName = "Lumia (iOS)"
+            ReferencedContainer = "container:Lumia.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
       </Testables>
    </TestAction>
@@ -45,8 +54,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Luminosia.app"
-            BlueprintName = "LumiaiOS"
+            BuildableName = "Lumia (iOS).app"
+            BlueprintName = "Lumia (iOS)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +71,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Luminosia.app"
-            BlueprintName = "LumiaiOS"
+            BuildableName = "Lumia (iOS).app"
+            BlueprintName = "Lumia (iOS)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,7 +82,6 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
-      customArchiveName = "Lumia"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

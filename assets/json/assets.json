@@ -6,7 +6,7 @@
             "wrapT": "repeat"
         },
         "sticky-wall": {
-            "file": "textures/sticky_placeholder.png",
+            "file": "textures/sticky-straight.png",
             "wrapS": "repeat",
             "wrapT": "repeat"
         },

@@ -159,7 +159,6 @@ void InputController::update(float dt) {
 
     _resetPressed = _keyReset;
     _mergePressed = _keyMerge;
-    _backPressed = _keyBack;
 
 #endif
     
@@ -172,12 +171,13 @@ void InputController::update(float dt) {
 
     _launched = _launchInputted;
     _launchInputted = false;
+    _backPressed = _keyBack;
+    _keyBack = false;
 
 // If it does not support keyboard, we must reset "virtual" keyboard
 #ifdef CU_TOUCH_SCREEN
     _keyExit = false;
     _keyReset = false;
-    _keyBack = false;
     _keyDebug = false;
     _keySplit = false;
     _keyMerge = false;
@@ -292,13 +292,14 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
         // two fingers on screen, user is splitting Lumia
         _keySplit = true;
     } else if (_touchids.size() == 3) {
-        // two fingers on screen, user is merging Lumia
+        // three fingers on screen, user is merging Lumia
+        _keySplit = false;
         _mergePressed = true;
     } else if (_touchids.size() == 4) {
         _resetPressed = true;
     } else if (_touchids.size() == 5)// only temp
     {
-        _backPressed = true;
+        _keyBack = true;
     }else {
         // invalid input
         return;
@@ -342,6 +343,9 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     }
     if (_touchids.size() != 4) {
         _resetPressed = false;
+    }
+    if (_touchids.size() != 5) {
+        _keyBack = false;
     }
 }
 
