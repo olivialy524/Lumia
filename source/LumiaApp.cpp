@@ -183,8 +183,8 @@ void LumiaApp::update(float timestep) {
             return;
         }
         case Game:{
-            if (_gameplay.isActive()){
-            _gameplay.update(timestep);
+            if (!_gameplay.didSwitchLevelSelect()){
+                _gameplay.update(timestep);
             }else{
                 _gameplay.dispose();
                 _scene = LevelSelect;
