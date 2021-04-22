@@ -285,14 +285,15 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 400) {
+        _keySplit = true;
+    }
+
     if (_touchids.size() == 1) {
         // only one finger on screen, input is drag-and-release or tap
         _dclick.set(event.position);
     } else if (_touchids.size() == 2) {
-        // two fingers on screen, user is splitting Lumia
-        _keySplit = true;
-    } else if (_touchids.size() == 3) {
-        // three fingers on screen, user is merging Lumia
+        // two fingers on screen, user is merging Lumia
         _keySplit = false;
         _mergePressed = true;
     } else if (_touchids.size() == 4) {
@@ -334,11 +335,7 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     // finger lifted off screen, remove from set of touch IDs
     _touchids.erase(event.touch);
     if (_touchids.size() != 2) {
-        // doesn't have 2 fingers on screen, stop splitting
-        _keySplit = false;
-    }
-    if (_touchids.size() != 3) {
-        // doesn't have 3 fingers on screen, stop merging
+        // doesn't have 2 fingers on screen, stop merging
         _mergePressed = false;
     }
     if (_touchids.size() != 4) {
@@ -347,6 +344,8 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     if (_touchids.size() != 5) {
         _keyBack = false;
     }
+
+    _clickTime = event.timestamp;
 }
 
 /**

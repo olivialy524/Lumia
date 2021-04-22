@@ -56,6 +56,8 @@ private:
     bool _launchInputted;
     /** The initial click or touch location for the current click-and-drag */
     cugl::Vec2 _dclick;
+    /** The timestamp for a double tap */
+    cugl::Timestamp _clickTime;
     /** The touch id(s) of fingers on the screen */
     std::unordered_set<Uint64> _touchids;
   
