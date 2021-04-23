@@ -67,6 +67,9 @@
         "playbutton": {
             "file": "textures/playbutton.png"
         },
+        "back": {
+            "file": "textures/back.png"
+        },
         "closebutton": {
             "file": "textures/closebutton.png"
         },
@@ -226,7 +229,7 @@
                     "data": {
                         "key"   : "backbutton",
                         "variables" : {
-                            "texture": "settingsbutton"
+                            "texture": "back"
                         }
                     }
                 }

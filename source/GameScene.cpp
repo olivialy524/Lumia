@@ -212,12 +212,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     };
     
     std::shared_ptr<Texture> button_tex = assets->get<Texture>("earth");
-//    _backbuttonNode= cugl::scene2::PolygonNode::allocWithTexture(button_tex);
-//    _backbutton = cugl::scene2::Button::alloc(_backbuttonNode);
-//    _backbutton->setPosition(100, 100);
-//    _backbutton->addListener([=](const std::string& name, bool down) {
-//        CULog("backpressed");
-//    });
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -270,7 +264,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
-    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/4, 0);
+    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
 
     setActive(true);
     // XNA nostalgia
@@ -810,7 +804,7 @@ void GameScene::update(float dt) {
         getCamera()->setPositionX(new_pos);
     }
     getCamera()->update();
-    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/4, 0);
+    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
     
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
