@@ -281,6 +281,7 @@ void GameScene::dispose() {
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
+        _UIscene->dispose();
         _level->resetLevel();
         _sensorFixtureMap.clear();
         _graph.clear();
