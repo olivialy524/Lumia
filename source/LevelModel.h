@@ -144,7 +144,7 @@ public:
         return _stickyWalls;
     }
     
-    void resetLevel(const std::string& file){
+    void resetLevel(){
         dispose();
         preload(_levelJson);
     }

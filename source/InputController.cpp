@@ -285,7 +285,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
-    if (event.timestamp.ellapsedMillis(_clickTime) <= 400) {
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 250) {
         _keySplit = true;
     }
 
@@ -305,6 +305,8 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
         // invalid input
         return;
     }
+    
+    _clickTime = event.timestamp;
 }
 
  
@@ -343,8 +345,6 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     if (_touchids.size() != 5) {
         _keyBack = false;
     }
-
-    _clickTime = event.timestamp;
 }
 
 /**
