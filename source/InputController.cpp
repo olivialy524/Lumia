@@ -316,14 +316,13 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
  */
 void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     CULog("Touch ended %lld", event.touch);
-
     Vec2 finishDrag = event.position - _dclick;
 
     if (finishDrag.lengthSquared() < 625.0f) {
         // end position of touch was very close to start of touch, register as tap
         _inputSwitch = event.position;
         _switchInputted = true;
-    } else {
+    } else if (_dragged){
         _dragged = false;
 
         finishDrag = calculateLaunch(finishDrag);
