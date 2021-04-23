@@ -64,6 +64,12 @@
 		C794A66E262F67840011BE4A /* StickyWallNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A66C262F67840011BE4A /* StickyWallNode.cpp */; };
 		C794A66F262F67840011BE4A /* StickyWallNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A66C262F67840011BE4A /* StickyWallNode.cpp */; };
 		C794A670262F67840011BE4A /* StickyWallNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A66C262F67840011BE4A /* StickyWallNode.cpp */; };
+		C794A6C32632582D0011BE4A /* SpikeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6BC2632582C0011BE4A /* SpikeModel.cpp */; };
+		C794A6C42632582D0011BE4A /* SpikeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6BC2632582C0011BE4A /* SpikeModel.cpp */; };
+		C794A6C52632582D0011BE4A /* SpikeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6BC2632582C0011BE4A /* SpikeModel.cpp */; };
+		C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
+		C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
+		C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
 		C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
@@ -222,6 +228,10 @@
 		C794A66B262F66AB0011BE4A /* StickyWallModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StickyWallModel.h; sourceTree = "<group>"; };
 		C794A66C262F67840011BE4A /* StickyWallNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StickyWallNode.cpp; sourceTree = "<group>"; };
 		C794A677262F68170011BE4A /* StickyWallNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StickyWallNode.h; sourceTree = "<group>"; };
+		C794A6BC2632582C0011BE4A /* SpikeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeModel.cpp; sourceTree = "<group>"; };
+		C794A6C02632582C0011BE4A /* SpikeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeNode.cpp; sourceTree = "<group>"; };
+		C794A6C12632582C0011BE4A /* SpikeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeModel.h; sourceTree = "<group>"; };
+		C794A6C22632582C0011BE4A /* SpikeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeNode.h; sourceTree = "<group>"; };
 		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
 		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
 		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
@@ -415,6 +425,10 @@
 				EBB4B5512040912400238092 /* InputController.cpp */,
 				EBB4B54E2040912400238092 /* LumiaModel.cpp */,
 				613E8D202602A93800900A39 /* EnergyModel.h */,
+				C794A6BC2632582C0011BE4A /* SpikeModel.cpp */,
+				C794A6C12632582C0011BE4A /* SpikeModel.h */,
+				C794A6C02632582C0011BE4A /* SpikeNode.cpp */,
+				C794A6C22632582C0011BE4A /* SpikeNode.h */,
 				613E8D242602A94D00900A39 /* EnergyModel.cpp */,
 				613C1CB225FA90CD00B213B8 /* Plant.h */,
 				613C1CB625FA90D800B213B8 /* Plant.cpp */,
@@ -728,6 +742,7 @@
 				3AEC4CD02620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A66F262F67840011BE4A /* StickyWallNode.cpp in Sources */,
 				C729A1D0261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
+				C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
 				6144347126194A1900F597E4 /* Door.cpp in Sources */,
@@ -735,6 +750,7 @@
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFD25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
+				C794A6C42632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D8261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
@@ -762,6 +778,7 @@
 				3AEC4CD12620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A670262F67840011BE4A /* StickyWallNode.cpp in Sources */,
 				C729A1D1261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
+				C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
 				6144347226194A1900F597E4 /* Door.cpp in Sources */,
@@ -769,6 +786,7 @@
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFE25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
+				C794A6C52632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D9261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
@@ -796,6 +814,7 @@
 				3AEC4CCF2620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A66E262F67840011BE4A /* StickyWallNode.cpp in Sources */,
 				C729A1CF261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
+				C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
 				6144347026194A1900F597E4 /* Door.cpp in Sources */,
@@ -803,6 +822,7 @@
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LoadingScene.cpp in Sources */,
+				C794A6C32632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */,
 				3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D7261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,

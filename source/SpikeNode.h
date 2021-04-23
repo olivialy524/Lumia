@@ -18,20 +18,11 @@ protected:
     
     int _frameCount;
     
-    const int LIGHT_UP_ANIMATION_INTERVAL = 2;
-    
-    const int LIT_ANIMATION_INTERVAL = 18;
-    
-    const int LIT_ANIMATION_START = 3;
-    
-    const int LIT_ANIMATION_END = 5;
-    
-    bool _frameIncreasing;
-    
+    const int ANIMATION_INTERVAL = 2;
 public:
     
     
-    SpikeNode() : _frameCount(0), _frameIncreasing(false), AnimationNode() {}
+    SpikeNode() : _frameCount(0), AnimationNode() {}
 
     ~SpikeNode() { dispose(); }
  
