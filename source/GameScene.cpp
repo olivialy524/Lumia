@@ -187,11 +187,21 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     bkgNode->setPosition(dimen.width/2, dimen.height/2);
 
-    std::shared_ptr<scene2::SceneNode> scene = assets->get<scene2::SceneNode>("game");
+    _UIscene = assets->get<scene2::SceneNode>("gameUI");
     
     
-    scene->setContentSize(dimen);
-    scene->doLayout(); // Repositions the HUD;
+    _UIscene->setContentSize(dimen);
+    _UIscene->doLayout(); // Repositions the HUD;
+    for (auto it : _UIscene->getChildren()) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
+        if (button->getName() == "backbutton"){
+            button->addListener([=](const std::string& name, bool down) {
+                _didSwitchLevelSelect = true;
+            });
+        }
+        button->activate();
+        }
+        
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -204,9 +214,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     };
     
     std::shared_ptr<Texture> button_tex = assets->get<Texture>("earth");
-    _backbuttonNode= cugl::scene2::PolygonNode::allocWithTexture(button_tex);
-    _backbutton = cugl::scene2::Button::alloc(_backbuttonNode);
-    _backbutton->setPosition(100, 0);
+//    _backbuttonNode= cugl::scene2::PolygonNode::allocWithTexture(button_tex);
+//    _backbutton = cugl::scene2::Button::alloc(_backbuttonNode);
+//    _backbutton->setPosition(100, 100);
+//    _backbutton->addListener([=](const std::string& name, bool down) {
+//        CULog("backpressed");
+//    });
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -240,11 +253,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
     addChild(bkgNode);
+    addChild(_UIscene);
+//    addChild(_backbutton);
     addChild(_worldnode, 1);
     addChild(_debugnode, 2);
     addChild(_winnode,  3);
     addChild(_losenode, 4);
-//    addChild(button);
     _UIelements.push_back(_backbuttonNode);
 
     populate();
@@ -258,6 +272,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
+    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/4, 0);
 
     setActive(true);
     // XNA nostalgia
@@ -795,6 +810,7 @@ void GameScene::update(float dt) {
         getCamera()->setPositionX(new_pos);
     }
     getCamera()->update();
+    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/4, 0);
     
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
