@@ -85,8 +85,6 @@ using namespace cugl;
 
 #define CAMERA_SHIFT 0.15f
 
-#define LEVEL_NAME "json/techlevel"
-
 
 
 
@@ -289,7 +287,7 @@ void GameScene::dispose() {
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
-        _level->dispose();
+        _level->resetLevel();
         _sensorFixtureMap.clear();
         _graph.clear();
         for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
@@ -381,7 +379,7 @@ void GameScene::reset() {
     _collisionController.clearStates();
     _trajectoryNode->dispose();
 
-    _level->resetLevel(LEVEL_NAME);
+    _level->resetLevel();
     setFailure(false);
     setComplete(false);
     populate();
@@ -679,7 +677,9 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
+    if (_input.didGoBack()){
+//        setActive(false)
+        _didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         removeLumia(lumia);
