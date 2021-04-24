@@ -71,6 +71,8 @@ protected:
     // Physics objects for the game
     /** References to the magical plants */
     std::list<std::shared_ptr<Plant>> _plantList;
+    /** References to the spikes */
+    std::list<std::shared_ptr<SpikeModel>> _spikeList;
     /** References to the energy items */
     std::list<std::shared_ptr<EnergyModel>> _energyList;
     /** References to the Lumia bodies */
@@ -107,7 +109,9 @@ protected:
     
     std::unordered_map<Node, NodeState> _graph;
 
-    int ticks;
+    int _ticks;
+    /** Tick of last time a Lumia hit a spike */
+    int _lastSpikeCollision;
     
     bool _didSwitchLevelSelect;
     

@@ -47,8 +47,6 @@ private:
     bool  _keySplit;
     /** Whether the merge key is down */
     bool  _keyMerge;
-
-    bool  _keyBack;
     // MOUSE + TOUCH SUPPORT
     /** Whether the mouse or finger was tapped */
     bool  _switchInputted;
@@ -56,6 +54,8 @@ private:
     bool _launchInputted;
     /** The initial click or touch location for the current click-and-drag */
     cugl::Vec2 _dclick;
+    /** The timestamp for a double tap */
+    cugl::Timestamp _clickTime;
     /** The touch id(s) of fingers on the screen */
     std::unordered_set<Uint64> _touchids;
   
@@ -70,8 +70,6 @@ protected:
     bool _debugPressed;
     /** Whether the exit action was chosen. */
     bool _exitPressed;
-    
-    bool _backPressed;
     /** Whether the split action was chosen. */
     bool _splitPressed;
     /** Whether the merge action was chosen. */
@@ -223,7 +221,6 @@ public:
      */
 	bool didReset() const { return _resetPressed; }
 
-    bool didGoBack() const { return _backPressed; }
     /**
      * Returns true if the player wants to go toggle the debug mode.
      *

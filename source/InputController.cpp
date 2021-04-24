@@ -18,7 +18,6 @@ using namespace cugl;
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
 /** The key for toggling the debug display */
-#define BACK_KEY KeyCode::B
 #define DEBUG_KEY KeyCode::D
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
@@ -53,7 +52,6 @@ _splitPressed(false),
 _mergePressed(false),
 _keyReset(false),
 _keyDebug(false),
-_keyBack(false),
 _keyExit(false),
 _keySplit(false),
 _keyMerge(false),
@@ -151,7 +149,6 @@ void InputController::update(float dt) {
 
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
-    _keyBack  = keys->keyPressed(BACK_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
     _keyMerge  = keys->keyDown(MERGE_KEY);
@@ -171,8 +168,6 @@ void InputController::update(float dt) {
 
     _launched = _launchInputted;
     _launchInputted = false;
-    _backPressed = _keyBack;
-    _keyBack = false;
 
 // If it does not support keyboard, we must reset "virtual" keyboard
 #ifdef CU_TOUCH_SCREEN
@@ -285,25 +280,26 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 250) {
+        _keySplit = true;
+    }
+
     if (_touchids.size() == 1) {
         // only one finger on screen, input is drag-and-release or tap
         _dclick.set(event.position);
     } else if (_touchids.size() == 2) {
-        // two fingers on screen, user is splitting Lumia
-        _keySplit = true;
-    } else if (_touchids.size() == 3) {
-        // three fingers on screen, user is merging Lumia
+        // two fingers on screen, user is merging Lumia
         _keySplit = false;
         _mergePressed = true;
     } else if (_touchids.size() == 4) {
         _resetPressed = true;
-    } else if (_touchids.size() == 5)// only temp
-    {
-        _keyBack = true;
-    }else {
+    }
+    else {
         // invalid input
         return;
     }
+    
+    _clickTime = event.timestamp;
 }
 
  
@@ -315,14 +311,13 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
  */
 void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     CULog("Touch ended %lld", event.touch);
-
     Vec2 finishDrag = event.position - _dclick;
 
     if (finishDrag.lengthSquared() < 625.0f) {
         // end position of touch was very close to start of touch, register as tap
         _inputSwitch = event.position;
         _switchInputted = true;
-    } else {
+    } else if (_dragged){
         _dragged = false;
 
         finishDrag = calculateLaunch(finishDrag);
@@ -334,18 +329,11 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
     // finger lifted off screen, remove from set of touch IDs
     _touchids.erase(event.touch);
     if (_touchids.size() != 2) {
-        // doesn't have 2 fingers on screen, stop splitting
-        _keySplit = false;
-    }
-    if (_touchids.size() != 3) {
-        // doesn't have 3 fingers on screen, stop merging
+        // doesn't have 2 fingers on screen, stop merging
         _mergePressed = false;
     }
     if (_touchids.size() != 4) {
         _resetPressed = false;
-    }
-    if (_touchids.size() != 5) {
-        _keyBack = false;
     }
 }
 

@@ -141,6 +141,7 @@ void LumiaApp::update(float timestep) {
                 _loading.update(0.01f);
             }else{
                 _scene = Main;
+                _loading.setActive(false);
                 _loading.dispose();
                 _mainMenu.init(_assets);
                 _mainMenu.setActive(true);
@@ -153,6 +154,7 @@ void LumiaApp::update(float timestep) {
             if (_mainMenu.isActive()){
                 _mainMenu.update(timestep);
             }else{
+                _mainMenu.setActive(false);
                 _mainMenu.dispose();
                 string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
                 if (nextScene ==  "levelselect"){
@@ -168,15 +170,17 @@ void LumiaApp::update(float timestep) {
             if (_levelSelect.isActive()){
                     _levelSelect.update(timestep);
             }else{
+                _levelSelect.setActive(false);
                 string nextScene = _levelSelect.getNextScene();
-                if (nextScene ==  "game"){
+                if (nextScene == "game"){
                     _scene = Game;
                     _gameplay.init(_assets, _levelSelect.getSelectedLevel());
+                    _gameplay.setMusicVolume(_settings.getMusicVolume());
+                    _gameplay.setEffectVolume(_settings.getEffectVolume());
                     _gameplay.setActive(true);
-                    _levelSelect.setActive(false);
-                }else if (nextScene == "settings") {
-                    _levelSelect.setActive(false);
+                } else if (nextScene == "settings") {
                     _scene = Settings;
+                    _settings.init(_assets);
                     _settings.setActive(true);
                 }
             }
@@ -187,6 +191,7 @@ void LumiaApp::update(float timestep) {
                 _gameplay.update(timestep);
             }else{
                 _gameplay.dispose();
+
                 _scene = LevelSelect;
                 _levelSelect.setActive(true);
             }
@@ -196,11 +201,11 @@ void LumiaApp::update(float timestep) {
             if (_settings.isActive()){
                     _settings.update(timestep);
             }else{
+                _settings.setActive(false);
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
                     _scene = LevelSelect;
                     _levelSelect.setActive(true);
-                    _settings.setActive(false);
                 }
             }
             return;

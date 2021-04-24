@@ -15,10 +15,14 @@
 #include "EnergyModel.h"
 #include "Button.h"
 #include "Door.h"
+#include "SpikeModel.h"
 #include "StickyWallModel.h"
+
+
 class LevelModel : public cugl::Asset {
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
+    std::vector<std::shared_ptr<SpikeModel>> _spikes;
     std::vector<std::shared_ptr<EnergyModel>> _energies;
     std::vector<std::shared_ptr<Tile>> _tiles;
     std::vector<std::shared_ptr<EnemyModel>> _enemies;
@@ -33,6 +37,8 @@ private:
     float _yBound;
     
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
+
+    std::vector<std::shared_ptr<SpikeModel>> createSpikes(const std::shared_ptr<cugl::JsonValue>& spikes);
 
     std::vector<std::shared_ptr<EnergyModel>> createEnergies(const std::shared_ptr<cugl::JsonValue>& energies);
     
@@ -109,6 +115,10 @@ public:
     
     std::vector<std::shared_ptr<Plant>> getPlants(){
         return _plants;
+    }
+
+    std::vector<std::shared_ptr<SpikeModel>> getSpikes() {
+        return _spikes;
     }
 
     std::vector<std::shared_ptr<EnergyModel>> getEnergies() {

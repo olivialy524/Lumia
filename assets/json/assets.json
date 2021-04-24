@@ -90,6 +90,9 @@
         },
         "enemy": {
             "file": "textures/enemy-3d.png"
+        },
+        "spike": {
+            "file": "textures/spike.png"
         }
     },
     "sounds": {

@@ -64,6 +64,9 @@ using namespace cugl;
 /** The name of a plant (for object identification) */
 #define PLANT_NAME       "plant"
 
+/** The name of a spike (for object identification) */
+#define SPIKE_NAME       "spike"
+
 #define LUMIA_NAME      "lumia"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
@@ -273,6 +276,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
+    _ticks = 0;
+    _lastSpikeCollision = NULL;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -322,21 +327,22 @@ void GameScene::dispose() {
             p->dispose();
         }
         _plantList.clear();
-        
+            
         for (const std::shared_ptr<EnergyModel> &e : _energyList) {
             e->dispose();
         }
         _energyList.clear();
+
         for (const std::shared_ptr<Door> & d: _doorList) {
             d->dispose();
         }
         _doorList.clear();
-        
+            
         for (const std::shared_ptr<Button> & b: _buttonList) {
             b->dispose();
         }
         _buttonList.clear();
-        
+            
         for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
             enemy->dispose();
         }
@@ -347,7 +353,9 @@ void GameScene::dispose() {
         _winnode = nullptr;
         _losenode = nullptr;
         _complete = false;
+        _failed = false;
         _debug = false;
+        _didSwitchLevelSelect = false;
         _UIelements.clear();
         Scene2::dispose();
         setActive(false);
@@ -403,6 +411,8 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
+    _ticks = 0;
+    _lastSpikeCollision = NULL;
     _level->resetLevel();
     setFailure(false);
     setComplete(false);
@@ -559,6 +569,18 @@ void GameScene::populate() {
         addObstacle(plant, plant->getNode(), 0);
         _plantList.push_front(plant);
     }
+
+#pragma mark : Spikes
+    vector<std::shared_ptr<SpikeModel>> spikes = _level->getSpikes();
+    image = _assets->get<Texture>("spike");
+    for (int i = 0; i < spikes.size(); i++) {
+        auto spike = spikes[i];
+        spike->setDrawScale(_scale);
+        spike->setTextures(image, spike->getAngle());
+        spike->setVX(0);
+        addObstacle(spike, spike->getNode(), 0);
+        _spikeList.push_front(spike);
+    }
     
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
@@ -714,7 +736,7 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
+//    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
@@ -801,8 +823,9 @@ void GameScene::update(float dt) {
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
 
             float radius = lumia->getRadius() * _scale; // world coordinates
-            if (IN_RANGE(tapLocationWorld.x, lumiaPosition.x - radius, lumiaPosition.x + radius) &&
-                IN_RANGE(tapLocationWorld.y, lumiaPosition.y - radius, lumiaPosition.y + radius)) {
+            CULog("%f", radius);
+            if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
+                IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
             }
         }
@@ -817,11 +840,11 @@ void GameScene::update(float dt) {
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-    if (! (_avatar->isGrounded() && _input.isDragging()) || ticks % 8 == 0){
+    if (! (_avatar->isGrounded() && _input.isDragging()) || _ticks % 8 == 0){
         _trajectoryNode->clearPoints();
     }
     
-	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && ticks % 8 == 0) {
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && _ticks % 8 == 0) {
         Vec2 startPos = _avatar->getPosition();
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input.getPlannedLaunch();
@@ -984,9 +1007,7 @@ void GameScene::update(float dt) {
             
     }
 
-    ticks++;
-
-    if (ticks % 100 == 0){
+    if (_ticks % 100 == 0){
         for (auto & enemy : _enemyList){
             std::shared_ptr<LumiaModel> closestLumia;
             Vec2 enemyPos = enemy->getPosition();
@@ -1013,6 +1034,8 @@ void GameScene::update(float dt) {
             enemy->setInCoolDown(false);
         }
     }
+
+    _ticks++;
 //    for (auto & lumia : _lumiaList){
 //        Vec2 lastPos = lumia->getLastPosition();
 //        _graph[{Vec2(floor(lastPos.x), floor(lastPos.y))}] = NodeState::Void;
@@ -1301,6 +1324,23 @@ void GameScene::beginContact(b2Contact* contact) {
                 std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
                 AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            }
+        // handle collision between spike and Lumia
+        } else if (bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get()) {
+            if (_lastSpikeCollision == NULL) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            } else if (_ticks - _lastSpikeCollision > 30) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            }
+        } else if (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get()) {
+            if (_lastSpikeCollision == NULL) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+            } else if (_ticks - _lastSpikeCollision > 30) {
+                _lastSpikeCollision = _ticks;
+                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         }
         // handle collision between enemy and Lumia

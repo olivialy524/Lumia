@@ -207,6 +207,8 @@
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
     <ClInclude Include="..\..\source\SettingsScene.h" />
+    <ClInclude Include="..\..\source\SpikeModel.h" />
+    <ClInclude Include="..\..\source\SpikeNode.h" />
     <ClInclude Include="..\..\source\StickyWallModel.h" />
     <ClInclude Include="..\..\source\StickyWallNode.h" />
     <ClInclude Include="..\..\source\Tile.h" />
@@ -248,6 +250,8 @@
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
     <ClCompile Include="..\..\source\SettingsScene.cpp" />
+    <ClCompile Include="..\..\source\SpikeModel.cpp" />
+    <ClCompile Include="..\..\source\SpikeNode.cpp" />
     <ClCompile Include="..\..\source\StickyWallModel.cpp" />
     <ClCompile Include="..\..\source\StickyWallNode.cpp" />
     <ClCompile Include="..\..\source\Tile.cpp" />
