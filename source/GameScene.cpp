@@ -294,7 +294,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     if (_active) {
-        _input.dispose();
+//        _input.dispose();
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
