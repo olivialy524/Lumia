@@ -86,11 +86,21 @@ using namespace cugl;
 
 #define CAMERA_SHIFT 0.15f
 
+#define WIN_MUSIC "win"
+
 #define CAMERA_UPBOUND 0.85f
 
 #define CAMERA_LOWERBOUND 0.2f
 
+#define GAME_MUSIC "game"
 
+#define LOSE_MUSIC "lose"
+
+#define SPLIT_SOUND "jump"
+
+#define LIGHT_SOUND "pew"
+
+#define DIE_SOUND "pop"
 
 
 #pragma mark -
@@ -257,12 +267,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     _UIelements.push_back(_backbuttonNode);
-
+    
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     populate();
     _active = true;
     _complete = false;
-    _musicVolume = 1.0f;
-    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
@@ -342,6 +352,9 @@ void GameScene::dispose() {
         Scene2::dispose();
         setActive(false);
     }
+
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 
@@ -390,7 +403,6 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
-
     _level->resetLevel();
     setFailure(false);
     setComplete(false);
@@ -632,6 +644,9 @@ void GameScene::populate() {
     Color4f tint = Color4f(1,1,1,0.6f);
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
+    
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 /**
@@ -699,11 +714,11 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){
-//        setActive(false)
-        _didSwitchLevelSelect = true; }
+    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
+        AudioEngine::get()->play(DIE_SOUND,source, false, _effectVolume, true);
         removeLumia(lumia);
     }
     
@@ -860,6 +875,8 @@ void GameScene::update(float dt) {
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
+            std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
+            AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
@@ -1045,8 +1062,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -1065,8 +1082,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-//      AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
@@ -1274,11 +1291,15 @@ void GameScene::beginContact(b2Contact* contact) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         }

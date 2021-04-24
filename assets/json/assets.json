@@ -95,7 +95,7 @@
     "sounds": {
         "game": {
             "type":     "sample",
-            "file":     "sounds/DD_Main.ogg",
+            "file":     "sounds/LevelTheme.ogg",
             "stream":   true,
             "volume":   0.5
         },
@@ -125,7 +125,13 @@
             "type":     "sample",
             "file":     "sounds/plop.wav",
             "volume":   0.5
-        }                
+        },
+        "ui": {
+            "type": "sample",
+            "file": "sounds/UITheme.ogg",
+            "stream": true,
+            "volume": 0.5
+        }
     },
 	"fonts": {
 		"orbitron": {
