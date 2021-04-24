@@ -54,7 +54,9 @@ protected:
     
     std::shared_ptr<cugl::scene2::SceneNode> _backbuttonNode;
     
-    std::shared_ptr<cugl::scene2::SceneNode> _backbutton;
+    std::shared_ptr<cugl::scene2::SceneNode> _UIscene;
+    
+    std::shared_ptr<cugl::scene2::Button> _backbutton;
     /** Reference to the win message label */
     std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */

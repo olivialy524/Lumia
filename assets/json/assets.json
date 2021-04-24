@@ -67,6 +67,9 @@
         "playbutton": {
             "file": "textures/playbutton.png"
         },
+        "back": {
+            "file": "textures/back.png"
+        },
         "closebutton": {
             "file": "textures/closebutton.png"
         },
@@ -150,7 +153,8 @@
 	},
     "widgets": {
         "levelbutton" : "widgets/levelbutton.json",
-        "toprightbutton" : "widgets/toprightbutton.json"
+        "toprightbutton" : "widgets/toprightbutton.json",
+        "backbutton" : "widgets/backbutton.json"
     },
     "scene2s" : {
     	"mainmenu" : {
@@ -219,21 +223,20 @@
                 }
             }
         },
-        "game" : {
+        "gameUI" : {
             "type"      : "Node",
             "format"    : {
                 "type" : "Anchored"
             },
             "children":  {
-                "background": {
-                    "type": "Image",
+
+                "backbutton"  : {
+                    "type": "Widget",
                     "data": {
-                        "texture":  "background",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
+                        "key"   : "backbutton",
+                        "variables" : {
+                            "texture": "back"
+                        }
                     }
                 }
             }
