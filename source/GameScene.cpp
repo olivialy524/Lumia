@@ -267,12 +267,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     _UIelements.push_back(_backbuttonNode);
-
+    
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     populate();
     _active = true;
     _complete = false;
-    _musicVolume = 1.0f;
-    _effectVolume = 1.0f;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
