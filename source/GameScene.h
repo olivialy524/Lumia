@@ -45,6 +45,7 @@ protected:
     CollisionController _collisionController;
     
     float _cameraTargetX;
+    float _cameraTargetY;
     
     // VIEW
     /** Reference to the physics root of the scene graph */

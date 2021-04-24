@@ -132,6 +132,10 @@ public:
         _position.x = tx;
     }
     
+    void setPositionY(float ty){
+        _position.y = ty;
+    }
+    
     /**
      * Returns the unit length direction vector of the camera
      *

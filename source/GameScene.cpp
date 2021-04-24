@@ -40,6 +40,7 @@ using namespace cugl;
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
 /** Friction of most platforms */
+
 #define BASIC_FRICTION  0.4f
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
@@ -88,7 +89,21 @@ using namespace cugl;
 
 #define CAMERA_SHIFT 0.15f
 
+#define WIN_MUSIC "win"
 
+#define CAMERA_UPBOUND 0.85f
+
+#define CAMERA_LOWERBOUND 0.2f
+
+#define GAME_MUSIC "game"
+
+#define LOSE_MUSIC "lose"
+
+#define SPLIT_SOUND "jump"
+
+#define LIGHT_SOUND "pew"
+
+#define DIE_SOUND "pop"
 
 
 #pragma mark -
@@ -220,17 +235,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     _scale *= 1.7f;
-    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+//    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _worldnode->setPosition(offset);
+//    _worldnode->setPosition(offset);
 
     _debugnode = scene2::SceneNode::alloc();
     _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _debugnode->setPosition(offset);
+//    _debugnode->setPosition(offset);
 
     _winnode = scene2::Label::alloc(WIN_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -255,18 +270,30 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_winnode,  3);
     addChild(_losenode, 4);
     _UIelements.push_back(_backbuttonNode);
-
+    
+    _musicVolume = 1.0f;
+    _effectVolume = 1.0f;
     populate();
     _active = true;
     _complete = false;
-    _musicVolume = 1.0f;
-    _effectVolume = 1.0f;
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
     
     float cameraWidth = getCamera()->getViewport().size.width;
+    float cameraHeight = getCamera()->getViewport().size.height;
+    float upbound = CAMERA_UPBOUND * cameraHeight;
+    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
+    if (_avatar->getAvatarPos().y > upbound){
+        getCamera()->setPositionY(cameraHeight*2/3);
+        _cameraTargetY = cameraHeight*2/3;
+    }else if (_avatar->getAvatarPos().y < lowerbound){
+        getCamera()->setPositionY(cameraHeight/3);
+        _cameraTargetY = cameraHeight/3;
+    }else {
+        getCamera()->setPositionY(cameraHeight/2);
+    }
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
     _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
@@ -282,11 +309,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     if (_active) {
-        _input.dispose();
+//        _input.dispose();
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
-        _UIscene->dispose();
+//        _UIscene->dispose();
         _level->resetLevel();
         _sensorFixtureMap.clear();
         _graph.clear();
@@ -333,6 +360,9 @@ void GameScene::dispose() {
         Scene2::dispose();
         setActive(false);
     }
+
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 
@@ -381,7 +411,6 @@ void GameScene::reset() {
     _enemyList.clear();
     _collisionController.clearStates();
     _trajectoryNode->dispose();
-
     _ticks = 0;
     _lastSpikeCollision = NULL;
     _level->resetLevel();
@@ -389,6 +418,16 @@ void GameScene::reset() {
     setComplete(false);
     populate();
     float cameraWidth = getCamera()->getViewport().size.width;
+    float cameraHeight = getCamera()->getViewport().size.height;
+    float upbound = CAMERA_UPBOUND * cameraHeight;
+    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
+    if (_avatar->getAvatarPos().y > upbound){
+        getCamera()->setPositionY(cameraHeight*2/3);
+    }else if (_avatar->getAvatarPos().y < lowerbound){
+        getCamera()->setPositionY(cameraHeight/3);
+    }else {
+        getCamera()->setPositionY(cameraHeight/2);
+    }
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
 }
@@ -627,6 +666,9 @@ void GameScene::populate() {
     Color4f tint = Color4f(1,1,1,0.6f);
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
+    
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 /**
@@ -694,11 +736,11 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-    if (_input.didGoBack()){
-//        setActive(false)
-        _didSwitchLevelSelect = true; }
+    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
+        AudioEngine::get()->play(DIE_SOUND,source, false, _effectVolume, true);
         removeLumia(lumia);
     }
     
@@ -817,15 +859,33 @@ void GameScene::update(float dt) {
       
 
     float cameraWidth = getCamera()->getViewport().size.width;
+    float cameraHeight = getCamera()->getViewport().size.height;
+    float upbound = CAMERA_UPBOUND * cameraHeight;
+    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
+    if (_avatar->getAvatarPos().y > upbound){
+        _cameraTargetY = cameraHeight*2/3;
+    }else if (_avatar->getAvatarPos().y < lowerbound){
+        _cameraTargetY = cameraHeight/3;
+    }else {
+        _cameraTargetY = cameraHeight/2;
+    }
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
     float currentPosX = getCamera()->getPosition().x;
-    float diff = _cameraTargetX - currentPosX;
-    if (std::abs(diff) <= 3){
+    float currentPosY = getCamera()->getPosition().y;
+    float diffY = _cameraTargetY - currentPosY;
+    float diffX = _cameraTargetX - currentPosX;
+    if (std::abs(diffX) <= 3){
         getCamera()->setPositionX(_cameraTargetX);
     }else{
-        float new_pos = currentPosX + CAMERA_SPEED * sgn(diff);
+        float new_pos = currentPosX + CAMERA_SPEED * sgn(diffX);
         getCamera()->setPositionX(new_pos);
+    }
+    if (std::abs(diffY) <= 3){
+        getCamera()->setPositionY(_cameraTargetY);
+    }else{
+        float new_pos = currentPosY + CAMERA_SPEED * sgn(diffY);
+        getCamera()->setPositionY(new_pos);
     }
     getCamera()->update();
     _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
@@ -838,6 +898,8 @@ void GameScene::update(float dt) {
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
+            std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
+            AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
@@ -1023,8 +1085,8 @@ void GameScene::setComplete(bool value) {
     bool change = _complete != value;
 	_complete = value;
 	if (value && change) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-//		AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else if (!value) {
@@ -1043,8 +1105,8 @@ void GameScene::setComplete(bool value) {
 void GameScene::setFailure(bool value) {
 	_failed = value;
 	if (value) {
-//		std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
-//      AudioEngine::get()->getMusicQueue()->play(source, false, MUSIC_VOLUME);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
+        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
 		_countdown = EXIT_COUNT;
 	} else {
@@ -1252,11 +1314,15 @@ void GameScene::beginContact(b2Contact* contact) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get()) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
+                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         // handle collision between spike and Lumia
