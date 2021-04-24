@@ -171,7 +171,6 @@ void LumiaApp::update(float timestep) {
                     _levelSelect.update(timestep);
             }else{
                 _levelSelect.setActive(false);
-                _levelSelect.dispose();
                 string nextScene = _levelSelect.getNextScene();
                 if (nextScene == "game"){
                     _scene = Game;
@@ -191,11 +190,9 @@ void LumiaApp::update(float timestep) {
             if (!_gameplay.didSwitchLevelSelect()){
                 _gameplay.update(timestep);
             }else{
-                _gameplay.setActive(false);
                 _gameplay.dispose();
 
                 _scene = LevelSelect;
-                _levelSelect.init(_assets);
                 _levelSelect.setActive(true);
             }
             return;
@@ -205,11 +202,9 @@ void LumiaApp::update(float timestep) {
                     _settings.update(timestep);
             }else{
                 _settings.setActive(false);
-                _settings.dispose();
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
                     _scene = LevelSelect;
-                    _levelSelect.init(_assets);
                     _levelSelect.setActive(true);
                 }
             }
