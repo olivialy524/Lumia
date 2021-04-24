@@ -533,7 +533,7 @@ void GameScene::populate() {
 
 #pragma mark : Spikes
     vector<std::shared_ptr<SpikeModel>> spikes = _level->getSpikes();
-    image = _assets->get<Texture>(EARTH_TEXTURE);
+    image = _assets->get<Texture>("spike");
     for (int i = 0; i < spikes.size(); i++) {
         auto spike = spikes[i];
         spike->setDrawScale(_scale);
