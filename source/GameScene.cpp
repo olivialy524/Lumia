@@ -283,20 +283,17 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     float cameraWidth = getCamera()->getViewport().size.width;
     float cameraHeight = getCamera()->getViewport().size.height;
     float upbound = CAMERA_UPBOUND * cameraHeight;
-    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     if (_avatar->getAvatarPos().y > upbound){
         getCamera()->setPositionY(cameraHeight*2/3);
         _cameraTargetY = cameraHeight*2/3;
-    }else if (_avatar->getAvatarPos().y < lowerbound){
-        getCamera()->setPositionY(cameraHeight/3);
-        _cameraTargetY = cameraHeight/3;
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
     }else {
         getCamera()->setPositionY(cameraHeight/2);
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
     }
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
     getCamera()->update();
-    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
 
     setActive(true);
     // XNA nostalgia
@@ -420,16 +417,14 @@ void GameScene::reset() {
     float cameraWidth = getCamera()->getViewport().size.width;
     float cameraHeight = getCamera()->getViewport().size.height;
     float upbound = CAMERA_UPBOUND * cameraHeight;
-    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
     if (_avatar->getAvatarPos().y > upbound){
         getCamera()->setPositionY(cameraHeight*2/3);
-    }else if (_avatar->getAvatarPos().y < lowerbound){
-        getCamera()->setPositionY(cameraHeight/3);
     }else {
         getCamera()->setPositionY(cameraHeight/2);
     }
     getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
     getCamera()->update();
+    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
 }
 
 /**
@@ -861,13 +856,12 @@ void GameScene::update(float dt) {
     float cameraWidth = getCamera()->getViewport().size.width;
     float cameraHeight = getCamera()->getViewport().size.height;
     float upbound = CAMERA_UPBOUND * cameraHeight;
-    float lowerbound = CAMERA_LOWERBOUND * cameraHeight;
     if (_avatar->getAvatarPos().y > upbound){
         _cameraTargetY = cameraHeight*2/3;
-    }else if (_avatar->getAvatarPos().y < lowerbound){
-        _cameraTargetY = cameraHeight/3;
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
     }else {
         _cameraTargetY = cameraHeight/2;
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
     }
     _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
 //    getCamera()->setPositionX(_avatar->getAvatarPos().x);
@@ -888,7 +882,6 @@ void GameScene::update(float dt) {
         getCamera()->setPositionY(new_pos);
     }
     getCamera()->update();
-    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
     
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
