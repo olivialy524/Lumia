@@ -287,7 +287,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     if (_avatar->getAvatarPos().y > upbound){
         getCamera()->setPositionY(cameraHeight*2/3);
         _cameraTargetY = cameraHeight*2/3;
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, cameraHeight/6);
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
     }else {
         getCamera()->setPositionY(cameraHeight/2);
         _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
@@ -858,7 +858,7 @@ void GameScene::update(float dt) {
     float upbound = CAMERA_UPBOUND * cameraHeight;
     if (_avatar->getAvatarPos().y > upbound){
         _cameraTargetY = cameraHeight*2/3;
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, cameraHeight/6);
+        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
     }else {
         _cameraTargetY = cameraHeight/2;
         _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
