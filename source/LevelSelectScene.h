@@ -26,6 +26,8 @@ protected:
     /** The identifier for the level selected by the player */
     string _selectedLevel;
     
+    float _musicVolume = 1.0;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
