@@ -16,9 +16,6 @@
 		3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
 		3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
 		3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A51260C3DF700898D04 /* LevelModel.cpp */; };
-		3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
-		3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
-		3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D6A5B260C415D00898D04 /* Tile.cpp */; };
 		3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
 		3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
 		3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */; };
@@ -70,6 +67,9 @@
 		C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
 		C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
 		C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6C02632582C0011BE4A /* SpikeNode.cpp */; };
+		C794A6F72638F29A0011BE4A /* TileModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6F62638F29A0011BE4A /* TileModel.cpp */; };
+		C794A6F82638F29A0011BE4A /* TileModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6F62638F29A0011BE4A /* TileModel.cpp */; };
+		C794A6F92638F29A0011BE4A /* TileModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A6F62638F29A0011BE4A /* TileModel.cpp */; };
 		C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
 		C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */; };
@@ -197,7 +197,6 @@
 		3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundNode.cpp; sourceTree = "<group>"; };
 		3A9D6A50260C3DE800898D04 /* LevelModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelModel.h; sourceTree = "<group>"; };
 		3A9D6A51260C3DF700898D04 /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
-		3A9D6A5B260C415D00898D04 /* Tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tile.cpp; sourceTree = "<group>"; };
 		3A9D6A62260C417100898D04 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		3AEC4CA9261B6DA80013AEB7 /* TileDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileDataModel.h; sourceTree = "<group>"; };
 		3AEC4CAD261B8DE00013AEB7 /* TileDataModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileDataModel.cpp; sourceTree = "<group>"; };
@@ -232,6 +231,8 @@
 		C794A6C02632582C0011BE4A /* SpikeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpikeNode.cpp; sourceTree = "<group>"; };
 		C794A6C12632582C0011BE4A /* SpikeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeModel.h; sourceTree = "<group>"; };
 		C794A6C22632582C0011BE4A /* SpikeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpikeNode.h; sourceTree = "<group>"; };
+		C794A6F52638F2840011BE4A /* TileModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileModel.h; sourceTree = "<group>"; };
+		C794A6F62638F29A0011BE4A /* TileModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileModel.cpp; sourceTree = "<group>"; };
 		C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnemyModel.cpp; sourceTree = "<group>"; };
 		C79D7E64261BA3CB007DDD42 /* EnemyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyModel.h; sourceTree = "<group>"; };
 		C79D7E65261BA3DB007DDD42 /* EnemyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnemyNode.h; sourceTree = "<group>"; };
@@ -440,7 +441,6 @@
 				3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */,
 				3A9D6A50260C3DE800898D04 /* LevelModel.h */,
 				3A9D6A51260C3DF700898D04 /* LevelModel.cpp */,
-				3A9D6A5B260C415D00898D04 /* Tile.cpp */,
 				3A9D6A62260C417100898D04 /* Tile.h */,
 				C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */,
 				C79D7E64261BA3CB007DDD42 /* EnemyModel.h */,
@@ -459,6 +459,8 @@
 				C794A66B262F66AB0011BE4A /* StickyWallModel.h */,
 				C794A66C262F67840011BE4A /* StickyWallNode.cpp */,
 				C794A677262F68170011BE4A /* StickyWallNode.h */,
+				C794A6F52638F2840011BE4A /* TileModel.h */,
+				C794A6F62638F29A0011BE4A /* TileModel.cpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -750,9 +752,9 @@
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFD25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
+				C794A6F82638F29A0011BE4A /* TileModel.cpp in Sources */,
 				C794A6C42632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A53260C3DF800898D04 /* LevelModel.cpp in Sources */,
-				3A9D6A5D260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D8261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -786,9 +788,9 @@
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				3A534AFE25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
+				C794A6F92638F29A0011BE4A /* TileModel.cpp in Sources */,
 				C794A6C52632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A54260C3DF800898D04 /* LevelModel.cpp in Sources */,
-				3A9D6A5E260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D9261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -822,9 +824,9 @@
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */,
 				EBB4B55C2040912400238092 /* LoadingScene.cpp in Sources */,
+				C794A6F72638F29A0011BE4A /* TileModel.cpp in Sources */,
 				C794A6C32632582D0011BE4A /* SpikeModel.cpp in Sources */,
 				3A9D6A52260C3DF800898D04 /* LevelModel.cpp in Sources */,
-				3A9D6A5C260C415D00898D04 /* Tile.cpp in Sources */,
 				C729A1D7261FEACC00BD1C5A /* MainMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

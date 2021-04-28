@@ -121,6 +121,7 @@ GameScene::GameScene() : Scene2(),
 	_avatar(nullptr),
 	_complete(false),
 	_debug(false),
+    _canSplit(true),
     _didSwitchLevelSelect(false)
 {    
 }
@@ -362,7 +363,6 @@ void GameScene::dispose() {
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
-
 #pragma mark -
 #pragma mark Level Layout
 
@@ -501,44 +501,15 @@ void GameScene::populate() {
         platform.setGeometry(Geometry::SOLID);
         
         platform += Vec2(t->getX(), t->getY());
-        platobj = physics2::PolygonObstacle::alloc(platform);
-        platobj->setAngle(t->getAngle());
-        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
-        
-           //  Set the physics attributes
-        platobj->setBodyType(b2_staticBody);
-        platobj->setDensity(BASIC_DENSITY);
-        platobj->setFriction(BASIC_FRICTION);
-        platobj->setRestitution(BASIC_RESTITUTION);
-        platobj->setDebugColor(DEBUG_COLOR);
-        platform *= _scale;
-        
+        std::shared_ptr<TileModel> tileobj = TileModel::alloc(platform);
+        tileobj->setAngle(t->getAngle());
+        tileobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        tileobj->setDrawScale(_scale);;
+        tileobj->setPosition(t->getX(), t->getY());
         image = _assets->get<Texture>(t->getFile());
-
-        // calcuate the drawing overlay scale
-        float scalex = platform.getBounds().size.width/image->getWidth();
-        float scaley = platform.getBounds().size.height/image->getHeight();
-        
-        sprite = scene2::PolygonNode::allocWithTexture(image);
-        sprite->setScale(Vec2(scalex, scaley));
-        sprite->setAngle(t->getAngle());
-       
-        _world->addObstacle(platobj);
-        platobj->setDebugScene(_debugnode);
-        platobj->setPosition(t->getX(), t->getY());
-        sprite->setPosition(t->getX()*_scale, t->getY()* _scale);
-        _worldnode->addChild(sprite, 1);
-        
-        
-//        cout <<"type" << t->getType()<< endl;
-//        cout <<"angle" << t->getAngle()<< endl;
-//////        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
-////        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
-//        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
-//        for (int i = 0; i< grid_data.size(); i++ ){
-//            cout << grid_data[i].x << "" << grid_data[i].y << endl;
-//        }
-        
+        tileobj->setTextures(image);
+        tileobj->setType(t->getType());
+        addObstacle(tileobj, tileobj->getSceneNode(), 1);
     }
  
 #pragma mark : Energy
@@ -886,11 +857,26 @@ void GameScene::update(float dt) {
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
+    _canSplit = true;
     
     if(!_avatar->isRemoved()){
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
+            std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
+                b2Body* body = fixture->GetBody();
+                physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
+                if (bd->getName().substr(0,8) == PLATFORM_NAME) {
+//                    if ((Tile*)bd->getT){
+                        _canSplit = false;
+                        return true;
+//                    }
+                }
+                return false;
+            };
+            
+            Rect aabb = Rect(1,1,1,1);// left bottom x, y, w, h
+            _world->queryAABB(cb, aabb);
             std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
             AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
             _avatar->setState(LumiaModel::LumiaState::Splitting);
