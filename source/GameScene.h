@@ -19,6 +19,7 @@
 #include "Door.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
+#include "TileModel.h"
 //#include "PathFindingController.h"
 #include "TrajectoryNode.h"
 /**
@@ -103,6 +104,8 @@ protected:
     float _musicVolume;
     /** Volume level for sound effects */
     float _effectVolume;
+    
+    bool _canSplit;
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
@@ -342,6 +345,8 @@ public:
 
 #pragma mark -
 #pragma mark Gameplay Handling
+    
+    
     /**
      * The method called to update the game mode.
      *

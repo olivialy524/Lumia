@@ -121,6 +121,7 @@ GameScene::GameScene() : Scene2(),
 	_avatar(nullptr),
 	_complete(false),
 	_debug(false),
+    _canSplit(true),
     _didSwitchLevelSelect(false)
 {    
 }
@@ -362,7 +363,6 @@ void GameScene::dispose() {
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
-
 #pragma mark -
 #pragma mark Level Layout
 
@@ -501,44 +501,15 @@ void GameScene::populate() {
         platform.setGeometry(Geometry::SOLID);
         
         platform += Vec2(t->getX(), t->getY());
-        platobj = physics2::PolygonObstacle::alloc(platform);
-        platobj->setAngle(t->getAngle());
-        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
-        
-           //  Set the physics attributes
-        platobj->setBodyType(b2_staticBody);
-        platobj->setDensity(BASIC_DENSITY);
-        platobj->setFriction(BASIC_FRICTION);
-        platobj->setRestitution(BASIC_RESTITUTION);
-        platobj->setDebugColor(DEBUG_COLOR);
-        platform *= _scale;
-        
+        std::shared_ptr<TileModel> tileobj = TileModel::alloc(platform);
+        tileobj->setAngle(t->getAngle());
+        tileobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        tileobj->setDrawScale(_scale);;
+        tileobj->setPosition(t->getX(), t->getY());
         image = _assets->get<Texture>(t->getFile());
-
-        // calcuate the drawing overlay scale
-        float scalex = platform.getBounds().size.width/image->getWidth();
-        float scaley = platform.getBounds().size.height/image->getHeight();
-        
-        sprite = scene2::PolygonNode::allocWithTexture(image);
-        sprite->setScale(Vec2(scalex, scaley));
-        sprite->setAngle(t->getAngle());
-       
-        _world->addObstacle(platobj);
-        platobj->setDebugScene(_debugnode);
-        platobj->setPosition(t->getX(), t->getY());
-        sprite->setPosition(t->getX()*_scale, t->getY()* _scale);
-        _worldnode->addChild(sprite, 1);
-        
-        
-//        cout <<"type" << t->getType()<< endl;
-//        cout <<"angle" << t->getAngle()<< endl;
-//////        cout <<"x_corner" << sprite->getPolygon().getBounds().getMinX()/<< endl;
-////        cout <<"y_corner" << platobj->getPolygon().getBounds().size.height << endl;
-//        auto grid_data = _tileManager->getTileGridData(t->getType()-1, t->getAngle());
-//        for (int i = 0; i< grid_data.size(); i++ ){
-//            cout << grid_data[i].x << "" << grid_data[i].y << endl;
-//        }
-        
+        tileobj->setTextures(image);
+        tileobj->setType(t->getType());
+        addObstacle(tileobj, tileobj->getSceneNode(), 1);
     }
  
 #pragma mark : Energy
@@ -886,7 +857,6 @@ void GameScene::update(float dt) {
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    
     if(!_avatar->isRemoved()){
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
@@ -899,13 +869,14 @@ void GameScene::update(float dt) {
         }
     }
     
+    _canSplit = true;
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
+            int currentSizeLevel = _avatar->getSizeLevel();
+            Vec2 pos = _avatar->getPosition();
+            float radius = LumiaModel::sizeLevels[currentSizeLevel].radius;
+            Vec2 offset = Vec2(0.5f + radius, 0.0f);
             if (_avatar->isDoneSplitting() && _world->inBounds(_avatar.get())) {
-                int currentSizeLevel = _avatar->getSizeLevel();
-                Vec2 pos = _avatar->getPosition();
-                Vec2 offset = Vec2(0.5f + LumiaModel::sizeLevels[currentSizeLevel].radius, 0.0f);
-
                 // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
                 // http://www.iforce2d.net/b2dtut/world-querying
                 Vec2 currentVel = _avatar->getLinearVelocity();
@@ -984,6 +955,24 @@ void GameScene::update(float dt) {
                     );
                 }
             } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
+                std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
+                    b2Body* body = fixture->GetBody();
+                    physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
+                    if (bd->getName().substr(0,8) == PLATFORM_NAME) {
+                        if (((TileModel*)bd)->getType() == 3){
+                            _canSplit = false;
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-0.1f);
+                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*1.5f,radius);// left bottom x, y, w, h
+                _world->queryAABB(cb, aabb);
+                if (!_canSplit){
+                    _avatar->setState(LumiaModel::LumiaState::Idle);
+                    break;
+                }
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
                 }
