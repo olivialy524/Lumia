@@ -53,6 +53,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Asset Constants
 #define AVATAR_INDICATOR "avatar-indicator"
+#define SIZE_INDICATOR "size-indicator"
 /** The key for the earth texture in the asset manager */
 #define EARTH_TEXTURE   "earth"
 /** The key for the win door texture in the asset manager */
@@ -587,9 +588,10 @@ void GameScene::populate() {
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
+    std::shared_ptr<Texture> indicator = _assets->get<Texture>(SIZE_INDICATOR);
     _avatar = _level->getLumia();
     _avatar->setDrawScale(_scale);
-    _avatar->setTextures(image, split);
+    _avatar->setTextures(image, split, indicator);
     _avatar->setName(LUMIA_NAME);
 	_avatar->setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
@@ -1112,6 +1114,7 @@ void GameScene::checkWin() {
 std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool isAvatar, Vec2 vel, float angularVel) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
+    std::shared_ptr<Texture> indicator = _assets->get<Texture>(SIZE_INDICATOR);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, LumiaModel::sizeLevels[sizeLevel].radius, _scale);
     lumia->setDebugColor(DEBUG_COLOR);
     lumia->setName(LUMIA_NAME);
@@ -1119,8 +1122,8 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     lumia->setDensity(LumiaModel::sizeLevels[sizeLevel].density);
     lumia->setLinearVelocity(vel);
     lumia->setAngularVelocity(angularVel);
-    lumia->setTextures(image, splitting);
     lumia->setSizeLevel(sizeLevel);
+    lumia->setTextures(image, splitting, indicator);
 
     addObstacle(lumia, lumia->getSceneNode(), 5);
     

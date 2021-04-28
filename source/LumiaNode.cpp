@@ -7,7 +7,7 @@
 //
 
 #include <stdio.h>
-
+#include <math.h>
 #include "LumiaNode.h"
 
 void LumiaNode::dispose(){
@@ -17,6 +17,7 @@ void LumiaNode::dispose(){
 
 bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
                      const std::shared_ptr<cugl::Texture> &splittingAnimation,
+                    const std::shared_ptr<cugl::Texture> &indicator,
                      float radius,
                      float drawScale){
     auto scale = radius*2/(idleAnimation->getHeight()/4.0f/drawScale);
@@ -27,6 +28,24 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     _idleAnimation->setPosition(offset/2);
     _idleAnimation->setFrame(0);
     addChild(_idleAnimation);
+
+    float angle = 2*3.14f/(_level+1);
+    Vec2 center = Vec2(splittingAnimation->getWidth()/5.0f/2.0f,splittingAnimation->getHeight()/4.0f/2.0f);
+    float r = idleAnimation->getHeight()/4.0f/2.0f * 0.9f;
+    
+    for (int i=0; i<= _level; i++){
+        std::shared_ptr<cugl::scene2::PolygonNode> ind = cugl::scene2::PolygonNode::allocWithTexture(indicator);
+        ind->setAnchor(Vec2::ANCHOR_CENTER);
+        float ang = angle * i;
+        ind->setPosition(center.x + r*cos(1.57 - ang), center.y + r*sin(1.57 - ang));
+        
+        _indicatorNode.push_back(ind);
+    }
+    
+    for (auto node : _indicatorNode){
+        node->setScale(0.4f);
+        addChild(node);
+    }
     
     _splittingAnimation = cugl::scene2::AnimationNode::alloc(splittingAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
     _splittingAnimation->setAnchor(Vec2::ANCHOR_CENTER);
@@ -37,17 +56,27 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     return true;
 }
 
+void LumiaNode::setLevel(int level){
+    _level = level;
+}
+
 void LumiaNode::setAnimState(LumiaAnimState state){
     switch (state){
         case Splitting:
         case SplitFinished:{
             _splittingAnimation->setVisible(true);
             _idleAnimation->setVisible(false);
+            for (auto node : _indicatorNode){
+                node->setVisible(false);
+            }
             break;
         }
         default:{
             _splittingAnimation->setVisible(false);
             _idleAnimation->setVisible(true);
+            for (auto node : _indicatorNode){
+                node->setVisible(true);
+            }
             break;
         }
     }

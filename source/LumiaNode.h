@@ -33,6 +33,8 @@ protected:
     
     int _frameCount;
     
+    int _level;
+    
     const int IDLE_ANIMATION_INTERVAL = 10;
     
     const int SPLIT_ANIMATION_INTERVAL = 1;
@@ -46,6 +48,8 @@ protected:
     std::shared_ptr<cugl::scene2::AnimationNode> _idleAnimation;
     /** Reference to node of donut idle face */
     std::shared_ptr<cugl::scene2::AnimationNode> _splittingAnimation;
+    
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicatorNode;
 
 public:
     
@@ -61,8 +65,11 @@ public:
      */
     bool setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
               const std::shared_ptr<cugl::Texture> &splittingAnimation,
+              const std::shared_ptr<cugl::Texture> &indicator,
               float radius,
               float drawScale);
+    
+    void setLevel(int level);
     
     void setAnimState(LumiaAnimState state);
     
