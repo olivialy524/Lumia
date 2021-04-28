@@ -211,8 +211,8 @@
     <ClInclude Include="..\..\source\SpikeNode.h" />
     <ClInclude Include="..\..\source\StickyWallModel.h" />
     <ClInclude Include="..\..\source\StickyWallNode.h" />
-    <ClInclude Include="..\..\source\Tile.h" />
     <ClInclude Include="..\..\source\TileDataModel.h" />
+    <ClInclude Include="..\..\source\TileModel.h" />
     <ClInclude Include="..\..\source\TrajectoryNode.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -254,8 +254,8 @@
     <ClCompile Include="..\..\source\SpikeNode.cpp" />
     <ClCompile Include="..\..\source\StickyWallModel.cpp" />
     <ClCompile Include="..\..\source\StickyWallNode.cpp" />
-    <ClCompile Include="..\..\source\Tile.cpp" />
     <ClCompile Include="..\..\source\TileDataModel.cpp" />
+    <ClCompile Include="..\..\source\TileModel.cpp" />
     <ClCompile Include="..\..\source\TrajectoryNode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
