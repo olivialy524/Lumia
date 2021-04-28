@@ -215,6 +215,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         if (button->getName() == "backbutton"){
             button->addListener([=](const std::string& name, bool down) {
                 _didSwitchLevelSelect = true;
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
             });
         }
         button->activate();

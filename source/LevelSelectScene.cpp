@@ -74,7 +74,6 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
         button->activate();
         count++;
     }
-    
     setActive(_active);
     
     // XNA nostalgia

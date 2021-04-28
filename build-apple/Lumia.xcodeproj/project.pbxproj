@@ -240,7 +240,7 @@
 		C79D7E70261BD616007DDD42 /* GraphNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphNode.h; sourceTree = "<group>"; };
 		C79D7E83261D5453007DDD42 /* PathFindingController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathFindingController.cpp; sourceTree = "<group>"; };
 		C79D7E8D261D546A007DDD42 /* PathFindingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathFindingController.h; sourceTree = "<group>"; };
-		EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB122DA01E281F4A0019E2D1 /* Lumia: Guardian of Light.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia: Guardian of Light.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
@@ -393,7 +393,7 @@
 			isa = PBXGroup;
 			children = (
 				EBB1AC061DF8C6BC00C353B0 /* Lumia (Mac).app */,
-				EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */,
+				EB122DA01E281F4A0019E2D1 /* Lumia: Guardian of Light.app */,
 				EB5D204D23FC73FF007D16CD /* Platformer.app */,
 			);
 			name = Products;
@@ -561,7 +561,7 @@
 			);
 			name = "Lumia (iOS)";
 			productName = "UIDemo (iOS)";
-			productReference = EB122DA01E281F4A0019E2D1 /* Lumia (iOS).app */;
+			productReference = EB122DA01E281F4A0019E2D1 /* Lumia: Guardian of Light.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EB5D204C23FC73FF007D16CD /* Lumia (Sim) */ = {
@@ -609,7 +609,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = F2S98STJVH;
+						DevelopmentTeam = 6F38AKR3X8;
 						ProvisioningStyle = Automatic;
 					};
 					EB5D204C23FC73FF007D16CD = {
@@ -845,13 +845,15 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.02;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
-				PRODUCT_NAME = "Lumia (iOS)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_NAME = "Lumia: Guardian of Light";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -868,13 +870,15 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.02;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
-				PRODUCT_NAME = "Lumia (iOS)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_NAME = "Lumia: Guardian of Light";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
