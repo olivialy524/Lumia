@@ -857,26 +857,10 @@ void GameScene::update(float dt) {
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
-    _canSplit = true;
-    
     if(!_avatar->isRemoved()){
         if(_input.didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
-            std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
-                b2Body* body = fixture->GetBody();
-                physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
-                if (bd->getName().substr(0,8) == PLATFORM_NAME) {
-//                    if ((Tile*)bd->getT){
-                        _canSplit = false;
-                        return true;
-//                    }
-                }
-                return false;
-            };
-            
-            Rect aabb = Rect(1,1,1,1);// left bottom x, y, w, h
-            _world->queryAABB(cb, aabb);
             std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
             AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
             _avatar->setState(LumiaModel::LumiaState::Splitting);
@@ -885,13 +869,14 @@ void GameScene::update(float dt) {
         }
     }
     
+    _canSplit = true;
     switch (_avatar->getState()){
         case LumiaModel::LumiaState::Splitting:{
+            int currentSizeLevel = _avatar->getSizeLevel();
+            Vec2 pos = _avatar->getPosition();
+            float radius = LumiaModel::sizeLevels[currentSizeLevel].radius;
+            Vec2 offset = Vec2(0.5f + radius, 0.0f);
             if (_avatar->isDoneSplitting() && _world->inBounds(_avatar.get())) {
-                int currentSizeLevel = _avatar->getSizeLevel();
-                Vec2 pos = _avatar->getPosition();
-                Vec2 offset = Vec2(0.5f + LumiaModel::sizeLevels[currentSizeLevel].radius, 0.0f);
-
                 // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
                 // http://www.iforce2d.net/b2dtut/world-querying
                 Vec2 currentVel = _avatar->getLinearVelocity();
@@ -970,6 +955,24 @@ void GameScene::update(float dt) {
                     );
                 }
             } else if (!_avatar->isRemoved() && _world->inBounds(_avatar.get())) {
+                std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
+                    b2Body* body = fixture->GetBody();
+                    physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
+                    if (bd->getName().substr(0,8) == PLATFORM_NAME) {
+                        if (((TileModel*)bd)->getType() == 3){
+                            _canSplit = false;
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-0.1f);
+                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*1.5f,radius);// left bottom x, y, w, h
+                _world->queryAABB(cb, aabb);
+                if (!_canSplit){
+                    _avatar->setState(LumiaModel::LumiaState::Idle);
+                    break;
+                }
                 if (_avatar->getSizeLevel() > 0) {
                     deactivateAvatarPhysics();
                 }
