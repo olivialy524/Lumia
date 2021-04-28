@@ -16,11 +16,14 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting) {
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting,  const std::shared_ptr<Texture>& indicator) {
     
     _sceneNode = LumiaNode::alloc(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _sceneNode->setTextures(idle, splitting, getRadius(), _drawScale);
+    _sceneNode->setLevel(_sizeLevel);
+    _sceneNode->setTextures(idle, splitting, indicator, getRadius(), _drawScale);
+   
+    
 }
 
 #pragma mark Constructors

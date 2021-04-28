@@ -13,6 +13,9 @@
         "avatar-indicator":{
             "file": "textures/avatar_indicator.png"
         },
+        "size-indicator":{
+            "file": "textures/size-indicator.png"
+        },
         "tile1": {
             "file": "textures/tile1.png"
         },

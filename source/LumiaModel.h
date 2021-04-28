@@ -212,7 +212,7 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting);
+    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting, const std::shared_ptr<Texture>& indicator);
 
     void setDrawScale(float scale);
     
