@@ -189,8 +189,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity) {
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
-    Size dimen = computeActiveSize();
-
+    Size dimen = Application::get()->getDisplaySize();
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
@@ -208,7 +207,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _UIscene = assets->get<scene2::SceneNode>("gameUI");
     
     
-    _UIscene->setContentSize(dimen);
+    CULog("called here%f", dimen.width);
+    _UIscene->setContentSize(1024, dimen.height);
     _UIscene->doLayout(); // Repositions the HUD;
     for (auto it : _UIscene->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
@@ -217,6 +217,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                 _didSwitchLevelSelect = true;
                 std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
                 AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+            });
+        }
+        if (button->getName() == "pausebutton"){
+            CULog("pausebutton");
+            button->addListener([=](const std::string& name, bool down) {
+                _state = GameState::Paused;
             });
         }
         button->activate();
@@ -238,7 +244,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
-    _scale *= 1.7f;
+    _scale *= 1.0f;
 //    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     // Create the scene graph
@@ -687,6 +693,19 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
 #pragma mark -
 #pragma mark Physics Handling
 
+
+void GameScene::update(float dt) {
+    switch (_state) {
+        case GameState::playing:
+            updateGame(dt);
+            break;
+        case GameState::Paused:
+            updatePaused(dt);
+        default:
+            break;
+    }
+    
+}
 /**
  * Executes the core gameplay loop of this world.
  *
@@ -697,7 +716,13 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  *
  * @param  delta    Number of seconds since last animation frame
  */
-void GameScene::update(float dt) {
+
+
+void GameScene::updatePaused(float dt) {
+    _input.update(dt);
+}
+
+void GameScene::updateGame(float dt) {
 	_input.update(dt);
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -1479,13 +1504,13 @@ void GameScene::endContact(b2Contact* contact) {
  */
 Size GameScene::computeActiveSize() const {
     Size dimen = Application::get()->getDisplaySize();
-    float ratio1 = dimen.width/dimen.height;
-    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-    if (ratio1 < ratio2) {
-        dimen *= SCENE_WIDTH/dimen.width;
-    } else {
-        dimen *= SCENE_HEIGHT/dimen.height;
-    }
+//    float ratio1 = dimen.width/dimen.height;
+//    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
+//    if (ratio1 < ratio2) {
+//        dimen *= SCENE_WIDTH/dimen.width;
+//    } else {
+//        dimen *= SCENE_HEIGHT/dimen.height;
+//    }
     return dimen;
 }
 

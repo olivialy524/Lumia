@@ -90,6 +90,8 @@ protected:
     std::shared_ptr<TrajectoryNode> _trajectoryNode;
     
     std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
+    
+
 
     
     /** Whether we have completed this "game" */
@@ -164,8 +166,15 @@ protected:
     cugl::Size computeActiveSize() const;
     
 public:
-#pragma mark -
+#pragma mark Game state
+    enum GameState {
+        Paused,
+        playing
+    };
+    
+    GameState _state = GameState::playing;
 #pragma mark Constructors
+
     /**
      * Creates a new game world with the default values.
      *
@@ -391,6 +400,11 @@ public:
 
     /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
     void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
+    
+    
+    void updateGame(float dt);
+    
+    void updatePaused(float dt);
 
     /**
      * Calculates trajectory point one timestep into future
