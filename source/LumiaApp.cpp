@@ -50,11 +50,7 @@ void LumiaApp::onStartup() {
     // Que up the other assets
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    //load in the json file
-    _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level3.json", "json/level3.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level4.json", "json/level4.json", nullptr);
+    // load in the tiles json file
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
     CULog("%s", Application::getSaveDirectory().c_str());
@@ -67,11 +63,21 @@ void LumiaApp::onStartup() {
         std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
         std::shared_ptr<cugl::JsonValue> saveJson = cugl::JsonValue::allocWithJson(DEFAULT_SAVE);
         writer->writeJson(saveJson);
+        _saveFile = saveJson;
     } else {
         // save file already exists, so read from it
         CULog("save file exist");
         _saveFile = reader->readJson();
     }
+
+    // load level json files
+    std::shared_ptr<cugl::JsonValue> levels = _saveFile->get("level_saves");
+    for (int i = 0; i < levels->size(); i++) {
+        CULog(levels->get(i)->getString("path").c_str());
+        string levelPath = levels->get(i)->getString("path");
+        _assets->loadAsync<LevelModel>(levelPath, levelPath, nullptr);
+    }
+
     Application::onStartup(); // YOU MUST END with call to parent
 }
 
