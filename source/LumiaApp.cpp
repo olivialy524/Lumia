@@ -5,6 +5,7 @@
 //  Version: 3/5/21
 
 #include "LumiaApp.h"
+#include <fstream>
 
 using namespace cugl;
 
@@ -12,6 +13,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":false,\"completed\":false,\"score\":90,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level4.json\"}],\"musicVolume\":1.0,\"effectVolume\":1.0}"
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -55,6 +57,21 @@ void LumiaApp::onStartup() {
     _assets->loadAsync<LevelModel>("json/level4.json", "json/level4.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
+    CULog("%s", Application::getSaveDirectory().c_str());
+
+    std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
+    //if (!reader->ready()) {
+    if (reader == nullptr) {
+        // no save file exists yet, so create it
+        std::ofstream file{ Application::getSaveDirectory() + "save.json" };
+        std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+        std::shared_ptr<cugl::JsonValue> saveJson = cugl::JsonValue::allocWithJson(DEFAULT_SAVE);
+        writer->writeJson(saveJson);
+    } else {
+        // save file already exists, so read from it
+        CULog("save file exist");
+        _saveFile = reader->readJson();
+    }
     Application::onStartup(); // YOU MUST END with call to parent
 }
 
@@ -86,6 +103,8 @@ void LumiaApp::onShutdown() {
     Input::deactivate<Mouse>();
 #endif
     
+    std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    writer->writeJson(_saveFile);
     AudioEngine::stop();
     Application::onShutdown();  // YOU MUST END with call to parent
 }
@@ -102,6 +121,8 @@ void LumiaApp::onShutdown() {
  * the background.
  */
 void LumiaApp::onSuspend() {
+    std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    writer->writeJson(_saveFile);
     AudioEngine::get()->pause();
 }
 
@@ -116,6 +137,8 @@ void LumiaApp::onSuspend() {
  * paused before app suspension.
  */
 void LumiaApp::onResume() {
+    std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile = reader->readJson();
     AudioEngine::get()->resume();
 }
 
@@ -147,6 +170,8 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(true);
                 _settings.init(_assets);
                 _settings.setActive(false);
+                _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
+                _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
             }
             return;
         }
@@ -182,6 +207,8 @@ void LumiaApp::update(float timestep) {
                     _scene = Settings;
                     _settings.init(_assets);
                     _settings.setActive(true);
+                    _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
+                    _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
                 }
             }
             return;
@@ -201,6 +228,8 @@ void LumiaApp::update(float timestep) {
             if (_settings.isActive()){
                     _settings.update(timestep);
             }else{
+                _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+                _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
                 _settings.setActive(false);
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {

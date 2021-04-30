@@ -47,6 +47,8 @@ protected:
     SettingsScene _settings;
     /** The current scene of the game*/
     CurrentScene _scene;
+
+    std::shared_ptr<cugl::JsonValue> _saveFile;
     
 public:
 #pragma mark Constructors
