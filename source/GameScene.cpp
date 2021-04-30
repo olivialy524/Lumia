@@ -362,8 +362,8 @@ void GameScene::dispose() {
         setActive(false);
     }
 
-    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+    //std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    //AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 #pragma mark -
@@ -743,10 +743,15 @@ void GameScene::update(float dt) {
     for (auto & door : _doorList) {
         door->setAngle(0);
         if (door->getOpening()) {
+            door->setBodyType(b2_dynamicBody);
             door->Open();
         }
         else if (door->getClosing()) {
+            door->setBodyType(b2_dynamicBody);
             door->Close();
+        }
+        else {
+            door->setBodyType(b2_staticBody);
         }
         door->getNode()->setPosition(door->getPosition()*_scale);
     }

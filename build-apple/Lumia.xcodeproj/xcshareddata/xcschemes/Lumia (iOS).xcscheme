@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-               BuildableName = "Lumia (iOS).app"
+               BuildableName = "Lumia: Guardian of Light.app"
                BlueprintName = "Lumia (iOS)"
                ReferencedContainer = "container:Lumia.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Lumia (iOS).app"
+            BuildableName = "Lumia: Guardian of Light.app"
             BlueprintName = "Lumia (iOS)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
@@ -54,7 +54,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Lumia (iOS).app"
+            BuildableName = "Lumia: Guardian of Light.app"
             BlueprintName = "Lumia (iOS)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "Lumia (iOS).app"
+            BuildableName = "Lumia: Guardian of Light.app"
             BlueprintName = "Lumia (iOS)"
             ReferencedContainer = "container:Lumia.xcodeproj">
          </BuildableReference>
