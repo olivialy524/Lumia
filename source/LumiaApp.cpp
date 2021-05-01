@@ -190,7 +190,7 @@ void LumiaApp::update(float timestep) {
                 string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
                 if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
-                    _levelSelect.init(_assets);
+                    _levelSelect.init(_assets, _saveFile);
                     _levelSelect.setActive(true);
                 }
             }

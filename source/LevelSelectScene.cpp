@@ -26,9 +26,10 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save) {
     setName("levelselect");
 
+    _saveFile = save;
     
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();

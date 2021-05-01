@@ -27,6 +27,8 @@ protected:
     string _selectedLevel;
     
     float _musicVolume = 1.0;
+
+    std::shared_ptr<cugl::JsonValue> _saveFile;
     
 public:
 #pragma mark -
@@ -68,11 +70,11 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save);
     
-    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
+    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save) {
         std::shared_ptr<LevelSelectScene> result = std::make_shared<LevelSelectScene>();
-        return (result->init(assets) ? result : nullptr);
+        return (result->init(assets, save) ? result : nullptr);
     }
     
     /**
@@ -83,10 +85,12 @@ public:
     virtual void setActive(bool value) override;
 
     /** Returns the string representing the next scene to transition to */
-    string getNextScene() { return _nextScene; };
+    string getNextScene() { return _nextScene; }
 
     /** Returns the string representing the next scene to transition to */
-    string getSelectedLevel() { return _selectedLevel; };
+    string getSelectedLevel() { return _selectedLevel; }
+
+    std::shared_ptr<cugl::JsonValue> getSaveFile() { return _saveFile; }
     
 };
 
