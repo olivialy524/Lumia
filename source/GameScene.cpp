@@ -698,6 +698,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  * @param  delta    Number of seconds since last animation frame
  */
 void GameScene::update(float dt) {
+    if (_countdown <= 0 || _countdown >= EXIT_COUNT*(.75)) {
 	_input.update(dt);
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -1049,12 +1050,19 @@ void GameScene::update(float dt) {
     if (!_failed && !_complete) {
         checkWin();
     }
-
+    }
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
 		_countdown--;
 	} else if (_countdown == 0) {
+        if (_failed) {
 		reset();
+        }
+        else {
+            std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+            AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+            _didSwitchLevelSelect = true;
+        }
 	}
 }
 
@@ -1089,6 +1097,9 @@ void GameScene::setComplete(bool value) {
  * @param value whether the level is failed.
  */
 void GameScene::setFailure(bool value) {
+    if (_complete) {
+        return;
+    }
 	_failed = value;
 	if (value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);

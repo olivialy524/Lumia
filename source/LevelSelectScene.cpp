@@ -28,7 +28,6 @@ using namespace cugl;
  */
 bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     setName("levelselect");
-
     
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
@@ -104,4 +103,6 @@ void LevelSelectScene::setActive(bool value) {
             it->second->deactivate();
         }
     }
+    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
