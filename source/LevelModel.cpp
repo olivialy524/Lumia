@@ -47,6 +47,7 @@ void LevelModel::dispose(){
     _irregular_tiles.clear();
     _tiles.clear();
     _stickyWalls.clear();
+    _tutorials.clear();
 }
 
 bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
@@ -68,6 +69,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> enemies_json = _leveljson->get("enemies");
     std::shared_ptr<cugl::JsonValue> irregular_tile_json = _leveljson->get("tiles");
     std::shared_ptr<cugl::JsonValue> sticky_walls_json = _leveljson->get("sticky_walls");
+    std::shared_ptr<cugl::JsonValue> tutorials_json = _leveljson->get("tutorials");
     createButtonsAndDoors(buttondoor_json);
     createPlants(plants_json);
     createSpikes(spikes_json);
@@ -77,6 +79,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     createIrregular(irregular_tile_json);
     createEnemies(enemies_json);
     createStickyWalls(sticky_walls_json);
+    createTutorials(tutorials_json);
 
     return true;
 };
@@ -219,6 +222,18 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr
     }
     
     return _tiles;
+}
+
+std::vector<LevelModel::Tutorial> LevelModel::createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials) {
+    for (int i = 0; i < tutorials->size(); i++) {
+        std::shared_ptr<cugl::JsonValue> tutorial = tutorials->get(i);
+        float posX = tutorial->getFloat("posx");
+        float posY = tutorial->getFloat("posy");
+        string textureKey = tutorial->getString("texture");
+        _tutorials.push_back(Tutorial{ posX, posY, textureKey });
+    }
+
+    return _tutorials;
 }
 
 std::vector<std::shared_ptr<Tile>> LevelModel::createIrregular(const std::shared_ptr<cugl::JsonValue> &platforms){

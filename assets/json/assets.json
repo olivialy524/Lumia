@@ -96,6 +96,9 @@
         },
         "spike": {
             "file": "textures/spike.png"
+        },
+        "tutorial1": {
+            "file": "textures/tutorial1.png"
         }
     },
     "sounds": {

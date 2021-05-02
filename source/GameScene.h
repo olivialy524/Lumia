@@ -91,6 +91,8 @@ protected:
     
     std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
 
+    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
+
     
     /** Whether we have completed this "game" */
     bool _complete;
