@@ -55,11 +55,10 @@ void LumiaApp::onStartup() {
     
     CULog("%s", Application::getSaveDirectory().c_str());
 
-    std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
-    //if (!reader->ready()) {
-    if (reader == nullptr) {
+    if (!cugl::filetool::file_exists(Application::getSaveDirectory() + "save.json")) {
         // no save file exists yet, so create it
         std::ofstream file{ Application::getSaveDirectory() + "save.json" };
+        CULog(cugl::filetool::is_readable(Application::getSaveDirectory() + "save.json") ? "true" : "false");
         std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
         std::shared_ptr<cugl::JsonValue> saveJson = cugl::JsonValue::allocWithJson(DEFAULT_SAVE);
         writer->writeJson(saveJson);
@@ -67,6 +66,7 @@ void LumiaApp::onStartup() {
     } else {
         // save file already exists, so read from it
         CULog("save file exist");
+        std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
         _saveFile = reader->readJson();
     }
 
