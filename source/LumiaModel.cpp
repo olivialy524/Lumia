@@ -95,11 +95,11 @@ void LumiaModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density;
+    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density * 0.45f;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.1f;
+    sensorShape.m_radius = _radius * 1.8f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
@@ -170,7 +170,7 @@ void LumiaModel::applyForce() {
     // put a cap on maximum velocity Lumia can have
     if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
         Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
-        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+        setLinearVelocity(vel);
     }
 }
 
@@ -208,10 +208,10 @@ void LumiaModel::resetDebug() {
     PolyFactory factory;
     factory.setSegments(12);
     factory.setGeometry(Geometry::PATH);
-    Poly2 poly = factory.makeCircle(Vec2::ZERO,1.15f*getRadius());
+    Poly2 poly = factory.makeCircle(Vec2::ZERO,1.8f*getRadius());
 
     _sensorNode = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
-    _sensorNode->setColor(DEBUG_COLOR);
+    _sensorNode->setColor(Color4f::RED);
     auto size = _debug->getContentSize();
     _sensorNode->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
     _debug->addChild(_sensorNode);
