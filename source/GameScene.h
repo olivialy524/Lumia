@@ -109,6 +109,8 @@ protected:
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    /** Mark set to handle more sophisticated collision callbacks */
+    std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap2;
     
     std::unordered_map<Node, NodeState> _graph;
 

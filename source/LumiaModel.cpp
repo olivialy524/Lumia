@@ -59,6 +59,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     if (WheelObstacle::init(pos,radius)) {
         // Gameplay attributes
         _isGrounded = false;
+        _isRolling = false;
         _state = Idle;
         _sizeLevel = 2;
         _velocity = Vec2::ZERO;
@@ -103,7 +104,18 @@ void LumiaModel::createFixtures() {
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
-    _sensorFixture->SetUserData(getSensorName());
+    _sensorFixture->SetUserData(getLaunchSensorName());
+    
+    b2FixtureDef sensorDef2;
+    sensorDef2.density = 0;
+    sensorDef2.isSensor = true;
+
+    b2CircleShape sensorShape2;
+    sensorShape2.m_radius = _radius * 1.1f;
+
+    sensorDef2.shape = &sensorShape2;
+    _sensorFixture2 = _body->CreateFixture(&sensorDef2);
+    _sensorFixture2->SetUserData(getFrictionSensorName());
 }
 
 /**
@@ -132,6 +144,7 @@ void LumiaModel::releaseFixtures() {
 void LumiaModel::dispose() {
     _sceneNode = nullptr;
     _sensorNode = nullptr;
+    _sensorNode2 = nullptr;
 }
 
 /**
@@ -155,23 +168,22 @@ void LumiaModel::applyForce() {
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
-        setGravityScale(0.0f);
+        setFixedRotation(true);
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-    }else{
-        setGravityScale(1.0f);
+        CULog("launch x %f, y %f ",getLinearVelocity().x, getLinearVelocity().y);
     }
-    if (!isLaunching() && isGrounded()) {
-        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
-        b2Vec2 forceX(-getDamping() * getVX(), 0);
-        _body->ApplyForce(forceX, _body->GetPosition(), true);
-    }
+//    if (!isLaunching() && isRolling()) {
+//        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
+//        b2Vec2 forceX(-getDamping() * getVX(), 0);
+//        _body->ApplyForce(forceX, _body->GetPosition(), true);
+//    }
 
     // put a cap on maximum velocity Lumia can have
-    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
-        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
-        setLinearVelocity(vel);
-    }
+//    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
+//        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
+//        setLinearVelocity(vel);
+//    }
 }
 
 
@@ -215,6 +227,13 @@ void LumiaModel::resetDebug() {
     auto size = _debug->getContentSize();
     _sensorNode->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
     _debug->addChild(_sensorNode);
+    
+    Poly2 poly2 = factory.makeCircle(Vec2::ZERO,1.1f*getRadius());
+    _sensorNode2 = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
+    _sensorNode2->setColor(Color4f::RED);
+    size = _debug->getContentSize();
+    _sensorNode2->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
+    _debug->addChild(_sensorNode2);
 }
 
 

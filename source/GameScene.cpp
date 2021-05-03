@@ -317,6 +317,7 @@ void GameScene::dispose() {
 //        _UIscene->dispose();
         _level->resetLevel();
         _sensorFixtureMap.clear();
+        _sensorFixtureMap2.clear();
         _graph.clear();
         for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
             l->dispose();
@@ -379,6 +380,7 @@ void GameScene::reset() {
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
     _sensorFixtureMap.clear();
+    _sensorFixtureMap2.clear();
     _graph.clear();
     for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
         l->dispose();
@@ -601,6 +603,8 @@ void GameScene::populate() {
 //    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
+    std::unordered_set<b2Fixture*> fixtures2;
+    _sensorFixtureMap2[_avatar.get()] = fixtures2;
 	addObstacle(_avatar,_avatar->getSceneNode(), 4); // Put this at the very front
     
 #pragma mark : Enemies
@@ -819,7 +823,8 @@ void GameScene::update(float dt) {
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input.getPlannedLaunch();
         Vec2 initialVelocity = plannedImpulse / m;
-		for (int i = 1; i < 35; i+=5) {
+        CULog("x %f, y %f ",initialVelocity.x, initialVelocity.y);
+		for (int i = 1; i < 180; i+=5) {
 			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i, _world, dt);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}
@@ -1132,6 +1137,8 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     _lumiaList.push_back(lumia);
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[lumia.get()] = fixtures;
+    std::unordered_set<b2Fixture*> fixtures2;
+    _sensorFixtureMap2[lumia.get()] = fixtures2;
 
     if (isAvatar) {
         _avatar = lumia;
@@ -1146,6 +1153,7 @@ void GameScene::deactivateAvatarPhysics() {
         return;
     }
     _sensorFixtureMap.erase(_avatar.get());
+    _sensorFixtureMap2.erase(_avatar.get());
     _avatar->markRemoved(true);
 }
 
@@ -1165,6 +1173,7 @@ void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {
         return;
     }
     _sensorFixtureMap.erase(lumia.get());
+    _sensorFixtureMap2.erase(lumia.get());
     _worldnode->removeChild(lumia->getSceneNode());
 
     std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
@@ -1297,7 +1306,7 @@ void GameScene::beginContact(b2Contact* contact) {
         }
 
         // handle collision between magical plant and Lumia
-        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
+        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
@@ -1305,7 +1314,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
-        } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
                 std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
@@ -1313,15 +1322,8 @@ void GameScene::beginContact(b2Contact* contact) {
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         // handle collision between spike and Lumia
-        } else if (bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
-            if (_lastSpikeCollision == NULL) {
-                _lastSpikeCollision = _ticks;
-                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
-            } else if (_ticks - _lastSpikeCollision > 30) {
-                _lastSpikeCollision = _ticks;
-                _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
-            }
-        } else if (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        } else if((bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) ||
+            (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1)){
             if (_lastSpikeCollision == NULL) {
                 _lastSpikeCollision = _ticks;
                 _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
@@ -1331,14 +1333,14 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between enemy and Lumia
-        else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
+        else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd1 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
                     break;
                 }
             }
-        } else if (bd2->getName() == ENEMY_TEXTURE && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        } else if (bd2->getName() == ENEMY_TEXTURE && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd2 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
@@ -1347,14 +1349,14 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between energy item and Lumia
-        else if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
+        else if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd1 && !energy->getRemoved()) {
                     _collisionController.processEnergyLumiaCollision(energy, lumia, lumia == _avatar);
                     break;
                 }
             }
-        } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
                     _collisionController.processEnergyLumiaCollision(energy, lumia, lumia == _avatar);
@@ -1362,7 +1364,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1->getName() == "button" && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
+        else if (bd1->getName() == "button" && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1370,7 +1372,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd2->getName() == "button" && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        else if (bd2->getName() == "button" && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1379,7 +1381,7 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between two Lumias
-        else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get() && lumia->getSensorName() != fd2) {
+        else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd1 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
@@ -1387,7 +1389,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
             break;
-        } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get() && lumia->getSensorName() != fd1) {
+        } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd2 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
@@ -1395,20 +1397,28 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"){
+        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd2);
             
         }
-        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"){
+        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd1);
             
         }
-        // handle detection of Lumia and ground
-        if (((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getSensorName() == fd1 && lumia.get() != bd2))) {
+        // detect if lumia can launch
+        if (((lumia->getLaunchSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getLaunchSensorName() == fd1 && lumia.get() != bd2))) {
             lumia->setGrounded(true);
             // Could have more than one ground
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
+            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+        }
+        // detect if use friction on lumia
+        else if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2))) {
+            lumia->setRolling(true);
+            // Could have more than one ground
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
             sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
         }
     }
@@ -1436,12 +1446,20 @@ void GameScene::endContact(b2Contact* contact) {
 
     
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList){
-        if ((lumia->getSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getSensorName() == fd1 && lumia.get() != bd2)) {
+        if ((lumia->getLaunchSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getLaunchSensorName() == fd1 && lumia.get() != bd2)) {
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
             if (sensorFixtures.empty()) {
                 lumia->setGrounded(false);
+            }
+        }
+        if ((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
+            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2)) {
+            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
+            sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
+            if (sensorFixtures.empty()) {
+                lumia->setRolling(false);
             }
         }
         if (bd1->getName() == "button" && bd2 == lumia.get()) {
