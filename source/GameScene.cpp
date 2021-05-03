@@ -761,8 +761,8 @@ void GameScene::update(float dt) {
         Vec2 tutorialPos = tutorial->getPosition();
         Vec2 avatarPos = _avatar->getPosition() *_scale;
 
-        if (IN_RANGE(avatarPos.x, tutorialPos.x - 200, tutorialPos.x + 200) &&
-            IN_RANGE(avatarPos.y, tutorialPos.y - 200, tutorialPos.y + 200)) {
+        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150) &&
+            IN_RANGE(avatarPos.y, tutorialPos.y - 150, tutorialPos.y + 150)) {
             tutorial->setVisible(true);
         } else {
             tutorial->setVisible(false);

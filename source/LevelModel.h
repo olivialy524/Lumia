@@ -17,7 +17,6 @@
 #include "Door.h"
 #include "SpikeModel.h"
 #include "StickyWallModel.h"
-#include "TutorialNode.h"
 
 
 class LevelModel : public cugl::Asset {
