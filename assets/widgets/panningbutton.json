@@ -29,8 +29,12 @@
                             "type" : "Anchored"
                         },
                         "data"   : {
-                            "texture"  : "back",
+                            "texture"  : "closebutton",
                             "anchor"   : [0.5, 0.5]
+                        },
+                        "layout" : {
+                            "x_anchor" : "fill",
+                            "y_anchor" : "fill"
                         }
                     }
                 },
@@ -44,8 +48,9 @@
             "x_anchor" : "right",
             "y_anchor" : "top",
             "y_offset" : -0.1,
-            "x_offset" : -0.1
+            "x_offset" : -0.2
         }
     }
 }
+
 

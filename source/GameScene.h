@@ -91,6 +91,8 @@ protected:
     
     std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
     
+    std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
+    
 
 
     
@@ -251,6 +253,10 @@ public:
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity);
     
     
+    float touchstart;
+    bool setStart;
+    
+    
 #pragma mark -
 #pragma mark State Access
     
@@ -404,7 +410,7 @@ public:
     
     void updateGame(float dt);
     
-    void updatePaused(float dt);
+    void updatePaused(float dt, float startX);
 
     /**
      * Calculates trajectory point one timestep into future
