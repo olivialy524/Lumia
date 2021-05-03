@@ -123,6 +123,7 @@ GameScene::GameScene() : Scene2(),
 	_complete(false),
 	_debug(false),
     _canSplit(true),
+    _switched(false),
     _didSwitchLevelSelect(false)
 {    
 }
@@ -702,7 +703,13 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
  * @param  delta    Number of seconds since last animation frame
  */
 void GameScene::update(float dt) {
-	_input.update(dt);
+    if (_switched){
+        _input.clearAvatarStates();
+    }
+    if (_ticks % 8 == 0){
+        _switched = false;
+    }
+    _input.update(dt);
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -710,7 +717,6 @@ void GameScene::update(float dt) {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
-//    if (_input.didGoBack()){_didSwitchLevelSelect = true; }
     
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
@@ -767,10 +773,6 @@ void GameScene::update(float dt) {
             button->pushUp(_scale);
             button->resetCD();
         }
-//        cout << "Button Position y: " << button->getPosition().y << "\n";
-//        cout << "Node Position y: " << button->getNode()->getPositionY() << "\n";
-        //button->getNode()->setPosition(button->getPosition().x*_scale,(button->getPosition().y)*_scale);
-        //button->getNode()->setContentHeight(button->getHeight()*_scale);
     }
 
     // check if Lumia bodies fell out of the level, and remove as needed
@@ -797,7 +799,6 @@ void GameScene::update(float dt) {
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
 
             float radius = lumia->getRadius() * _scale; // world coordinates
-            CULog("%f", radius);
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
@@ -814,18 +815,17 @@ void GameScene::update(float dt) {
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-    if (! (_avatar->isGrounded() && _input.isDragging()) || _ticks % 8 == 0){
+    if (! (_avatar->isGrounded() && _input.isDragging()) || _ticks % 3 == 0){
         _trajectoryNode->clearPoints();
     }
     
-	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && _ticks % 8 == 0) {
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && _ticks % 3 == 0) {
         Vec2 startPos = _avatar->getPosition();
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input.getPlannedLaunch();
         Vec2 initialVelocity = plannedImpulse / m;
-        CULog("x %f, y %f ",initialVelocity.x, initialVelocity.y);
-		for (int i = 1; i < 180; i+=5) {
-			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i, _world, dt);
+		for (int i = 1; i < 30; i+=5) {
+			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}
         float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input.getMaximumLaunchVelocity(), 2);
@@ -886,8 +886,6 @@ void GameScene::update(float dt) {
             float radius = LumiaModel::sizeLevels[currentSizeLevel].radius;
             Vec2 offset = Vec2(0.5f + radius, 0.0f);
             if (_avatar->isDoneSplitting() && _world->inBounds(_avatar.get())) {
-                // TODO: has issues with potentially spawning Lumia body inside or on the otherside of a wall
-                // http://www.iforce2d.net/b2dtut/world-querying
                 Vec2 currentVel = _avatar->getLinearVelocity();
                 float currentAngularVel = _avatar->getAngularVelocity();
 
@@ -1250,7 +1248,7 @@ void GameScene::switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia) {
             closestLumia = lumiaOther;
         }
     }
-
+    _switched = true;
     if (closestLumia != NULL) {
         _avatar = closestLumia;
     }
@@ -1263,14 +1261,13 @@ void GameScene::switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia) {
 * @param startingVelocity the velocity model will be launched at during aiming
 * @param n timestep
 */
-Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity,
-						float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt) {
+Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, float n) {
 	//velocity and gravity are given per second but we want time step values here
-	// float t = 1 / 60.0f; // seconds per time step (at 60fps)
-    float t = dt;
+    float t = 1.0f / 60.0f;
 	Vec2 stepVelocity = t * startingVelocity; // m/s
 	Vec2 stepGravity = t * t * _world->getGravity(); // m/s/s
-    return startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;
+    Vec2 estmPos = startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;
+    return estmPos;
 }
 
 
@@ -1397,11 +1394,11 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1){
+        else if (bd1 == lumia.get() && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd2);
             
         }
-        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2){
+        else if (bd2 == lumia.get() && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd1);
             
         }
@@ -1462,7 +1459,7 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setRolling(false);
             }
         }
-        if (bd1->getName() == "button" && bd2 == lumia.get()) {
+        if (bd1->getName() == "button" && bd2 == lumia.get()&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
@@ -1470,7 +1467,7 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd2->getName() == "button" && bd1 == lumia.get()) {
+        else if (bd2->getName() == "button" && bd1 == lumia.get()&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
@@ -1478,13 +1475,9 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1->getName() == LUMIA_NAME && bd2->getName()=="STICKY_WALL"){
+        else if ((bd1 == lumia.get() && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) ||
+                 (bd2 == lumia.get() && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2)){
             _collisionController.processStickyWallLumiaEnding(lumia);
-            
-        }
-        else if (bd2->getName() == LUMIA_NAME && bd1->getName()=="STICKY_WALL"){
-            _collisionController.processStickyWallLumiaEnding(lumia);
-            
         }
     }
 }

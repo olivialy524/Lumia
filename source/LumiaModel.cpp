@@ -168,22 +168,20 @@ void LumiaModel::applyForce() {
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
-        setFixedRotation(true);
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-        CULog("launch x %f, y %f ",getLinearVelocity().x, getLinearVelocity().y);
     }
-//    if (!isLaunching() && isRolling()) {
-//        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
-//        b2Vec2 forceX(-getDamping() * getVX(), 0);
-//        _body->ApplyForce(forceX, _body->GetPosition(), true);
-//    }
+    if (!isLaunching() && isRolling()) {
+        // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
+        b2Vec2 forceX(-getDamping() * getVX(), 0);
+        _body->ApplyForce(forceX, _body->GetPosition(), true);
+    }
 
     // put a cap on maximum velocity Lumia can have
-//    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
-//        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
-//        setLinearVelocity(vel);
-//    }
+    if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
+        Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
+        setLinearVelocity(vel);
+    }
 }
 
 
@@ -197,7 +195,6 @@ void LumiaModel::applyForce() {
 void LumiaModel::update(float dt) {
     _lastPosition = getPosition();
     WheelObstacle::update(dt);
-    
     if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());

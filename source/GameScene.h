@@ -105,6 +105,8 @@ protected:
     /** Volume level for sound effects */
     float _effectVolume;
     
+    bool _switched;
+    
     bool _canSplit;
 
     /** Mark set to handle more sophisticated collision callbacks */
@@ -403,7 +405,7 @@ public:
      * @param dt time in seconds since last update frame
      */
     Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
-                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt);
+                            float n);
 
   };
 

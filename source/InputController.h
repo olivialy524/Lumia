@@ -150,6 +150,7 @@ public:
      */
     void clear();
     
+    void clearAvatarStates();
 #pragma mark -
 #pragma mark Input Results
     /**
@@ -238,7 +239,7 @@ public:
     float getMaximumLaunchVelocity(){
         return MAXIMUM_LAUNCH_VELOCITY;
     }
-
+    
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
     /**
