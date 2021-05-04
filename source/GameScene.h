@@ -341,6 +341,8 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+    
+    bool didCollideWithLumiaBody(std::shared_ptr<LumiaModel> lumia, physics2::Obstacle* bd, void* fd);
 	/**
 	* Processes the start of a collision
 	*

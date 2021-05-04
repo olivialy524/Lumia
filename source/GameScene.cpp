@@ -1293,6 +1293,10 @@ Vec2 GameScene::getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocit
 #pragma mark -
 #pragma mark Collision Handling
 
+bool GameScene::didCollideWithLumiaBody(std::shared_ptr<LumiaModel> lumia, physics2::Obstacle* bd, void* fd){
+    return bd == lumia.get() && lumia->getLaunchSensorName() != fd && lumia->getFrictionSensorName() != fd;
+}
+
 /**
  * Processes the start of a collision
  *
@@ -1322,7 +1326,7 @@ void GameScene::beginContact(b2Contact* contact) {
         }
 
         // handle collision between magical plant and Lumia
-        if (bd1->getName().substr(0,5) == PLANT_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        if (bd1->getName().substr(0,5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
@@ -1330,7 +1334,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
-        } else if (bd2->getName().substr(0, 5) == PLANT_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        } else if (bd2->getName().substr(0, 5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
                 std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
@@ -1338,8 +1342,8 @@ void GameScene::beginContact(b2Contact* contact) {
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         // handle collision between spike and Lumia
-        } else if((bd1->getName().substr(0, 5) == SPIKE_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) ||
-            (bd2->getName().substr(0, 5) == SPIKE_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1)){
+        } else if((bd1->getName().substr(0, 5) == SPIKE_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) ||
+            (bd2->getName().substr(0, 5) == SPIKE_NAME && didCollideWithLumiaBody(lumia, bd1, fd1))){
             if (_lastSpikeCollision == NULL) {
                 _lastSpikeCollision = _ticks;
                 _collisionController.processSpikeLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
@@ -1349,14 +1353,14 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between enemy and Lumia
-        else if (bd1->getName() == ENEMY_TEXTURE && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        else if (bd1->getName() == ENEMY_TEXTURE && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd1 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
                     break;
                 }
             }
-        } else if (bd2->getName() == ENEMY_TEXTURE && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        } else if (bd2->getName() == ENEMY_TEXTURE && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd2 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
@@ -1365,14 +1369,14 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between energy item and Lumia
-        else if (bd1->getName() == ENERGY_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        else if (bd1->getName() == ENERGY_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd1 && !energy->getRemoved()) {
                     _collisionController.processEnergyLumiaCollision(energy, lumia, lumia == _avatar);
                     break;
                 }
             }
-        } else if (bd2->getName() == ENERGY_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        } else if (bd2->getName() == ENERGY_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             for (const std::shared_ptr<EnergyModel>& energy : _energyList) {
                 if (energy.get() == bd2 && !energy->getRemoved()) {
                     _collisionController.processEnergyLumiaCollision(energy, lumia, lumia == _avatar);
@@ -1380,7 +1384,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1->getName() == "button" && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        else if (bd1->getName() == "button" && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1388,7 +1392,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd2->getName() == "button" && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        else if (bd2->getName() == "button" && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaCollision(lumia, button);
@@ -1397,7 +1401,7 @@ void GameScene::beginContact(b2Contact* contact) {
             }
         }
         // handle collision between two Lumias
-        else if (bd1->getName() == LUMIA_NAME && bd2 == lumia.get() && lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        else if (bd1->getName() == LUMIA_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd1 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
@@ -1405,7 +1409,7 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
             break;
-        } else if (bd2->getName() == LUMIA_NAME && bd1 == lumia.get() && lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        } else if (bd2->getName() == LUMIA_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             for (const std::shared_ptr<LumiaModel>& lumia2 : _lumiaList) {
                 if (lumia2.get() == bd2 && !lumia2->getRemoved() && _avatar->getState() == LumiaModel::LumiaState::Merging) {
                     _collisionController.processLumiaLumiaCollision(lumia, lumia2, lumia == _avatar || lumia2 == _avatar);
@@ -1413,11 +1417,11 @@ void GameScene::beginContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd1 == lumia.get() && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1){
+        else if (bd2->getName()=="STICKY_WALL" && didCollideWithLumiaBody(lumia, bd1, fd1)){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd2);
             
         }
-        else if (bd2 == lumia.get() && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2){
+        else if (bd1->getName()=="STICKY_WALL" && didCollideWithLumiaBody(lumia, bd2, fd2)){
             _collisionController.processStickyWallLumiaCollision(lumia, (StickyWallModel*)bd1);
             
         }
@@ -1478,7 +1482,7 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setRolling(false);
             }
         }
-        if (bd1->getName() == "button" && bd2 == lumia.get()&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2) {
+        if (bd1->getName() == "button" && didCollideWithLumiaBody(lumia, bd2, fd2)) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
@@ -1486,7 +1490,7 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd2->getName() == "button" && bd1 == lumia.get()&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) {
+        else if (bd2->getName() == "button" && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
@@ -1494,8 +1498,8 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        else if ((bd1 == lumia.get() && bd2->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd1 && lumia->getFrictionSensorName() != fd1) ||
-                 (bd2 == lumia.get() && bd1->getName()=="STICKY_WALL"&& lumia->getLaunchSensorName() != fd2 && lumia->getFrictionSensorName() != fd2)){
+        else if ((bd2->getName()=="STICKY_WALL" && didCollideWithLumiaBody(lumia, bd1, fd1)) ||
+                 (bd1->getName()=="STICKY_WALL" && didCollideWithLumiaBody(lumia, bd2, fd2))){
             _collisionController.processStickyWallLumiaEnding(lumia);
         }
     }
