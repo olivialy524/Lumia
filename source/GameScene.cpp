@@ -242,6 +242,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             button->addListener([=](const std::string& name, bool down) {
                 _state = GameState::Paused;
                 _UIscene->setVisible(false);
+                _pausedUI->setVisible(true);
                
             });
                 
@@ -249,6 +250,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         button->activate();
         }
         
+    _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
+    _pausedUI->setContentSize(dimen.width, dimen.height);
+    for (auto it : _pausedUI->getChildren()) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
+        if (button->getName() == "exit"){
+            button->addListener([=](const std::string& name, bool down) {
+                _state = GameState::playing;
+                _UIscene->setVisible(true);
+                _pausedUI->setVisible(false);
+            });
+                
+        }
+        button->activate();
+        }
+    _pausedUI->setVisible(false);
+    
     _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
     
     _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -288,6 +305,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     addChild(_scrollNode);
     addChild(_UIscene);
+    addChild(_pausedUI);
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
     populate();
@@ -731,6 +749,7 @@ void GameScene::updatePaused(float dt, float startX) {
                 _avatar = lumia;
                 _state = GameState::playing;
                 _UIscene->setVisible(true);
+                _pausedUI->setVisible(false);
             }
         }
 

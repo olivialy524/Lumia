@@ -272,6 +272,23 @@
                 }
             }
         },
+        "pausedUI" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "exit"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "panningbutton"
+                        }
+                    }
+                }
+            }
+        },
         "levelselect" : {
             "type": "Node",
             "format": {
