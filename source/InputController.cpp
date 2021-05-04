@@ -260,6 +260,7 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
  */
 void InputController::mouseDraggedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
     Vec2 currentDrag = event.position - _dclick;
+    _dragDistance = currentDrag.x;
     // only register player as dragging if sufficiently far from initial click/touch
     if (currentDrag.lengthSquared() >= 625.0f) {
         _dragged = true;
@@ -280,7 +281,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
-    if (event.timestamp.ellapsedMillis(_clickTime) <= 250) {
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 250.0f) {
         _keySplit = true;
     }
 
@@ -347,6 +348,8 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
 void InputController::touchesDraggedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
     if (_touchids.size() == 1) {
         Vec2 currentDrag = event.position - _dclick;
+        
+        _dragDistance = currentDrag.x;
 
         // only register player as dragging if sufficiently far from initial click/touch
         if (currentDrag.lengthSquared() >= 625.0f) {
