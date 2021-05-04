@@ -73,6 +73,12 @@
         "back": {
             "file": "textures/back.png"
         },
+        "pausebutton": {
+            "file": "textures/pause.png"
+        },
+        "panningbutton": {
+            "file": "textures/panning.png"
+        },
         "closebutton": {
             "file": "textures/closebutton.png"
         },
@@ -160,7 +166,8 @@
     "widgets": {
         "levelbutton" : "widgets/levelbutton.json",
         "toprightbutton" : "widgets/toprightbutton.json",
-        "backbutton" : "widgets/backbutton.json"
+        "backbutton" : "widgets/backbutton.json",
+        "panningbutton" : "widgets/panningbutton.json"
     },
     "scene2s" : {
     	"mainmenu" : {
@@ -242,6 +249,24 @@
                         "key"   : "backbutton",
                         "variables" : {
                             "texture": "back"
+                        }
+                    }
+                },
+                "panning"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "panningbutton",
+                        "variables" : {
+                            "texture": "panningbutton"
+                        }
+                    }
+                },
+                "pause"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "pausebutton"
                         }
                     }
                 }

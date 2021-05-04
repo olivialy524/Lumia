@@ -88,7 +88,7 @@ using namespace cugl;
 
 #define CAMERA_SPEED 4.0f
 
-#define CAMERA_SHIFT 0.15f
+#define CAMERA_SHIFT 0.33f
 
 #define WIN_MUSIC "win"
 
@@ -190,13 +190,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity) {
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
-    Size dimen = computeActiveSize();
-
+    Size dimen = Application::get()->getDisplaySize();
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
     }
+    
+    CULog("hiii");
     
     _assets = assets;
     _input.init();
@@ -206,23 +207,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     bkgNode->setPosition(dimen.width/2, dimen.height/2);
 
-    _UIscene = assets->get<scene2::SceneNode>("gameUI");
-    
-    
-    _UIscene->setContentSize(dimen);
-    _UIscene->doLayout(); // Repositions the HUD;
-    for (auto it : _UIscene->getChildren()) {
-        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "backbutton"){
-            button->addListener([=](const std::string& name, bool down) {
-                _didSwitchLevelSelect = true;
-                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
-                AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
-            });
-        }
-        button->activate();
-        }
-        
+//    CULog("called here%f", dimen.width);
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -238,10 +223,38 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
-    _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
-    _scale *= 1.7f;
+    _scale = dimen.height/rect.size.height;
+    _scale *= 1.5f;
 //    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
+    _UIscene = assets->get<scene2::SceneNode>("gameUI");
+    _UIscene->setContentSize(dimen.width, dimen.height);
+    _UIscene->doLayout(); // Repositions the HUD;
+    for (auto it : _UIscene->getChildren()) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
+        if (button->getName() == "backbutton"){
+            button->addListener([=](const std::string& name, bool down) {
+                _didSwitchLevelSelect = true;
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+            });
+        }
+        if (button->getName() == "panning"){
+            button->addListener([=](const std::string& name, bool down) {
+                _state = GameState::Paused;
+                _UIscene->setVisible(false);
+               
+            });
+                
+        }
+        button->activate();
+        }
+        
+    _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
+    
+    _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _scrollNode->setPosition(0, 0);
+    
     // Create the scene graph
     _worldnode = scene2::SceneNode::alloc();
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -267,39 +280,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _didSwitchLevelSelect = false;
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
-    addChild(bkgNode);
-    addChild(_UIscene);
-//    addChild(_backbutton);
-    addChild(_worldnode, 1);
-    addChild(_debugnode, 2);
-    addChild(_winnode,  3);
-    addChild(_losenode, 4);
-    _UIelements.push_back(_backbuttonNode);
     
+    _scrollNode->addChild(bkgNode);
+    _scrollNode->addChild(_worldnode, 1);
+    _scrollNode->addChild(_debugnode, 2);
+    _scrollNode->addChild(_winnode, 3);
+    _scrollNode->addChild(_losenode, 4);
+    
+    addChild(_scrollNode);
+    addChild(_UIscene);
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
     populate();
+    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
+
     _active = true;
     _complete = false;
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
     
-    float cameraWidth = getCamera()->getViewport().size.width;
-    float cameraHeight = getCamera()->getViewport().size.height;
-    float upbound = CAMERA_UPBOUND * cameraHeight;
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
-    if (_avatar->getAvatarPos().y > upbound){
-        getCamera()->setPositionY(cameraHeight*2/3);
-        _cameraTargetY = cameraHeight*2/3;
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
-    }else {
-        getCamera()->setPositionY(cameraHeight/2);
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
-    }
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT;
-    getCamera()->update();
-
+    
+    
     setActive(true);
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::BLACK);
@@ -364,8 +366,8 @@ void GameScene::dispose() {
         setActive(false);
     }
 
-    std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
+    //std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
+    //AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 #pragma mark -
@@ -420,17 +422,7 @@ void GameScene::reset() {
     setFailure(false);
     setComplete(false);
     populate();
-    float cameraWidth = getCamera()->getViewport().size.width;
-    float cameraHeight = getCamera()->getViewport().size.height;
-    float upbound = CAMERA_UPBOUND * cameraHeight;
-    if (_avatar->getAvatarPos().y > upbound){
-        getCamera()->setPositionY(cameraHeight*2/3);
-    }else {
-        getCamera()->setPositionY(cameraHeight/2);
-    }
-    getCamera()->setPositionX(_avatar->getAvatarPos().x + cameraWidth * CAMERA_SHIFT);
-    getCamera()->update();
-    _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
+    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 }
 
 /**
@@ -692,17 +684,66 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
 #pragma mark -
 #pragma mark Physics Handling
 
+
+void GameScene::update(float dt) {
+    switch (_state) {
+        case GameState::playing:
+            updateGame(dt);
+            break;
+        case GameState::Paused:
+            updatePaused(dt, -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT);
+        default:
+            break;
+    }
+    
+}
+
+
+/**
+ * Executes the core gameplay loop of this world when on a paused state
+ *
+ */
+void GameScene::updatePaused(float dt, float startX) {
+    _input.update(dt);
+    if (_input.isDragging()){
+        if (!setStart){
+            touchstart = _scrollNode->getPositionX();
+            setStart = true;
+        }
+        _scrollNode->setPositionX(touchstart + _input.getCurrentDrag());
+    }else{
+        setStart = false;
+    }
+    
+    if(!_input.isDragging() && _input.didSwitch()){
+        cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
+
+        for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
+            cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
+            cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
+            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
+
+            float radius = lumia->getRadius() * _scale; // world coordinates
+            CULog("%f", radius);
+            if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
+                IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
+                _avatar = lumia;
+                _state = GameState::playing;
+                _UIscene->setVisible(true);
+            }
+        }
+
+    }
+    
+}
+
+
 /**
  * Executes the core gameplay loop of this world.
  *
- * This method contains the specific update code for this mini-game. It does
- * not handle collisions, as those are managed by the parent class WorldController.
- * This method is called after input is read, but before collisions are resolved.
- * The very last thing that it should do is apply forces to the appropriate objects.
- *
  * @param  delta    Number of seconds since last animation frame
  */
-void GameScene::update(float dt) {
+void GameScene::updateGame(float dt) {
     if (_switched){
         _input.clearAvatarStates();
     }
@@ -710,6 +751,7 @@ void GameScene::update(float dt) {
         _switched = false;
     }
     _input.update(dt);
+
 	// Process the toggled key commands
 	if (_input.didDebug()) { setDebug(!isDebug()); }
 	if (_input.didReset()) { reset(); }
@@ -753,10 +795,15 @@ void GameScene::update(float dt) {
     for (auto & door : _doorList) {
         door->setAngle(0);
         if (door->getOpening()) {
+            door->setBodyType(b2_dynamicBody);
             door->Open();
         }
         else if (door->getClosing()) {
+            door->setBodyType(b2_dynamicBody);
             door->Close();
+        }
+        else {
+            door->setBodyType(b2_staticBody);
         }
         door->getNode()->setPosition(door->getPosition()*_scale);
     }
@@ -795,7 +842,7 @@ void GameScene::update(float dt) {
 
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
-            cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation);
+            cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
             CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
 
             float radius = lumia->getRadius() * _scale; // world coordinates
@@ -833,36 +880,8 @@ void GameScene::update(float dt) {
 	}
       
 
-    float cameraWidth = getCamera()->getViewport().size.width;
-    float cameraHeight = getCamera()->getViewport().size.height;
-    float upbound = CAMERA_UPBOUND * cameraHeight;
-    if (_avatar->getAvatarPos().y > upbound){
-        _cameraTargetY = cameraHeight*2/3;
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, getCamera()->getPosition().y - cameraHeight/2);
-    }else {
-        _cameraTargetY = cameraHeight/2;
-        _UIscene->setPosition(getCamera()->getPosition().x - cameraWidth/3, 0);
-    }
-    _cameraTargetX = _avatar->getAvatarPos().x + cameraWidth*CAMERA_SHIFT;
-//    getCamera()->setPositionX(_avatar->getAvatarPos().x);
-    float currentPosX = getCamera()->getPosition().x;
-    float currentPosY = getCamera()->getPosition().y;
-    float diffY = _cameraTargetY - currentPosY;
-    float diffX = _cameraTargetX - currentPosX;
-    if (std::abs(diffX) <= 3){
-        getCamera()->setPositionX(_cameraTargetX);
-    }else{
-        float new_pos = currentPosX + CAMERA_SPEED * sgn(diffX);
-        getCamera()->setPositionX(new_pos);
-    }
-    if (std::abs(diffY) <= 3){
-        getCamera()->setPositionY(_cameraTargetY);
-    }else{
-        float new_pos = currentPosY + CAMERA_SPEED * sgn(diffY);
-        getCamera()->setPositionY(new_pos);
-    }
-    getCamera()->update();
     
+    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
     _avatar->setVelocity(_input.getLaunch());
 	_avatar->setLaunching(_input.didLaunch());
 	_avatar->applyForce();
@@ -1490,13 +1509,13 @@ void GameScene::endContact(b2Contact* contact) {
  */
 Size GameScene::computeActiveSize() const {
     Size dimen = Application::get()->getDisplaySize();
-    float ratio1 = dimen.width/dimen.height;
-    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-    if (ratio1 < ratio2) {
-        dimen *= SCENE_WIDTH/dimen.width;
-    } else {
-        dimen *= SCENE_HEIGHT/dimen.height;
-    }
+//    float ratio1 = dimen.width/dimen.height;
+//    float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
+//    if (ratio1 < ratio2) {
+//        dimen *= SCENE_WIDTH/dimen.width;
+//    } else {
+//        dimen *= SCENE_HEIGHT/dimen.height;
+//    }
     return dimen;
 }
 

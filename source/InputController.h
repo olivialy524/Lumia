@@ -88,6 +88,7 @@ protected:
     bool _dragged;
     /** The planned launch velocity produced by player input drag */
     cugl::Vec2 _plannedLaunch;
+    float _dragDistance;
   
 public:
 #pragma mark -
@@ -180,6 +181,8 @@ public:
      * @return whether or not the player is dragging their mouse/finger
      */
     bool isDragging() { return _dragged; }
+    
+    float getCurrentDrag() {return _dragDistance;}
 
     /**
      * Returns the attempted input switch tap/click location.
