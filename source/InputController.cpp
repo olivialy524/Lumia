@@ -264,7 +264,7 @@ void InputController::mouseDraggedCB(const MouseEvent& event, const Vec2& previo
     // only register player as dragging if sufficiently far from initial click/touch
     if (currentDrag.lengthSquared() >= 625.0f) {
         _dragged = true;
-
+        _dragDistance = currentDrag.x;
         currentDrag = calculateLaunch(currentDrag);
 
         _plannedLaunch = currentDrag;
