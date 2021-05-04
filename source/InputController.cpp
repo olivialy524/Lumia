@@ -295,7 +295,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
-    if (event.timestamp.ellapsedMillis(_clickTime) <= 250) {
+    if (event.timestamp.ellapsedMi0) {
         _keySplit = true;
     }
 
