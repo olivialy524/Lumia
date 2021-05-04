@@ -280,7 +280,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
-    if (event.timestamp.ellapsedMillis(_clickTime) <= 625) {
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 250.0f) {
         _keySplit = true;
     }
 
@@ -351,7 +351,7 @@ void InputController::touchesDraggedCB(const TouchEvent& event, const Vec2& prev
         _dragDistance = currentDrag.x;
 
         // only register player as dragging if sufficiently far from initial click/touch
-        if (currentDrag.lengthSquared() >= 100.0f) {
+        if (currentDrag.lengthSquared() >= 625.0f) {
             _dragged = true;
 
             currentDrag = calculateLaunch(currentDrag);

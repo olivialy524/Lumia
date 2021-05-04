@@ -238,7 +238,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                 AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
             });
         }
-        if (button->getName() == "pause"){
+        if (button->getName() == "panning"){
             button->addListener([=](const std::string& name, bool down) {
                 _state = GameState::Paused;
                 _UIscene->setVisible(false);
