@@ -110,10 +110,14 @@ protected:
     /** Volume level for sound effects */
     float _effectVolume;
     
+    bool _switched;
+    
     bool _canSplit;
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    /** Mark set to handle more sophisticated collision callbacks */
+    std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap2;
     
     std::unordered_map<Node, NodeState> _graph;
 
@@ -338,6 +342,8 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+    
+    bool didCollideWithLumiaBody(std::shared_ptr<LumiaModel> lumia, physics2::Obstacle* bd, void* fd);
 	/**
 	* Processes the start of a collision
 	*
@@ -422,7 +428,7 @@ public:
      * @param dt time in seconds since last update frame
      */
     Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
-                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt);
+                            float n);
 
   };
 

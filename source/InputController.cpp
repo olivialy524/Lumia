@@ -202,6 +202,21 @@ void InputController::clear() {
     _touchids.clear();
 }
 
+void InputController::clearAvatarStates() {
+    _splitPressed = false;
+    _mergePressed = false;
+    _launched = false;
+    _switched = false;
+    _dragging = false;
+    _dragged = false;
+
+    _inputLaunch = Vec2::ZERO;
+    _inputSwitch = Vec2::ZERO;
+    _dclick = Vec2::ZERO;
+    _plannedLaunch = Vec2::ZERO;
+    _touchids.clear();
+}
+
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
 
