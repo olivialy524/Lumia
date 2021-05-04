@@ -233,6 +233,7 @@ bool ObstacleWorld::init(const Rect bounds) {
 bool ObstacleWorld::init(const Rect bounds, const Vec2 gravity) {
     CUAssertLog(!_world,"Attempt to reinitialize and active world");
     _bounds = bounds;
+    _gravity = gravity;
     _world = new b2World(b2Vec2(gravity.x,gravity.y));
     if (_world) {
         return true;

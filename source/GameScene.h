@@ -57,6 +57,7 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _backbuttonNode;
     
     std::shared_ptr<cugl::scene2::SceneNode> _UIscene;
+    std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
     /** Reference to the win message label */
@@ -90,6 +91,10 @@ protected:
     std::shared_ptr<TrajectoryNode> _trajectoryNode;
     
     std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
+    
+
 
     
     /** Whether we have completed this "game" */
@@ -105,10 +110,14 @@ protected:
     /** Volume level for sound effects */
     float _effectVolume;
     
+    bool _switched;
+    
     bool _canSplit;
 
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    /** Mark set to handle more sophisticated collision callbacks */
+    std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap2;
     
     std::unordered_map<Node, NodeState> _graph;
 
@@ -164,8 +173,15 @@ protected:
     cugl::Size computeActiveSize() const;
     
 public:
-#pragma mark -
+#pragma mark Game state
+    enum GameState {
+        Paused,
+        playing
+    };
+    
+    GameState _state = GameState::playing;
 #pragma mark Constructors
+
     /**
      * Creates a new game world with the default values.
      *
@@ -240,6 +256,10 @@ public:
      * @return  true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity);
+    
+    
+    float touchstart;
+    bool setStart;
     
     
 #pragma mark -
@@ -322,6 +342,8 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+    
+    bool didCollideWithLumiaBody(std::shared_ptr<LumiaModel> lumia, physics2::Obstacle* bd, void* fd);
 	/**
 	* Processes the start of a collision
 	*
@@ -391,6 +413,11 @@ public:
 
     /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
     void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
+    
+    
+    void updateGame(float dt);
+    
+    void updatePaused(float dt, float startX);
 
     /**
      * Calculates trajectory point one timestep into future
@@ -401,7 +428,7 @@ public:
      * @param dt time in seconds since last update frame
      */
     Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
-                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt);
+                            float n);
 
   };
 

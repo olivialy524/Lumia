@@ -88,6 +88,7 @@ protected:
     bool _dragged;
     /** The planned launch velocity produced by player input drag */
     cugl::Vec2 _plannedLaunch;
+    float _dragDistance;
   
 public:
 #pragma mark -
@@ -150,6 +151,7 @@ public:
      */
     void clear();
     
+    void clearAvatarStates();
 #pragma mark -
 #pragma mark Input Results
     /**
@@ -179,6 +181,8 @@ public:
      * @return whether or not the player is dragging their mouse/finger
      */
     bool isDragging() { return _dragged; }
+    
+    float getCurrentDrag() {return _dragDistance;}
 
     /**
      * Returns the attempted input switch tap/click location.
@@ -238,7 +242,7 @@ public:
     float getMaximumLaunchVelocity(){
         return MAXIMUM_LAUNCH_VELOCITY;
     }
-
+    
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
     /**

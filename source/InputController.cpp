@@ -202,6 +202,21 @@ void InputController::clear() {
     _touchids.clear();
 }
 
+void InputController::clearAvatarStates() {
+    _splitPressed = false;
+    _mergePressed = false;
+    _launched = false;
+    _switched = false;
+    _dragging = false;
+    _dragged = false;
+
+    _inputLaunch = Vec2::ZERO;
+    _inputSwitch = Vec2::ZERO;
+    _dclick = Vec2::ZERO;
+    _plannedLaunch = Vec2::ZERO;
+    _touchids.clear();
+}
+
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
 
@@ -260,10 +275,11 @@ void InputController::mouseReleasedCB(const MouseEvent& event, Uint8 clicks, boo
  */
 void InputController::mouseDraggedCB(const MouseEvent& event, const Vec2& previous, bool focus) {
     Vec2 currentDrag = event.position - _dclick;
+    _dragDistance = currentDrag.x;
     // only register player as dragging if sufficiently far from initial click/touch
     if (currentDrag.lengthSquared() >= 625.0f) {
         _dragged = true;
-
+        _dragDistance = currentDrag.x;
         currentDrag = calculateLaunch(currentDrag);
 
         _plannedLaunch = currentDrag;
@@ -280,7 +296,7 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
     CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
-    if (event.timestamp.ellapsedMillis(_clickTime) <= 250) {
+    if (event.timestamp.ellapsedMillis(_clickTime) <= 250.0f) {
         _keySplit = true;
     }
 
@@ -347,6 +363,8 @@ void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
 void InputController::touchesDraggedCB(const TouchEvent& event, const Vec2& previous, bool focus) {
     if (_touchids.size() == 1) {
         Vec2 currentDrag = event.position - _dclick;
+        
+        _dragDistance = currentDrag.x;
 
         // only register player as dragging if sufficiently far from initial click/touch
         if (currentDrag.lengthSquared() >= 625.0f) {

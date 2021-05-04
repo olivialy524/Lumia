@@ -37,7 +37,7 @@ protected:
     /** The factor to multiply by the input */
     static constexpr float LUMIA_FORCE = 20.0f;
     /** The amount to slow the character down */
-    static constexpr float LUMIA_DAMPING = 6.0f;
+    static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
     static constexpr float LUMIA_MAXVELOCITY = 20.0f;
 
@@ -82,11 +82,17 @@ protected:
     float _radius;
 	/** Ground sensor to represent our feet */
 	b2Fixture*  _sensorFixture;
+    /** Ground sensor to represent our feet */
+    b2Fixture*  _sensorFixture2;
 	/** Reference to the sensor name (since a constant cannot have a pointer) */
-	std::string _sensorName;
+	std::string _launchSensorName;
+    /** Reference to the sensor name (since a constant cannot have a pointer) */
+    std::string _frictionSensorName;
 	/** The node for debugging the sensor */
 	std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
-
+    
+    /** The node for debugging the sensor */
+    std::shared_ptr<cugl::scene2::WireNode> _sensorNode2;
 	/** The scene graph node for Lumia. */
 	std::shared_ptr<LumiaNode> _sceneNode;
     
@@ -111,6 +117,8 @@ protected:
 	virtual void resetDebug() override;
     
     bool _isOnStickyWall;
+    
+    bool _isRolling;
     
     Vec2 _stickDirection;
     
@@ -458,7 +466,19 @@ public:
      * @param value whether the Lumia is on the ground.
      */
     void setGrounded(bool value) { _isGrounded = value; }
+    /**
+     * Returns true if the Lumia is on the ground.
+     *
+     * @return true if the Lumia is on the ground.
+     */
+    bool isRolling() const { return _isRolling; }
     
+    /**
+     * Sets whether the Lumia is on the ground.
+     *
+     * @param value whether the Lumia is on the ground.
+     */
+    void setRolling(bool value) { _isRolling = value; }
     /**
      * Returns how much force to apply to get the Lumia moving
      *
@@ -489,8 +509,10 @@ public:
      *
      * @return the name of the ground sensor
      */
-    std::string* getSensorName() { return &_sensorName; }
-
+    std::string* getLaunchSensorName() { return &_launchSensorName; }
+    
+    std::string* getFrictionSensorName() { return &_frictionSensorName; }
+    
     void setRemoved(bool value) { _removed = value; }
 
     /* Returns whether or not this energy item is due to be or has been removed */
