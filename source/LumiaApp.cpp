@@ -180,7 +180,6 @@ void LumiaApp::update(float timestep) {
                     _gameplay.setActive(true);
                 } else if (nextScene == "settings") {
                     _scene = Settings;
-                    _settings.init(_assets);
                     _settings.setActive(true);
                 }
             }

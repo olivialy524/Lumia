@@ -474,19 +474,6 @@
                         "snap"   : true,
                         "anchor" : [0.5,0.5]
                     },
-                    "children": {
-                        "knob": {
-                            "type": "Image",
-                            "data": {
-                                "texture":  "background",
-                                "anchor":   [0.0,0.5]
-                            },
-                            "layout" : {
-                                "x_anchor" : "fill",
-                                "y_anchor" : "fill"
-                            }
-                        }
-                    },
                     "layout" : {
                         "x_anchor" : "right",
                         "y_anchor" : "middle",
