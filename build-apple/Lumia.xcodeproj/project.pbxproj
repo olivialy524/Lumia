@@ -616,7 +616,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 6F38AKR3X8;
+						DevelopmentTeam = F2S98STJVH;
 						ProvisioningStyle = Automatic;
 					};
 					EB5D204C23FC73FF007D16CD = {
@@ -856,13 +856,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = 6F38AKR3X8;
+				DEVELOPMENT_TEAM = F2S98STJVH;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.02;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
 				PRODUCT_NAME = "Lumia: Guardian of Light";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -881,13 +881,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = 6F38AKR3X8;
+				DEVELOPMENT_TEAM = F2S98STJVH;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.02;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.LumiaClosedBeta2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Lumia;
 				PRODUCT_NAME = "Lumia: Guardian of Light";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

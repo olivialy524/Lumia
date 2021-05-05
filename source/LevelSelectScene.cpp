@@ -87,7 +87,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[button->getName()] = button;
         
-        if (count <= 3) {
+        if (count <= 4) {
             button->addListener([=](const std::string& name, bool down) {
                 if (!_input->isDragging()){
                 this->_active = down;
