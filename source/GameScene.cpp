@@ -1376,7 +1376,7 @@ void GameScene::beginContact(b2Contact* contact) {
 
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        if (bd1 != lumia.get() && bd2 != lumia.get()){
+        if (bd1 != lumia.get() && bd2 != lumia.get() || lumia->getRemoved()){
             continue;
         }
 
