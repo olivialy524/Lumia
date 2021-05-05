@@ -92,15 +92,6 @@ protected:
     
     bool _inCoolDown;
 
-    /**
-    * Redraws the outline of the physics fixtures to the debug node
-    *
-    * The debug node is use to outline the fixtures attached to this object.
-    * This is very useful when the fixtures have a very different shape than
-    * the texture (e.g. a circular shape attached to a square texture).
-    */
-    virtual void resetDebug() override;
-
 public:
     
 #pragma mark Hidden Constructors
@@ -397,41 +388,8 @@ public:
     bool getRemoved(){
         return _removed;
     }
-#pragma mark -
-#pragma mark Physics Methods
-    /**
-     * Creates the physics Body(s) for this object, adding them to the world.
-     *
-     * This method overrides the base method to keep your ship from spinning.
-     *
-     * @param world Box2D world to store body
-     *
-     * @return true if object allocation succeeded
-     */
-    void createFixtures() override;
     
-    /**
-     * Release the fixtures for this body, reseting the shape
-     *
-     * This is the primary method to override for custom physics objects.
-     */
-    void releaseFixtures() override;
-    
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * We use this method to reset cooldowns.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
     void update(float dt) override;
-    
-    /**
-     * Applies the force to the body of this Lumia
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
 };
 
 
