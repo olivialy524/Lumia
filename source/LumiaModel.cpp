@@ -157,13 +157,15 @@ void LumiaModel::applyForce() {
         return;
     }
     
-    if (isOnStickyWall() && !isLaunching()){
+    if ((isOnStickyWall() || isOnButton()) && !isLaunching()){
         setLinearVelocity(Vec2::ZERO);
         setAngularVelocity(0.0f);
         b2Vec2 force(_stickDirection.x, _stickDirection.y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-    } else if (isOnStickyWall() && isLaunching()){
+        CULog("Stick dir %f, %f", _stickDirection.x, _stickDirection.y);
+    } else if ((isOnStickyWall() || isOnButton()) && isLaunching()){
         setOnStickyWall(false);
+        setOnButton(false);
     }
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body

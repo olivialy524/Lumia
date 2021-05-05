@@ -828,6 +828,10 @@ void GameScene::updateGame(float dt) {
             if (button->getCD() >= 30) {
                 button->resetCD();
             }
+            auto lumia = button->getLumia();
+            if (lumia->isOnButton()){
+                lumia->setStickDirection(button->getPosition()-lumia->getPosition());
+            }
         }
         else if (button->getCD() >= 5) {
             button->pushUp();
