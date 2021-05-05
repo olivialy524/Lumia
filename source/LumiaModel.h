@@ -76,6 +76,8 @@ protected:
 	bool _isGrounded;
     /** Whether Lumia is splitting into two */
     bool _isSplitting;
+    
+    bool _inCoolDown;
     /* Whether or not the Lumia body is due to be or has been removed */
     bool _removed;
     /** Radius of Lumia's body */
@@ -442,6 +444,14 @@ public:
     
     void setOnButton(bool value){
         _isOnButton = value;
+    }
+    
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
     }
     
     void unStick(){

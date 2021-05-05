@@ -923,7 +923,7 @@ void GameScene::updateGame(float dt) {
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input->getPlannedLaunch();
         Vec2 initialVelocity = plannedImpulse / m;
-		for (int i = 1; i < 30; i+=5) {
+		for (int i = 1; i < 40; i+=5) {
 			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}
@@ -1376,7 +1376,7 @@ void GameScene::beginContact(b2Contact* contact) {
 
 	// See if we have landed on the ground.
     for (const std::shared_ptr<LumiaModel> &lumia : _lumiaList) {
-        if (bd1 != lumia.get() && bd2 != lumia.get()){
+        if ((bd1 != lumia.get() && bd2 != lumia.get()) || lumia->getRemoved()){
             continue;
         }
 

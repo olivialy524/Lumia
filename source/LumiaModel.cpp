@@ -44,12 +44,12 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-struct LumiaModel::LumiaSize size0 = { 0.51f, 0.68f };
+struct LumiaModel::LumiaSize size0 = { 0.55f, 0.52f };
 struct LumiaModel::LumiaSize size1 = { 0.69f, 0.44f };
 struct LumiaModel::LumiaSize size2 = { 0.83f, 0.39f };
 struct LumiaModel::LumiaSize size3 = { 1.0f, 0.30f };
 struct LumiaModel::LumiaSize size4 = { 1.2f, 0.21f };
-struct LumiaModel::LumiaSize size5 = { 1.44f, 0.19f };
+struct LumiaModel::LumiaSize size5 = { 1.40f, 0.19f };
 std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3, size4, size5 };
 
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
@@ -70,7 +70,8 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         _radius = radius;
 
         setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
-        setFriction(0.1f);
+        setFriction(0.2f);
+        setAngularDamping(0.20f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(false);
@@ -97,11 +98,11 @@ void LumiaModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density * 0.45f;
+    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density * 0.40f;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.8f;
+    sensorShape.m_radius = _radius + 0.6f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
@@ -112,7 +113,7 @@ void LumiaModel::createFixtures() {
     sensorDef2.isSensor = true;
 
     b2CircleShape sensorShape2;
-    sensorShape2.m_radius = _radius * 1.1f;
+    sensorShape2.m_radius = _radius + 0.08f;
 
     sensorDef2.shape = &sensorShape2;
     _sensorFixture2 = _body->CreateFixture(&sensorDef2);
@@ -218,7 +219,7 @@ void LumiaModel::resetDebug() {
     PolyFactory factory;
     factory.setSegments(12);
     factory.setGeometry(Geometry::PATH);
-    Poly2 poly = factory.makeCircle(Vec2::ZERO,1.8f*getRadius());
+    Poly2 poly = factory.makeCircle(Vec2::ZERO,0.6f+getRadius());
 
     _sensorNode = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
     _sensorNode->setColor(Color4f::RED);
@@ -226,7 +227,7 @@ void LumiaModel::resetDebug() {
     _sensorNode->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
     _debug->addChild(_sensorNode);
     
-    Poly2 poly2 = factory.makeCircle(Vec2::ZERO,1.1f*getRadius());
+    Poly2 poly2 = factory.makeCircle(Vec2::ZERO,0.08f+getRadius());
     _sensorNode2 = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
     _sensorNode2->setColor(Color4f::RED);
     size = _debug->getContentSize();
