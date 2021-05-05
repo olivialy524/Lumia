@@ -100,7 +100,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
            button->addListener([=](const std::string& name, bool down) {
                this->_active = down;
                _nextScene = "game";
-               _selectedLevel = "json/tutorial" + std::to_string(count -3) + ".json";
+               _selectedLevel = "json/tutorial" + std::to_string(count-4) + ".json";
            });
        }
    
