@@ -369,6 +369,12 @@ void GameScene::dispose() {
             enemy->dispose();
         }
         _enemyList.clear();
+
+        for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
+            t->dispose();
+        }
+        _tutorialList.clear();
+
         _world = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -599,6 +605,23 @@ void GameScene::populate() {
         s->setDebugColor(DEBUG_COLOR);
         addObstacle(s, s->getSceneNode(), 1);
     }
+
+#pragma mark : Tutorials
+    std::vector<LevelModel::Tutorial> tutorials = _level->getTutorials();
+    for (int i = 0; i < tutorials.size(); i++) {
+        LevelModel::Tutorial t = tutorials[i];
+        image = _assets->get<Texture>(t.texture);
+        std::shared_ptr<scene2::PolygonNode> tutorialNode = scene2::PolygonNode::allocWithTexture(image);
+        Vec2 pos = Vec2(t.posX, t.posY) * _scale;
+        tutorialNode->setPosition(pos);
+        tutorialNode->setVisible(false);
+        //Color4f tint = Color4f(1, 1, 1, 0.6f);
+        //_avatarIndicatorNode->setColor(tint);
+        _worldnode->addChild(tutorialNode);
+
+        _tutorialList.push_back(tutorialNode);
+    }
+
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
@@ -650,7 +673,7 @@ void GameScene::populate() {
     Color4f tint = Color4f(1,1,1,0.6f);
     _avatarIndicatorNode->setColor(tint);
     _worldnode->addChild(_avatarIndicatorNode);
-    
+
     std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
@@ -659,12 +682,12 @@ void GameScene::populate() {
  * Adds the physics object to the physics world and loosely couples it to the scene graph
  *
  * There are two ways to link a physics object to a scene graph node on the
- * screen.  One way is to make a subclass of a physics object, like we did 
- * with dude.  The other is to use callback functions to loosely couple 
+ * screen.  One way is to make a subclass of a physics object, like we did
+ * with dude.  The other is to use callback functions to loosely couple
  * the two.  This function is an example of the latter.
  *
- * In addition, scene graph nodes have a z-order.  This is the order they are 
- * drawn in the scene graph node.  Objects with the different textures should 
+ * In addition, scene graph nodes have a z-order.  This is the order they are
+ * drawn in the scene graph node.  Objects with the different textures should
  * have different z-orders whenever possible.  This will cut down on the amount of drawing done
  *
  * @param obj             The physics object to add
@@ -673,27 +696,27 @@ void GameScene::populate() {
  * @param useObjPosition  Whether to update the node's position to be at the object's position
  */
 void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj,
-                            const std::shared_ptr<cugl::scene2::SceneNode>& node,
-                            int zOrder,
-                            bool useObjPosition) {
+    const std::shared_ptr<cugl::scene2::SceneNode>& node,
+    int zOrder,
+    bool useObjPosition) {
     _world->addObstacle(obj);
     obj->setDebugScene(_debugnode);
-    
+
     // Position the scene graph node (enough for static objects)
-  	if (useObjPosition) {
-	    node->setPosition(obj->getPosition()*_scale);
-	}
-	_worldnode->addChild(node, zOrder);
-    
+    if (useObjPosition) {
+        node->setPosition(obj->getPosition() * _scale);
+    }
+    _worldnode->addChild(node, zOrder);
+
     // Dynamic objects need constant updating
     if (obj->getBodyType() == b2_dynamicBody) {
         scene2::SceneNode* weak = node.get(); // No need for smart pointer in callback
-        obj->setListener([=](physics2::Obstacle* obs){
-            if(!obs->isRemoved()){
-                weak->setPosition(obs->getPosition()*_scale);
+        obj->setListener([=](physics2::Obstacle* obs) {
+            if (!obs->isRemoved()) {
+                weak->setPosition(obs->getPosition() * _scale);
                 weak->setAngle(obs->getAngle());
             }
-        });
+            });
     }
 }
 
@@ -761,6 +784,7 @@ void GameScene::updatePaused(float dt, float startX) {
  *
  * @param  delta    Number of seconds since last animation frame
  */
+
 void GameScene::updateGame(float dt) {
     if (_switched){
         _input->clearAvatarStates();
@@ -778,20 +802,21 @@ void GameScene::updateGame(float dt) {
 		Application::get()->quit();
 	}
     
+
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
-        AudioEngine::get()->play(DIE_SOUND,source, false, _effectVolume, true);
+        AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
         removeLumia(lumia);
     }
-    
+
     for (const std::shared_ptr<EnemyModel>& enemy : _collisionController.getEnemiesToRemove()) {
         removeEnemy(enemy);
     }
-    
+
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToStick()) {
         lumia->setOnStickyWall(true);
     }
-    
+
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToUnstick()) {
         lumia->unStick();
     }
@@ -799,11 +824,23 @@ void GameScene::updateGame(float dt) {
     for (const CollisionController::LumiaBody& lumia : _collisionController.getLumiasToCreate()) {
         createLumia(lumia.sizeLevel, lumia.position, lumia.isAvatar, lumia.vel, lumia.angularVel);
     }
-   
+
     for (const std::shared_ptr<EnergyModel>& energy : _collisionController.getEnergiesToRemove()) {
         removeEnergy(energy);
     }
-    
+
+    for (const std::shared_ptr<scene2::PolygonNode>& tutorial : _tutorialList) {
+        Vec2 tutorialPos = tutorial->getPosition();
+        Vec2 avatarPos = _avatar->getPosition() *_scale;
+
+        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150) &&
+            IN_RANGE(avatarPos.y, tutorialPos.y - 150, tutorialPos.y + 150)) {
+            tutorial->setVisible(true);
+        } else {
+            tutorial->setVisible(false);
+        }
+    }
+
     if (_collisionController.didSwitchLumia()){
         switchToNearestLumia(_avatar);
     }

@@ -70,7 +70,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     auto UIbuttons = _UINode->getChildren();
 
     
-    int count = 0;
+  
     for (int i = 1; i <UIbuttons.size(); i++) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(UIbuttons[i]);
         if (button->getName() == "settings") {
@@ -81,20 +81,29 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
         }
         button->activate();
     }
-
+    
+    int count = 1;
     for (auto it = levelbuttons.begin(); it != levelbuttons.end(); ++it) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[button->getName()] = button;
+        
+        if (count <= 3) {
+            button->addListener([=](const std::string& name, bool down) {
+                if (!_input->isDragging()){
+                this->_active = down;
+                _nextScene = "game";
+                _selectedLevel = "json/level" + std::to_string(count) + ".json";
+                std::cout << _selectedLevel << std::endl;
+                }
+            });
+       } else {
+           button->addListener([=](const std::string& name, bool down) {
+               this->_active = down;
+               _nextScene = "game";
+               _selectedLevel = "json/tutorial" + std::to_string(count -3) + ".json";
+           });
+       }
    
-        button->addListener([=](const std::string& name, bool down) {
-            if (!_input->isDragging()){
-            this->_active = down;
-            _nextScene = "game";
-            _selectedLevel = "json/level" + std::to_string(count+1) + ".json";
-            std::cout << _selectedLevel << std::endl;
-            }
-
-        });
         
         button->activate();
         count++;
