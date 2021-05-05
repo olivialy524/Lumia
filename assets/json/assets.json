@@ -102,6 +102,21 @@
         },
         "spike": {
             "file": "textures/spike.png"
+        },
+        "levelpauseicon": {
+            "file": "textures/levelpauseicon.png"
+        },
+        "levelsbutton": {
+            "file": "textures/levelsbutton.png"
+        },
+        "replaybutton": {
+            "file": "textures/replaybutton.png"
+        },
+        "pausedetails": {
+            "file": "textures/pausedetails.png"
+        },
+        "continuebutton": {
+            "file": "textures/continuebutton.png"
         }
     },
     "sounds": {
@@ -242,16 +257,6 @@
                 "type" : "Anchored"
             },
             "children":  {
-
-                "backbutton"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "backbutton",
-                        "variables" : {
-                            "texture": "back"
-                        }
-                    }
-                },
                 "panning"  : {
                     "type": "Widget",
                     "data": {
@@ -268,6 +273,295 @@
                         "variables" : {
                             "texture": "pausebutton"
                         }
+                    }
+                }
+            }
+        },
+        "pausescreen": {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "background",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "pauselabel" : {
+                    "type"   : "Label",
+                    "data"   : {
+                        "font"       : "orbitron",
+                        "text"       : "Game Paused",
+                        "foreground" : [255,255,255,255],
+                        "halign"     : "center",
+                        "valign"     : "top"
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill",
+                        "y_offset" : 0.03
+                    }
+                },
+                "levelicon": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "levelpauseicon",
+                        "size"     : [120, 120]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "pausepatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "label" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronblack",
+                                "text"       : "1",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill",
+                                "x_offset" : 0
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "left",
+                        "y_anchor" : "top",
+                        "y_offset" : -0.23,
+                        "x_offset" : 0.1
+                    }
+                },
+                "details": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "pausedetails",
+                        "size":[440, 200]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "pausepatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "plantlabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "3/4",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "top",
+                                "x_offset" : -0.4,
+                                "y_offset": -0.4
+                            }
+                        },
+                        "enemylabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "1/2",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "bottom",
+                                "x_offset" : -0.4,
+                                "y_offset": 0.15
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset": -0.2,
+                        "y_offset": -0.1
+                    }
+                },
+                "settings"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "settingsbutton"
+                        }
+                    }
+                },
+                "levelselectbutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [215, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "levelsbutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "x_offset": 0.25,
+                        "y_offset": 0.2
+                    }
+                },
+                "continuebutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [140, 140],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "continuebutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "bottom",
+                        "y_offset": 0.2
+                    }
+                },
+                "replaybutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [230, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "replaybutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "bottom",
+                        "x_offset": -0.25,
+                        "y_offset": 0.2
                     }
                 }
             }

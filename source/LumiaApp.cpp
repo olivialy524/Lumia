@@ -147,6 +147,10 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(true);
                 _settings.init(_assets);
                 _settings.setActive(false);
+                _pause.init(_assets);
+                _pause.setActive(false);
+                _gameplay.init(_assets);
+                _gameplay.setActive(false);
             }
             return;
         }
@@ -168,47 +172,87 @@ void LumiaApp::update(float timestep) {
         }
         case LevelSelect:{
             if (_levelSelect.isActive()){
-                    _levelSelect.update(timestep);
+                _levelSelect.update(timestep);
             }else{
                 _levelSelect.setActive(false);
                 string nextScene = _levelSelect.getNextScene();
                 if (nextScene == "game"){
                     _scene = Game;
-                    _gameplay.init(_assets, _levelSelect.getSelectedLevel());
+                    _gameplay.setLevel(_assets, _levelSelect.getSelectedLevel());
+                    _gameplay.populate();
                     _gameplay.setMusicVolume(_settings.getMusicVolume());
                     _gameplay.setEffectVolume(_settings.getEffectVolume());
                     _gameplay.setActive(true);
                 } else if (nextScene == "settings") {
                     _scene = Settings;
+                    _settings.setNextScene("levelselect");
                     _settings.setActive(true);
                 }
             }
             return;
         }
         case Game:{
-            if (!_gameplay.didSwitchLevelSelect()){
+            if (_gameplay.isActive()){
                 _gameplay.update(timestep);
             }else{
-                _gameplay.dispose();
+                _gameplay.setActive(false);
+                string nextScene = _gameplay.getNextScene();
+                if (nextScene == "levelselect") {
+                    _gameplay.dispose();
 
-                _scene = LevelSelect;
-                _levelSelect.setActive(true);
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                } else if (nextScene == "pause") {
+                    _scene = Pause;
+                    _pause.setActive(true);
+                }
+            }
+            return;
+        }
+        case Pause: {
+            if (_pause.isActive()) {
+                _pause.update(timestep);
+            } else {
+                _pause.setActive(false);
+                string nextScene = _pause.getNextScene();
+                if (nextScene == "game-continue") {
+                    _scene = Game;
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "game-restart") {
+                    _scene = Game;
+                    _gameplay.reset();
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "levelselect") {
+                    _gameplay.dispose();
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                } else if (nextScene == "settings") {
+                    _scene = Settings;
+                    _settings.setNextScene("pause");
+                    _settings.setActive(true);
+                }
             }
             return;
         }
         case Settings:{
             if (_settings.isActive()){
-                    _settings.update(timestep);
+                _settings.update(timestep);
             }else{
                 _settings.setActive(false);
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
                     _scene = LevelSelect;
                     _levelSelect.setActive(true);
+                } else if (nextScene == "pause") {
+                    _scene = Pause;
+                    _pause.setActive(true);
                 }
             }
             return;
-            
         }
     }
 }
@@ -244,7 +288,10 @@ void LumiaApp::draw() {
             _gameplay.render_game(_batch, _UIbatch);
             break;
         }
-        
+        case Pause: {
+            _pause.render(_batch);
+            break;
+        }
     }
         
 }

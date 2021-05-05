@@ -123,8 +123,7 @@ GameScene::GameScene() : Scene2(),
 	_complete(false),
 	_debug(false),
     _canSplit(true),
-    _switched(false),
-    _didSwitchLevelSelect(false)
+    _switched(false)
 {    
 }
 
@@ -142,10 +141,9 @@ GameScene::GameScene() : Scene2(),
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     setName("game");
     
-    _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     
     return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,DEFAULT_GRAVITY));
@@ -197,18 +195,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     
-    CULog("hiii");
-    
     _assets = assets;
     _input.init();
     _collisionController.init();
     
-    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
-    std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
-    bkgNode->setPosition(dimen.width/2, dimen.height/2);
-
-//    CULog("called here%f", dimen.width);
-   
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
@@ -232,24 +222,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _UIscene->doLayout(); // Repositions the HUD;
     for (auto it : _UIscene->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "backbutton"){
-            button->addListener([=](const std::string& name, bool down) {
-                _didSwitchLevelSelect = true;
-                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
-                AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
-            });
-        }
         if (button->getName() == "panning"){
             button->addListener([=](const std::string& name, bool down) {
-                _state = GameState::Paused;
-                _UIscene->setVisible(false);
-                _pausedUI->setVisible(true);
-               
+                if (_UIscene->isVisible()) {
+                    CULog("enter pan");
+                    _state = GameState::Paused;
+                    _UIscene->setVisible(false);
+                    _pausedUI->setVisible(true);
+                }
             });
-                
+        }
+        if (button->getName() == "pause") {
+            button->addListener([=](const std::string& name, bool down) {
+                if (_UIscene->isVisible()) {
+                    CULog("pause pressed");
+                    _state = GameState::Paused;
+                    setActive(false);
+                    _nextScene = "pause";
+                }
+            });
         }
         button->activate();
-        }
+    }
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
     _pausedUI->setContentSize(dimen.width, dimen.height);
@@ -257,20 +251,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button->getName() == "exit"){
             button->addListener([=](const std::string& name, bool down) {
-                _state = GameState::playing;
-                _UIscene->setVisible(true);
-                _pausedUI->setVisible(false);
+                if (_pausedUI->isVisible()) {
+                    CULog("exit pan");
+                    _state = GameState::Playing;
+                    _UIscene->setVisible(true);
+                    CULog("ui scene visible");
+                    _pausedUI->setVisible(false);
+                }
             });
                 
         }
         button->activate();
-        }
+    }
     _pausedUI->setVisible(false);
-    
-    _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
-    
-    _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//    _scrollNode->setPosition(0, 0);
     
     // Create the scene graph
     _worldnode = scene2::SceneNode::alloc();
@@ -294,31 +287,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setForeground(LOSE_COLOR);
     setFailure(false);
     
-    _didSwitchLevelSelect = false;
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
-    
-    _scrollNode->addChild(bkgNode);
-    _scrollNode->addChild(_worldnode, 1);
-    _scrollNode->addChild(_debugnode, 2);
-    _scrollNode->addChild(_winnode, 3);
-    _scrollNode->addChild(_losenode, 4);
-    
-    addChild(_scrollNode);
-    addChild(_UIscene);
-    addChild(_pausedUI);
+     
+    addChild(_UIscene, 2);
+    addChild(_pausedUI, 2);
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
-    populate();
-    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 
-    _active = true;
     _complete = false;
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
-    
-    
     
     setActive(true);
     // XNA nostalgia
@@ -378,7 +358,6 @@ void GameScene::dispose() {
         _complete = false;
         _failed = false;
         _debug = false;
-        _didSwitchLevelSelect = false;
         _UIelements.clear();
         Scene2::dispose();
         setActive(false);
@@ -443,6 +422,29 @@ void GameScene::reset() {
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 }
 
+void GameScene::setLevel(const std::shared_ptr<AssetManager>& assets, string level) {
+    _level = assets->get<LevelModel>(level);
+    _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
+    _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    //    _scrollNode->setPosition(0, 0);
+
+    Size dimen = Application::get()->getDisplaySize();
+
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
+    std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
+    bkgNode->setPosition(dimen.width / 2, dimen.height / 2);
+
+    _scrollNode->addChild(bkgNode);
+    _scrollNode->addChild(_worldnode, 1);
+    _scrollNode->addChild(_debugnode, 2);
+    _scrollNode->addChild(_winnode, 3);
+    _scrollNode->addChild(_losenode, 4);
+
+    addChild(_scrollNode);
+
+    _scrollNode->setPosition(-1 * _level->getLumia()->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
+}
+
 /**
  * Lays out the game geography.
  *
@@ -455,6 +457,9 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
+    _complete = false;
+    _ticks = 0;
+    _lastSpikeCollision = NULL;
 //    float xBound = _level->getXBound();
 //    float yBound = _level->getYBound();
 //    for (int i = 0; i < xBound; i++){
@@ -705,7 +710,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
 
 void GameScene::update(float dt) {
     switch (_state) {
-        case GameState::playing:
+        case GameState::Playing:
             updateGame(dt);
             break;
         case GameState::Paused:
@@ -746,7 +751,7 @@ void GameScene::updatePaused(float dt, float startX) {
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
-                _state = GameState::playing;
+                _state = GameState::Playing;
                 _UIscene->setVisible(true);
                 _pausedUI->setVisible(false);
             }

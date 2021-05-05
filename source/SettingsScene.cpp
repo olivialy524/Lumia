@@ -61,7 +61,6 @@ bool SettingsScene::init(const std::shared_ptr<AssetManager>& assets) {
     _close = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("settings_close"));
     _close->addListener([=](const std::string& name, bool down) {
         this->_active = down;
-        _nextScene = "levelselect";
     });
     
     setActive(_active);

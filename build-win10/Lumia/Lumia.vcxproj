@@ -204,6 +204,7 @@
     <ClInclude Include="..\..\source\LumiaNode.h" />
     <ClInclude Include="..\..\source\MainMenuScene.h" />
     <ClInclude Include="..\..\source\PathFindingController.h" />
+    <ClInclude Include="..\..\source\PauseScene.h" />
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
     <ClInclude Include="..\..\source\SettingsScene.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\MainMenuScene.cpp" />
     <ClCompile Include="..\..\source\PathFindingController.cpp" />
+    <ClCompile Include="..\..\source\PauseScene.cpp" />
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
     <ClCompile Include="..\..\source\SettingsScene.cpp" />
