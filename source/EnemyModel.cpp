@@ -21,10 +21,10 @@ using namespace cugl;
 
 void EnemyModel::setTextures(const std::shared_ptr<Texture>& texture) {
     
-    _sceneNode = scene2::SceneNode::allocWithBounds(Size(texture->getWidth()/5.0f,texture->getHeight()/4.0f));
+    _sceneNode = scene2::SceneNode::allocWithBounds(Size(texture->getWidth()/ 18.0f,texture->getHeight()));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-   _node = EnemyNode::alloc(texture, 4, 5, 20);
-    auto scale =  getRadius()*2/(texture->getHeight()/4.0f/_drawScale);
+   _node = EnemyNode::alloc(texture, 1, 18, 18);
+    auto scale =  getRadius()*2/(texture->getHeight()/_drawScale);
    _node->setScale(scale);
    _node->setAnchor(Vec2::ANCHOR_CENTER);
   
