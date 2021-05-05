@@ -277,35 +277,20 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         d->setOriginalPos(orpos);
         d->setNewPos(cugl::Vec2(nx,ny));
         d->setDensity(10000);
-         //d->setBodyType(b2_staticBody);
         d->setGravityScale(0);
         d->setRestitution(BASIC_RESTITUTION);
         d->setAnchor(Vec2(0,0));
         d->setDebugColor(DEBUG_COLOR);
-        /**
-        d->setName("door " + toString(i));
-     platform *= _scale;
-     image = _assets->get<Texture>(EARTH_TEXTURE);
-     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-        sprite->setAnchor(Vec2(0,0));
-     d->setNode(sprite);
-     addObstacle(d,sprite,1); */
         _doors.push_back(d);
         float bx = button->getFloat("posx");
         float by = button->getFloat("posy");
         std::shared_ptr<Button> b;
-        b = Button::alloc(Vec2(bx,by), Size(1,1));
+        b = Button::alloc(Vec2(bx,by), Size(1,0.6f));
         b->setDensity(BASIC_DENSITY);
         b->setBodyType(b2_staticBody);
         b->setRestitution(BASIC_RESTITUTION);
         b->setDebugColor(DEBUG_COLOR);
-        //image = _assets->get<Texture>(EARTH_TEXTURE);
         b->setDoor(d);
-        //std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
-        //sprite->setScale(_scale);
-        //b->setNode(sprite);
-        //b->setSensor(true);
-        //addObstacle(b,sprite,1);
         _buttons.push_back(b);
     }
     return _buttons;

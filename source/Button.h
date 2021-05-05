@@ -10,6 +10,7 @@
 #define Button_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
+#include "ButtonNode.h"
 #include "Door.h"
 
 class Button : public cugl::physics2::BoxObstacle {
@@ -20,12 +21,15 @@ protected:
     float _scale;
     std::shared_ptr<Door> _door;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> _node;
-    int _cooldown;
+    std::shared_ptr<ButtonNode> _node;
+    bool _inCoolDown;
     float _normHeight;
-    bool _pushedDown = false;
+    bool _pushingDown;
+    bool _pushingUp;
+    float _drawScale;
+    int _cooldown;
 public:
-    Button() : cugl::physics2::BoxObstacle() { }
+    Button(): _normHeight(0.6f),_pushingDown(false), _pushingUp(false),_inCoolDown(false), _cooldown(0), cugl::physics2::BoxObstacle() { }
 
     virtual ~Button(void) { dispose(); }
 
@@ -43,15 +47,13 @@ public:
 
     static std::shared_ptr<Button> alloc(const cugl::Vec2& pos, cugl::Size size) {
         std::shared_ptr<Button> result = std::make_shared<Button>();
-        result->setNormHeight(size.getIHeight());
         return (result->init(pos, size) ? result : nullptr);
     }
     
-    std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
-        return _node;
-    }
-    void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
-        _node = n;
+    void setTextures(const std::shared_ptr<cugl::Texture>& button);
+
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() {
+        return _sceneNode;
     }
     
     float getNormHeight() {
@@ -68,28 +70,72 @@ public:
     void setDoor(std::shared_ptr<Door> d) {
         _door = d;
     }
-    bool getPushedDown() {
-        return _pushedDown;
+    bool getPushingDown() {
+        return _pushingDown;
     }
     
-    void setPushedDown(bool p) {
-        _pushedDown = p;
+    void setPushingDown(bool p) {
+        _pushingDown = p;
     }
-    void pushDown(float scale);
     
+    bool getPushingUp() {
+        return _pushingUp;
+    }
+    
+    void setPushingUp(bool p) {
+        _pushingUp = p;
+    }
+    
+    void pushDown();
+    
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
+    }
     int getCD() {
         return _cooldown;
     }
-    
+
     void incCD() {
         _cooldown++;
     }
-    
+
     void resetCD() {
         _cooldown = 0;
     }
-    void pushUp(float scale);
     
+    void pushUp();
+    
+    void setDrawScale(float value){
+        _drawScale = value;
+    }
+    
+    bool getPushedDown(){
+        if (_node != nullptr){
+            return _node->getAnimState() == ButtonNode::ButtonAnimState::Pressed;
+        }
+        return false;
+    }
+    
+    bool getPushedUp(){
+        if (_node != nullptr){
+            return _node->getAnimState() == ButtonNode::ButtonAnimState::Idle;
+        }
+        return false;
+        
+    }
+    
+    /**
+     * Updates the object's physics state (NOT GAME LOGIC).
+     *
+     * We use this method to reset cooldowns.
+     *
+     * @param delta Number of seconds since last animation frame
+     */
+    void update(float dt) override;
 };
 
 #endif /* Button_h */
