@@ -832,7 +832,6 @@ void GameScene::updateGame(float dt) {
     
     for (auto & button : _buttonList) {
         button->incCD();
-        CULog("CD, %d", button->getCD());
         if (button->getPushingDown()) {
             button->pushDown();
             if (button->getCD() >= 30) {
@@ -1505,7 +1504,7 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setRolling(false);
             }
         }
-        if (bd1->getName() == "button" && lumia->getFrictionSensorName()==fd2) {
+        if (bd1->getName() == BUTTON_NAME && lumia->getFrictionSensorName()==fd2) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd1) {
                     _collisionController.processButtonLumiaEnding(lumia, button);
@@ -1513,7 +1512,7 @@ void GameScene::endContact(b2Contact* contact) {
                 }
             }
         }
-        else if (bd2->getName() == "button" && lumia->getFrictionSensorName()==fd1) {
+        else if (bd2->getName() == BUTTON_NAME && lumia->getFrictionSensorName()==fd1) {
             for (const std::shared_ptr<Button>& button : _buttonList) {
                 if (button.get() == bd2) {
                     _collisionController.processButtonLumiaEnding(lumia, button);

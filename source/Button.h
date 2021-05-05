@@ -22,14 +22,14 @@ protected:
     std::shared_ptr<Door> _door;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<ButtonNode> _node;
-    bool _inCoolDown;
     float _normHeight;
     bool _pushingDown;
-    bool _pushingUp;
     float _drawScale;
     int _cooldown;
+    const float NUM_FRAMES = 6.0f;
+    
 public:
-    Button(): _normHeight(0.6f),_pushingDown(false), _pushingUp(false),_inCoolDown(false), _cooldown(0), cugl::physics2::BoxObstacle() { }
+    Button(): _normHeight(0.6f), _pushingDown(false), _cooldown(0), cugl::physics2::BoxObstacle() { }
 
     virtual ~Button(void) { dispose(); }
 
@@ -78,23 +78,8 @@ public:
         _pushingDown = p;
     }
     
-    bool getPushingUp() {
-        return _pushingUp;
-    }
-    
-    void setPushingUp(bool p) {
-        _pushingUp = p;
-    }
-    
     void pushDown();
     
-    void setInCoolDown(bool value){
-        _inCoolDown = value;
-    }
-    
-    bool getInCoolDown(){
-        return _inCoolDown;
-    }
     int getCD() {
         return _cooldown;
     }
@@ -127,15 +112,6 @@ public:
         return false;
         
     }
-    
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * We use this method to reset cooldowns.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    void update(float dt) override;
 };
 
 #endif /* Button_h */
