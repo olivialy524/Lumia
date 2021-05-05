@@ -262,9 +262,8 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         float oy = door->getFloat("obly");
         float nx = door->getFloat("nblx");
         float ny = door->getFloat("nbly");
-        float wid = door->getFloat("width");
-        float hgt = door->getFloat("height");
-        Rect rectangle = Rect(ox,oy,wid,hgt);
+        float angle = door->getFloat("angle");
+        Rect rectangle = Rect(ox,oy,3.0f,0.5f);
         std::shared_ptr<Door> d;
         Poly2 platform(rectangle,false);
         SimpleTriangulator triangulator;
@@ -274,6 +273,7 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         platform.setGeometry(Geometry::SOLID);
         cugl::Vec2 orpos = cugl::Vec2(ox,oy);
         d = Door::alloc(orpos, platform);
+        d->setAngle(angle);
         d->setOriginalPos(orpos);
         d->setNewPos(cugl::Vec2(nx,ny));
         d->setDensity(10000);

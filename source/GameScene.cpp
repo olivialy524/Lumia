@@ -71,6 +71,8 @@ using namespace cugl;
 #define LUMIA_NAME      "lumia"
 
 #define BUTTON_NAME     "button"
+
+#define DOOR_NAME       "door"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 
@@ -199,8 +201,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     
-    CULog("hiii");
-    
     _assets = assets;
     _input.init();
     _collisionController.init();
@@ -221,7 +221,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         endContact(contact);
     };
     
-    std::shared_ptr<Texture> button_tex = assets->get<Texture>("earth");
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
@@ -569,30 +568,23 @@ void GameScene::populate() {
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
     std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
-    image = _assets->get<Texture>(BUTTON_NAME);
     for (int i = 0; i < buttons.size(); i++) {
         std::shared_ptr<Button> b = buttons[i];
         std::shared_ptr<Door> d = doors[i];
-        d->setDensity(10000);
         d->setName("door " + toString(i));
-        Poly2 platform = d->getPolygon();
-        platform *= _scale;
-        sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-        sprite->setAnchor(Vec2(0,0));
-        d->setNode(sprite);
-        addObstacle(d,sprite,1);
+        image = _assets->get<Texture>(DOOR_NAME);
+        d->setDrawScale(_scale);
+        d->setTextures(image);
+        addObstacle(d,d->getSceneNode(),1);
         _doorList.push_front(d);
         b->setName(BUTTON_NAME);
-//        Rect rectangle = Rect(b->getX(),b->getY(),1,1);
-//        Poly2 plat(rectangle);
-//        plat *= _scale;
-//        sprite = scene2::PolygonNode::allocWithTexture(image,plat);
-//        b->setNode(sprite);
+        image = _assets->get<Texture>(BUTTON_NAME);
         b->setDrawScale(_scale);
         b->setTextures(image);
         addObstacle(b,b->getSceneNode(),1);
         _buttonList.push_front(b);
     }
+    
 #pragma mark : Sticky Walls
     std::vector<std::shared_ptr<StickyWallModel>> stickyWalls = _level->getStickyWalls();
     image = _assets->get<Texture>(STICKY_TEXTURE);
@@ -827,7 +819,6 @@ void GameScene::updateGame(float dt) {
         else {
             door->setBodyType(b2_staticBody);
         }
-        door->getNode()->setPosition(door->getPosition()*_scale);
     }
     
     for (auto & button : _buttonList) {
