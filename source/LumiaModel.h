@@ -39,7 +39,7 @@ protected:
     /** The amount to slow the character down */
     static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
-    static constexpr float LUMIA_MAXVELOCITY = 21.0f;
+    static constexpr float LUMIA_MAXVELOCITY = 20.0f;
 
 public:
     enum LumiaState {

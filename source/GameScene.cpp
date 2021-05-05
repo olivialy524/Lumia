@@ -36,7 +36,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
-#define DEFAULT_GRAVITY -14.2f
+#define DEFAULT_GRAVITY -13.0f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
 /** Friction of most platforms */
