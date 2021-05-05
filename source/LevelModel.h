@@ -143,6 +143,7 @@ public:
     std::vector<std::shared_ptr<Door>> getDoors() {
         return _doors;
     }
+    
     std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
         return _enemies;
     }

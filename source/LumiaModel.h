@@ -122,6 +122,7 @@ protected:
     
     Vec2 _stickDirection;
     
+    bool _isOnButton;
 
 public:
     
@@ -435,8 +436,17 @@ public:
         _isOnStickyWall = value;
     }
     
+    bool isOnButton() {
+        return _isOnButton;
+    }
+    
+    void setOnButton(bool value){
+        _isOnButton = value;
+    }
+    
     void unStick(){
         setOnStickyWall(false);
+        setOnButton(false);
         _stickDirection = Vec2::ZERO;
     }
     

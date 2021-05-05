@@ -277,9 +277,8 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         float oy = door->getFloat("obly");
         float nx = door->getFloat("nblx");
         float ny = door->getFloat("nbly");
-        float wid = door->getFloat("width");
-        float hgt = door->getFloat("height");
-        Rect rectangle = Rect(ox,oy,wid,hgt);
+        float angle = door->getFloat("angle");
+        Rect rectangle = Rect(ox,oy,3.0f,0.5f);
         std::shared_ptr<Door> d;
         Poly2 platform(rectangle,false);
         SimpleTriangulator triangulator;
@@ -289,38 +288,24 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         platform.setGeometry(Geometry::SOLID);
         cugl::Vec2 orpos = cugl::Vec2(ox,oy);
         d = Door::alloc(orpos, platform);
+        d->setAngle(angle);
         d->setOriginalPos(orpos);
         d->setNewPos(cugl::Vec2(nx,ny));
         d->setDensity(10000);
-         //d->setBodyType(b2_staticBody);
         d->setGravityScale(0);
         d->setRestitution(BASIC_RESTITUTION);
         d->setAnchor(Vec2(0,0));
         d->setDebugColor(DEBUG_COLOR);
-        /**
-        d->setName("door " + toString(i));
-     platform *= _scale;
-     image = _assets->get<Texture>(EARTH_TEXTURE);
-     sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-        sprite->setAnchor(Vec2(0,0));
-     d->setNode(sprite);
-     addObstacle(d,sprite,1); */
         _doors.push_back(d);
         float bx = button->getFloat("posx");
         float by = button->getFloat("posy");
         std::shared_ptr<Button> b;
-        b = Button::alloc(Vec2(bx,by), Size(1,1));
+        b = Button::alloc(Vec2(bx,by), Size(1,0.6f));
         b->setDensity(BASIC_DENSITY);
         b->setBodyType(b2_staticBody);
         b->setRestitution(BASIC_RESTITUTION);
         b->setDebugColor(DEBUG_COLOR);
-        //image = _assets->get<Texture>(EARTH_TEXTURE);
         b->setDoor(d);
-        //std::shared_ptr<scene2::PolygonNode> sprite = scene2::PolygonNode::allocWithTexture(image, buttonp);
-        //sprite->setScale(_scale);
-        //b->setNode(sprite);
-        //b->setSensor(true);
-        //addObstacle(b,sprite,1);
         _buttons.push_back(b);
     }
     return _buttons;

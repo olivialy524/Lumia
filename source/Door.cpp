@@ -8,8 +8,21 @@
 
 #include <stdio.h>
 #include "Door.h"
+
+
+void Door::setTextures(const std::shared_ptr<Texture>& image){
+    auto platform = getPolygon() * _drawScale;
+
+    // calcuate the drawing overlay scale
+    float scalex = platform.getBounds().size.width/image->getWidth();
+    float scaley = platform.getBounds().size.height/image->getHeight();
+    _scenenode = scene2::PolygonNode::allocWithTexture(image);
+    _scenenode->setScale(Vec2(scalex, scaley));
+    _scenenode->setAngle(getAngle());
+    _scenenode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+}
+
 void Door::dispose() {
-    _node = nullptr;
     _scenenode = nullptr;
 }
 
@@ -40,5 +53,13 @@ void Door::Open() {
         setLinearVelocity(0,0);
         setPosition(getNewPos().x,getNewPos().y);
         setOpening(false);
+    }
+}
+
+void Door::update(float dt) {
+    PolygonObstacle::update(dt);
+    if (_scenenode != nullptr) {
+        _scenenode->setPosition(getPosition()*_drawScale);
+        _scenenode->setAngle(getAngle());
     }
 }

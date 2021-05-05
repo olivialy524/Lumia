@@ -9,9 +9,6 @@
 #include <stdio.h>
 
 #include "PlantNode.h"
-#define SHADOW_OFFSET   10.0f
-
-
 void PlantNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
     switch (_state){

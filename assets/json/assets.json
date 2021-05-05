@@ -16,6 +16,12 @@
         "size-indicator":{
             "file": "textures/size-indicator.png"
         },
+        "button":{
+            "file": "textures/button.png"
+        },
+        "door":{
+            "file": "textures/door.png"
+        },
         "tile1": {
             "file": "textures/tile1.png"
         },

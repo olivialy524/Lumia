@@ -63,4 +63,4 @@ public:
 
 };
 
-#endif /* __LM_PLANT_NODE_H__ */
+#endif /* __PLANT_NODE_H__ */

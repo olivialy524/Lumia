@@ -10,8 +10,6 @@
 
 
 #include "BackgroundNode.h"
-#define SHADOW_OFFSET   10.0f
-
 
 void BackgroundNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
