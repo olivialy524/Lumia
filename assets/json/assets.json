@@ -322,8 +322,8 @@
                     	"key"   : "levelbutton",
                         "variables" : {
                         	"text": "1",
-                        	"x_offset": 170,
-                        	"y_offset": 110,
+                        	"x_offset": 730,
+                        	"y_offset": 60,
                         	"label_x_offset": 0.03,
                         	"texture": "level_complete"
                         }
@@ -335,8 +335,8 @@
                     	"key"   : "levelbutton",
                         "variables" : {
                         	"text": "2",
-                        	"x_offset": 350,
-                        	"y_offset": -130,
+                        	"x_offset": 900,
+                        	"y_offset": 110,
                             "texture": "level_complete"
                         }
                     }
@@ -347,8 +347,8 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "3",
-                            "x_offset": 550,
-                            "y_offset": -130,
+                            "x_offset": 1050,
+                            "y_offset": 110,
                             "texture": "level_complete"
                         }
                     }
@@ -359,7 +359,7 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "4",
-                            "x_offset": 720,
+                            "x_offset": 1200,
                             "y_offset": 110,
                             "texture": "level_complete"
                         }
@@ -371,8 +371,8 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "T1",
-                            "x_offset": 500,
-                            "y_offset": 10,
+                            "x_offset": 340,
+                            "y_offset": -130,
                             "texture": "level_complete"
                         }
                     }
@@ -383,8 +383,8 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "T2",
-                            "x_offset": 600,
-                            "y_offset": 10,
+                            "x_offset": 490,
+                            "y_offset": -130,
                             "texture": "level_complete"
                         }
                     }
@@ -395,8 +395,8 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "T3",
-                            "x_offset": 700,
-                            "y_offset": 10,
+                            "x_offset": 640,
+                            "y_offset": -130,
                             "texture": "level_complete"
                         }
                     }
