@@ -11,6 +11,8 @@
 #ifndef __LEVEL_SELECT_SCENE_H__
 #define __LEVEL_SELECT_SCENE_H__
 #include <cugl/cugl.h>
+#include "InputController.h"
+#include "BackgroundNode.h"
 
 /**
  * A scene for demoing a simple button
@@ -26,7 +28,15 @@ protected:
     /** The identifier for the level selected by the player */
     string _selectedLevel;
     
+    std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
+    std::shared_ptr<cugl::scene2::SceneNode> _UINode;
+    
     float _musicVolume = 1.0;
+    
+    std::shared_ptr<InputController> _input;
+    
+    float touchstart;
+    bool setStart;
     
 public:
 #pragma mark -
@@ -87,6 +97,8 @@ public:
 
     /** Returns the string representing the next scene to transition to */
     string getSelectedLevel() { return _selectedLevel; };
+    
+    virtual void update(float timestep) override;
     
 };
 

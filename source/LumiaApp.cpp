@@ -53,6 +53,9 @@ void LumiaApp::onStartup() {
     _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
     _assets->loadAsync<LevelModel>("json/level3.json", "json/level3.json", nullptr);
     _assets->loadAsync<LevelModel>("json/level4.json", "json/level4.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/tutorial1.json", "json/tutorial1.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/tutorial2.json", "json/tutorial2.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/tutorial3.json", "json/tutorial3.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -190,7 +193,6 @@ void LumiaApp::update(float timestep) {
                 _gameplay.update(timestep);
             }else{
                 _gameplay.dispose();
-
                 _scene = LevelSelect;
                 _levelSelect.setActive(true);
             }

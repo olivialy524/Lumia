@@ -41,7 +41,7 @@ protected:
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    InputController _input;
+    std::shared_ptr<InputController> _input;
     
     CollisionController _collisionController;
     
@@ -95,6 +95,8 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
     
 
+
+    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
 
     
     /** Whether we have completed this "game" */
@@ -418,6 +420,7 @@ public:
     void updateGame(float dt);
     
     void updatePaused(float dt, float startX);
+    
 
     /**
      * Calculates trajectory point one timestep into future

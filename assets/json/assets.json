@@ -108,6 +108,27 @@
         },
         "spike": {
             "file": "textures/spike.png"
+        },
+        "drag-tutorial": {
+            "file": "textures/drag-tutorial.png"
+        },
+        "split-tutorial": {
+            "file": "textures/split-tutorial.png"
+        },
+        "split-tutorial2": {
+            "file": "textures/split-tutorial-2.png"
+        },
+        "energy-tutorial": {
+            "file": "textures/energy-tutorial.png"
+        },
+        "lamp-tutorial": {
+            "file": "textures/lamp-tutorial.png"
+        },
+        "merge-tutorial": {
+            "file": "textures/merge-tutorial.png"
+        },
+        "try-again": {
+            "file": "textures/try-again.png"
         }
     },
     "sounds": {
@@ -301,18 +322,100 @@
                 "type": "Anchored"
             },
             "children"  : {
-            	"background": {
-                    "type": "Image",
+                "levelbutton1"  : {
+                    "type": "Widget",
                     "data": {
-                        "texture":  "levelselectbg",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
+                    	"key"   : "levelbutton",
+                        "variables" : {
+                        	"text": "1",
+                        	"x_offset": 730,
+                        	"y_offset": 60,
+                        	"label_x_offset": 0.03,
+                        	"texture": "level_complete"
+                        }
                     }
                 },
-            	"label" : {
+                "levelbutton2"  : {
+                    "type": "Widget",
+                    "data": {
+                    	"key"   : "levelbutton",
+                        "variables" : {
+                        	"text": "2",
+                        	"x_offset": 900,
+                        	"y_offset": 110,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton3"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "3",
+                            "x_offset": 1050,
+                            "y_offset": 110,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton4"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "4",
+                            "x_offset": 1200,
+                            "y_offset": 110,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial1"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T1",
+                            "x_offset": 340,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial2"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T2",
+                            "x_offset": 490,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial3"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T3",
+                            "x_offset": 640,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                }
+            }
+        },
+        "levelSelectUI" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "label" : {
                     "type"   : "Label",
                     "data"   : {
                         "font"       : "orbitron",
@@ -330,58 +433,9 @@
                 "settings"  : {
                     "type": "Widget",
                     "data": {
-                    	"key"   : "toprightbutton",
+                        "key"   : "toprightbutton",
                         "variables" : {
-                        	"texture": "settingsbutton"
-                        }
-                    }
-                },
-                "levelbutton1"  : {
-                    "type": "Widget",
-                    "data": {
-                    	"key"   : "levelbutton",
-                        "variables" : {
-                        	"text": "1",
-                        	"x_offset": 170,
-                        	"y_offset": 110,
-                        	"label_x_offset": 0.03,
-                        	"texture": "level_complete"
-                        }
-                    }
-                },
-                "levelbutton2"  : {
-                    "type": "Widget",
-                    "data": {
-                    	"key"   : "levelbutton",
-                        "variables" : {
-                        	"text": "2",
-                        	"x_offset": 350,
-                        	"y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "levelbutton3"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "3",
-                            "x_offset": 550,
-                            "y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "levelbutton4"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "4",
-                            "x_offset": 720,
-                            "y_offset": 110,
-                            "texture": "level_complete"
+                            "texture": "settingsbutton"
                         }
                     }
                 }
