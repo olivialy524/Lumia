@@ -190,7 +190,6 @@ void LumiaApp::update(float timestep) {
                 _gameplay.update(timestep);
             }else{
                 _gameplay.dispose();
-
                 _scene = LevelSelect;
                 _levelSelect.setActive(true);
             }

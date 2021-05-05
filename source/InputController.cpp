@@ -37,6 +37,8 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Input Controller
+
+std::shared_ptr<InputController> InputController::instance; 
 /**
  * Creates a new input controller.
  *

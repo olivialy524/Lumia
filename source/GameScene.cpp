@@ -200,12 +200,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     CULog("hiii");
     
     _assets = assets;
-    _input.init();
+    _input = InputController::getInstance();
     _collisionController.init();
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     bkgNode->setPosition(dimen.width/2, dimen.height/2);
+    bkgNode->setScale(dimen.height/bkgTexture->getHeight());
 
 //    CULog("called here%f", dimen.width);
    
@@ -331,11 +332,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     if (_active) {
-//        _input.dispose();
         _collisionController.dispose();
         _trajectoryNode->dispose();
         _avatarIndicatorNode->dispose();
-//        _UIscene->dispose();
         _level->resetLevel();
         _sensorFixtureMap.clear();
         _sensorFixtureMap2.clear();
@@ -722,19 +721,19 @@ void GameScene::update(float dt) {
  *
  */
 void GameScene::updatePaused(float dt, float startX) {
-    _input.update(dt);
-    if (_input.isDragging()){
+    _input->update(dt);
+    if (_input->isDragging()){
         if (!setStart){
             touchstart = _scrollNode->getPositionX();
             setStart = true;
         }
-        _scrollNode->setPositionX(touchstart + _input.getCurrentDrag());
+        _scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
     }else{
         setStart = false;
     }
     
-    if(!_input.isDragging() && _input.didSwitch()){
-        cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
+    if(!_input->isDragging() && _input->didSwitch()){
+        cugl::Vec2 tapLocation = _input->getSwitch(); // screen coordinates
 
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
@@ -764,17 +763,17 @@ void GameScene::updatePaused(float dt, float startX) {
  */
 void GameScene::updateGame(float dt) {
     if (_switched){
-        _input.clearAvatarStates();
+        _input->clearAvatarStates();
     }
     if (_ticks % 8 == 0){
         _switched = false;
     }
-    _input.update(dt);
+    _input->update(dt);
 
 	// Process the toggled key commands
-	if (_input.didDebug()) { setDebug(!isDebug()); }
-	if (_input.didReset()) { reset(); }
-	if (_input.didExit())  {
+	if (_input->didDebug()) { setDebug(!isDebug()); }
+	if (_input->didReset()) { reset(); }
+	if (_input->didExit())  {
 		CULog("Shutting down");
 		Application::get()->quit();
 	}
@@ -856,8 +855,8 @@ void GameScene::updateGame(float dt) {
         }
     }
 
-    if(_input.didSwitch()){
-        cugl::Vec2 tapLocation = _input.getSwitch(); // screen coordinates
+    if(_input->didSwitch()){
+        cugl::Vec2 tapLocation = _input->getSwitch(); // screen coordinates
 
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
@@ -881,33 +880,33 @@ void GameScene::updateGame(float dt) {
 
 	// if Lumia is on ground, player can launch Lumia so we should show the projected
     // trajectory if player is dragging
-    if (! (_avatar->isGrounded() && _input.isDragging()) || _ticks % 3 == 0){
+    if (! (_avatar->isGrounded() && _input->isDragging()) || _ticks % 3 == 0){
         _trajectoryNode->clearPoints();
     }
     
-	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input.isDragging() && _ticks % 3 == 0) {
+	if (!_avatar->isRemoved()&&_avatar->isGrounded() && _input->isDragging() && _ticks % 3 == 0) {
         Vec2 startPos = _avatar->getPosition();
         float m = _avatar->getMass();
-        Vec2 plannedImpulse = _input.getPlannedLaunch();
+        Vec2 plannedImpulse = _input->getPlannedLaunch();
         Vec2 initialVelocity = plannedImpulse / m;
 		for (int i = 1; i < 30; i+=5) {
 			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}
-        float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input.getMaximumLaunchVelocity(), 2);
+        float endAlpha = (0.9f*plannedImpulse.lengthSquared()) / pow(_input->getMaximumLaunchVelocity(), 2);
         _trajectoryNode->setEndAlpha(endAlpha);
 	}
       
 
     
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
-    _avatar->setVelocity(_input.getLaunch());
-	_avatar->setLaunching(_input.didLaunch());
+    _avatar->setVelocity(_input->getLaunch());
+	_avatar->setLaunching(_input->didLaunch());
 	_avatar->applyForce();
     if(!_avatar->isRemoved()){
-        if(_input.didMerge()){
+        if(_input->didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
-        }else if (_input.didSplit() && _avatar->getSizeLevel()!=0){
+        }else if (_input->didSplit() && _avatar->getSizeLevel()!=0){
             std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
             AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
             _avatar->setState(LumiaModel::LumiaState::Splitting);
@@ -1543,25 +1542,10 @@ Size GameScene::computeActiveSize() const {
 }
 
 
+
 void GameScene::render_game(const std::shared_ptr<SpriteBatch>& batch, const std::shared_ptr<SpriteBatch>& UIbatch){
     Scene2::render(batch);
     
     
-//    Mat4 matrix = _camera->getProjection();
-////    matrix.scale(1, -1, 1);
-////
-////    _target->begin();
-//
-//    UIbatch->begin(matrix);
-////    UIbatch->setBlendFunc(_srcFactor, _dstFactor);
-////    UIbatch->setBlendEquation(_blendEquation);
-//
-//
-////    for(auto it = _UIelements.begin(); it != _UIelements.end(); ++it) {
-////        (*it)->render(UIbatch, Mat4::IDENTITY, _color);
-////    }
-//    _backbutton->render(UIbatch, Mat4::IDENTITY, _color );
-//
-//    UIbatch->end();
-//    _target->end();
+
 }

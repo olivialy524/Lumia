@@ -62,6 +62,8 @@ private:
     /** Maximum allowed Lumia launch velocity */
     float MAXIMUM_LAUNCH_VELOCITY = 20.0f;
     
+    static std::shared_ptr<InputController> instance;
+    
 protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
@@ -105,6 +107,16 @@ public:
      * Disposes of this input controller, releasing all listeners.
      */
     ~InputController() { dispose(); }
+    
+    
+    static std::shared_ptr<InputController> getInstance() {
+        if (instance == nullptr) {
+            instance = std::shared_ptr<InputController>(new InputController());
+        }
+        return instance;
+    }
+    
+    static void cleanup() { instance = nullptr; }
     
     /**
      * Deactivates this input controller, releasing all listeners.

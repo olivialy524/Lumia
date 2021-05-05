@@ -41,7 +41,7 @@ protected:
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    InputController _input;
+    std::shared_ptr<InputController> _input;
     
     CollisionController _collisionController;
     
@@ -418,6 +418,7 @@ public:
     void updateGame(float dt);
     
     void updatePaused(float dt, float startX);
+    
 
     /**
      * Calculates trajectory point one timestep into future
