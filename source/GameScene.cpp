@@ -1085,11 +1085,14 @@ void GameScene::updateGame(float dt) {
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
                 if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
                     enemy->setVelocity(-distance.normalize() * 1.5f);
+                    enemy->setFleeingTint();
                 } else {
                     enemy->setVelocity(distance.normalize() * 1.5f);
+                    enemy->resetTint();
                 }
             } else {
                 enemy->setVelocity(Vec2::ZERO);
+                enemy->resetTint();
             }
             enemy->setInCoolDown(false);
         }
