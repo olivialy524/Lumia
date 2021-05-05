@@ -295,41 +295,6 @@
                 "type": "Anchored"
             },
             "children"  : {
-            	"background": {
-                    "type": "Image",
-                    "data": {
-                        "texture":  "levelselectbg",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
-                    }
-                },
-            	"label" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitron",
-                        "text"       : "Level Select",
-                        "foreground" : [255,255,255,255],
-                        "halign"     : "center",
-                        "valign"     : "top"
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill",
-                        "y_offset" : 0.02
-                    }
-                },
-                "settings"  : {
-                    "type": "Widget",
-                    "data": {
-                    	"key"   : "toprightbutton",
-                        "variables" : {
-                        	"texture": "settingsbutton"
-                        }
-                    }
-                },
                 "levelbutton1"  : {
                     "type": "Widget",
                     "data": {
@@ -376,6 +341,38 @@
                             "x_offset": 720,
                             "y_offset": 110,
                             "texture": "level_complete"
+                        }
+                    }
+                }
+            }
+        },
+        "levelSelectUI" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "label" : {
+                    "type"   : "Label",
+                    "data"   : {
+                        "font"       : "orbitron",
+                        "text"       : "Level Select",
+                        "foreground" : [255,255,255,255],
+                        "halign"     : "center",
+                        "valign"     : "top"
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill",
+                        "y_offset" : 0.02
+                    }
+                },
+                "settings"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "settingsbutton"
                         }
                     }
                 }
