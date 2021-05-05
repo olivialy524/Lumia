@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\BackgroundNode.h" />
     <ClInclude Include="..\..\source\Button.h" />
+    <ClInclude Include="..\..\source\ButtonNode.h" />
     <ClInclude Include="..\..\source\CollisionController.h" />
     <ClInclude Include="..\..\source\Door.h" />
     <ClInclude Include="..\..\source\EnemyModel.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="..\..\source\SpikeNode.h" />
     <ClInclude Include="..\..\source\StickyWallModel.h" />
     <ClInclude Include="..\..\source\StickyWallNode.h" />
+    <ClInclude Include="..\..\source\Tile.h" />
     <ClInclude Include="..\..\source\TileDataModel.h" />
     <ClInclude Include="..\..\source\TileModel.h" />
     <ClInclude Include="..\..\source\TrajectoryNode.h" />
@@ -230,6 +232,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\BackgroundNode.cpp" />
     <ClCompile Include="..\..\source\Button.cpp" />
+    <ClCompile Include="..\..\source\ButtonNode.cpp" />
     <ClCompile Include="..\..\source\CollisionController.cpp" />
     <ClCompile Include="..\..\source\Door.cpp" />
     <ClCompile Include="..\..\source\EnemyModel.cpp" />
