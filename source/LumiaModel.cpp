@@ -70,7 +70,8 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         _radius = radius;
 
         setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
-        setFriction(0.1f);
+        setFriction(0.2f);
+        setAngularDamping(0.2f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(false);

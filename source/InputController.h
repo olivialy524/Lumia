@@ -60,7 +60,7 @@ private:
     std::unordered_set<Uint64> _touchids;
   
     /** Maximum allowed Lumia launch velocity */
-    float MAXIMUM_LAUNCH_VELOCITY = 20.0f;
+    float MAXIMUM_LAUNCH_VELOCITY = 22.0f;
     
     static std::shared_ptr<InputController> instance;
     

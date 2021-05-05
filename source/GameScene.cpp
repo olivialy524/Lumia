@@ -36,7 +36,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Physics Constants
 /** The new heavier gravity for this world (so it is not so floaty) */
-#define DEFAULT_GRAVITY -13.0f
+#define DEFAULT_GRAVITY -14.2f
 /** The density for most physics objects */
 #define BASIC_DENSITY   0.0f
 /** Friction of most platforms */
@@ -923,7 +923,7 @@ void GameScene::updateGame(float dt) {
         float m = _avatar->getMass();
         Vec2 plannedImpulse = _input->getPlannedLaunch();
         Vec2 initialVelocity = plannedImpulse / m;
-		for (int i = 1; i < 30; i+=5) {
+		for (int i = 1; i < 40; i+=5) {
 			Vec2 trajectoryPosition = getTrajectoryPoint(startPos, initialVelocity, i);
             _trajectoryNode->addPoint(trajectoryPosition * _scale);
 		}

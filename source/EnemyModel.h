@@ -203,7 +203,7 @@ public:
     void setDrawScale(float scale);
     
     void setFleeingTint(){
-        _node->setColor(Color4f(0.15f,0.95f,0.8f));
+        _node->setColor(Color4f::BLUE);
     }
     
     void resetTint(){

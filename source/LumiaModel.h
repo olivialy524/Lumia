@@ -39,7 +39,7 @@ protected:
     /** The amount to slow the character down */
     static constexpr float LUMIA_DAMPING = 3.0f;
     /** The maximum character speed */
-    static constexpr float LUMIA_MAXVELOCITY = 20.0f;
+    static constexpr float LUMIA_MAXVELOCITY = 21.0f;
 
 public:
     enum LumiaState {
@@ -76,6 +76,8 @@ protected:
 	bool _isGrounded;
     /** Whether Lumia is splitting into two */
     bool _isSplitting;
+    
+    bool _inCoolDown;
     /* Whether or not the Lumia body is due to be or has been removed */
     bool _removed;
     /** Radius of Lumia's body */
@@ -442,6 +444,14 @@ public:
     
     void setOnButton(bool value){
         _isOnButton = value;
+    }
+    
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
     }
     
     void unStick(){
