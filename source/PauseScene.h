@@ -36,7 +36,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    PauseScene() {}
+    PauseScene() : _nextScene("") {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -78,6 +78,11 @@ public:
 
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; }
+
+    void setLevelNumber(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> levelLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("pausescreen_levelicon_label"));
+        levelLabel->setText(value);
+    }
 };
 
 #endif /* __PAUSE_SCENE_H__ */

@@ -149,8 +149,6 @@ void LumiaApp::update(float timestep) {
                 _settings.setActive(false);
                 _pause.init(_assets);
                 _pause.setActive(false);
-                _gameplay.init(_assets);
-                _gameplay.setActive(false);
             }
             return;
         }
@@ -178,8 +176,7 @@ void LumiaApp::update(float timestep) {
                 string nextScene = _levelSelect.getNextScene();
                 if (nextScene == "game"){
                     _scene = Game;
-                    _gameplay.setLevel(_assets, _levelSelect.getSelectedLevel());
-                    _gameplay.populate();
+                    _gameplay.init(_assets, _levelSelect.getSelectedLevel());
                     _gameplay.setMusicVolume(_settings.getMusicVolume());
                     _gameplay.setEffectVolume(_settings.getEffectVolume());
                     _gameplay.setActive(true);
@@ -204,6 +201,21 @@ void LumiaApp::update(float timestep) {
                     _levelSelect.setActive(true);
                 } else if (nextScene == "pause") {
                     _scene = Pause;
+                    string levelFile = _levelSelect.getSelectedLevel();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _pause.setLevelNumber(_assets, levelNumber);
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _pause.setLevelNumber(_assets, "T" + levelNumber);
+                    }
                     _pause.setActive(true);
                 }
             }

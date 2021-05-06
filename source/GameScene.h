@@ -130,6 +130,19 @@ protected:
 #pragma mark Internal Object Management
     
     /**
+     * Lays out the game geography.
+     *
+     * Pay close attention to how we attach physics objects to a scene graph.
+     * The simplest way is to make a subclass, like we do for the dude.  However,
+     * for simple objects you can just use a callback function to lightly couple
+     * them.  This is what we do with the crates.
+     *
+     * This method is really, really long.  In practice, you would replace this
+     * with your serialization loader, which would process a level file.
+     */
+    void populate();
+
+    /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
      *
      * There are two ways to link a physics object to a scene graph node on the
@@ -174,20 +187,7 @@ public:
 
     GameState getState() { return _state; }
 
-    /**
-     * Lays out the game geography.
-     *
-     * Pay close attention to how we attach physics objects to a scene graph.
-     * The simplest way is to make a subclass, like we do for the dude.  However,
-     * for simple objects you can just use a callback function to lightly couple
-     * them.  This is what we do with the crates.
-     *
-     * This method is really, really long.  In practice, you would replace this
-     * with your serialization loader, which would process a level file.
-     */
-    void populate();
 
-    void setLevel(const std::shared_ptr<AssetManager>& assets, string level);
 #pragma mark Constructors
 
     /**
@@ -226,7 +226,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, string level);
 
     /**
      * Initializes the controller contents, and starts the game
