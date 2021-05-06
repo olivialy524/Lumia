@@ -422,6 +422,7 @@ public:
     
     int calcScore();
     
+    int getStars();
     /**
      * Calculates trajectory point one timestep into future
      *

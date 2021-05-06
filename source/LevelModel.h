@@ -45,6 +45,10 @@ private:
     
     float _yBound;
     
+    int _twoStarScore;
+    
+    int _threeStarScore;
+    
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
 
     std::vector<std::shared_ptr<SpikeModel>> createSpikes(const std::shared_ptr<cugl::JsonValue>& spikes);
@@ -158,6 +162,14 @@ public:
 
     std::vector<Tutorial> getTutorials() {
         return _tutorials;
+    }
+    
+    int getTwoStarScore() {
+        return _twoStarScore;
+    }
+    
+    int getThreeStarScore() {
+        return _threeStarScore;
     }
     
     void resetLevel(){

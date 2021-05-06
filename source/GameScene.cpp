@@ -1152,6 +1152,8 @@ void GameScene::setComplete(bool value) {
         AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_winnode->setVisible(true);
 		_countdown = EXIT_COUNT;
+        cout << "Score: " << calcScore() << "\n";
+        cout << "Stars: " << getStars() << "\n";
 	} else if (!value) {
 		_winnode->setVisible(false);
 		_countdown = -1;
@@ -1188,11 +1190,25 @@ void GameScene::checkWin() {
 }
 
 int GameScene::calcScore() {
-    int score = 0;
+    int score = -1;
     for (auto & lumia : _lumiaList){
         score = score + lumia->getSizeLevel()+1;
     }
     return score*1000;
+}
+
+int GameScene::getStars() {
+    int score = calcScore();
+    if (score >= _level->getThreeStarScore()) {
+        return 3;
+    }
+    if (score >= _level->getTwoStarScore()) {
+        return 2;
+    }
+    if (score >= 0) {
+        return 1;
+    }
+    return 0;
 }
 
 /**
