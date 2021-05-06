@@ -231,8 +231,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button->getName() == "panning"){
             button->addListener([=](const std::string& name, bool down) {
-                if (_UIscene->isVisible()) {
-                    CULog("enter pan");
+                if (down && _UIscene->isVisible()) {
                     _state = GameState::Paused;
                     _UIscene->setVisible(false);
                     _pausedUI->setVisible(true);
@@ -241,8 +240,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         }
         if (button->getName() == "pause") {
             button->addListener([=](const std::string& name, bool down) {
-                if (_UIscene->isVisible()) {
-                    CULog("pause pressed");
+                if (down && _UIscene->isVisible()) {
                     _state = GameState::Paused;
                     setActive(false);
                     _nextScene = "pause";
@@ -258,11 +256,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button->getName() == "exit"){
             button->addListener([=](const std::string& name, bool down) {
-                if (_pausedUI->isVisible()) {
-                    CULog("exit pan");
+                if (down && _pausedUI->isVisible()) {
                     _state = GameState::Playing;
                     _UIscene->setVisible(true);
-                    CULog("ui scene visible");
                     _pausedUI->setVisible(false);
                 }
             });
