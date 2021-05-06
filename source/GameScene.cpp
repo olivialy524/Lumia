@@ -1187,6 +1187,14 @@ void GameScene::checkWin() {
     setComplete(true);
 }
 
+int GameScene::calcScore() {
+    int score = 0;
+    for (auto & lumia : _lumiaList){
+        score = score + lumia->getSizeLevel()+1;
+    }
+    return score*1000;
+}
+
 /**
  * Add a new Lumia to the world.
  */

@@ -128,7 +128,6 @@ protected:
     int _lastSpikeCollision;
     
     bool _didSwitchLevelSelect;
-    
 #pragma mark Internal Object Management
     
     /**
@@ -421,7 +420,8 @@ public:
     
     void updatePaused(float dt, float startX);
     
-
+    int calcScore();
+    
     /**
      * Calculates trajectory point one timestep into future
      *
@@ -434,6 +434,8 @@ public:
                             float n);
 
   };
+
+
 
 
 #endif /* __GAME_SCENE_H__ */
