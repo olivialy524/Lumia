@@ -78,6 +78,8 @@ using namespace cugl;
 
 #define SPLIT_NAME      "split"
 
+#define DEATH_NAME      "death"
+
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
 #define MESSAGE_FONT    "retro"
@@ -209,8 +211,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     bkgNode->setPosition(dimen.width/2, dimen.height/2);
     bkgNode->setScale(dimen.height/bkgTexture->getHeight());
-
-//    CULog("called here%f", dimen.width);
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -340,6 +340,7 @@ void GameScene::dispose() {
         _sensorFixtureMap.clear();
         _sensorFixtureMap2.clear();
         _graph.clear();
+        std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
         for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
             l->dispose();
         }
@@ -438,6 +439,7 @@ void GameScene::reset() {
         enemy->dispose();
     }
     _enemyList.clear();
+    std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
     _collisionController.clearStates();
     _trajectoryNode->dispose();
     _ticks = 0;
@@ -610,8 +612,6 @@ void GameScene::populate() {
         Vec2 pos = Vec2(t.posX, t.posY) * _scale;
         tutorialNode->setPosition(pos);
         tutorialNode->setVisible(false);
-        //Color4f tint = Color4f(1, 1, 1, 0.6f);
-        //_avatarIndicatorNode->setColor(tint);
         _worldnode->addChild(tutorialNode);
 
         _tutorialList.push_back(tutorialNode);
@@ -620,10 +620,11 @@ void GameScene::populate() {
 #pragma mark : Lumia
     image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> split = _assets->get<Texture>(SPLIT_NAME);
+    std::shared_ptr<Texture> death = _assets->get<Texture>(DEATH_NAME);
     std::shared_ptr<Texture> indicator = _assets->get<Texture>(SIZE_INDICATOR);
     _avatar = _level->getLumia();
     _avatar->setDrawScale(_scale);
-    _avatar->setTextures(image, split, indicator);
+    _avatar->setTextures(image, split, death, indicator);
     _avatar->setName(LUMIA_NAME);
 	_avatar->setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
@@ -801,7 +802,12 @@ void GameScene::updateGame(float dt) {
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
         AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
-        removeLumia(lumia);
+        if (lumia->isDying()){
+            deactivateLumiaPhysics(lumia);
+            _dyingLumiaQueue.push(lumia);
+        }else{
+            removeLumia(lumia);
+        }
     }
 
     for (const std::shared_ptr<EnemyModel>& enemy : _collisionController.getEnemiesToRemove()) {
@@ -835,11 +841,6 @@ void GameScene::updateGame(float dt) {
             tutorial->setVisible(false);
         }
     }
-
-    if (_collisionController.didSwitchLumia()){
-        switchToNearestLumia(_avatar);
-    }
-    
     _collisionController.clearStates();
     
     for (auto & door : _doorList) {
@@ -999,7 +1000,7 @@ void GameScene::updateGame(float dt) {
 
                 CULog("current: (%f, %f)", currentVel.x, currentVel.y);
                 CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
-                removeAvatarNode();
+                removeLumiaNode(_avatar);
                 if ((currentSizeLevel + 1) % 2 == 0) {
                     int newSize = ((currentSizeLevel + 1) / 2) - 1;
 
@@ -1052,7 +1053,7 @@ void GameScene::updateGame(float dt) {
                     break;
                 }
                 if (_avatar->getSizeLevel() > 0) {
-                    deactivateAvatarPhysics();
+                    deactivateLumiaPhysics(_avatar);
                 }
             }
             break;
@@ -1066,7 +1067,19 @@ void GameScene::updateGame(float dt) {
         }
             
     }
-
+    int size = _dyingLumiaQueue.size();
+    for (int i = 0; i < size; i++){
+        shared_ptr<LumiaModel> lumia = _dyingLumiaQueue.front();
+        _dyingLumiaQueue.pop();
+        if (lumia->isDead()){
+            if (lumia == _avatar){
+                switchToNearestLumia(_avatar);
+            }
+            removeLumiaNode(lumia);
+        }else{
+            _dyingLumiaQueue.push(lumia);
+        }
+    }
     if (_ticks % 100 == 0){
         for (auto & enemy : _enemyList){
             std::shared_ptr<LumiaModel> closestLumia;
@@ -1193,6 +1206,7 @@ void GameScene::checkWin() {
 std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool isAvatar, Vec2 vel, float angularVel) {
     std::shared_ptr<Texture> image = _assets->get<Texture>(LUMIA_TEXTURE);
     std::shared_ptr<Texture> splitting = _assets->get<Texture>(SPLIT_NAME);
+    std::shared_ptr<Texture> death = _assets->get<Texture>(DEATH_NAME);
     std::shared_ptr<Texture> indicator = _assets->get<Texture>(SIZE_INDICATOR);
     std::shared_ptr<LumiaModel> lumia = LumiaModel::alloc(pos, LumiaModel::sizeLevels[sizeLevel].radius, _scale);
     lumia->setDebugColor(DEBUG_COLOR);
@@ -1202,7 +1216,7 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     lumia->setLinearVelocity(vel);
     lumia->setAngularVelocity(angularVel);
     lumia->setSizeLevel(sizeLevel);
-    lumia->setTextures(image, splitting, indicator);
+    lumia->setTextures(image, splitting, death, indicator);
 
     addObstacle(lumia, lumia->getSceneNode(), 5);
     
@@ -1219,24 +1233,24 @@ std::shared_ptr<LumiaModel> GameScene::createLumia(int sizeLevel, Vec2 pos, bool
     return lumia;
 }
 
-void GameScene::deactivateAvatarPhysics() {
+void GameScene::deactivateLumiaPhysics(shared_ptr<LumiaModel> lumia) {
     // do not attempt to remove a Lumia that has already been removed
     if (_avatar->isRemoved()) {
         return;
     }
-    _sensorFixtureMap.erase(_avatar.get());
-    _sensorFixtureMap2.erase(_avatar.get());
-    _avatar->markRemoved(true);
+    _sensorFixtureMap.erase(lumia.get());
+    _sensorFixtureMap2.erase(lumia.get());
+    lumia->markRemoved(true);
 }
 
-void GameScene::removeAvatarNode() {
-    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), _avatar);
+void GameScene::removeLumiaNode(shared_ptr<LumiaModel> lumia) {
+    std::list<shared_ptr<LumiaModel>>::iterator position = std::find(_lumiaList.begin(), _lumiaList.end(), lumia);
     if (position != _lumiaList.end())
         _lumiaList.erase(position);
     
-    _worldnode->removeChild(_avatar->getSceneNode());
-    _avatar->dispose();
-    _avatar->setDebugScene(nullptr);
+    _worldnode->removeChild(lumia->getSceneNode());
+    lumia->dispose();
+    lumia->setDebugScene(nullptr);
 }
 
 void GameScene::removeLumia(shared_ptr<LumiaModel> lumia) {

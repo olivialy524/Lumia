@@ -9,9 +9,7 @@
 #include <stdio.h>
 #include "CollisionController.h"
 
-CollisionController::CollisionController():
-_switchLumia(false)
-{}
+CollisionController::CollisionController(){}
 
 void CollisionController::clearStates(){
     _lumiasToRemove.clear();
@@ -21,7 +19,6 @@ void CollisionController::clearStates(){
     _energiesToRemove.clear();
     _lumiasToStick.clear();
     _lumiasToUnstick.clear();
-    _switchLumia = false;
 }
 
 void CollisionController::processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
@@ -41,12 +38,9 @@ void CollisionController::processPlantLumiaCollision(int newSize, const std::sha
         lumia->setRemoved(true);
         _lumiasToCreate.push_back(lumiaNew);
     } else {
-        // if avatar is killed, player is given control of nearest Lumia body
-        if (isAvatar) {
-            _switchLumia = true;
-        }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
@@ -67,12 +61,9 @@ void CollisionController::processSpikeLumiaCollision(int newSize, const std::sha
         lumia->setRemoved(true);
         _lumiasToCreate.push_back(lumiaNew);
     } else {
-        // if avatar is killed, player is given control of nearest Lumia body
-        if (isAvatar) {
-            _switchLumia = true;
-        }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
@@ -104,12 +95,9 @@ void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<Enemy
         lumia->setRemoved(true);
         _lumiasToCreate.push_back(lumiaNew);
     } else if (lumia->getSizeLevel() == 0 && newSize == 0) {
-        // if avatar is killed, player is given control of nearest Lumia body
-        if (isAvatar) {
-            _switchLumia = true;
-        }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
@@ -214,8 +202,5 @@ void CollisionController::dispose(){
 }
 
 bool CollisionController::init(){
-    _switchLumia = false;
-    
-    // TODO: add listeners
     return true;
 }
