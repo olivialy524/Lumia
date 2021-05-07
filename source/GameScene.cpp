@@ -841,11 +841,6 @@ void GameScene::updateGame(float dt) {
             tutorial->setVisible(false);
         }
     }
-
-//    if (_collisionController.didSwitchLumia()){
-//        switchToNearestLumia(_avatar);
-//    }
-    
     _collisionController.clearStates();
     
     for (auto & door : _doorList) {

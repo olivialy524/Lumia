@@ -53,8 +53,6 @@ protected:
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
     
-    bool _switchLumia;
-    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -145,11 +143,6 @@ public:
     std::list<std::shared_ptr<Door>> getDoorsToOpen(){
         return _doorsToOpen;
     }
-    
-    bool didSwitchLumia(){
-        return _switchLumia;
-    }
-    
 };
 
 #endif /* CollisionController_h */
