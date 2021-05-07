@@ -116,6 +116,9 @@ protected:
     
     bool _canSplit;
 
+    int _prevscore;
+    
+    int _prevstars;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -423,6 +426,22 @@ public:
     int calcScore();
     
     int getStars();
+    
+    int getPrevScore() {
+        return _prevscore;
+    }
+    
+    void setPrevScore(int s) {
+        _prevscore = s;
+    }
+    
+    int getPrevStars() {
+        return _prevstars;
+    }
+    
+    void setPrevStars(int p) {
+        _prevstars = p;
+    }
     /**
      * Calculates trajectory point one timestep into future
      *
