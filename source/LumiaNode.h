@@ -23,8 +23,12 @@ public:
         Splitting,
         /** When Lumia is merging */
         Merging,
-        
-        SplitFinished
+        /** When Lumia has finished Splitting */
+        SplitFinished,
+        /** When Lumia is dying */
+        Dying,
+        /** When Lumia is dead */
+        Dead
     };
 
     
@@ -39,6 +43,8 @@ protected:
     
     const int SPLIT_ANIMATION_INTERVAL = 1;
     
+    const int DEATH_ANIMATION_INTERVAL = 2;
+    
     const int ANIMATION_ROWS = 4;
     
     const int ANIMATION_COLS = 5;
@@ -46,8 +52,10 @@ protected:
     const int ANIMATION_SIZE = 20;
     
     std::shared_ptr<cugl::scene2::AnimationNode> _idleAnimation;
-    /** Reference to node of donut idle face */
+    
     std::shared_ptr<cugl::scene2::AnimationNode> _splittingAnimation;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _deathAnimation;
     
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicatorNode;
 
@@ -65,6 +73,7 @@ public:
      */
     bool setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
               const std::shared_ptr<cugl::Texture> &splittingAnimation,
+              const std::shared_ptr<cugl::Texture> &deathAnimation,
               const std::shared_ptr<cugl::Texture> &indicator,
               float radius,
               float drawScale);

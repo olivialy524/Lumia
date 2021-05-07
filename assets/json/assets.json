@@ -67,6 +67,9 @@
         "split": {
             "file": "textures/lumia-splitting.png"
         },
+        "death": {
+            "file": "textures/lumia-death.png"
+        },
         "level_complete": {
             "file": "textures/level_complete_icon.png"
         },

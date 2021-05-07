@@ -16,14 +16,12 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting,  const std::shared_ptr<Texture>& indicator) {
-    
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting, const std::shared_ptr<cugl::Texture>& death,
+                             const std::shared_ptr<Texture>& indicator) {
     _sceneNode = LumiaNode::alloc(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode->setLevel(_sizeLevel);
-    _sceneNode->setTextures(idle, splitting, indicator, getRadius(), _drawScale);
-   
-    
+    _sceneNode->setTextures(idle, splitting, death, indicator, getRadius(), _drawScale);
 }
 
 #pragma mark Constructors
@@ -68,6 +66,7 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
         _isOnStickyWall = false;
         _isOnButton = false;
         _radius = radius;
+        _dying = false;
 
         setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
         setFriction(0.2f);

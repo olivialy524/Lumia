@@ -82,6 +82,9 @@ protected:
     
     std::list<std::shared_ptr<Button>> _buttonList;
     
+    /** References to the Lumias */
+    std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
+    
     std::list<std::shared_ptr<Door>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
@@ -380,9 +383,9 @@ public:
      */
     void update(float timestep);
     
-    void removeAvatarNode();
+    void removeLumiaNode(shared_ptr<LumiaModel> lumia);
 
-    void deactivateAvatarPhysics();
+    void deactivateLumiaPhysics(shared_ptr<LumiaModel> lumia);
     /**
      * Resets the status of the game so that we can play again.
      */

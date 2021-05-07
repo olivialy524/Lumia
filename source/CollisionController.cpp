@@ -47,6 +47,7 @@ void CollisionController::processPlantLumiaCollision(int newSize, const std::sha
         }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
@@ -73,6 +74,7 @@ void CollisionController::processSpikeLumiaCollision(int newSize, const std::sha
         }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
@@ -110,6 +112,7 @@ void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<Enemy
         }
         _lumiasToRemove.push_back(lumia);
         lumia->setRemoved(true);
+        lumia->setDying(true);
     }
 }
 
