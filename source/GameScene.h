@@ -119,6 +119,9 @@ protected:
     
     bool _canSplit;
 
+    int _prevscore;
+    
+    int _prevstars;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -131,7 +134,6 @@ protected:
     int _lastSpikeCollision;
     
     bool _didSwitchLevelSelect;
-    
 #pragma mark Internal Object Management
     
     /**
@@ -424,7 +426,25 @@ public:
     
     void updatePaused(float dt, float startX);
     
-
+    int calcScore();
+    
+    int getStars();
+    
+    int getPrevScore() {
+        return _prevscore;
+    }
+    
+    void setPrevScore(int s) {
+        _prevscore = s;
+    }
+    
+    int getPrevStars() {
+        return _prevstars;
+    }
+    
+    void setPrevStars(int p) {
+        _prevstars = p;
+    }
     /**
      * Calculates trajectory point one timestep into future
      *
@@ -437,6 +457,8 @@ public:
                             float n);
 
   };
+
+
 
 
 #endif /* __GAME_SCENE_H__ */

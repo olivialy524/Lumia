@@ -1144,6 +1144,9 @@ void GameScene::updateGame(float dt) {
 	if (_countdown > 0) {
 		_countdown--;
 	} else if (_countdown == 0) {
+        int stars = getStars();
+        setPrevStars(stars);
+        setPrevScore(calcScore());
 		reset();
 	}
 }
@@ -1179,6 +1182,9 @@ void GameScene::setComplete(bool value) {
  * @param value whether the level is failed.
  */
 void GameScene::setFailure(bool value) {
+    if (_complete) {
+        return;
+    }
 	_failed = value;
 	if (value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
@@ -1198,6 +1204,28 @@ void GameScene::checkWin() {
         }
     }
     setComplete(true);
+}
+
+int GameScene::calcScore() {
+    int score = 0;
+    for (auto & lumia : _lumiaList){
+        score = score + lumia->getSizeLevel()+1;
+    }
+    return score*1000;
+}
+
+int GameScene::getStars() {
+    int score = calcScore();
+    if (score >= _level->getThreeStarScore()) {
+        return 3;
+    }
+    if (score >= _level->getTwoStarScore()) {
+        return 2;
+    }
+    if (score >= 0) {
+        return 1;
+    }
+    return 0;
 }
 
 /**
