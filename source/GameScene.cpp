@@ -1193,7 +1193,7 @@ void GameScene::setFailure(bool value) {
         AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
         _loseAnimation->setVisible(true);
-        _scrollNode->setColor(Color4::GRAY);
+        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
 		_countdown = EXIT_COUNT;
 	} else {
 		_losenode->setVisible(false);
