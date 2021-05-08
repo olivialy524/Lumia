@@ -236,23 +236,25 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _UIscene->doLayout(); // Repositions the HUD;
     for (auto it : _UIscene->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "backbutton"){
+        if (button && button->getName() == "backbutton"){
             button->addListener([=](const std::string& name, bool down) {
                 _didSwitchLevelSelect = true;
                 std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
                 AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
             });
+            button->activate();
         }
-        if (button->getName() == "panning"){
+        if (button && button->getName() == "panning"){
             button->addListener([=](const std::string& name, bool down) {
                 _state = GameState::Paused;
                 _UIscene->setVisible(false);
                 _pausedUI->setVisible(true);
                
             });
+            button->activate();
                 
         }
-        button->activate();
+       
         }
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
@@ -294,7 +296,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     _losenode = scene2::Label::alloc(LOSE_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
-    _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
+    _losenode->setPosition(dimen.width/2.0f,dimen.height* 2/3.0f);
     _losenode->setForeground(Color4::WHITE);
     setFailure(false);
     
@@ -342,6 +344,7 @@ void GameScene::dispose() {
         _sensorFixtureMap.clear();
         _sensorFixtureMap2.clear();
         _graph.clear();
+        _scrollNode->dispose();
         std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
         for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
             l->dispose();
@@ -406,6 +409,7 @@ void GameScene::dispose() {
  * This method disposes of the world and creates a new one.
  */
 void GameScene::reset() {
+    _scrollNode->setColor(Color4::WHITE);
     _world->clear();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -1178,6 +1182,7 @@ void GameScene::setFailure(bool value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
         AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
+        _scrollNode->setColor(Color4::GRAY);
 		_countdown = EXIT_COUNT;
 	} else {
 		_losenode->setVisible(false);
