@@ -298,6 +298,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
     _losenode->setPosition(dimen.width/2.0f,dimen.height* 2/3.0f);
     _losenode->setForeground(Color4::WHITE);
+    _loseAnimation = cugl::scene2::AnimationNode::alloc(assets->get<Texture>("death"), 4, 5, 20);
+    _loseAnimation->setAnchor(Vec2::ANCHOR_CENTER);
+    _loseAnimation->setPosition(dimen.width/2.0f,dimen.height/3.0f);
     setFailure(false);
     
     _didSwitchLevelSelect = false;
@@ -309,6 +312,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scrollNode->addChild(_debugnode, 2);
     _UIscene->addChild(_winnode, 3);
     _UIscene->addChild(_losenode, 4);
+    _UIscene->addChild(_loseAnimation, 5);
     
     addChild(_scrollNode);
     addChild(_UIscene);
@@ -1188,10 +1192,12 @@ void GameScene::setFailure(bool value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
         AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
+        _loseAnimation->setVisible(true);
         _scrollNode->setColor(Color4::GRAY);
 		_countdown = EXIT_COUNT;
 	} else {
 		_losenode->setVisible(false);
+        _loseAnimation->setVisible(false);
 		_countdown = -1;
 	}
 }
