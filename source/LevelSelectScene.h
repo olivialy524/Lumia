@@ -14,6 +14,8 @@
 #include "InputController.h"
 #include "BackgroundNode.h"
 
+#include "LevelSelectTile.h"
+
 /**
  * A scene for demoing a simple button
  */
@@ -31,12 +33,25 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
     std::shared_ptr<cugl::scene2::SceneNode> _UINode;
     
+    std::vector<Vec2> buttonPositions = {
+        Vec2(180, 720),
+        Vec2(700, 300),
+        Vec2(1230, 300),
+        Vec2(1650, 720),
+        Vec2(2140, 720),
+        Vec2(2550, 300),
+        Vec2(3080, 300),
+
+    };
+    
     float _musicVolume = 1.0;
     
     std::shared_ptr<InputController> _input;
     
     float touchstart;
     bool setStart;
+    
+    void addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4);
     
 public:
 #pragma mark -
