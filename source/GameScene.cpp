@@ -45,7 +45,7 @@ using namespace cugl;
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
-#define EXIT_COUNT      139
+#define EXIT_COUNT      119
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
@@ -1146,7 +1146,7 @@ void GameScene::updateGame(float dt) {
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
         if (_failed){
-            if (_countdown % 7 == 0){
+            if (_countdown % 6 == 0){
                 int frame = _loseAnimation->getFrame() + 1;
                 _loseAnimation->setFrame(frame);
             }
