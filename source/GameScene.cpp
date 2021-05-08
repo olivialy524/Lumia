@@ -209,8 +209,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
-    bkgNode->setPosition(dimen.width/2, dimen.height/2);
+    bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    bkgNode->setPosition(0, 0);
     bkgNode->setScale(dimen.height/bkgTexture->getHeight());
+    
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -757,10 +759,7 @@ void GameScene::updatePaused(float dt, float startX) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
-            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
-
             float radius = lumia->getRadius() * _scale; // world coordinates
-            CULog("%f", radius);
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
@@ -896,8 +895,6 @@ void GameScene::updateGame(float dt) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
-            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
-
             float radius = lumia->getRadius() * _scale; // world coordinates
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
@@ -997,9 +994,6 @@ void GameScene::updateGame(float dt) {
                     splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
                     splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
                 }
-
-                CULog("current: (%f, %f)", currentVel.x, currentVel.y);
-                CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeLumiaNode(_avatar);
                 if ((currentSizeLevel + 1) % 2 == 0) {
                     int newSize = ((currentSizeLevel + 1) / 2) - 1;

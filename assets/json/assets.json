@@ -325,6 +325,42 @@
                 "type": "Anchored"
             },
             "children"  : {
+                "tutorial1"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T1",
+                            "x_offset": 340,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial2"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T2",
+                            "x_offset": 490,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial3"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T3",
+                            "x_offset": 640,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
                 "levelbutton1"  : {
                     "type": "Widget",
                     "data": {
@@ -370,42 +406,6 @@
                             "text": "4",
                             "x_offset": 1200,
                             "y_offset": 110,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial1"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T1",
-                            "x_offset": 340,
-                            "y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial2"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T2",
-                            "x_offset": 490,
-                            "y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial3"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T3",
-                            "x_offset": 640,
-                            "y_offset": -130,
                             "texture": "level_complete"
                         }
                     }
