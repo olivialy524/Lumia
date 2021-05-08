@@ -64,6 +64,8 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _loseAnimation;
 
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
