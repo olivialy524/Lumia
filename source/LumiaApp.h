@@ -13,6 +13,7 @@
 #include "MainMenuScene.h"
 #include "SettingsScene.h"
 #include "PauseScene.h"
+#include "WinScene.h"
 #include "InputController.h"
 
 /**
@@ -26,7 +27,8 @@ protected:
         LevelSelect,
         Settings,
         Game,
-        Pause
+        Pause,
+        Win
     };
     
     /** The global sprite batch for drawing (only want one of these) */
@@ -49,6 +51,8 @@ protected:
     SettingsScene _settings;
     /** The controller for the settings screen */
     PauseScene _pause;
+    /** The controller for the win screen */
+    WinScene _win;
     /** The current scene of the game*/
     CurrentScene _scene;
     

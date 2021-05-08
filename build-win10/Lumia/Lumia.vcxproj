@@ -215,6 +215,7 @@
     <ClInclude Include="..\..\source\TileDataModel.h" />
     <ClInclude Include="..\..\source\TileModel.h" />
     <ClInclude Include="..\..\source\TrajectoryNode.h" />
+    <ClInclude Include="..\..\source\WinScene.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +260,7 @@
     <ClCompile Include="..\..\source\TileDataModel.cpp" />
     <ClCompile Include="..\..\source\TileModel.cpp" />
     <ClCompile Include="..\..\source\TrajectoryNode.cpp" />
+    <ClCompile Include="..\..\source\WinScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

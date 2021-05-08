@@ -75,6 +75,8 @@ void LumiaApp::onShutdown() {
     _settings.dispose();
     _levelSelect.dispose();
     _mainMenu.dispose();
+    _pause.dispose();
+    _win.dispose();
     _assets = nullptr;
     _batch = nullptr;
     _UIbatch = nullptr;
@@ -149,6 +151,8 @@ void LumiaApp::update(float timestep) {
                 _settings.setActive(false);
                 _pause.init(_assets);
                 _pause.setActive(false);
+                _win.init(_assets);
+                _win.setActive(false);
             }
             return;
         }
@@ -217,6 +221,26 @@ void LumiaApp::update(float timestep) {
                         _pause.setLevelNumber(_assets, "T" + levelNumber);
                     }
                     _pause.setActive(true);
+                } else if (nextScene == "win") {
+                    _scene = Win;
+                    string levelFile = _levelSelect.getSelectedLevel();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _win.setLevelNumber(_assets, levelNumber);
+                        _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _win.setLevelNumber(_assets, "T" + levelNumber);
+                        _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
+                    }
+                    _win.setActive(true);
                 }
             }
             return;
@@ -250,6 +274,36 @@ void LumiaApp::update(float timestep) {
             }
             return;
         }
+        case Win: {
+            if (_win.isActive()) {
+                _win.update(timestep);
+            } else {
+                _win.setActive(false);
+                string nextScene = _win.getNextScene();
+                if (nextScene == "win-continue") {
+                    _scene = Game;
+                    _gameplay.dispose();
+                    // TODO: move to next level
+                    _gameplay.setActive(true);
+                } else if (nextScene == "win-replay") {
+                    _scene = Game;
+                    _gameplay.reset();
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "levelselect") {
+                    _gameplay.dispose();
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                } else if (nextScene == "settings") {
+                    _scene = Settings;
+                    _settings.setNextScene("win");
+                    _settings.setActive(true);
+                }
+            }
+            return;
+        }
         case Settings:{
             if (_settings.isActive()){
                 _settings.update(timestep);
@@ -262,6 +316,9 @@ void LumiaApp::update(float timestep) {
                 } else if (nextScene == "pause") {
                     _scene = Pause;
                     _pause.setActive(true);
+                } else if (nextScene == "win") {
+                    _scene = Win;
+                    _win.setActive(true);
                 }
             }
             return;
@@ -302,6 +359,10 @@ void LumiaApp::draw() {
         }
         case Pause: {
             _pause.render(_batch);
+            break;
+        }
+        case Win: {
+            _win.render(_batch);
             break;
         }
     }
