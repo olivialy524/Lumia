@@ -45,7 +45,7 @@ using namespace cugl;
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
-#define EXIT_COUNT      240
+#define EXIT_COUNT      139
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
@@ -301,6 +301,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _loseAnimation = cugl::scene2::AnimationNode::alloc(assets->get<Texture>("death"), 4, 5, 20);
     _loseAnimation->setAnchor(Vec2::ANCHOR_CENTER);
     _loseAnimation->setPosition(dimen.width/2.0f,dimen.height/3.0f);
+    _loseAnimation->setFrame(0);
     setFailure(false);
     
     _didSwitchLevelSelect = false;
@@ -1144,8 +1145,15 @@ void GameScene::updateGame(float dt) {
 
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
-		_countdown--;
+        if (_failed){
+            if (_countdown % 7 == 0){
+                int frame = _loseAnimation->getFrame() + 1;
+                _loseAnimation->setFrame(frame);
+            }
+        }
+        _countdown--;
 	} else if (_countdown == 0) {
+        _loseAnimation->setFrame(0);
         int stars = getStars();
         setPrevStars(stars);
         setPrevScore(calcScore());
