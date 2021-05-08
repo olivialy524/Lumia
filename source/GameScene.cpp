@@ -82,7 +82,7 @@ using namespace cugl;
 
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
-#define MESSAGE_FONT    "retro"
+#define MESSAGE_FONT    "orbitron"
 /** The message for winning the game */
 #define WIN_MESSAGE     "VICTORY!"
 /** The color of the win message */
@@ -289,13 +289,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _winnode = scene2::Label::alloc(WIN_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
     _winnode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
-    _winnode->setForeground(WIN_COLOR);
+    _winnode->setForeground(Color4::WHITE);
     setComplete(false);
 
     _losenode = scene2::Label::alloc(LOSE_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
     _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
-    _losenode->setForeground(LOSE_COLOR);
+    _losenode->setForeground(Color4::WHITE);
     setFailure(false);
     
     _didSwitchLevelSelect = false;
@@ -305,8 +305,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scrollNode->addChild(bkgNode);
     _scrollNode->addChild(_worldnode, 1);
     _scrollNode->addChild(_debugnode, 2);
-    _scrollNode->addChild(_winnode, 3);
-    _scrollNode->addChild(_losenode, 4);
+    _UIscene->addChild(_winnode, 3);
+    _UIscene->addChild(_losenode, 4);
     
     addChild(_scrollNode);
     addChild(_UIscene);
