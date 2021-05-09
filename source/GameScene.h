@@ -447,6 +447,14 @@ public:
     void setPrevStars(int p) {
         _prevstars = p;
     }
+    
+    void playSplitSound();
+    
+    void playDieSound();
+    
+    void playLightSound();
+    
+    void playGrowSound();
     /**
      * Calculates trajectory point one timestep into future
      *
