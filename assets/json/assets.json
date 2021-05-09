@@ -106,8 +106,11 @@
         "sliderbutton": {
             "file": "textures/sliderbutton.png"
         },
-        "enemy": {
-            "file": "textures/enemy.png"
+        "enemy-chase": {
+            "file": "textures/enemy-chase.png"
+        },
+        "enemy-escape": {
+            "file": "textures/enemy-escape.png"
         },
         "spike": {
             "file": "textures/spike.png"
