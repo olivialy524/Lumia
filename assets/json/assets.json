@@ -601,8 +601,9 @@
                 "levelbanner": {
                     "type"   : "Image",
                     "data"   : {
-                        "texture"  : "levelbanner.png",
-                        "size":[440, 200]
+                        "texture"  : "levelbanner",
+                        "size": [1050, 170],
+                        "anchor": [0.5,0.5]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -621,7 +622,7 @@
                         "levellabel" : {
                             "type"   : "Label",
                             "data"   : {
-                                "font"       : "orbitronsmall",
+                                "font"       : "orbitronblack",
                                 "text"       : "1",
                                 "foreground" : [255, 255, 255, 255],
                                 "halign"     : "center",
@@ -629,15 +630,110 @@
                             },
                             "layout" : {
                                 "x_anchor" : "center",
-                                "y_anchor" : "middle"
+                                "y_anchor" : "bottom",
+                                "y_offset": 35,
+                                "absolute": true
+                            }
+                        },
+                        "star1empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": -75,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star1filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": -75,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star2empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "y_offset": -35,
+                                "x_offset": 8,
+                                "absolute": true
+                            }
+                        },
+                        "star2filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "y_offset": -35,
+                                "x_offset": 8,
+                                "absolute": true
+                            }
+                        },
+                        "star3empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": 85,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star3filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": 85,
+                                "y_offset": 10,
+                                "absolute": true
                             }
                         }
                     },
                     "layout": {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset": -0.2,
-                        "y_offset": -0.1
+                        "y_anchor" : "top",
+                        "absolute" : true,
+                        "y_offset": -90
                     }
                 },
                 "winlabel" : {
@@ -652,14 +748,15 @@
                     "layout" : {
                         "x_anchor" : "fill",
                         "y_anchor" : "fill",
-                        "y_offset" : 0.03
+                        "y_offset" : 0.2
                     }
                 },
                 "details": {
                     "type"   : "Image",
                     "data"   : {
                         "texture"  : "pausedetails",
-                        "size":[440, 200]
+                        "size": [396, 180],
+                        "anchor": [0.5,0.5]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -711,8 +808,7 @@
                     "layout": {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset": -0.2,
-                        "y_offset": -0.1
+                        "y_offset": -0.18
                     }
                 },
                 "settings"  : {
@@ -769,7 +865,7 @@
                         "x_anchor" : "left",
                         "y_anchor" : "bottom",
                         "x_offset": 0.2,
-                        "y_offset": 0.2
+                        "y_offset": 0.1
                     }
                 },
                 "replaybutton"  : {
@@ -816,7 +912,7 @@
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "bottom",
-                        "y_offset": 0.2
+                        "y_offset": 0.1
                     }
                 },
                 "continuebutton"  : {
@@ -864,7 +960,7 @@
                         "x_anchor" : "right",
                         "y_anchor" : "bottom",
                         "x_offset": -0.2,
-                        "y_offset": 0.2
+                        "y_offset": 0.1
                     }
                 }
             }
