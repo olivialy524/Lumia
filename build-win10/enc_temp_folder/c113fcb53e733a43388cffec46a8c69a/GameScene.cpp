@@ -1139,12 +1139,12 @@ void GameScene::setFailure(bool value) {
 }
 
 void GameScene::checkWin() {
-    for (auto const& i : _plantList) {
+    /*for (auto const& i : _plantList) {
         if (!(i->getIsLit())) {
             return;
         }
-    }
-
+    }*/
+    //setComplete(true);
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";
