@@ -304,9 +304,10 @@ void LumiaApp::update(float timestep) {
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
                         // TODO: update this with eventual number of tutorials in the game
                         if (levelNumber == "4") {
-                            levelNumber = "3";
+                            _gameplay.init(_assets, "json/level1.json");
+                        } else {
+                            _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
                         }
-                        _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
                     }
                     _gameplay.setMusicVolume(_settings.getMusicVolume());
                     _gameplay.setEffectVolume(_settings.getEffectVolume());
