@@ -283,7 +283,29 @@ void LumiaApp::update(float timestep) {
                 if (nextScene == "win-continue") {
                     _scene = Game;
                     _gameplay.dispose();
-                    // TODO: move to next level
+
+                    string levelFile = _levelSelect.getSelectedLevel();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
+                        // TODO: update this with eventual number of levels in the game
+                        if (levelNumber == "5") {
+                            levelNumber = "4";
+                        }
+                        _gameplay.init(_assets, "json/level" + levelNumber + ".json");
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
+                        if (levelNumber == "5") {
+                            levelNumber = "4";
+                        }
+                        _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
+                    }
+                    _gameplay.setMusicVolume(_settings.getMusicVolume());
+                    _gameplay.setEffectVolume(_settings.getEffectVolume());
                     _gameplay.setActive(true);
                 } else if (nextScene == "win-replay") {
                     _scene = Game;
