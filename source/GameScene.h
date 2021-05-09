@@ -60,8 +60,6 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
 
@@ -97,8 +95,6 @@ protected:
 
 
     
-    /** Whether we have completed this "game" */
-    bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
     /** Whether we have failed at this world (and need a reset) */
@@ -293,24 +289,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    bool isComplete() const { return _complete; }
-    
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-	void setComplete(bool value);
 
 	/**
 	* Returns true if the level is failed.

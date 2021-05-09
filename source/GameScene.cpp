@@ -120,7 +120,6 @@ GameScene::GameScene() : Scene2(),
 	_debugnode(nullptr),
 	_world(nullptr),
 	_avatar(nullptr),
-	_complete(false),
 	_debug(false),
     _canSplit(true),
     _switched(false)
@@ -283,12 +282,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 //    _debugnode->setPosition(offset);
 
-    _winnode = scene2::Label::alloc(WIN_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
-    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winnode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
-    _winnode->setForeground(WIN_COLOR);
-    setComplete(false);
-
     _losenode = scene2::Label::alloc(LOSE_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
     _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
@@ -301,8 +294,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scrollNode->addChild(bkgNode);
     _scrollNode->addChild(_worldnode, 1);
     _scrollNode->addChild(_debugnode, 2);
-    _scrollNode->addChild(_winnode, 3);
-    _scrollNode->addChild(_losenode, 4);
+    _scrollNode->addChild(_losenode, 3);
 
     addChild(_scrollNode);
     addChild(_UIscene);
@@ -313,7 +305,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 
-    _complete = false;
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
@@ -370,9 +361,7 @@ void GameScene::dispose() {
     _world = nullptr;
     _worldnode = nullptr;
     _debugnode = nullptr;
-    _winnode = nullptr;
     _losenode = nullptr;
-    _complete = false;
     _failed = false;
     _debug = false;
     _state = GameScene::Playing;
@@ -434,7 +423,6 @@ void GameScene::reset() {
     _lastSpikeCollision = NULL;
     _level->resetLevel();
     setFailure(false);
-    setComplete(false);
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 }
@@ -1083,7 +1071,7 @@ void GameScene::updateGame(float dt) {
 		setFailure(true);
 	}
     
-    if (!_failed && !_complete) {
+    if (!_failed) {
         checkWin();
     }
 
@@ -1096,27 +1084,6 @@ void GameScene::updateGame(float dt) {
 }
 
 
-
-/**
-* Sets whether the level is completed.
-*
-* If true, the level will advance after a countdown
-*
-* @param value whether the level is completed.
-*/
-void GameScene::setComplete(bool value) {
-    bool change = _complete != value;
-	_complete = value;
-	if (value && change) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
-		_winnode->setVisible(true);
-		_countdown = EXIT_COUNT;
-	} else if (!value) {
-		_winnode->setVisible(false);
-		_countdown = -1;
-	}
-}
 
 /**
  * Sets whether the level is failed.
