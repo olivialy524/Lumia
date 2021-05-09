@@ -199,12 +199,14 @@
     <ClInclude Include="..\..\source\InputController.h" />
     <ClInclude Include="..\..\source\LevelModel.h" />
     <ClInclude Include="..\..\source\LevelSelectScene.h" />
+    <ClInclude Include="..\..\source\LevelSelectTile.h" />
     <ClInclude Include="..\..\source\LoadingScene.h" />
     <ClInclude Include="..\..\source\LumiaApp.h" />
     <ClInclude Include="..\..\source\LumiaModel.h" />
     <ClInclude Include="..\..\source\LumiaNode.h" />
     <ClInclude Include="..\..\source\MainMenuScene.h" />
     <ClInclude Include="..\..\source\PathFindingController.h" />
+    <ClInclude Include="..\..\source\PauseScene.h" />
     <ClInclude Include="..\..\source\Plant.h" />
     <ClInclude Include="..\..\source\PlantNode.h" />
     <ClInclude Include="..\..\source\SettingsScene.h" />
@@ -216,6 +218,7 @@
     <ClInclude Include="..\..\source\TileDataModel.h" />
     <ClInclude Include="..\..\source\TileModel.h" />
     <ClInclude Include="..\..\source\TrajectoryNode.h" />
+    <ClInclude Include="..\..\source\WinScene.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +246,7 @@
     <ClCompile Include="..\..\source\InputController.cpp" />
     <ClCompile Include="..\..\source\LevelModel.cpp" />
     <ClCompile Include="..\..\source\LevelSelectScene.cpp" />
+    <ClCompile Include="..\..\source\LevelSelectTile.cpp" />
     <ClCompile Include="..\..\source\LoadingScene.cpp" />
     <ClCompile Include="..\..\source\LumiaApp.cpp" />
     <ClCompile Include="..\..\source\LumiaModel.cpp" />
@@ -250,6 +254,7 @@
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\MainMenuScene.cpp" />
     <ClCompile Include="..\..\source\PathFindingController.cpp" />
+    <ClCompile Include="..\..\source\PauseScene.cpp" />
     <ClCompile Include="..\..\source\Plant.cpp" />
     <ClCompile Include="..\..\source\PlantNode.cpp" />
     <ClCompile Include="..\..\source\SettingsScene.cpp" />
@@ -260,6 +265,7 @@
     <ClCompile Include="..\..\source\TileDataModel.cpp" />
     <ClCompile Include="..\..\source\TileModel.cpp" />
     <ClCompile Include="..\..\source\TrajectoryNode.cpp" />
+    <ClCompile Include="..\..\source\WinScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

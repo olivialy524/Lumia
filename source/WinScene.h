@@ -9,29 +9,23 @@
 //  Author: Walker White
 //  Version: 1/20/18
 //
-#ifndef __SETTINGS_SCENE_H__
-#define __SETTINGS_SCENE_H__
+#ifndef __WIN_SCENE_H__
+#define __WIN_SCENE_H__
 
 #include <cugl/cugl.h>
 
 /**
  * A scene for demoing a slider
  */
-class SettingsScene : public cugl::Scene2 {
+class WinScene : public cugl::Scene2 {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
-    std::shared_ptr<cugl::scene2::Slider> _musicSlider;
-    std::shared_ptr<cugl::scene2::Slider> _effectSlider;
-    std::shared_ptr<cugl::scene2::Button> _close;
+    std::unordered_map<std::string, std::shared_ptr<cugl::scene2::Button>> _buttons;
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
-    /** Volume to set music level to */
-    float _musicVolume;
-    /** Volume to set sound effect level to */
-    float _effectVolume;
     
 public:
 #pragma mark -
@@ -42,7 +36,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    SettingsScene() : _musicVolume(1.0f), _effectVolume(1.0f) {}
+    WinScene() : _nextScene("") {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -50,7 +44,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~SettingsScene() { dispose(); }
+    ~WinScene() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -70,8 +64,8 @@ public:
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
     
-    static std::shared_ptr<SettingsScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
-        std::shared_ptr<SettingsScene> result = std::make_shared<SettingsScene>();
+    static std::shared_ptr<WinScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
+        std::shared_ptr<WinScene> result = std::make_shared<WinScene>();
         return (result->init(assets) ? result : nullptr);
     }
     
@@ -82,15 +76,18 @@ public:
      */
     virtual void setActive(bool value) override;
 
-    void setNextScene(string value) { _nextScene = value; }
     /** Returns the string representing the next scene to transition to */
-    string getNextScene() { return _nextScene; };
+    string getNextScene() { return _nextScene; }
 
-    /** Returns the set music volumd */
-    float getMusicVolume() { return _musicVolume; };
+    void setLevelNumber(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> levelLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_levellabel"));
+        levelLabel->setText(value);
+    }
 
-    /** Returns the set sound effect volume */
-    float getEffectVolume() { return _effectVolume; };
+    void setWinLabel(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> winLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("winscreen_winlabel"));
+        winLabel->setText(value);
+    }
 };
 
-#endif /* __SETTINGS_SCENE_H__ */
+#endif /* __WIN_SCENE_H__ */
