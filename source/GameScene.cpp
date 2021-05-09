@@ -1141,7 +1141,7 @@ void GameScene::updateGame(float dt) {
 	if (_countdown > 0) {
         if (_failed){
             if (_countdown % 6 == 0){
-                int frame = _loseAnimation->getFrame() + 1;
+                int frame = _loseAnimation->getFrame() + 1 < 20 ? _loseAnimation->getFrame() + 1 : 19;
                 _loseAnimation->setFrame(frame);
             }
         }
