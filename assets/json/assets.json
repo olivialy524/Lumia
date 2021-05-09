@@ -173,6 +173,21 @@
             "file": "sounds/UITheme.ogg",
             "stream": true,
             "volume": 0.5
+        },
+        "light": {
+            "type":     "sample",
+            "file":     "sounds/magicplantlightup.wav",
+            "volume":   0.2
+        },
+        "die": {
+            "type":     "sample",
+            "file":     "sounds/lumiabodydying.wav",
+            "volume":   0.2
+        },
+        "grow": {
+            "type":     "sample",
+            "file":     "sounds/gainsize.wav",
+            "volume":   0.2
         }
     },
 	"fonts": {

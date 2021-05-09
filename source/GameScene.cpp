@@ -110,7 +110,9 @@ using namespace cugl;
 
 #define LIGHT_SOUND "pew"
 
-#define DIE_SOUND "pop"
+#define DIE_SOUND "die"
+
+#define GROW_SOUND "grow"
 
 
 #pragma mark -
@@ -800,8 +802,6 @@ void GameScene::updateGame(float dt) {
     
 
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
-        AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
         if (lumia->isDying()){
             deactivateLumiaPhysics(lumia);
             _dyingLumiaQueue.push(lumia);
@@ -827,6 +827,7 @@ void GameScene::updateGame(float dt) {
     }
 
     for (const std::shared_ptr<EnergyModel>& energy : _collisionController.getEnergiesToRemove()) {
+        playGrowSound();
         removeEnergy(energy);
     }
 
@@ -885,6 +886,7 @@ void GameScene::updateGame(float dt) {
                 temp->setRemoved(true);
             } else {
                 _collisionController.addLumiaToRemove(lumia);
+                playDieSound();
                 lumia->setRemoved(true);
             }
         }
@@ -942,8 +944,7 @@ void GameScene::updateGame(float dt) {
         if(_input->didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input->didSplit() && _avatar->getSizeLevel()!=0){
-            std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
-            AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
+            playSplitSound();
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
@@ -1075,6 +1076,7 @@ void GameScene::updateGame(float dt) {
             if (lumia == _avatar){
                 switchToNearestLumia(_avatar);
             }
+            playDieSound();
             removeLumiaNode(lumia);
         }else{
             _dyingLumiaQueue.push(lumia);
@@ -1228,6 +1230,25 @@ int GameScene::getStars() {
     return 0;
 }
 
+void GameScene::playSplitSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
+    AudioEngine::get()->play(SPLIT_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playLightSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+    AudioEngine::get()->play(LIGHT_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playDieSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
+    AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playGrowSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GROW_SOUND);
+    AudioEngine::get()->play(GROW_SOUND, source, false, _effectVolume, true);
+}
 /**
  * Add a new Lumia to the world.
  */
@@ -1304,6 +1325,7 @@ void GameScene::removeEnemy(shared_ptr<EnemyModel> enemy) {
     if (enemy->isRemoved()) {
         return;
     }
+    playGrowSound();
     _worldnode->removeChild(enemy->getSceneNode());
 
     std::list<shared_ptr<EnemyModel>>::iterator position = std::find(_enemyList.begin(), _enemyList.end(), enemy);
@@ -1427,15 +1449,13 @@ void GameScene::beginContact(b2Contact* contact) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
-                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
-                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
-                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
-                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         // handle collision between spike and Lumia
