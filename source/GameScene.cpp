@@ -244,7 +244,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             });
                 
         }
-        if (button->getName() == "pause") {
+        if (button && button->getName() == "pause") {
             button->addListener([=](const std::string& name, bool down) {
                 if (down && _UIscene->isVisible()) {
                     _state = GameState::Paused;
@@ -293,10 +293,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
     _losenode->setPosition(dimen.width/2.0f,dimen.height* 2/3.0f);
     _losenode->setForeground(Color4::WHITE);
+    _losenode->setName("losenode");
     _loseAnimation = cugl::scene2::AnimationNode::alloc(assets->get<Texture>("death"), 4, 5, 20);
     _loseAnimation->setAnchor(Vec2::ANCHOR_CENTER);
     _loseAnimation->setPosition(dimen.width/2.0f,dimen.height/3.0f);
     _loseAnimation->setFrame(0);
+    _loseAnimation->setName("loseanimation");
     setFailure(false);
     
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
@@ -338,6 +340,12 @@ void GameScene::dispose() {
     _sensorFixtureMap.clear();
     _sensorFixtureMap2.clear();
     _graph.clear();
+    if (_UIscene->getChildByName("losenode")) {
+        _UIscene->removeChild(_losenode);
+    }
+    if (_UIscene->getChildByName("loseanimation")) {
+        _UIscene->removeChild(_loseAnimation);
+    }
     _scrollNode->dispose();
     std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
     for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
@@ -1156,9 +1164,6 @@ void GameScene::updateGame(float dt) {
  * @param value whether the level is failed.
  */
 void GameScene::setFailure(bool value) {
-    if (_complete) {
-        return;
-    }
 	_failed = value;
 	if (value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);

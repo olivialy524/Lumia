@@ -199,6 +199,7 @@
     <ClInclude Include="..\..\source\InputController.h" />
     <ClInclude Include="..\..\source\LevelModel.h" />
     <ClInclude Include="..\..\source\LevelSelectScene.h" />
+    <ClInclude Include="..\..\source\LevelSelectTile.h" />
     <ClInclude Include="..\..\source\LoadingScene.h" />
     <ClInclude Include="..\..\source\LumiaApp.h" />
     <ClInclude Include="..\..\source\LumiaModel.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="..\..\source\InputController.cpp" />
     <ClCompile Include="..\..\source\LevelModel.cpp" />
     <ClCompile Include="..\..\source\LevelSelectScene.cpp" />
+    <ClCompile Include="..\..\source\LevelSelectTile.cpp" />
     <ClCompile Include="..\..\source\LoadingScene.cpp" />
     <ClCompile Include="..\..\source\LumiaApp.cpp" />
     <ClCompile Include="..\..\source\LumiaModel.cpp" />

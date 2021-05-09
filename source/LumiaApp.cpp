@@ -302,8 +302,9 @@ void LumiaApp::update(float timestep) {
                         int startIdx = levelFile.find("tutorial") + 8;
                         int endIdx = levelFile.find(".json");
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
-                        if (levelNumber == "5") {
-                            levelNumber = "4";
+                        // TODO: update this with eventual number of tutorials in the game
+                        if (levelNumber == "4") {
+                            levelNumber = "3";
                         }
                         _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
                     }

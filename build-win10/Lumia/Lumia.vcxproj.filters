@@ -7,6 +7,9 @@
     <ClCompile Include="..\..\source\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ButtonNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\CollisionController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +40,9 @@
     <ClCompile Include="..\..\source\LevelSelectScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\LevelSelectTile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\LoadingScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,6 +62,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\PathFindingController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PauseScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\Plant.cpp">
@@ -82,16 +91,10 @@
     <ClCompile Include="..\..\source\TileDataModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\TrajectoryNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\TileModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\ButtonNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\PauseScene.cpp">
+    <ClCompile Include="..\..\source\TrajectoryNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\WinScene.cpp">
@@ -106,6 +109,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\Button.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ButtonNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\CollisionController.h">
@@ -141,6 +147,9 @@
     <ClInclude Include="..\..\source\LevelSelectScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\LevelSelectTile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\LoadingScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -157,6 +166,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\PathFindingController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\PauseScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\Plant.h">
@@ -180,37 +192,31 @@
     <ClInclude Include="..\..\source\StickyWallNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\TileDataModel.h">
+    <ClInclude Include="..\..\source\Tile.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\TrajectoryNode.h">
+    <ClInclude Include="..\..\source\TileDataModel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\TileModel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PauseScene.h">
+    <ClInclude Include="..\..\source\TrajectoryNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\WinScene.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ButtonNode.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Tile.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{73612aab-b6b7-4d8a-b712-fb68646c2436}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{e6c2a984-34e7-43bd-a527-9540bc0a7e95}</UniqueIdentifier>
+      <UniqueIdentifier>{df625927-9837-4e2d-951c-39f95f440c57}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{1f79b236-a556-4196-be1f-6f91e7069ff2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{4dde6da1-4704-4064-b21b-e78dbb016a27}</UniqueIdentifier>
+      <UniqueIdentifier>{4e4399b6-5385-4afd-8de4-d6d570a63f82}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
