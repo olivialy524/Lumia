@@ -76,8 +76,12 @@ protected:
 	bool _isGrounded;
     /** Whether Lumia is splitting into two */
     bool _isSplitting;
+    
+    bool _inCoolDown;
     /* Whether or not the Lumia body is due to be or has been removed */
     bool _removed;
+    
+    bool _dying;
     /** Radius of Lumia's body */
     float _radius;
 	/** Ground sensor to represent our feet */
@@ -122,6 +126,7 @@ protected:
     
     Vec2 _stickDirection;
     
+    bool _isOnButton;
 
 public:
     
@@ -220,7 +225,8 @@ public:
      *
      * @param lumia      The texture for the lumia filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting, const std::shared_ptr<Texture>& indicator);
+    void setTextures(const std::shared_ptr<cugl::Texture>& idle, const std::shared_ptr<cugl::Texture>& splitting, const std::shared_ptr<cugl::Texture>& death,
+                     const std::shared_ptr<Texture>& indicator);
 
     void setDrawScale(float scale);
     
@@ -435,8 +441,25 @@ public:
         _isOnStickyWall = value;
     }
     
+    bool isOnButton() {
+        return _isOnButton;
+    }
+    
+    void setOnButton(bool value){
+        _isOnButton = value;
+    }
+    
+    void setInCoolDown(bool value){
+        _inCoolDown = value;
+    }
+    
+    bool getInCoolDown(){
+        return _inCoolDown;
+    }
+    
     void unStick(){
         setOnStickyWall(false);
+        setOnButton(false);
         _stickDirection = Vec2::ZERO;
     }
     
@@ -469,6 +492,34 @@ public:
      * @param value whether the Lumia is on the ground.
      */
     void setRolling(bool value) { _isRolling = value; }
+    
+    /**
+     * Returns whether the Lumia is dying
+     *
+     * @param value whether the Lumia is dying
+     */
+    bool isDying() const { return _dying; }
+    
+    /**
+     * Sets whether the Lumia is dying
+     *
+     * @param value whether the Lumia is dying
+    */
+    void setDying(bool value) {
+        _dying = value;
+        _sceneNode->setAnimState(LumiaNode::LumiaAnimState::Dying);
+    }
+    /**
+     * Returns whether the Lumia is dead
+     *
+     * @param value whether the Lumia is dead
+     */
+    bool isDead() const {
+        if (_sceneNode != nullptr){
+            return _sceneNode->getAnimState() == LumiaNode::LumiaAnimState::Dead;
+        }
+        return false;
+    }
     /**
      * Returns how much force to apply to get the Lumia moving
      *

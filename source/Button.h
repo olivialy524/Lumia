@@ -10,6 +10,8 @@
 #define Button_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
+#include "ButtonNode.h"
+#include "LumiaModel.h"
 #include "Door.h"
 
 class Button : public cugl::physics2::BoxObstacle {
@@ -19,13 +21,17 @@ private:
 protected:
     float _scale;
     std::shared_ptr<Door> _door;
+    std::shared_ptr<LumiaModel> _lumia;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<cugl::scene2::PolygonNode> _node;
-    int _cooldown;
+    std::shared_ptr<ButtonNode> _node;
     float _normHeight;
-    bool _pushedDown = false;
+    bool _pushingDown;
+    float _drawScale;
+    int _cooldown;
+    const float NUM_FRAMES = 6.0f;
+    
 public:
-    Button() : cugl::physics2::BoxObstacle() { }
+    Button(): _normHeight(0.6f), _pushingDown(false), _cooldown(0), cugl::physics2::BoxObstacle() { }
 
     virtual ~Button(void) { dispose(); }
 
@@ -43,15 +49,13 @@ public:
 
     static std::shared_ptr<Button> alloc(const cugl::Vec2& pos, cugl::Size size) {
         std::shared_ptr<Button> result = std::make_shared<Button>();
-        result->setNormHeight(size.getIHeight());
         return (result->init(pos, size) ? result : nullptr);
     }
     
-    std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
-        return _node;
-    }
-    void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
-        _node = n;
+    void setTextures(const std::shared_ptr<cugl::Texture>& button);
+
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() {
+        return _sceneNode;
     }
     
     float getNormHeight() {
@@ -68,28 +72,57 @@ public:
     void setDoor(std::shared_ptr<Door> d) {
         _door = d;
     }
-    bool getPushedDown() {
-        return _pushedDown;
+    
+    std::shared_ptr<LumiaModel> getLumia(){
+        return _lumia;
     }
     
-    void setPushedDown(bool p) {
-        _pushedDown = p;
+    void setLumia(std::shared_ptr<LumiaModel> lumia){
+        _lumia = lumia;
     }
-    void pushDown(float scale);
+    
+    bool getPushingDown() {
+        return _pushingDown;
+    }
+    
+    void setPushingDown(bool p) {
+        _pushingDown = p;
+    }
+    
+    void pushDown();
     
     int getCD() {
         return _cooldown;
     }
-    
+
     void incCD() {
         _cooldown++;
     }
-    
+
     void resetCD() {
         _cooldown = 0;
     }
-    void pushUp(float scale);
     
+    void pushUp();
+    
+    void setDrawScale(float value){
+        _drawScale = value;
+    }
+    
+    bool getPushedDown(){
+        if (_node != nullptr){
+            return _node->getAnimState() == ButtonNode::ButtonAnimState::Pressed;
+        }
+        return false;
+    }
+    
+    bool getPushedUp(){
+        if (_node != nullptr){
+            return _node->getAnimState() == ButtonNode::ButtonAnimState::Idle;
+        }
+        return false;
+        
+    }
 };
 
 #endif /* Button_h */

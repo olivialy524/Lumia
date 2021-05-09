@@ -20,6 +20,13 @@
 
 
 class LevelModel : public cugl::Asset {
+public:
+    struct Tutorial {
+        float posX;
+        float posY;
+        string texture;
+    };
+
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<SpikeModel>> _spikes;
@@ -31,10 +38,16 @@ private:
     std::vector<std::shared_ptr<Button>> _buttons;
     std::vector<std::shared_ptr<Door>> _doors;
     std::vector<std::shared_ptr<StickyWallModel>> _stickyWalls;
+
+    std::vector<Tutorial> _tutorials;
     
     float _xBound;
     
     float _yBound;
+    
+    int _twoStarScore;
+    
+    int _threeStarScore;
     
     std::vector<std::shared_ptr<Plant>> createPlants(const std::shared_ptr<cugl::JsonValue>& plants);
 
@@ -53,11 +66,13 @@ private:
     std::vector<std::shared_ptr<Button>> createButtonsAndDoors(const std::shared_ptr<cugl::JsonValue>& buttonsAndDoors);
     
     std::vector<std::shared_ptr<StickyWallModel>> createStickyWalls(const std::shared_ptr<cugl::JsonValue>& stickyWalls);
+
+    std::vector<Tutorial> createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials);
     
     std::shared_ptr<cugl::JsonValue> _levelJson;
     
 public:
-    
+
 #pragma mark Static Constructors
     /**
      * Creates a new game level with no source file.
@@ -132,6 +147,7 @@ public:
     std::vector<std::shared_ptr<Door>> getDoors() {
         return _doors;
     }
+    
     std::vector<std::shared_ptr<EnemyModel>> getEnemies(){
         return _enemies;
     }
@@ -142,6 +158,18 @@ public:
     
     std::vector<std::shared_ptr<StickyWallModel>> getStickyWalls(){
         return _stickyWalls;
+    }
+
+    std::vector<Tutorial> getTutorials() {
+        return _tutorials;
+    }
+    
+    int getTwoStarScore() {
+        return _twoStarScore;
+    }
+    
+    int getThreeStarScore() {
+        return _threeStarScore;
     }
     
     void resetLevel(){

@@ -12,7 +12,7 @@
 #define BASIC_DENSITY   0.0f
 /** Friction of most platforms */
 
-#define BASIC_FRICTION  0.4f
+#define BASIC_FRICTION  1.0f
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 

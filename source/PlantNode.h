@@ -27,13 +27,13 @@ protected:
     
     int _frameCount;
     
-    const int LIGHT_UP_ANIMATION_INTERVAL = 2;
+    const int LIGHT_UP_ANIMATION_INTERVAL = 3;
     
-    const int LIT_ANIMATION_INTERVAL = 18;
+    const int LIT_ANIMATION_INTERVAL = 17;
     
-    const int LIT_ANIMATION_START = 3;
+    const int LIT_ANIMATION_START = 6;
     
-    const int LIT_ANIMATION_END = 5;
+    const int LIT_ANIMATION_END = 9;
     
     bool _frameIncreasing;
     
@@ -63,4 +63,4 @@ public:
 
 };
 
-#endif /* __LM_PLANT_NODE_H__ */
+#endif /* __PLANT_NODE_H__ */

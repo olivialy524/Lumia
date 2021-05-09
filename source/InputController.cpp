@@ -37,6 +37,8 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Input Controller
+
+std::shared_ptr<InputController> InputController::instance; 
 /**
  * Creates a new input controller.
  *
@@ -293,7 +295,6 @@ void InputController::mouseDraggedCB(const MouseEvent& event, const Vec2& previo
  * @param focus	Whether the listener currently has focus
  */
 void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
-    CULog("Touch began %lld", event.touch);
     _touchids.insert(event.touch);
 
     if (event.timestamp.ellapsedMillis(_clickTime) <= 250.0f) {
@@ -326,7 +327,6 @@ void InputController::touchBeganCB(const TouchEvent& event, bool focus) {
  * @param focus	Whether the listener currently has focus
  */
 void InputController::touchEndedCB(const TouchEvent& event, bool focus) {
-    CULog("Touch ended %lld", event.touch);
     Vec2 finishDrag = event.position - _dclick;
 
     if (finishDrag.lengthSquared() < 625.0f) {

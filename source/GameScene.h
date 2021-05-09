@@ -41,7 +41,7 @@ protected:
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    InputController _input;
+    std::shared_ptr<InputController> _input;
     
     CollisionController _collisionController;
     
@@ -62,6 +62,8 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _backbutton;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _loseAnimation;
 
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
@@ -80,6 +82,9 @@ protected:
     
     std::list<std::shared_ptr<Button>> _buttonList;
     
+    /** References to the Lumias */
+    std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
+    
     std::list<std::shared_ptr<Door>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
@@ -93,6 +98,8 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
     
 
+
+    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
 
     
     /** Whether or not debug mode is active */
@@ -110,6 +117,9 @@ protected:
     
     bool _canSplit;
 
+    int _prevscore;
+    
+    int _prevstars;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -362,9 +372,9 @@ public:
      */
     void update(float timestep);
     
-    void removeAvatarNode();
+    void removeLumiaNode(shared_ptr<LumiaModel> lumia);
 
-    void deactivateAvatarPhysics();
+    void deactivateLumiaPhysics(shared_ptr<LumiaModel> lumia);
     /**
      * Resets the status of the game so that we can play again.
      */
@@ -402,7 +412,26 @@ public:
     void updateGame(float dt);
     
     void updatePaused(float dt, float startX);
-
+    
+    int calcScore();
+    
+    int getStars();
+    
+    int getPrevScore() {
+        return _prevscore;
+    }
+    
+    void setPrevScore(int s) {
+        _prevscore = s;
+    }
+    
+    int getPrevStars() {
+        return _prevstars;
+    }
+    
+    void setPrevStars(int p) {
+        _prevstars = p;
+    }
     /**
      * Calculates trajectory point one timestep into future
      *
@@ -415,6 +444,8 @@ public:
                             float n);
 
   };
+
+
 
 
 #endif /* __GAME_SCENE_H__ */
