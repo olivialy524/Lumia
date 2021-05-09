@@ -62,6 +62,8 @@ using namespace cugl;
 #define STICKY_TEXTURE  "sticky-wall"
 
 #define ENEMY_TEXTURE   "enemy"
+#define ENEMY_CHASE     "enemy-chase"
+#define ENEMY_ESCAPE    "enemy-escape"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME      "plant"
 
@@ -639,8 +641,6 @@ void GameScene::populate() {
     _avatar->setName(LUMIA_NAME);
 	_avatar->setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
-//    Vec2 lumiaPos = _avatar->getPosition();
-//    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
     std::unordered_set<b2Fixture*> fixtures2;
@@ -650,16 +650,15 @@ void GameScene::populate() {
 #pragma mark : Enemies
     vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
     
-    image = _assets->get<Texture>(ENEMY_TEXTURE);
+    image = _assets->get<Texture>(ENEMY_ESCAPE);
+    std::shared_ptr<Texture> chasing = _assets->get<Texture>(ENEMY_CHASE);
     for (int i = 0; i < enemies.size(); i++) {
         std::shared_ptr<EnemyModel> enemy = enemies[i];
         enemy->setDrawScale(_scale);
-        enemy->setTextures(image);
+        enemy->setTextures(chasing, image);
         enemy->setName(ENEMY_TEXTURE);
         enemy->setDebugColor(DEBUG_COLOR);
         addObstacle(enemy, enemy->getSceneNode(), 3);
-//        Vec2 enemyPos = enemy->getPosition();
-//        _graph[{Vec2(floor(enemyPos.x), floor(enemyPos.y))}] = NodeState::Enemy;
         _enemyList.push_back(enemy);
     }
     
@@ -1101,14 +1100,14 @@ void GameScene::updateGame(float dt) {
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
                 if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
                     enemy->setVelocity(-distance.normalize() * 1.5f);
-                    enemy->setFleeingTint();
+                    enemy->setEscaping();
                 } else {
                     enemy->setVelocity(distance.normalize() * 1.5f);
-                    enemy->resetTint();
+                    enemy->setChasing();
                 }
             } else {
                 enemy->setVelocity(Vec2::ZERO);
-                enemy->resetTint();
+                enemy->setIdle();
             }
             enemy->setInCoolDown(false);
         }
