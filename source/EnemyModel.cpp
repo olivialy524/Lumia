@@ -19,17 +19,11 @@ using namespace cugl;
 #pragma mark -
 
 
-void EnemyModel::setTextures(const std::shared_ptr<Texture>& texture) {
+void EnemyModel::setTextures(const std::shared_ptr<Texture>& chasing, const std::shared_ptr<Texture>& escaping) {
     
-    _sceneNode = scene2::SceneNode::allocWithBounds(Size(texture->getWidth()/ 18.0f,texture->getHeight()));
+    _sceneNode = EnemyNode::alloc(Size(chasing->getWidth()/ 18.0f,chasing->getHeight()));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
-   _node = EnemyNode::alloc(texture, 1, 18, 18);
-    auto scale =  getRadius()*2/(texture->getHeight()/_drawScale);
-   _node->setScale(scale);
-   _node->setAnchor(Vec2::ANCHOR_CENTER);
-  
-   _node->setFrame(0);
-   _sceneNode->addChild(_node);
+    _sceneNode->setTextures(chasing, escaping, getRadius(), _drawScale);
 }
 
 #pragma mark Constructors
@@ -84,7 +78,6 @@ bool EnemyModel::init(const cugl::Vec2& pos, float radius, float scale) {
  * disposed, a LumiaModel may not be used until it is initialized again.
  */
 void EnemyModel::dispose() {
-    _node = nullptr;
     _sensorNode = nullptr;
 }
 

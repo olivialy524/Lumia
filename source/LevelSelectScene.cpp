@@ -33,7 +33,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    dimen *= SCENE_WIDTH/dimen.width; // Lock the game to a reasonable resolution
+//    dimen *= SCENE_WIDTH/dimen.width; // Lock the game to a reasonable resolution
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
@@ -44,26 +44,44 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
     _assets = assets;
     
     
-    _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(dimen * 2);
-    _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _scrollNode->setPosition(0.0f, 0.0f);
+
     
     auto layer = assets->get<scene2::SceneNode>("levelselect");
     _UINode = assets->get<scene2::SceneNode>("levelSelectUI");
+
+    
     _UINode->setContentSize(dimen);
     _UINode->doLayout(); // This rearranges the children to fit the screen
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
     
-    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("levelselectbg");
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    bkgNode->setPosition(0, 0);
-    bkgNode->setScale(dimen.height/bkgTexture->getHeight());
+    bkgNode->setPosition(0,0.0f);
+    
+    _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(bkgTexture->getWidth(), bkgTexture->getHeight());
+    _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    
     _scrollNode->addChild(bkgNode);
+    
+    std::shared_ptr<Texture> tile3 = assets->get<Texture>("tile3");
+    std::shared_ptr<Texture> tile4 = assets->get<Texture>("tile4");
+    
+    float grpw = 1840.0f;
+    for (int i = 0; i< 3; i++){
+    addTileGroup(i * grpw + 50.0f, tile3, tile4);
+    }
+//    _scrollNode->addChild(tileNode);
     _scrollNode->addChild(layer);
+    _scrollNode->setScale(dimen.height/bkgTexture->getHeight());
+    _scrollNode->setPosition(0.0f, 0.0f);
+    
+    
+    
     addChild(_scrollNode);
     addChild(_UINode);
+    
     
 
     auto levelbuttons = layer->getChildren();
@@ -87,24 +105,28 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[button->getName()] = button;
         
-        if (count <= 4) {
+        if (count <= 3) {
+  
             button->addListener([=](const std::string& name, bool down) {
                 if (!_input->isDragging()){
                 this->_active = down;
                 _nextScene = "game";
-                _selectedLevel = "json/level" + std::to_string(count) + ".json";
-                std::cout << _selectedLevel << std::endl;
+                _selectedLevel = "json/tutorial" + std::to_string(count) + ".json";
                 }
             });
+            
        } else {
            button->addListener([=](const std::string& name, bool down) {
+               if (!_input->isDragging()){
                this->_active = down;
                _nextScene = "game";
-               _selectedLevel = "json/tutorial" + std::to_string(count-4) + ".json";
+               _selectedLevel = "json/level" + std::to_string(count -3) + ".json";
+               std::cout << _selectedLevel << std::endl;
+               }
            });
        }
-   
-        
+        button->setPosition(buttonPositions[count-1]);
+        button->setScale(1.8f);
         button->activate();
         count++;
     }
@@ -152,9 +174,81 @@ void LevelSelectScene::update(float timestep){
             touchstart = _scrollNode->getPositionX();
             setStart = true;
         }
-        _scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
+        float target = touchstart + _input->getCurrentDrag();
+        if (target > 0){
+            target = 0;
+        }
+        if (target < - 3000){
+            target = -3000;
+        }
+        _scrollNode->setPositionX(target);
+        
     }else{
         setStart = false;
     }
+    
+}
+
+
+void LevelSelectScene::addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4 ){
+    float scale = 40.0f/tile3->getHeight();
+    float tilew = tile4->getWidth();
+    float tileh = tile3->getHeight();
+    float ypos = 600.0f;
+    
+    std::shared_ptr<LevelSelectTile> tileNode = LevelSelectTile::alloc(tile3);
+    tileNode->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode->setPosition(offset + 120.0f, ypos);
+    tileNode->setScale(scale);
+    _scrollNode->addChild(tileNode);
+    std::shared_ptr<LevelSelectTile> tileNode2 = LevelSelectTile::alloc(tile4);
+    tileNode2->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode2->setPosition(offset + 360.0f, ypos - 120.0f + 20.0f);
+    tileNode2->setScale(scale);
+    tileNode2->setAngle(1.57f);
+    _scrollNode->addChild(tileNode2);
+    
+    std::shared_ptr<LevelSelectTile> tileNode3 = LevelSelectTile::alloc(tile4);
+    tileNode3->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode3->setPosition(offset + 600.0f - 40.0f , ypos - 350.0f + 15.0f );
+    tileNode3->setScale(scale);
+    tileNode3->setAngle(4.71f);
+    _scrollNode->addChild(tileNode3);
+    
+    std::shared_ptr<LevelSelectTile> tileNode4 = LevelSelectTile::alloc(tile3);
+    tileNode4->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode4->setPosition(offset + 800.0f , ypos - tilew*4/2 * scale + tileh * scale );
+    tileNode4->setScale(scale);
+    tileNode4->setAngle(0);
+    _scrollNode->addChild(tileNode4);
+    
+    std::shared_ptr<LevelSelectTile> tileNode5 = LevelSelectTile::alloc(tile3);
+    tileNode5->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode5->setPosition(offset + 1040.0f , ypos - tilew*4/2 * scale + tileh * scale );
+    tileNode5->setScale(scale);
+    tileNode5->setAngle(0);
+    _scrollNode->addChild(tileNode5);
+    
+    std::shared_ptr<LevelSelectTile> tileNode6 = LevelSelectTile::alloc(tile4);
+    tileNode6->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode6->setPosition(offset + 1280.0f , ypos - tilew*3/2 * scale + 0.5 * tileh * scale );
+    tileNode6->setScale(scale);
+    tileNode6->setAngle(0);
+    _scrollNode->addChild(tileNode6);
+    
+    std::shared_ptr<LevelSelectTile> tileNode7 = LevelSelectTile::alloc(tile4);
+    tileNode7->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode7->setPosition(offset + 1480.0f , ypos - tilew*1/2 * scale + 0.5 * tileh * scale );
+    tileNode7->setScale(scale);
+    tileNode7->setAngle(3.14f);
+    _scrollNode->addChild(tileNode7);
+    
+    
+    std::shared_ptr<LevelSelectTile> tileNode8 = LevelSelectTile::alloc(tile3);
+    tileNode8->setAnchor(Vec2::ANCHOR_CENTER);
+    tileNode8->setPosition(offset + 1720.0f , ypos );
+    tileNode8->setScale(scale);
+    tileNode8->setAngle(3.14f);
+    _scrollNode->addChild(tileNode8);
     
 }

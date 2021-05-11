@@ -82,6 +82,15 @@
 		C7A721472642058D00436C69 /* ButtonNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721462642058D00436C69 /* ButtonNode.cpp */; };
 		C7A721482642058D00436C69 /* ButtonNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721462642058D00436C69 /* ButtonNode.cpp */; };
 		C7A721492642058D00436C69 /* ButtonNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721462642058D00436C69 /* ButtonNode.cpp */; };
+		C7A7216A26467F6D00436C69 /* LevelSelectTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */; };
+		C7A7216B26467F6D00436C69 /* LevelSelectTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */; };
+		C7A7216C26467F6D00436C69 /* LevelSelectTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */; };
+		C7A721782647898E00436C69 /* PauseScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721712647898E00436C69 /* PauseScene.cpp */; };
+		C7A721792647898E00436C69 /* PauseScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721712647898E00436C69 /* PauseScene.cpp */; };
+		C7A7217A2647898F00436C69 /* PauseScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721712647898E00436C69 /* PauseScene.cpp */; };
+		C7A7217B2647898F00436C69 /* WinScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721752647898E00436C69 /* WinScene.cpp */; };
+		C7A7217C2647898F00436C69 /* WinScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721752647898E00436C69 /* WinScene.cpp */; };
+		C7A7217D2647898F00436C69 /* WinScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7A721752647898E00436C69 /* WinScene.cpp */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
@@ -245,6 +254,12 @@
 		C79D7E8D261D546A007DDD42 /* PathFindingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathFindingController.h; sourceTree = "<group>"; };
 		C7A721462642058D00436C69 /* ButtonNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ButtonNode.cpp; sourceTree = "<group>"; };
 		C7A7214D2642059D00436C69 /* ButtonNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ButtonNode.h; sourceTree = "<group>"; };
+		C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSelectTile.cpp; sourceTree = "<group>"; };
+		C7A7216926467F6D00436C69 /* LevelSelectTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSelectTile.h; sourceTree = "<group>"; };
+		C7A721712647898E00436C69 /* PauseScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PauseScene.cpp; sourceTree = "<group>"; };
+		C7A721752647898E00436C69 /* WinScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WinScene.cpp; sourceTree = "<group>"; };
+		C7A721762647898E00436C69 /* WinScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinScene.h; sourceTree = "<group>"; };
+		C7A721772647898E00436C69 /* PauseScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PauseScene.h; sourceTree = "<group>"; };
 		EB122DA01E281F4A0019E2D1 /* Lumia: Guardian of Light.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lumia: Guardian of Light.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
@@ -413,6 +428,8 @@
 				6144346626192F2300F597E4 /* Button.h */,
 				C7A721462642058D00436C69 /* ButtonNode.cpp */,
 				C7A7214D2642059D00436C69 /* ButtonNode.h */,
+				C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */,
+				C7A7216926467F6D00436C69 /* LevelSelectTile.h */,
 				C729A25B2624002500BD1C5A /* CollisionController.cpp */,
 				C729A2622624019800BD1C5A /* CollisionController.h */,
 				6144346F26194A1900F597E4 /* Door.cpp */,
@@ -453,6 +470,10 @@
 				3A534B0225FB258300CDAE69 /* PlantNode.h */,
 				C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */,
 				C729A1CE261FEAB300BD1C5A /* SettingsScene.h */,
+				C7A721712647898E00436C69 /* PauseScene.cpp */,
+				C7A721772647898E00436C69 /* PauseScene.h */,
+				C7A721752647898E00436C69 /* WinScene.cpp */,
+				C7A721762647898E00436C69 /* WinScene.h */,
 				C794A6BC2632582C0011BE4A /* SpikeModel.cpp */,
 				C794A6C12632582C0011BE4A /* SpikeModel.h */,
 				C794A6C02632582C0011BE4A /* SpikeNode.cpp */,
@@ -616,7 +637,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = F2S98STJVH;
+						DevelopmentTeam = 6F38AKR3X8;
 						ProvisioningStyle = Automatic;
 					};
 					EB5D204C23FC73FF007D16CD = {
@@ -743,8 +764,10 @@
 				3AEC4CB0261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55F2040A2F400238092 /* LumiaApp.cpp in Sources */,
 				C729A2012620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C7A7217C2647898F00436C69 /* WinScene.cpp in Sources */,
 				C729A25D2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */,
+				C7A721792647898E00436C69 /* PauseScene.cpp in Sources */,
 				C7A721482642058D00436C69 /* ButtonNode.cpp in Sources */,
 				C729A1E7261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1A26082EA900898D04 /* BackgroundNode.cpp in Sources */,
@@ -755,6 +778,7 @@
 				C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
+				C7A7216B26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
 				6144347126194A1900F597E4 /* Door.cpp in Sources */,
 				C79D7E85261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
@@ -780,8 +804,10 @@
 				3AEC4CB1261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EB5D20A623FC77C8007D16CD /* LumiaApp.cpp in Sources */,
 				C729A2022620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C7A7217D2647898F00436C69 /* WinScene.cpp in Sources */,
 				C729A25E2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */,
+				C7A7217A2647898F00436C69 /* PauseScene.cpp in Sources */,
 				C7A721492642058D00436C69 /* ButtonNode.cpp in Sources */,
 				C729A1E8261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1B26082EA900898D04 /* BackgroundNode.cpp in Sources */,
@@ -792,6 +818,7 @@
 				C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
+				C7A7216C26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
 				6144347226194A1900F597E4 /* Door.cpp in Sources */,
 				C79D7E86261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
@@ -817,8 +844,10 @@
 				3AEC4CAF261B8DE00013AEB7 /* TileDataModel.cpp in Sources */,
 				EBB4B55D2040912400238092 /* InputController.cpp in Sources */,
 				C729A2002620E26700BD1C5A /* EnergyNode.cpp in Sources */,
+				C7A7217B2647898F00436C69 /* WinScene.cpp in Sources */,
 				C729A25C2624002500BD1C5A /* CollisionController.cpp in Sources */,
 				EBB4B5582040912400238092 /* LumiaApp.cpp in Sources */,
+				C7A721782647898E00436C69 /* PauseScene.cpp in Sources */,
 				C7A721472642058D00436C69 /* ButtonNode.cpp in Sources */,
 				C729A1E6261FEB2300BD1C5A /* LevelSelectScene.cpp in Sources */,
 				3A9D6A1926082EA900898D04 /* BackgroundNode.cpp in Sources */,
@@ -829,6 +858,7 @@
 				C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
+				C7A7216A26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
 				6144347026194A1900F597E4 /* Door.cpp in Sources */,
 				C79D7E84261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
@@ -856,7 +886,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -881,7 +911,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = F2S98STJVH;
+				DEVELOPMENT_TEAM = 6F38AKR3X8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

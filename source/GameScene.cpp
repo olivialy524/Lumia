@@ -45,7 +45,7 @@ using namespace cugl;
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
-#define EXIT_COUNT      240
+#define EXIT_COUNT      119
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
@@ -62,6 +62,8 @@ using namespace cugl;
 #define STICKY_TEXTURE  "sticky-wall"
 
 #define ENEMY_TEXTURE   "enemy"
+#define ENEMY_CHASE     "enemy-chase"
+#define ENEMY_ESCAPE    "enemy-escape"
 /** The name of a plant (for object identification) */
 #define PLANT_NAME      "plant"
 
@@ -82,7 +84,7 @@ using namespace cugl;
 
 #define ENERGY_NAME     "energy"
 /** The font for victory/failure messages */
-#define MESSAGE_FONT    "retro"
+#define MESSAGE_FONT    "orbitron"
 /** The message for winning the game */
 #define WIN_MESSAGE     "VICTORY!"
 /** The color of the win message */
@@ -110,7 +112,9 @@ using namespace cugl;
 
 #define LIGHT_SOUND "pew"
 
-#define DIE_SOUND "pop"
+#define DIE_SOUND "die"
+
+#define GROW_SOUND "grow"
 
 
 #pragma mark -
@@ -126,11 +130,9 @@ GameScene::GameScene() : Scene2(),
 	_debugnode(nullptr),
 	_world(nullptr),
 	_avatar(nullptr),
-	_complete(false),
 	_debug(false),
     _canSplit(true),
-    _switched(false),
-    _didSwitchLevelSelect(false)
+    _switched(false)
 {    
 }
 
@@ -150,7 +152,7 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
-    
+
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     
@@ -209,8 +211,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
-    bkgNode->setPosition(dimen.width/2, dimen.height/2);
+    bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    bkgNode->setPosition(0, 0);
     bkgNode->setScale(dimen.height/bkgTexture->getHeight());
+    
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -234,24 +238,27 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _UIscene->doLayout(); // Repositions the HUD;
     for (auto it : _UIscene->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "backbutton"){
+        if (button && button->getName() == "panning"){
             button->addListener([=](const std::string& name, bool down) {
-                _didSwitchLevelSelect = true;
-                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
-                AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
-            });
-        }
-        if (button->getName() == "panning"){
-            button->addListener([=](const std::string& name, bool down) {
-                _state = GameState::Paused;
-                _UIscene->setVisible(false);
-                _pausedUI->setVisible(true);
-               
+                if (down && _UIscene->isVisible()) {
+                    _state = GameState::Paused;
+                    _UIscene->setVisible(false);
+                    _pausedUI->setVisible(true);
+                }
             });
                 
         }
-        button->activate();
+        if (button && button->getName() == "pause") {
+            button->addListener([=](const std::string& name, bool down) {
+                if (down && _UIscene->isVisible()) {
+                    _state = GameState::Paused;
+                    setActive(false);
+                    _nextScene = "pause";
+                }
+            });
         }
+        button->activate();
+    }
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
     _pausedUI->setContentSize(dimen.width, dimen.height);
@@ -259,20 +266,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button->getName() == "exit"){
             button->addListener([=](const std::string& name, bool down) {
-                _state = GameState::playing;
-                _UIscene->setVisible(true);
-                _pausedUI->setVisible(false);
+                if (down && _pausedUI->isVisible()) {
+                    _state = GameState::Playing;
+                    _UIscene->setVisible(true);
+                    _pausedUI->setVisible(false);
+                }
             });
                 
         }
         button->activate();
-        }
+    }
     _pausedUI->setVisible(false);
-    
+
     _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
-    
+
     _scrollNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//    _scrollNode->setPosition(0, 0);
+    //_scrollNode->setPosition(0, 0);
     
     // Create the scene graph
     _worldnode = scene2::SceneNode::alloc();
@@ -284,43 +293,39 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 //    _debugnode->setPosition(offset);
 
-    _winnode = scene2::Label::alloc(WIN_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
-    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winnode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
-    _winnode->setForeground(WIN_COLOR);
-    setComplete(false);
-
     _losenode = scene2::Label::alloc(LOSE_MESSAGE, _assets->get<Font>(MESSAGE_FONT));
     _losenode->setAnchor(Vec2::ANCHOR_CENTER);
-    _losenode->setPosition(dimen.width/2.0f,dimen.height/2.0f);
-    _losenode->setForeground(LOSE_COLOR);
+    _losenode->setPosition(dimen.width/2.0f,dimen.height* 2/3.0f);
+    _losenode->setForeground(Color4::WHITE);
+    _losenode->setName("losenode");
+    _loseAnimation = cugl::scene2::AnimationNode::alloc(assets->get<Texture>("death"), 4, 5, 20);
+    _loseAnimation->setAnchor(Vec2::ANCHOR_CENTER);
+    _loseAnimation->setPosition(dimen.width/2.0f,dimen.height/3.0f);
+    _loseAnimation->setFrame(0);
+    _loseAnimation->setName("loseanimation");
     setFailure(false);
     
-    _didSwitchLevelSelect = false;
 //    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
 //    addChild(scene, 0);
-    
+
     _scrollNode->addChild(bkgNode);
     _scrollNode->addChild(_worldnode, 1);
     _scrollNode->addChild(_debugnode, 2);
-    _scrollNode->addChild(_winnode, 3);
-    _scrollNode->addChild(_losenode, 4);
+    _UIscene->addChild(_losenode, 3);
+    _UIscene->addChild(_loseAnimation, 4);
     
     addChild(_scrollNode);
     addChild(_UIscene);
     addChild(_pausedUI);
+    
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 
-    _active = true;
-    _complete = false;
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
-    
-    
     
     setActive(true);
     // XNA nostalgia
@@ -332,64 +337,67 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
-    if (_active) {
-        _collisionController.dispose();
-        _trajectoryNode->dispose();
-        _avatarIndicatorNode->dispose();
-        _level->resetLevel();
-        _sensorFixtureMap.clear();
-        _sensorFixtureMap2.clear();
-        _graph.clear();
-        std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
-        for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
-            l->dispose();
-        }
-        _lumiaList.clear();
-        _avatar = nullptr;
-
-        for (const std::shared_ptr<Plant> &p : _plantList) {
-            p->dispose();
-        }
-        _plantList.clear();
-            
-        for (const std::shared_ptr<EnergyModel> &e : _energyList) {
-            e->dispose();
-        }
-        _energyList.clear();
-
-        for (const std::shared_ptr<Door> & d: _doorList) {
-            d->dispose();
-        }
-        _doorList.clear();
-            
-        for (const std::shared_ptr<Button> & b: _buttonList) {
-            b->dispose();
-        }
-        _buttonList.clear();
-            
-        for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
-            enemy->dispose();
-        }
-        _enemyList.clear();
-
-        for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
-            t->dispose();
-        }
-        _tutorialList.clear();
-
-        _world = nullptr;
-        _worldnode = nullptr;
-        _debugnode = nullptr;
-        _winnode = nullptr;
-        _losenode = nullptr;
-        _complete = false;
-        _failed = false;
-        _debug = false;
-        _didSwitchLevelSelect = false;
-        _UIelements.clear();
-        Scene2::dispose();
-        setActive(false);
+    _collisionController.dispose();
+    _trajectoryNode->dispose();
+    _avatarIndicatorNode->dispose();
+    _level->resetLevel();
+    _sensorFixtureMap.clear();
+    _sensorFixtureMap2.clear();
+    _graph.clear();
+    if (_UIscene->getChildByName("losenode")) {
+        _UIscene->removeChild(_losenode);
     }
+    if (_UIscene->getChildByName("loseanimation")) {
+        _UIscene->removeChild(_loseAnimation);
+    }
+    _scrollNode->dispose();
+    std::queue<std::shared_ptr<LumiaModel>>().swap(_dyingLumiaQueue);
+    for (const std::shared_ptr<LumiaModel> &l : _lumiaList) {
+        l->dispose();
+    }
+    _lumiaList.clear();
+    _avatar = nullptr;
+
+    for (const std::shared_ptr<Plant> &p : _plantList) {
+        p->dispose();
+    }
+    _plantList.clear();
+            
+    for (const std::shared_ptr<EnergyModel> &e : _energyList) {
+        e->dispose();
+    }
+    _energyList.clear();
+
+    for (const std::shared_ptr<Door> & d: _doorList) {
+        d->dispose();
+    }
+    _doorList.clear();
+            
+    for (const std::shared_ptr<Button> & b: _buttonList) {
+        b->dispose();
+    }
+    _buttonList.clear();
+            
+    for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
+        enemy->dispose();
+    }
+    _enemyList.clear();
+
+    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
+        t->dispose();
+    }
+    _tutorialList.clear();
+
+    _world = nullptr;
+    _worldnode = nullptr;
+    _debugnode = nullptr;
+    _losenode = nullptr;
+    _failed = false;
+    _debug = false;
+    _state = GameScene::Playing;
+    _UIelements.clear();
+    Scene2::dispose();
+    setActive(false);
 
     //std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
     //AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
@@ -404,6 +412,7 @@ void GameScene::dispose() {
  * This method disposes of the world and creates a new one.
  */
 void GameScene::reset() {
+    _scrollNode->setColor(Color4::WHITE);
     _world->clear();
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -446,7 +455,6 @@ void GameScene::reset() {
     _lastSpikeCollision = NULL;
     _level->resetLevel();
     setFailure(false);
-    setComplete(false);
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
 }
@@ -628,8 +636,6 @@ void GameScene::populate() {
     _avatar->setName(LUMIA_NAME);
 	_avatar->setDebugColor(DEBUG_COLOR);
     _lumiaList.push_back(_avatar);
-//    Vec2 lumiaPos = _avatar->getPosition();
-//    _graph[{Vec2(floor(lumiaPos.x), floor(lumiaPos.y))}] = NodeState::Lumia;
     std::unordered_set<b2Fixture*> fixtures;
     _sensorFixtureMap[_avatar.get()] = fixtures;
     std::unordered_set<b2Fixture*> fixtures2;
@@ -639,16 +645,15 @@ void GameScene::populate() {
 #pragma mark : Enemies
     vector<std::shared_ptr<EnemyModel>> enemies = _level->getEnemies();
     
-    image = _assets->get<Texture>(ENEMY_TEXTURE);
+    image = _assets->get<Texture>(ENEMY_ESCAPE);
+    std::shared_ptr<Texture> chasing = _assets->get<Texture>(ENEMY_CHASE);
     for (int i = 0; i < enemies.size(); i++) {
         std::shared_ptr<EnemyModel> enemy = enemies[i];
         enemy->setDrawScale(_scale);
-        enemy->setTextures(image);
+        enemy->setTextures(chasing, image);
         enemy->setName(ENEMY_TEXTURE);
         enemy->setDebugColor(DEBUG_COLOR);
         addObstacle(enemy, enemy->getSceneNode(), 3);
-//        Vec2 enemyPos = enemy->getPosition();
-//        _graph[{Vec2(floor(enemyPos.x), floor(enemyPos.y))}] = NodeState::Enemy;
         _enemyList.push_back(enemy);
     }
     
@@ -723,7 +728,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::physics2::Obstacle>& obj
 
 void GameScene::update(float dt) {
     switch (_state) {
-        case GameState::playing:
+        case GameState::Playing:
             updateGame(dt);
             break;
         case GameState::Paused:
@@ -757,14 +762,11 @@ void GameScene::updatePaused(float dt, float startX) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
-            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
-
             float radius = lumia->getRadius() * _scale; // world coordinates
-            CULog("%f", radius);
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
-                _state = GameState::playing;
+                _state = GameState::Playing;
                 _UIscene->setVisible(true);
                 _pausedUI->setVisible(false);
             }
@@ -800,8 +802,6 @@ void GameScene::updateGame(float dt) {
     
 
     for (const std::shared_ptr<LumiaModel>& lumia : _collisionController.getLumiasToRemove()) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
-        AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
         if (lumia->isDying()){
             deactivateLumiaPhysics(lumia);
             _dyingLumiaQueue.push(lumia);
@@ -827,6 +827,7 @@ void GameScene::updateGame(float dt) {
     }
 
     for (const std::shared_ptr<EnergyModel>& energy : _collisionController.getEnergiesToRemove()) {
+        playGrowSound();
         removeEnergy(energy);
     }
 
@@ -885,6 +886,7 @@ void GameScene::updateGame(float dt) {
                 temp->setRemoved(true);
             } else {
                 _collisionController.addLumiaToRemove(lumia);
+                playDieSound();
                 lumia->setRemoved(true);
             }
         }
@@ -896,8 +898,6 @@ void GameScene::updateGame(float dt) {
         for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
             cugl::Vec2 lumiaPosition = lumia->getPosition() * _scale; // world coordinates
             cugl::Vec3 tapLocationWorld = getCamera()->screenToWorldCoords(tapLocation) - _scrollNode->getPosition();
-            CULog("lumia: (%f, %f) tap: (%f, %f)", lumiaPosition.x, lumiaPosition.y, tapLocationWorld.x, tapLocation.y);
-
             float radius = lumia->getRadius() * _scale; // world coordinates
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
@@ -942,8 +942,7 @@ void GameScene::updateGame(float dt) {
         if(_input->didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
         }else if (_input->didSplit() && _avatar->getSizeLevel()!=0){
-            std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
-            AudioEngine::get()->play(SPLIT_SOUND,source, false, _effectVolume, true);
+            playSplitSound();
             _avatar->setState(LumiaModel::LumiaState::Splitting);
         }else{
             _avatar->setState(LumiaModel::LumiaState::Idle);
@@ -997,9 +996,6 @@ void GameScene::updateGame(float dt) {
                     splitVel1 = Vec2(currentVel.x, currentVel.y + 1.0f);
                     splitVel2 = Vec2(currentVel.x, currentVel.y - 1.0f);
                 }
-
-                CULog("current: (%f, %f)", currentVel.x, currentVel.y);
-                CULog("split1: (%f, %f) split2: (%f, %f)", splitVel1.x, splitVel1.y, splitVel2.x, splitVel2.y);
                 removeLumiaNode(_avatar);
                 if ((currentSizeLevel + 1) % 2 == 0) {
                     int newSize = ((currentSizeLevel + 1) / 2) - 1;
@@ -1075,6 +1071,7 @@ void GameScene::updateGame(float dt) {
             if (lumia == _avatar){
                 switchToNearestLumia(_avatar);
             }
+            playDieSound();
             removeLumiaNode(lumia);
         }else{
             _dyingLumiaQueue.push(lumia);
@@ -1098,14 +1095,14 @@ void GameScene::updateGame(float dt) {
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
                 if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
                     enemy->setVelocity(-distance.normalize() * 1.5f);
-                    enemy->setFleeingTint();
+                    enemy->setEscaping();
                 } else {
                     enemy->setVelocity(distance.normalize() * 1.5f);
-                    enemy->resetTint();
+                    enemy->setChasing();
                 }
             } else {
                 enemy->setVelocity(Vec2::ZERO);
-                enemy->resetTint();
+                enemy->setIdle();
             }
             enemy->setInCoolDown(false);
         }
@@ -1136,40 +1133,29 @@ void GameScene::updateGame(float dt) {
 		setFailure(true);
 	}
     
-    if (!_failed && !_complete) {
+    if (!_failed) {
         checkWin();
     }
 
 	// Reset the game if we win or lose.
 	if (_countdown > 0) {
-		_countdown--;
+        if (_failed){
+            if (_countdown % 6 == 0){
+                int frame = _loseAnimation->getFrame() + 1 < 20 ? _loseAnimation->getFrame() + 1 : 19;
+                _loseAnimation->setFrame(frame);
+            }
+        }
+        _countdown--;
 	} else if (_countdown == 0) {
+        _loseAnimation->setFrame(0);
+        int stars = getStars();
+        setPrevStars(stars);
+        setPrevScore(calcScore());
 		reset();
 	}
 }
 
 
-
-/**
-* Sets whether the level is completed.
-*
-* If true, the level will advance after a countdown
-*
-* @param value whether the level is completed.
-*/
-void GameScene::setComplete(bool value) {
-    bool change = _complete != value;
-	_complete = value;
-	if (value && change) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
-        AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
-		_winnode->setVisible(true);
-		_countdown = EXIT_COUNT;
-	} else if (!value) {
-		_winnode->setVisible(false);
-		_countdown = -1;
-	}
-}
 
 /**
  * Sets whether the level is failed.
@@ -1184,9 +1170,12 @@ void GameScene::setFailure(bool value) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_MUSIC);
         AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
 		_losenode->setVisible(true);
+        _loseAnimation->setVisible(true);
+        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
 		_countdown = EXIT_COUNT;
 	} else {
 		_losenode->setVisible(false);
+        _loseAnimation->setVisible(false);
 		_countdown = -1;
 	}
 }
@@ -1197,9 +1186,53 @@ void GameScene::checkWin() {
             return;
         }
     }
-    setComplete(true);
+
+    _state = GameState::Paused;
+    setActive(false);
+    _nextScene = "win";
 }
 
+int GameScene::calcScore() {
+    int score = 0;
+    for (auto & lumia : _lumiaList){
+        score = score + lumia->getSizeLevel()+1;
+    }
+    return score*1000;
+}
+
+int GameScene::getStars() {
+    int score = calcScore();
+    if (score >= _level->getThreeStarScore()) {
+        return 3;
+    }
+    if (score >= _level->getTwoStarScore()) {
+        return 2;
+    }
+    if (score >= 0) {
+        return 1;
+    }
+    return 0;
+}
+
+void GameScene::playSplitSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
+    AudioEngine::get()->play(SPLIT_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playLightSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
+    AudioEngine::get()->play(LIGHT_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playDieSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(DIE_SOUND);
+    AudioEngine::get()->play(DIE_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playGrowSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(GROW_SOUND);
+    AudioEngine::get()->play(GROW_SOUND, source, false, _effectVolume, true);
+}
 /**
  * Add a new Lumia to the world.
  */
@@ -1276,6 +1309,7 @@ void GameScene::removeEnemy(shared_ptr<EnemyModel> enemy) {
     if (enemy->isRemoved()) {
         return;
     }
+    playGrowSound();
     _worldnode->removeChild(enemy->getSceneNode());
 
     std::list<shared_ptr<EnemyModel>>::iterator position = std::find(_enemyList.begin(), _enemyList.end(), enemy);
@@ -1399,15 +1433,13 @@ void GameScene::beginContact(b2Contact* contact) {
             // plant must not already be lit
             if (!((Plant*)bd1)->getIsLit()) {
                 ((Plant*)bd1)->lightUp();
-                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
-                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
-                std::shared_ptr<Sound> source = _assets->get<Sound>(LIGHT_SOUND);
-                AudioEngine::get()->play(LIGHT_SOUND,source, false, _effectVolume, true);
+                playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
             }
         // handle collision between spike and Lumia

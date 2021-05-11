@@ -10,15 +10,76 @@
 
 #include "EnemyNode.h"
 
+void EnemyNode::dispose(){
+    _chasingAnimation = nullptr;
+    _escapingAnimation = nullptr;
+}
+
+bool EnemyNode::setTextures(const std::shared_ptr<cugl::Texture> &chasingAnimation,
+                            const std::shared_ptr<cugl::Texture> &escapingAnimation,
+                            float radius,
+                            float drawScale){
+    auto scale =  radius*2/(chasingAnimation->getHeight()/drawScale);
+    setScale(scale);
+    
+    _chasingAnimation = cugl::scene2::AnimationNode::alloc(chasingAnimation, 1, 12, 12);
+    _chasingAnimation->setAnchor(Vec2::ZERO);
+    _chasingAnimation->setFrame(0);
+    addChild(_chasingAnimation);
+    
+    _escapingAnimation = cugl::scene2::AnimationNode::alloc(escapingAnimation, 1, 12, 12);
+    _escapingAnimation->setAnchor(Vec2::ZERO);
+    _escapingAnimation->setFrame(0);
+    float xscale = chasingAnimation->getWidth() / 12.0f;
+    float xscale2 = escapingAnimation->getWidth() / 12.0f;
+    _escapingAnimation->setScale( xscale/xscale2);
+    addChild(_escapingAnimation);
+    return true;
+}
+
+void EnemyNode::setAnimState(EnemyAnimState state){
+    switch (state){
+        case Idle:
+        case Escaping:{
+            _chasingAnimation->setVisible(false);
+            _escapingAnimation->setVisible(true);
+            break;
+        }
+        case Chasing:{
+            _chasingAnimation->setVisible(true);
+            _escapingAnimation->setVisible(false);
+            break;
+        }
+    }
+    _state = state;
+
+}
 
 void EnemyNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
                       const cugl::Mat4& transform, cugl::Color4 tint) {
-    if (_frameCount == 0){
-        int frame = AnimationNode::getFrame() + 1 > 17 ? 0 : AnimationNode::getFrame() + 1;
-        AnimationNode::setFrame(frame);
+    
+    switch (_state){
+        case Chasing:{
+            _frameCount %= ANIMATION_INTERVAL;
+            
+            if (_frameCount == 0){
+                int frame = _chasingAnimation->getFrame() + 1 >= 12 ? 0 : _chasingAnimation->getFrame() + 1 ;
+                _chasingAnimation->setFrame(frame);
+            }
+            break;
+        }
+        case Idle:
+        case Escaping:{
+            _frameCount %= ANIMATION_INTERVAL;
+            
+            if (_frameCount == 0){
+                int frame = _escapingAnimation->getFrame() + 1 >= 12 ? 0 : _escapingAnimation->getFrame() + 1 ;
+                _escapingAnimation->setFrame(frame);
+            }
+            break;
+        }
     }
-    _frameCount = (_frameCount + 1) % ANIMATION_INTERVAL;
+    _frameCount++;
     
-    AnimationNode::draw(batch, transform, tint);
-    
+    SceneNode::draw(batch, transform, tint);
 }

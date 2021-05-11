@@ -60,6 +60,8 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json){
     std::shared_ptr<cugl::JsonValue> _leveljson = json->get("level");
     _xBound = _leveljson->getFloat("xBound");
     _yBound = _leveljson->getFloat("yBound");
+    _twoStarScore = _leveljson->getInt("twostars");
+    _threeStarScore = _leveljson->getInt("threestars");
     std::shared_ptr<cugl::JsonValue> plants_json = _leveljson->get("plants");
     std::shared_ptr<cugl::JsonValue> spikes_json = _leveljson->get("spikes");
     std::shared_ptr<cugl::JsonValue> energies_json = _leveljson->get("energies");

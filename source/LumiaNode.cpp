@@ -13,6 +13,7 @@
 void LumiaNode::dispose(){
     _idleAnimation = nullptr;
     _splittingAnimation = nullptr;
+    _deathAnimation = nullptr;
 }
 
 bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,

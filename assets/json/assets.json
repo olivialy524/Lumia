@@ -106,8 +106,11 @@
         "sliderbutton": {
             "file": "textures/sliderbutton.png"
         },
-        "enemy": {
-            "file": "textures/enemy.png"
+        "enemy-chase": {
+            "file": "textures/enemy-chase.png"
+        },
+        "enemy-escape": {
+            "file": "textures/enemy-escape.png"
         },
         "spike": {
             "file": "textures/spike.png"
@@ -132,6 +135,36 @@
         },
         "try-again": {
             "file": "textures/try-again.png"
+        },
+        "levelpauseicon": {
+            "file": "textures/levelpauseicon.png"
+        },
+        "levelsbutton": {
+            "file": "textures/levelsbutton.png"
+        },
+        "replaybutton": {
+            "file": "textures/replaybutton.png"
+        },
+        "pausedetails": {
+            "file": "textures/pausedetails.png"
+        },
+        "continuebutton": {
+            "file": "textures/continuebutton.png"
+        },
+        "star-filled": {
+            "file": "textures/star-filled.png"
+        },
+        "star-empty": {
+            "file": "textures/star-empty.png"
+        },
+        "continuebuttontext": {
+            "file": "textures/continuebuttontext.png"
+        },
+        "winbackground": {
+            "file": "textures/winbackground.png"
+        },
+        "levelbanner": {
+            "file": "textures/levelbanner.png"
         }
     },
     "sounds": {
@@ -173,6 +206,21 @@
             "file": "sounds/UITheme.ogg",
             "stream": true,
             "volume": 0.5
+        },
+        "light": {
+            "type":     "sample",
+            "file":     "sounds/magicplantlightup.wav",
+            "volume":   0.2
+        },
+        "die": {
+            "type":     "sample",
+            "file":     "sounds/lumiabodydying.wav",
+            "volume":   0.2
+        },
+        "grow": {
+            "type":     "sample",
+            "file":     "sounds/gainsize.wav",
+            "volume":   0.2
         }
     },
 	"fonts": {
@@ -272,16 +320,6 @@
                 "type" : "Anchored"
             },
             "children":  {
-
-                "backbutton"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "backbutton",
-                        "variables" : {
-                            "texture": "back"
-                        }
-                    }
-                },
                 "panning"  : {
                     "type": "Widget",
                     "data": {
@@ -298,6 +336,679 @@
                         "variables" : {
                             "texture": "pausebutton"
                         }
+                    }
+                }
+            }
+        },
+        "pausescreen": {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "background",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "pauselabel" : {
+                    "type"   : "Label",
+                    "data"   : {
+                        "font"       : "orbitron",
+                        "text"       : "Game Paused",
+                        "foreground" : [255,255,255,255],
+                        "halign"     : "center",
+                        "valign"     : "top"
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill",
+                        "y_offset" : 0.03
+                    }
+                },
+                "levelicon": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "levelpauseicon",
+                        "size"     : [120, 120]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "pausepatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "label" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronblack",
+                                "text"       : "1",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill",
+                                "x_offset" : 0
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "left",
+                        "y_anchor" : "top",
+                        "y_offset" : -0.23,
+                        "x_offset" : 0.1
+                    }
+                },
+                "details": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "pausedetails",
+                        "size":[440, 200]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "pausepatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "plantlabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "3/4",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "top",
+                                "x_offset" : -0.4,
+                                "y_offset": -0.4
+                            }
+                        },
+                        "enemylabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "1/2",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "bottom",
+                                "x_offset" : -0.4,
+                                "y_offset": 0.15
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset": -0.2,
+                        "y_offset": -0.1
+                    }
+                },
+                "settings"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "settingsbutton"
+                        }
+                    }
+                },
+                "levelselectbutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [215, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "levelsbutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "x_offset": 0.25,
+                        "y_offset": 0.2
+                    }
+                },
+                "continuebutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [140, 140],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "continuebutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "bottom",
+                        "y_offset": 0.2
+                    }
+                },
+                "replaybutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [230, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "replaybutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "bottom",
+                        "x_offset": -0.25,
+                        "y_offset": 0.2
+                    }
+                }
+            }
+        },
+        "winscreen": {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "winbackground",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "levelbanner": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "levelbanner",
+                        "size": [1050, 170],
+                        "anchor": [0.5,0.5]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "winpatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "levellabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronblack",
+                                "text"       : "1",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "y_offset": 35,
+                                "absolute": true
+                            }
+                        },
+                        "star1empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": -75,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star1filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": -75,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star2empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "y_offset": -35,
+                                "x_offset": 8,
+                                "absolute": true
+                            }
+                        },
+                        "star2filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "y_offset": -35,
+                                "x_offset": 8,
+                                "absolute": true
+                            }
+                        },
+                        "star3empty": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-empty",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5]
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": 85,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        },
+                        "star3filled": {
+                            "type": "Image",
+                            "data"   : {
+                                "texture"  : "star-filled",
+                                "size": [50, 50],
+                                "anchor": [0.5,0.5],
+                                "visible": false
+                            },
+                            "layout": {
+                                "x_anchor" : "center",
+                                "y_anchor" : "bottom",
+                                "x_offset": 85,
+                                "y_offset": 10,
+                                "absolute": true
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "center",
+                        "y_anchor" : "top",
+                        "absolute" : true,
+                        "y_offset": -90
+                    }
+                },
+                "winlabel" : {
+                    "type"   : "Label",
+                    "data"   : {
+                        "font"       : "orbitron",
+                        "text"       : "Level 1 completed!",
+                        "foreground" : [255,255,255,255],
+                        "halign"     : "center",
+                        "valign"     : "top"
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill",
+                        "y_offset" : 0.2
+                    }
+                },
+                "details": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "pausedetails",
+                        "size": [396, 180],
+                        "anchor": [0.5,0.5]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "pausepatch" : {
+                            "type"   : "NinePatch",
+                            "data"   : {
+                                "visible": false
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        },
+                        "plantlabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "3/4",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "top",
+                                "x_offset" : -0.4,
+                                "y_offset": -0.4
+                            }
+                        },
+                        "enemylabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "1/2",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "right",
+                                "y_anchor" : "bottom",
+                                "x_offset" : -0.4,
+                                "y_offset": 0.15
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "y_offset": -0.18
+                    }
+                },
+                "settings"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "toprightbutton",
+                        "variables" : {
+                            "texture": "settingsbutton"
+                        }
+                    }
+                },
+                "levelselectbutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [215, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "levelsbutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "x_offset": 0.2,
+                        "y_offset": 0.1
+                    }
+                },
+                "replaybutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [230, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "replaybutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "bottom",
+                        "y_offset": 0.1
+                    }
+                },
+                "continuebutton"  : {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [250, 50],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "toprightpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "continuebuttontext",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "bottom",
+                        "x_offset": -0.2,
+                        "y_offset": 0.1
                     }
                 }
             }
@@ -325,6 +1036,42 @@
                 "type": "Anchored"
             },
             "children"  : {
+                "tutorial1"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T1",
+                            "x_offset": 340,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial2"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T2",
+                            "x_offset": 490,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "tutorial3"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "T3",
+                            "x_offset": 640,
+                            "y_offset": -130,
+                            "texture": "level_complete"
+                        }
+                    }
+                },
                 "levelbutton1"  : {
                     "type": "Widget",
                     "data": {
@@ -370,42 +1117,6 @@
                             "text": "4",
                             "x_offset": 1200,
                             "y_offset": 110,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial1"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T1",
-                            "x_offset": 340,
-                            "y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial2"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T2",
-                            "x_offset": 490,
-                            "y_offset": -130,
-                            "texture": "level_complete"
-                        }
-                    }
-                },
-                "tutorial3"  : {
-                    "type": "Widget",
-                    "data": {
-                        "key"   : "levelbutton",
-                        "variables" : {
-                            "text": "T3",
-                            "x_offset": 640,
-                            "y_offset": -130,
                             "texture": "level_complete"
                         }
                     }

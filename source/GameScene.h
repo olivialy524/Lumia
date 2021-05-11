@@ -60,10 +60,10 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winnode;
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _loseAnimation;
 
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
@@ -102,8 +102,6 @@ protected:
     std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
 
     
-    /** Whether we have completed this "game" */
-    bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
     /** Whether we have failed at this world (and need a reset) */
@@ -119,6 +117,9 @@ protected:
     
     bool _canSplit;
 
+    int _prevscore;
+    
+    int _prevstars;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -130,7 +131,7 @@ protected:
     /** Tick of last time a Lumia hit a spike */
     int _lastSpikeCollision;
     
-    bool _didSwitchLevelSelect;
+    string _nextScene;
     
 #pragma mark Internal Object Management
     
@@ -146,7 +147,7 @@ protected:
      * with your serialization loader, which would process a level file.
      */
     void populate();
-    
+
     /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
      *
@@ -181,10 +182,18 @@ public:
 #pragma mark Game state
     enum GameState {
         Paused,
-        playing
+        Playing
     };
     
-    GameState _state = GameState::playing;
+    GameState _state = GameState::Playing;
+
+    void setPlaying() { _state = GameState::Playing; }
+    
+    void setPaused() { _state = GameState::Paused; }
+
+    GameState getState() { return _state; }
+
+
 #pragma mark Constructors
 
     /**
@@ -290,24 +299,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    bool isComplete() const { return _complete; }
-    
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-	void setComplete(bool value);
 
 	/**
 	* Returns true if the level is failed.
@@ -317,10 +308,8 @@ public:
 	* @return true if the level is failed.
 	*/
 	bool isFailure() const { return _failed; }
-    
-    bool didSwitchLevelSelect(){
-        return _didSwitchLevelSelect;
-    }
+
+    string getNextScene() { return _nextScene; }
 
 	/**
 	* Sets whether the level is failed.
@@ -424,7 +413,33 @@ public:
     
     void updatePaused(float dt, float startX);
     
-
+    int calcScore();
+    
+    int getStars();
+    
+    int getPrevScore() {
+        return _prevscore;
+    }
+    
+    void setPrevScore(int s) {
+        _prevscore = s;
+    }
+    
+    int getPrevStars() {
+        return _prevstars;
+    }
+    
+    void setPrevStars(int p) {
+        _prevstars = p;
+    }
+    
+    void playSplitSound();
+    
+    void playDieSound();
+    
+    void playLightSound();
+    
+    void playGrowSound();
     /**
      * Calculates trajectory point one timestep into future
      *
@@ -437,6 +452,8 @@ public:
                             float n);
 
   };
+
+
 
 
 #endif /* __GAME_SCENE_H__ */
