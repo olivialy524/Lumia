@@ -11,13 +11,15 @@
 
 void StickyWallModel::setTextures(const std::shared_ptr<Texture>& texture){
     
-    _sceneNode = scene2::SceneNode::allocWithBounds(Size(getWidth()*_drawscale/5.0f * 2.0f,getHeight()*_drawscale));
+    _sceneNode = scene2::SceneNode::allocWithBounds(Size(getWidth()*_drawscale,getHeight()*_drawscale));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode->setAngle(getAngle());
-    float scale = getWidth()/(texture->getWidth()/5.0f/_drawscale) * 2.0f;
+    float scale = getWidth() * _drawscale/(texture->getWidth()/5.0f);
+    float scale2 = 1.0/scale;
     _node = StickyWallNode::alloc(texture, 1, 5, 5);
+
+    _node->setPolygon(Rect(getX()*_drawscale, getY()*_drawscale, texture->getWidth()/5.0f, getHeight()*_drawscale *scale2));
     _node->setScale(scale);
-    _node->setPolygon(Rect(getX()*_drawscale, getY()*_drawscale, getWidth()*_drawscale * 2.0f, getHeight()*_drawscale));
     _node->setAnchor(Vec2::ZERO);
     _node->setFrame(0);
     _sceneNode->addChild(_node);
