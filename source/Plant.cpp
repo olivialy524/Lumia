@@ -19,7 +19,6 @@ void Plant::setTextures(const std::shared_ptr<Texture>& plant, float angle) {
     auto scale = 2.5f * getWidth()/(plant->getWidth()/10.0f/_drawScale);
     _node->setScale(scale);
     _plantNode->setAnchor(Vec2::ZERO);
-//    _plantNode->setPosition(Vec2(0.0f, plant->getHeight()/2.0f/5.0f));
     _node->addChild(_plantNode);
 }
 

@@ -13,7 +13,7 @@
 #define __PAUSE_SCENE_H__
 
 #include <cugl/cugl.h>
-
+#include "BackgroundNode.h"
 /**
  * A scene for demoing a slider
  */
@@ -32,6 +32,8 @@ protected:
 
     int _totalPlants;
     int _litPlants;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _wrapperNode;
     
 public:
 #pragma mark -
