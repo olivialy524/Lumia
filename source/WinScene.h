@@ -13,6 +13,7 @@
 #define __WIN_SCENE_H__
 
 #include <cugl/cugl.h>
+#include "BackgroundNode.h"
 
 /**
  * A scene for demoing a slider
@@ -26,6 +27,8 @@ protected:
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _wrapperNode;
     
 public:
 #pragma mark -

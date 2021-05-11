@@ -41,13 +41,24 @@ bool WinScene::init(const std::shared_ptr<AssetManager>& assets) {
 
     
     _assets = assets;
+    _wrapperNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(1200, 700);
+    
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
+    std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
+    
+    bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    bkgNode->setPosition(0,0.0f);
+    addChild(bkgNode);
     auto layer = assets->get<scene2::SceneNode>("winscreen");
-    layer->setContentSize(dimen);
+    layer->setContentSize(1200, 700);
     layer->doLayout(); // This rearranges the children to fit the screen
-    addChild(layer);
+    layer->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    layer->setPosition(0, 0);
+    _wrapperNode->addChild(layer);
+    
     
     std::vector<std::shared_ptr<scene2::SceneNode>> pauseSceneChildren = layer->getChildren();
-    for (int i = 4; i < pauseSceneChildren.size(); i++) {
+    for (int i = 3; i < pauseSceneChildren.size(); i++) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(pauseSceneChildren[i]);
         _buttons[button->getName()] = button;
         if (button->getName() == "settings") {
@@ -77,6 +88,12 @@ bool WinScene::init(const std::shared_ptr<AssetManager>& assets) {
         button->activate();
     }
     setActive(_active);
+    
+    _wrapperNode->setScale(dimen.height/700);
+    bkgNode->setScale(dimen.height/700);
+    _wrapperNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _wrapperNode->setPosition(dimen.width/2, dimen.height/2);
+    addChild(_wrapperNode);
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
