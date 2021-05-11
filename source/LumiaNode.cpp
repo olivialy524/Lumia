@@ -59,7 +59,7 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     _deathAnimation->setPosition(offset/2);
     float xscale = idleAnimation->getWidth();
     float xscale2 = deathAnimation->getWidth();
-    _deathAnimation->setScale( xscale/xscale2);
+    _deathAnimation->setScale(xscale/xscale2);
     _deathAnimation->setFrame(0);
     addChild(_deathAnimation);
     

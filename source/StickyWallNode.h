@@ -21,11 +21,9 @@ protected:
 
     const int ANIMATION_INTERVAL = 12;
     
-    const int FRAME_SIZE = 1;
+    const int FRAME_SIZE = 5;
     
 public:
-    
-    cugl::Color4 _stint;
     
     StickyWallNode() : _frameCount(0), AnimationNode() {}
 
