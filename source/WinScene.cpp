@@ -57,9 +57,9 @@ bool WinScene::init(const std::shared_ptr<AssetManager>& assets) {
     _wrapperNode->addChild(layer);
     
     
-    std::vector<std::shared_ptr<scene2::SceneNode>> pauseSceneChildren = layer->getChildren();
-    for (int i = 3; i < pauseSceneChildren.size(); i++) {
-        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(pauseSceneChildren[i]);
+    std::vector<std::shared_ptr<scene2::SceneNode>> winSceneChildren = layer->getChildren();
+    for (int i = 4; i < winSceneChildren.size(); i++) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(winSceneChildren[i]);
         _buttons[button->getName()] = button;
         if (button->getName() == "settings") {
             button->addListener([=](const std::string& name, bool down) {

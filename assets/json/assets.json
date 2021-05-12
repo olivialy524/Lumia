@@ -160,11 +160,14 @@
         "continuebuttontext": {
             "file": "textures/continuebuttontext.png"
         },
-        "winbackground": {
-            "file": "textures/winbackground.png"
-        },
         "levelbanner": {
             "file": "textures/levelbanner.png"
+        },
+        "uibackground": {
+            "file": "textures/uibackground.png"
+        },
+        "windetails": {
+            "file": "textures/windetails.png"
         }
     },
     "sounds": {
@@ -232,6 +235,10 @@
 			"file":     "fonts/Orbitron-Regular.ttf",
 			"size":     30
 		},
+        "orbitronlarge": {
+            "file":     "fonts/Orbitron-Regular.ttf",
+            "size":     50
+        },
 		"orbitronblack": {
 			"file":     "fonts/Orbitron-Black.ttf",
 			"size":     30
@@ -346,11 +353,22 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "uibackground",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
                 "pauselabel" : {
                     "type"   : "Label",
                     "data"   : {
-                        "font"       : "orbitron",
-                        "text"       : "Game Paused",
+                        "font"       : "orbitronlarge",
+                        "text"       : "Game paused",
                         "foreground" : [255,255,255,255],
                         "halign"     : "center",
                         "valign"     : "top"
@@ -358,14 +376,14 @@
                     "layout" : {
                         "x_anchor" : "fill",
                         "y_anchor" : "fill",
-                        "y_offset" : 0.07
+                        "y_offset" : 0.1
                     }
                 },
                 "levelicon": {
                     "type"   : "Image",
                     "data"   : {
                         "texture"  : "levelpauseicon",
-                        "size"     : [160, 160]
+                        "size"     : [222, 204]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -393,14 +411,16 @@
                             "layout" : {
                                 "x_anchor" : "fill",
                                 "y_anchor" : "fill",
-                                "x_offset" : 0
+                                "absolute": true,
+                                "x_offset" : 30,
+                                "y_offset": -20
                             }
                         }
                     },
                     "layout": {
                         "x_anchor" : "left",
                         "y_anchor" : "top",
-                        "y_offset" : -0.3,
+                        "y_offset" : -0.4,
                         "x_offset" : 0.05
                     }
                 },
@@ -408,7 +428,7 @@
                     "type"   : "Image",
                     "data"   : {
                         "texture"  : "pausedetails",
-                        "size":[374, 170]
+                        "size": [338, 96]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -434,26 +454,11 @@
                                 "valign"     : "middle"
                             },
                             "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "top",
-                                "x_offset" : -0.4,
-                                "y_offset": -0.4
-                            }
-                        },
-                        "enemylabel" : {
-                            "type"   : "Label",
-                            "data"   : {
-                                "font"       : "orbitronsmall",
-                                "text"       : "1/2",
-                                "foreground" : [255, 255, 255, 255],
-                                "halign"     : "center",
-                                "valign"     : "middle"
-                            },
-                            "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "bottom",
-                                "x_offset" : -0.4,
-                                "y_offset": 0.15
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 40
                             }
                         }
                     },
@@ -624,6 +629,17 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "uibackground",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
                 "levelbanner": {
                     "type"   : "Image",
                     "data"   : {
@@ -765,7 +781,7 @@
                 "winlabel" : {
                     "type"   : "Label",
                     "data"   : {
-                        "font"       : "orbitron",
+                        "font"       : "orbitronlarge",
                         "text"       : "Level 1 completed!",
                         "foreground" : [255,255,255,255],
                         "halign"     : "center",
@@ -780,8 +796,8 @@
                 "details": {
                     "type"   : "Image",
                     "data"   : {
-                        "texture"  : "pausedetails",
-                        "size": [396, 180],
+                        "texture"  : "windetails",
+                        "size": [510, 108],
                         "anchor": [0.5,0.5]
                     },
                     "format"    : {
@@ -802,32 +818,17 @@
                             "type"   : "Label",
                             "data"   : {
                                 "font"       : "orbitronsmall",
-                                "text"       : "3/4",
+                                "text"       : "3",
                                 "foreground" : [255, 255, 255, 255],
                                 "halign"     : "center",
                                 "valign"     : "middle"
                             },
                             "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "top",
-                                "x_offset" : -0.4,
-                                "y_offset": -0.4
-                            }
-                        },
-                        "enemylabel" : {
-                            "type"   : "Label",
-                            "data"   : {
-                                "font"       : "orbitronsmall",
-                                "text"       : "1/2",
-                                "foreground" : [255, 255, 255, 255],
-                                "halign"     : "center",
-                                "valign"     : "middle"
-                            },
-                            "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "bottom",
-                                "x_offset" : -0.4,
-                                "y_offset": 0.15
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 140
                             }
                         }
                     },
