@@ -60,6 +60,9 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
+
+    std::shared_ptr<scene2::Label> _progressLabel;
+
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
     

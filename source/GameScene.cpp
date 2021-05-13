@@ -257,7 +257,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                 }
             });
         }
-        button->activate();
+        if (button) {
+            button->activate();
+        }
     }
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
@@ -322,7 +324,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _effectVolume = 1.0f;
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
-
+    _progressLabel = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("gameUI_progress_progresslabel"));
+    _progressLabel->setText("0/" + to_string(_plantList.size()));
     _ticks = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
@@ -392,6 +395,7 @@ void GameScene::dispose() {
     _worldnode = nullptr;
     _debugnode = nullptr;
     _losenode = nullptr;
+    _progressLabel = nullptr;
     _failed = false;
     _debug = false;
     _state = GameScene::Playing;
@@ -457,6 +461,7 @@ void GameScene::reset() {
     setFailure(false);
     populate();
     _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
+    _progressLabel->setText("0/" + to_string(_plantList.size()));
 }
 
 /**
@@ -1435,12 +1440,28 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd1)->lightUp();
                 playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+
+                int numPlantsLit = 0;
+                for (const std::shared_ptr<Plant>& p : _plantList) {
+                    if (p->getIsLit()) {
+                        numPlantsLit++;
+                    }
+                }
+                _progressLabel->setText(to_string(numPlantsLit) + "/" + to_string(_plantList.size()));
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
                 playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+
+                int numPlantsLit = 0;
+                for (const std::shared_ptr<Plant>& p : _plantList) {
+                    if (p->getIsLit()) {
+                        numPlantsLit++;
+                    }
+                }
+                _progressLabel->setText(to_string(numPlantsLit) + "/" + to_string(_plantList.size()));
             }
         // handle collision between spike and Lumia
         } else if((bd1->getName().substr(0, 5) == SPIKE_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) ||

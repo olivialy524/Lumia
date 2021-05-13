@@ -168,6 +168,9 @@
         },
         "windetails": {
             "file": "textures/windetails.png"
+        },
+        "lampicon": {
+            "file": "textures/lampicon.png"
         }
     },
     "sounds": {
@@ -327,6 +330,41 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "progress": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "lampicon",
+                        "size": [72, 72]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "progresslabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "0/4",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 60
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "left",
+                        "y_anchor" : "top",
+                        "y_offset" : -0.15,
+                        "x_offset": 0.05
+                    }
+                },
                 "panning"  : {
                     "type": "Widget",
                     "data": {
