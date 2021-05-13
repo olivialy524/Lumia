@@ -27,12 +27,6 @@ protected:
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
-
-    int _totalEnemies;
-    int _defeatedEnemies;
-
-    int _totalPlants;
-    int _litPlants;
     
     std::shared_ptr<cugl::scene2::SceneNode> _wrapperNode;
     
@@ -98,15 +92,10 @@ public:
         winLabel->setText(value);
     }
 
-    int getTotalEnemies() { return _totalEnemies; }
-    void setTotalEnemies(int value) { _totalEnemies = value; }
-    int getDefeatedEnemies() { return _defeatedEnemies; }
-    void setDefeatedEnemies(int value) { _defeatedEnemies = value; }
-
-    int getTotalPlants() { return _totalPlants; }
-    void setTotalPlants(int value) { _totalPlants = value; }
-    int getLitPlants() { return _litPlants; }
-    void setLitPlants(int value) { _litPlants = value; }
+    void setDetailsLabel(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> winLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("winscreen_details_plantlabel"));
+        winLabel->setText(value);
+    }
 };
 
 #endif /* __WIN_SCENE_H__ */

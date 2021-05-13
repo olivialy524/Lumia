@@ -27,9 +27,6 @@ protected:
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
 
-    int _totalEnemies;
-    int _defeatedEnemies;
-
     int _totalPlants;
     int _litPlants;
     
@@ -91,11 +88,6 @@ public:
         std::shared_ptr<cugl::scene2::Label> levelLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("pausescreen_levelicon_label"));
         levelLabel->setText(value);
     }
-
-    int getTotalEnemies() { return _totalEnemies; }
-    void setTotalEnemies(int value) { _totalEnemies = value; }
-    int getDefeatedEnemies() { return _defeatedEnemies; }
-    void setDefeatedEnemies(int value) { _defeatedEnemies = value; }
 
     int getTotalPlants() { return _totalPlants; }
     void setTotalPlants(int value) { _totalPlants = value; }

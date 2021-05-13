@@ -243,6 +243,7 @@ void LumiaApp::update(float timestep) {
                         _win.setLevelNumber(_assets, "T" + levelNumber);
                         _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
                     }
+                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
                     _win.setActive(true);
                 }
             }

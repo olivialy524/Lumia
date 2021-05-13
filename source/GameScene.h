@@ -135,6 +135,7 @@ protected:
     int _lastSpikeCollision;
     
     string _nextScene;
+    int _remainingSize;
     
 #pragma mark Internal Object Management
     
@@ -313,6 +314,8 @@ public:
 	bool isFailure() const { return _failed; }
 
     string getNextScene() { return _nextScene; }
+
+    int getRemainingSize() { return _remainingSize; }
 
 	/**
 	* Sets whether the level is failed.

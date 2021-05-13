@@ -1192,6 +1192,11 @@ void GameScene::checkWin() {
         }
     }
 
+    int remainingSize = 0;
+    for (auto const& l : _lumiaList) {
+        remainingSize += l->getSizeLevel();
+    }
+    _remainingSize = remainingSize;
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";
