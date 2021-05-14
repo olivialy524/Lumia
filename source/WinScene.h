@@ -96,6 +96,38 @@ public:
         std::shared_ptr<cugl::scene2::Label> winLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("winscreen_details_plantlabel"));
         winLabel->setText(value);
     }
+
+    void setStars(const std::shared_ptr<cugl::AssetManager>& assets, int value) {
+        if (value == 3) {
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1filled")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2filled")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3filled")->setVisible(true);
+        } else if (value == 2) {
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1filled")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2filled")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3filled")->setVisible(false);
+        } else if (value == 1) {
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1empty")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1filled")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2filled")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3filled")->setVisible(false);
+        } else {
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3empty")->setVisible(true);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star1filled")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star2filled")->setVisible(false);
+            assets->get<cugl::scene2::SceneNode>("winscreen_levelbanner_star3filled")->setVisible(false);
+        }
+    }
 };
 
 #endif /* __WIN_SCENE_H__ */

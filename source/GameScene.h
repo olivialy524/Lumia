@@ -119,10 +119,8 @@ protected:
     bool _switched;
     
     bool _canSplit;
-
-    int _prevscore;
     
-    int _prevstars;
+    int _stars;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -419,25 +417,7 @@ public:
     
     void updatePaused(float dt, float startX);
     
-    int calcScore();
-    
-    int getStars();
-    
-    int getPrevScore() {
-        return _prevscore;
-    }
-    
-    void setPrevScore(int s) {
-        _prevscore = s;
-    }
-    
-    int getPrevStars() {
-        return _prevstars;
-    }
-    
-    void setPrevStars(int p) {
-        _prevstars = p;
-    }
+    int getStars() { return _stars; }
     
     void playSplitSound();
     

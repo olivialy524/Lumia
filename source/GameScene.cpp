@@ -1153,9 +1153,6 @@ void GameScene::updateGame(float dt) {
         _countdown--;
 	} else if (_countdown == 0) {
         _loseAnimation->setFrame(0);
-        int stars = getStars();
-        setPrevStars(stars);
-        setPrevScore(calcScore());
 		reset();
 	}
 }
@@ -1194,34 +1191,21 @@ void GameScene::checkWin() {
 
     int remainingSize = 0;
     for (auto const& l : _lumiaList) {
-        remainingSize += l->getSizeLevel();
+        remainingSize += l->getSizeLevel() + 1;
     }
-    _remainingSize = remainingSize;
+    _remainingSize = remainingSize - 1; // win is counted before the last Lumia touching a plant can be reduced in size
+    if (_remainingSize >= _level->getThreeStarScore()) {
+        _stars = 3;
+    } else if (_remainingSize >= _level->getTwoStarScore()) {
+        _stars = 2;
+    } else if (_remainingSize >= 0) {
+        _stars = 1;
+    } else {
+        _stars = 0;
+    }
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";
-}
-
-int GameScene::calcScore() {
-    int score = 0;
-    for (auto & lumia : _lumiaList){
-        score = score + lumia->getSizeLevel()+1;
-    }
-    return score*1000;
-}
-
-int GameScene::getStars() {
-    int score = calcScore();
-    if (score >= _level->getThreeStarScore()) {
-        return 3;
-    }
-    if (score >= _level->getTwoStarScore()) {
-        return 2;
-    }
-    if (score >= 0) {
-        return 1;
-    }
-    return 0;
 }
 
 void GameScene::playSplitSound() {
