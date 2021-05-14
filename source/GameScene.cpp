@@ -229,8 +229,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
-    _scale = dimen.height/rect.size.height;
-    _scale *= 1.5f;
+    _scale = dimen.height/_level->getYBound();
 //    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     _UIscene = assets->get<scene2::SceneNode>("gameUI");
@@ -305,9 +304,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _loseAnimation->setName("loseanimation");
     setFailure(false);
     
-//    scene->setScale(2.0f);// tentatively scale the backgrouns bigger for camera test
-//    addChild(scene, 0);
-
     _scrollNode->addChild(bkgNode);
     _scrollNode->addChild(_worldnode, 1);
     _scrollNode->addChild(_debugnode, 2);
@@ -321,7 +317,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
     populate();
-    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
+    float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
+    if (scrollpos > 0){
+        scrollpos = 0;
+    }
+    _scrollNode->setPosition(scrollpos, 0);
 
     _ticks = 0;
     _lastSpikeCollision = NULL;
@@ -456,7 +456,11 @@ void GameScene::reset() {
     _level->resetLevel();
     setFailure(false);
     populate();
-    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
+    float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
+    if (scrollpos > 0){
+        scrollpos = 0;
+    }
+    _scrollNode->setPosition(scrollpos, 0);
 }
 
 /**
@@ -471,13 +475,7 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
-//    float xBound = _level->getXBound();
-//    float yBound = _level->getYBound();
-//    for (int i = 0; i < xBound; i++){
-//        for (int j = 0; j < yBound; j++){
-//            _graph[{Vec2(i, j)}] = NodeState::Void;
-//        }
-//    }
+    
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
     
@@ -619,6 +617,7 @@ void GameScene::populate() {
         std::shared_ptr<scene2::PolygonNode> tutorialNode = scene2::PolygonNode::allocWithTexture(image);
         Vec2 pos = Vec2(t.posX, t.posY) * _scale;
         tutorialNode->setPosition(pos);
+        tutorialNode->setScale(0.5);
         tutorialNode->setVisible(false);
         _worldnode->addChild(tutorialNode);
 
@@ -835,8 +834,7 @@ void GameScene::updateGame(float dt) {
         Vec2 tutorialPos = tutorial->getPosition();
         Vec2 avatarPos = _avatar->getPosition() *_scale;
 
-        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150) &&
-            IN_RANGE(avatarPos.y, tutorialPos.y - 150, tutorialPos.y + 150)) {
+        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150)) {
             tutorial->setVisible(true);
         } else {
             tutorial->setVisible(false);
@@ -933,8 +931,12 @@ void GameScene::updateGame(float dt) {
 	}
       
 
+    float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
+    if (scrollpos > 0){
+        scrollpos = 0.0;
+    }
+    _scrollNode->setPosition(scrollpos, 0);
     
-    _scrollNode->setPosition(-1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT, 0);
     _avatar->setVelocity(_input->getLaunch());
 	_avatar->setLaunching(_input->didLaunch());
 	_avatar->applyForce();

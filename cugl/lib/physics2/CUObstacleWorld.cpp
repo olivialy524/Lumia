@@ -267,7 +267,7 @@ void ObstacleWorld::addObstacle(const std::shared_ptr<Obstacle>& obj) {
         
         
     }
-    CUAssertLog(inBounds(obj.get()), "Obstacle is not in bounds");
+//    CUAssertLog(inBounds(obj.get()), "Obstacle is not in bounds");
     _objects.push_back(obj);
     obj->activatePhysics(*_world);
 }
