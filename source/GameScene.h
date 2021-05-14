@@ -121,6 +121,8 @@ protected:
     bool _canSplit;
     
     int _stars;
+
+    string _currentLevel;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -418,6 +420,10 @@ public:
     void updatePaused(float dt, float startX);
     
     int getStars() { return _stars; }
+
+    string getCurrentLevel() { return _currentLevel; }
+
+    string getPlantProgress() { return _progressLabel->getText(); }
     
     void playSplitSound();
     

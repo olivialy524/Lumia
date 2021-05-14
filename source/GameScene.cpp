@@ -153,6 +153,7 @@ GameScene::GameScene() : Scene2(),
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
 
+    _currentLevel = level;
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     

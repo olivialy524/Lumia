@@ -26,9 +26,6 @@ protected:
 
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
-
-    int _totalPlants;
-    int _litPlants;
     
     std::shared_ptr<cugl::scene2::SceneNode> _wrapperNode;
     
@@ -89,10 +86,10 @@ public:
         levelLabel->setText(value);
     }
 
-    int getTotalPlants() { return _totalPlants; }
-    void setTotalPlants(int value) { _totalPlants = value; }
-    int getLitPlants() { return _litPlants; }
-    void setLitPlants(int value) { _litPlants = value; }
+    void setDetailsLabel(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> detailsLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("pausescreen_details_plantlabel"));
+        detailsLabel->setText(value);
+    }
 };
 
 #endif /* __PAUSE_SCENE_H__ */
