@@ -156,6 +156,8 @@ void LumiaApp::update(float timestep) {
                 _pause.setActive(false);
                 _win.init(_assets);
                 _win.setActive(false);
+                _gameplay.init(_assets, "json/level1.json");
+                _gameplay.dispose();
             }
             return;
         }
