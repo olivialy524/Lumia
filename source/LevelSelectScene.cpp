@@ -179,8 +179,9 @@ void LevelSelectScene::update(float timestep){
         if (target > 0){
             target = 0;
         }
-        if (target < - 3000){
-            target = -3000;
+        float limit = -1 * _scrollNode->getWidth() -  Application::get()->getDisplaySize().width/2;
+        if (target < limit){
+            target = limit ;
         }
         _scrollNode->setPositionX(target);
         

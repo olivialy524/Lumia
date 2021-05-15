@@ -46,6 +46,9 @@
         "tile8": {
             "file": "textures/tile8.png"
         },
+        "tile9": {
+            "file": "textures/tile9.png"
+        },
         "dot": {
             "file": "textures/circle.png"
         },
