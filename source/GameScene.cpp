@@ -403,9 +403,6 @@ void GameScene::dispose() {
     _UIelements.clear();
     Scene2::dispose();
     setActive(false);
-
-    //std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    //AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 #pragma mark -
@@ -1204,6 +1201,8 @@ void GameScene::checkWin() {
     } else {
         _stars = 0;
     }
+    std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";

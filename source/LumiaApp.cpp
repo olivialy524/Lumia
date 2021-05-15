@@ -158,6 +158,8 @@ void LumiaApp::update(float timestep) {
                 _win.setActive(false);
                 _gameplay.init(_assets, "json/level1.json");
                 _gameplay.dispose();
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
             }
             return;
         }
@@ -345,14 +347,22 @@ void LumiaApp::update(float timestep) {
                 _settings.update(timestep);
             }else{
                 _settings.setActive(false);
+                _gameplay.setMusicVolume(_settings.getMusicVolume());
+                _gameplay.setEffectVolume(_settings.getEffectVolume());
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = LevelSelect;
                     _levelSelect.setActive(true);
                 } else if (nextScene == "pause") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = Pause;
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("win");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = Win;
                     _win.setActive(true);
                 }
