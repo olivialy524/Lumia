@@ -440,6 +440,8 @@ public:
     void playLightSound();
     
     void playGrowSound();
+    
+    void playShrinkSound();
     /**
      * Calculates trajectory point one timestep into future
      *

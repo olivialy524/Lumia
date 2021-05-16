@@ -176,29 +176,19 @@
         },
         "win": {
             "type":     "sample",
-            "file":     "sounds/DD_Victory.ogg",
+            "file":     "sounds/victorytheme.ogg",
             "stream":   true,
             "volume":   0.5
         },
         "lose": {
             "type":     "sample",
-            "file":     "sounds/DD_Failure.ogg",
+            "file":     "sounds/gameover.ogg",
             "stream":   true,
             "volume":   0.5
         },
         "jump": {
             "type":     "sample",
-            "file":     "sounds/jump.wav",
-            "volume":   0.5
-        },
-        "pew": {
-            "type":     "sample",
-            "file":     "sounds/pew.wav",
-            "volume":   0.5
-        },
-        "pop": {
-            "type":     "sample",
-            "file":     "sounds/plop.wav",
+            "file":     "sounds/launchsound.wav",
             "volume":   0.5
         },
         "ui": {
@@ -209,17 +199,22 @@
         },
         "light": {
             "type":     "sample",
-            "file":     "sounds/magicplantlightup.wav",
+            "file":     "sounds/lightsound.wav",
             "volume":   0.2
         },
         "die": {
             "type":     "sample",
-            "file":     "sounds/lumiabodydying.wav",
+            "file":     "sounds/lumiadie.wav",
             "volume":   0.2
         },
         "grow": {
             "type":     "sample",
             "file":     "sounds/gainsize.wav",
+            "volume":   0.2
+        },
+        "shrink": {
+            "type":     "sample",
+            "file":     "sounds/losesize.wav",
             "volume":   0.2
         }
     },

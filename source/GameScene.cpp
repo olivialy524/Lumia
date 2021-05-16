@@ -45,7 +45,7 @@ using namespace cugl;
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
-#define EXIT_COUNT      119
+#define EXIT_COUNT      200
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
@@ -110,11 +110,13 @@ using namespace cugl;
 
 #define SPLIT_SOUND "jump"
 
-#define LIGHT_SOUND "pew"
+#define LIGHT_SOUND "light"
 
 #define DIE_SOUND "die"
 
 #define GROW_SOUND "grow"
+
+#define SHRINK_SOUND "shrink"
 
 
 #pragma mark -
@@ -1188,7 +1190,8 @@ void GameScene::checkWin() {
             return;
         }
     }
-
+    std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";
@@ -1234,6 +1237,11 @@ void GameScene::playDieSound() {
 void GameScene::playGrowSound() {
     std::shared_ptr<Sound> source = _assets->get<Sound>(GROW_SOUND);
     AudioEngine::get()->play(GROW_SOUND, source, false, _effectVolume, true);
+}
+
+void GameScene::playShrinkSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SHRINK_SOUND);
+    AudioEngine::get()->play(SHRINK_SOUND, source, false, _effectVolume, true);
 }
 /**
  * Add a new Lumia to the world.
@@ -1460,6 +1468,9 @@ void GameScene::beginContact(b2Contact* contact) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd1 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
+                    if (lumia->getSizeLevel() < enemy->getSizeLevel()) {
+                        playShrinkSound();
+                    }
                     break;
                 }
             }
@@ -1467,6 +1478,9 @@ void GameScene::beginContact(b2Contact* contact) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd2 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
+                    if (lumia->getSizeLevel() <= enemy->getSizeLevel()) {
+                        playShrinkSound();
+                    }
                     break;
                 }
             }
