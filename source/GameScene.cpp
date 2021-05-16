@@ -316,7 +316,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChild(_UIscene);
     addChild(_pausedUI);
     
-    _musicVolume = 1.0f;
+    _musicVolume = 0.8f;
     _effectVolume = 1.0f;
     populate();
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
