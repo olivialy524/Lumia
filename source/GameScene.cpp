@@ -74,7 +74,9 @@ using namespace cugl;
 
 #define BUTTON_NAME     "button"
 
-#define DOOR_NAME       "door"
+#define SLIDING_DOOR_NAME       "sliding-door"
+
+#define SHRINKING_DOOR_NAME     "shrinking-door"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 
