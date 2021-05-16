@@ -60,6 +60,9 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
+
+    std::shared_ptr<scene2::Label> _progressLabel;
+
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
     
@@ -116,10 +119,10 @@ protected:
     bool _switched;
     
     bool _canSplit;
-
-    int _prevscore;
     
-    int _prevstars;
+    int _stars;
+
+    string _currentLevel;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -132,6 +135,7 @@ protected:
     int _lastSpikeCollision;
     
     string _nextScene;
+    int _remainingSize;
     
 #pragma mark Internal Object Management
     
@@ -311,6 +315,8 @@ public:
 
     string getNextScene() { return _nextScene; }
 
+    int getRemainingSize() { return _remainingSize; }
+
 	/**
 	* Sets whether the level is failed.
 	*
@@ -413,25 +419,11 @@ public:
     
     void updatePaused(float dt, float startX);
     
-    int calcScore();
-    
-    int getStars();
-    
-    int getPrevScore() {
-        return _prevscore;
-    }
-    
-    void setPrevScore(int s) {
-        _prevscore = s;
-    }
-    
-    int getPrevStars() {
-        return _prevstars;
-    }
-    
-    void setPrevStars(int p) {
-        _prevstars = p;
-    }
+    int getStars() { return _stars; }
+
+    string getCurrentLevel() { return _currentLevel; }
+
+    string getPlantProgress() { return _progressLabel->getText(); }
     
     void playSplitSound();
     

@@ -153,6 +153,7 @@ GameScene::GameScene() : Scene2(),
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
 
+    _currentLevel = level;
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
     
@@ -256,7 +257,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                 }
             });
         }
-        button->activate();
+        if (button) {
+            button->activate();
+        }
     }
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
@@ -317,6 +320,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _musicVolume = 1.0f;
     _effectVolume = 1.0f;
     populate();
+    _progressLabel = std::dynamic_pointer_cast<scene2::Label>(assets->get<scene2::SceneNode>("gameUI_progress_progresslabel"));
+    _progressLabel->setText("0/" + to_string(_plantList.size()));
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
     if (scrollpos > 0){
         scrollpos = 0;
@@ -392,15 +397,13 @@ void GameScene::dispose() {
     _worldnode = nullptr;
     _debugnode = nullptr;
     _losenode = nullptr;
+    _progressLabel = nullptr;
     _failed = false;
     _debug = false;
     _state = GameScene::Playing;
     _UIelements.clear();
     Scene2::dispose();
     setActive(false);
-
-    //std::shared_ptr<Sound> source = _assets->get<Sound>(GAME_MUSIC);
-    //AudioEngine::get()->getMusicQueue()->play(source, true, _musicVolume);
 }
 
 #pragma mark -
@@ -461,6 +464,7 @@ void GameScene::reset() {
         scrollpos = 0;
     }
     _scrollNode->setPosition(scrollpos, 0);
+    _progressLabel->setText("0/" + to_string(_plantList.size()));
 }
 
 /**
@@ -1150,9 +1154,6 @@ void GameScene::updateGame(float dt) {
         _countdown--;
 	} else if (_countdown == 0) {
         _loseAnimation->setFrame(0);
-        int stars = getStars();
-        setPrevStars(stars);
-        setPrevScore(calcScore());
 		reset();
 	}
 }
@@ -1189,31 +1190,25 @@ void GameScene::checkWin() {
         }
     }
 
+    int remainingSize = 0;
+    for (auto const& l : _lumiaList) {
+        remainingSize += l->getSizeLevel() + 1;
+    }
+    _remainingSize = remainingSize - 1; // win is counted before the last Lumia touching a plant can be reduced in size
+    if (_remainingSize >= _level->getThreeStarScore()) {
+        _stars = 3;
+    } else if (_remainingSize >= _level->getTwoStarScore()) {
+        _stars = 2;
+    } else if (_remainingSize >= 0) {
+        _stars = 1;
+    } else {
+        _stars = 0;
+    }
+    std::shared_ptr<Sound> source = _assets->get<Sound>(WIN_MUSIC);
+    AudioEngine::get()->getMusicQueue()->play(source, false, _musicVolume);
     _state = GameState::Paused;
     setActive(false);
     _nextScene = "win";
-}
-
-int GameScene::calcScore() {
-    int score = 0;
-    for (auto & lumia : _lumiaList){
-        score = score + lumia->getSizeLevel()+1;
-    }
-    return score*1000;
-}
-
-int GameScene::getStars() {
-    int score = calcScore();
-    if (score >= _level->getThreeStarScore()) {
-        return 3;
-    }
-    if (score >= _level->getTwoStarScore()) {
-        return 2;
-    }
-    if (score >= 0) {
-        return 1;
-    }
-    return 0;
 }
 
 void GameScene::playSplitSound() {
@@ -1437,12 +1432,28 @@ void GameScene::beginContact(b2Contact* contact) {
                 ((Plant*)bd1)->lightUp();
                 playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+
+                int numPlantsLit = 0;
+                for (const std::shared_ptr<Plant>& p : _plantList) {
+                    if (p->getIsLit()) {
+                        numPlantsLit++;
+                    }
+                }
+                _progressLabel->setText(to_string(numPlantsLit) + "/" + to_string(_plantList.size()));
             }
         } else if (bd2->getName().substr(0, 5) == PLANT_NAME && didCollideWithLumiaBody(lumia, bd1, fd1)) {
             if (!((Plant*)bd2)->getIsLit()) {
                 ((Plant*)bd2)->lightUp();
                 playLightSound();
                 _collisionController.processPlantLumiaCollision(lumia->getSmallerSizeLevel(), lumia, lumia == _avatar);
+
+                int numPlantsLit = 0;
+                for (const std::shared_ptr<Plant>& p : _plantList) {
+                    if (p->getIsLit()) {
+                        numPlantsLit++;
+                    }
+                }
+                _progressLabel->setText(to_string(numPlantsLit) + "/" + to_string(_plantList.size()));
             }
         // handle collision between spike and Lumia
         } else if((bd1->getName().substr(0, 5) == SPIKE_NAME && didCollideWithLumiaBody(lumia, bd2, fd2)) ||

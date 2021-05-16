@@ -156,6 +156,10 @@ void LumiaApp::update(float timestep) {
                 _pause.setActive(false);
                 _win.init(_assets);
                 _win.setActive(false);
+                _gameplay.init(_assets, "json/level1.json");
+                _gameplay.dispose();
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
             }
             return;
         }
@@ -208,7 +212,7 @@ void LumiaApp::update(float timestep) {
                     _levelSelect.setActive(true);
                 } else if (nextScene == "pause") {
                     _scene = Pause;
-                    string levelFile = _levelSelect.getSelectedLevel();
+                    string levelFile = _gameplay.getCurrentLevel();
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
@@ -216,17 +220,19 @@ void LumiaApp::update(float timestep) {
                         string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
 
                         _pause.setLevelNumber(_assets, levelNumber);
+                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
                     } else {
                         int startIdx = levelFile.find("tutorial") + 8;
                         int endIdx = levelFile.find(".json");
                         string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
 
                         _pause.setLevelNumber(_assets, "T" + levelNumber);
+                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
                     }
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
                     _scene = Win;
-                    string levelFile = _levelSelect.getSelectedLevel();
+                    string levelFile = _gameplay.getCurrentLevel();
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
@@ -243,6 +249,8 @@ void LumiaApp::update(float timestep) {
                         _win.setLevelNumber(_assets, "T" + levelNumber);
                         _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
                     }
+                    _win.setStars(_assets, _gameplay.getStars());
+                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
                     _win.setActive(true);
                 }
             }
@@ -285,9 +293,8 @@ void LumiaApp::update(float timestep) {
                 string nextScene = _win.getNextScene();
                 if (nextScene == "win-continue") {
                     _scene = Game;
+                    string levelFile = _gameplay.getCurrentLevel();
                     _gameplay.dispose();
-
-                    string levelFile = _levelSelect.getSelectedLevel();
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
@@ -295,9 +302,13 @@ void LumiaApp::update(float timestep) {
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
                         // TODO: update this with eventual number of levels in the game
                         if (levelNumber == "5") {
-                            levelNumber = "4";
+                            _scene = LevelSelect;
+                            _levelSelect.setActive(true);
+                            std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                            AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                        } else {
+                            _gameplay.init(_assets, "json/level" + levelNumber + ".json");
                         }
-                        _gameplay.init(_assets, "json/level" + levelNumber + ".json");
                     } else {
                         int startIdx = levelFile.find("tutorial") + 8;
                         int endIdx = levelFile.find(".json");
@@ -336,14 +347,22 @@ void LumiaApp::update(float timestep) {
                 _settings.update(timestep);
             }else{
                 _settings.setActive(false);
+                _gameplay.setMusicVolume(_settings.getMusicVolume());
+                _gameplay.setEffectVolume(_settings.getEffectVolume());
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = LevelSelect;
                     _levelSelect.setActive(true);
                 } else if (nextScene == "pause") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = Pause;
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("win");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = Win;
                     _win.setActive(true);
                 }
