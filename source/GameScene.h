@@ -16,7 +16,7 @@
 #include "EnergyModel.h"
 #include "LevelModel.h"
 #include "Button.h"
-#include "Door.h"
+#include "SlidingDoor.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
 #include "TileModel.h"
@@ -85,7 +85,7 @@ protected:
     /** References to the Lumias */
     std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
     
-    std::list<std::shared_ptr<Door>> _doorList;
+    std::list<std::shared_ptr<SlidingDoor>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */

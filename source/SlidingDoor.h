@@ -12,7 +12,7 @@
 #include <cugl/physics2/CUBoxObstacle.h>
 using namespace cugl;
 
-class Door : public cugl::physics2::PolygonObstacle {
+class SlidingDoor : public cugl::physics2::PolygonObstacle {
 private:
     cugl::Vec2 _origpos;
     cugl::Vec2 _newpos;
@@ -29,12 +29,12 @@ private:
       * This constructor does not initialize any of the Bullet values beyond
       * the defaults.  To use a Bullet, you must call init().
       */
-    Door() : cugl::physics2::PolygonObstacle() { }
+    SlidingDoor() : cugl::physics2::PolygonObstacle() { }
 
     void dispose();
     
-    static std::shared_ptr<Door> alloc(cugl::Vec2 pos, cugl::Poly2 p) {
-        std::shared_ptr<Door> result = std::make_shared<Door>();
+    static std::shared_ptr<SlidingDoor> alloc(cugl::Vec2 pos, cugl::Poly2 p) {
+        std::shared_ptr<SlidingDoor> result = std::make_shared<SlidingDoor>();
         return (result->init(p) ? result : nullptr);
     }
     

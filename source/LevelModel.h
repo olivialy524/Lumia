@@ -14,7 +14,7 @@
 #include "Tile.h"
 #include "EnergyModel.h"
 #include "Button.h"
-#include "Door.h"
+#include "SlidingDoor.h"
 #include "SpikeModel.h"
 #include "StickyWallModel.h"
 
@@ -36,7 +36,7 @@ private:
     std::vector<std::shared_ptr<Tile>> _irregular_tiles;
     std::shared_ptr<LumiaModel> _lumia;
     std::vector<std::shared_ptr<Button>> _buttons;
-    std::vector<std::shared_ptr<Door>> _doors;
+    std::vector<std::shared_ptr<SlidingDoor>> _doors;
     std::vector<std::shared_ptr<StickyWallModel>> _stickyWalls;
 
     std::vector<Tutorial> _tutorials;
@@ -144,7 +144,7 @@ public:
         return _buttons;
     }
     
-    std::vector<std::shared_ptr<Door>> getDoors() {
+    std::vector<std::shared_ptr<SlidingDoor>> getDoors() {
         return _doors;
     }
     

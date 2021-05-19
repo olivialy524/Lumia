@@ -12,7 +12,7 @@
 #include <cugl/physics2/CUBoxObstacle.h>
 #include "ButtonNode.h"
 #include "LumiaModel.h"
-#include "Door.h"
+#include "SlidingDoor.h"
 
 class Button : public cugl::physics2::BoxObstacle {
 private:
@@ -20,7 +20,7 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(Button);
 protected:
     float _scale;
-    std::shared_ptr<Door> _door;
+    std::shared_ptr<SlidingDoor> _door;
     std::shared_ptr<LumiaModel> _lumia;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<ButtonNode> _node;
@@ -65,11 +65,11 @@ public:
     void setNormHeight(float h) {
         _normHeight = h;
     }
-    std::shared_ptr<Door> getDoor() {
+    std::shared_ptr<SlidingDoor> getDoor() {
         return _door;
     }
     
-    void setDoor(std::shared_ptr<Door> d) {
+    void setDoor(std::shared_ptr<SlidingDoor> d) {
         _door = d;
     }
     

@@ -74,7 +74,9 @@ using namespace cugl;
 
 #define BUTTON_NAME     "button"
 
-#define DOOR_NAME       "door"
+#define SLIDING_DOOR_NAME       "sliding-door"
+
+#define SHRINKING_DOOR_NAME     "shrinking-door"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 
@@ -368,7 +370,7 @@ void GameScene::dispose() {
     }
     _energyList.clear();
 
-    for (const std::shared_ptr<Door> & d: _doorList) {
+    for (const std::shared_ptr<SlidingDoor> & d: _doorList) {
         d->dispose();
     }
     _doorList.clear();
@@ -434,7 +436,7 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
-    for (const std::shared_ptr<Door> & d: _doorList) {
+    for (const std::shared_ptr<SlidingDoor> & d: _doorList) {
         d->dispose();
     }
     _doorList.clear();
@@ -580,12 +582,12 @@ void GameScene::populate() {
     
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
-    std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
+    std::vector<std::shared_ptr<SlidingDoor>> doors = _level->getDoors();
     for (int i = 0; i < buttons.size(); i++) {
         std::shared_ptr<Button> b = buttons[i];
-        std::shared_ptr<Door> d = doors[i];
+        std::shared_ptr<SlidingDoor> d = doors[i];
         d->setName("door " + toString(i));
-        image = _assets->get<Texture>(DOOR_NAME);
+        image = _assets->get<Texture>(SLIDING_DOOR_NAME);
         d->setDrawScale(_scale);
         d->setTextures(image);
         addObstacle(d,d->getSceneNode(),1);
