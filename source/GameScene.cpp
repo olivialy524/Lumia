@@ -216,7 +216,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     bkgNode->setPosition(0, 0);
     bkgNode->setScale(dimen.height/bkgTexture->getHeight());
-    
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);

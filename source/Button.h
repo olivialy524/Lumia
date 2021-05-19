@@ -13,6 +13,7 @@
 #include "ButtonNode.h"
 #include "LumiaModel.h"
 #include "SlidingDoor.h"
+#include "ShrinkingDoor.h"
 
 class Button : public cugl::physics2::BoxObstacle {
 private:
@@ -20,7 +21,8 @@ private:
     CU_DISALLOW_COPY_AND_ASSIGN(Button);
 protected:
     float _scale;
-    std::shared_ptr<SlidingDoor> _door;
+    std::shared_ptr<SlidingDoor> _SlidingDoor;
+    std::shared_ptr<ShrinkingDoor> _ShrinkingDoor;
     std::shared_ptr<LumiaModel> _lumia;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<ButtonNode> _node;
@@ -29,6 +31,7 @@ protected:
     float _drawScale;
     int _cooldown;
     const float NUM_FRAMES = 6.0f;
+    bool isSlidingDoor;
     
 public:
     Button(): _normHeight(0.6f), _pushingDown(false), _cooldown(0), cugl::physics2::BoxObstacle() { }
@@ -65,14 +68,20 @@ public:
     void setNormHeight(float h) {
         _normHeight = h;
     }
-    std::shared_ptr<SlidingDoor> getDoor() {
-        return _door;
+    std::shared_ptr<SlidingDoor> getSlidingDoor() {
+        return _SlidingDoor;
     }
     
-    void setDoor(std::shared_ptr<SlidingDoor> d) {
-        _door = d;
+    void setSlidingDoor(std::shared_ptr<SlidingDoor> d) {
+        _SlidingDoor = d;
     }
     
+    std::shared_ptr<ShrinkingDoor> getShrinkingDoor() {
+        return _ShrinkingDoor;
+    }
+    void setShrinkingDoor(std::shared_ptr<ShrinkingDoor> d) {
+        _ShrinkingDoor = d;
+    }
     std::shared_ptr<LumiaModel> getLumia(){
         return _lumia;
     }
@@ -121,7 +130,14 @@ public:
             return _node->getAnimState() == ButtonNode::ButtonAnimState::Idle;
         }
         return false;
-        
+    }
+    
+    void setIsSlidingDoor(bool value){
+        isSlidingDoor = value;
+    }
+    
+    bool getIsSlidingDoor(){
+        return isSlidingDoor;
     }
 };
 

@@ -6,8 +6,8 @@
 //  Copyright © 2021 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef Door_h
-#define Door_h
+#ifndef SlidingDoor_h
+#define SlidingDoor_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 using namespace cugl;
@@ -88,4 +88,4 @@ private:
  };
 
 
-#endif /* Door_h */
+#endif /* SlidingDoor_h */

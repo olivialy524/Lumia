@@ -275,39 +275,48 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         std::shared_ptr<cugl::JsonValue> buttondoor = buttonsAndDoors->get(i);
         std::shared_ptr<cugl::JsonValue> button = buttondoor->get("button");
         std::shared_ptr<cugl::JsonValue> door = buttondoor->get("door");
-        float ox = door->getFloat("oblx");
-        float oy = door->getFloat("obly");
-        float nx = door->getFloat("nblx");
-        float ny = door->getFloat("nbly");
-        float angle = door->getFloat("angle");
-        Rect rectangle = Rect(ox,oy,3.0f,0.5f);
-        std::shared_ptr<SlidingDoor> d;
-        Poly2 platform(rectangle,false);
-        SimpleTriangulator triangulator;
-        triangulator.set(platform);
-        triangulator.calculate();
-        platform.setIndices(triangulator.getTriangulation());
-        platform.setGeometry(Geometry::SOLID);
-        cugl::Vec2 orpos = cugl::Vec2(ox,oy);
-        d = SlidingDoor::alloc(orpos, platform);
-        d->setAngle(angle);
-        d->setOriginalPos(orpos);
-        d->setNewPos(cugl::Vec2(nx,ny));
-        d->setDensity(10000);
-        d->setGravityScale(0);
-        d->setRestitution(BASIC_RESTITUTION);
-        d->setAnchor(Vec2(0,0));
-        d->setDebugColor(DEBUG_COLOR);
-        _doors.push_back(d);
+        std::shared_ptr<Button> b;
         float bx = button->getFloat("posx");
         float by = button->getFloat("posy");
-        std::shared_ptr<Button> b;
         b = Button::alloc(Vec2(bx,by), Size(1,0.6f));
         b->setDensity(BASIC_DENSITY);
         b->setBodyType(b2_staticBody);
         b->setRestitution(BASIC_RESTITUTION);
         b->setDebugColor(DEBUG_COLOR);
-        b->setDoor(d);
+        switch (door->getInt("type")){
+            case 1:{ // Sliding door
+                float ox = door->getFloat("oblx");
+                float oy = door->getFloat("obly");
+                float nx = door->getFloat("nblx");
+                float ny = door->getFloat("nbly");
+                float angle = door->getFloat("angle");
+                Rect rectangle = Rect(ox,oy,3.0f,0.5f);
+                std::shared_ptr<SlidingDoor> d;
+                Poly2 platform(rectangle,false);
+                SimpleTriangulator triangulator;
+                triangulator.set(platform);
+                triangulator.calculate();
+                platform.setIndices(triangulator.getTriangulation());
+                platform.setGeometry(Geometry::SOLID);
+                cugl::Vec2 orpos = cugl::Vec2(ox,oy);
+                d = SlidingDoor::alloc(orpos, platform);
+                d->setAngle(angle);
+                d->setOriginalPos(orpos);
+                d->setNewPos(cugl::Vec2(nx,ny));
+                d->setDensity(10000);
+                d->setGravityScale(0);
+                d->setRestitution(BASIC_RESTITUTION);
+                d->setAnchor(Vec2(0,0));
+                d->setDebugColor(DEBUG_COLOR);
+                _doors.push_back(d);
+                b->setSlidingDoor(d);
+                b->setIsSlidingDoor(true);
+                break;
+            }
+            case 2:{ // Shrinking door
+                break;
+            }
+        }
         _buttons.push_back(b);
     }
     return _buttons;
