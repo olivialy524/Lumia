@@ -10,6 +10,7 @@
 #define Door_h
 #include <cugl/cugl.h>
 #include <cugl/physics2/CUBoxObstacle.h>
+using namespace cugl;
 
 class Door : public cugl::physics2::PolygonObstacle {
 private:
@@ -17,8 +18,8 @@ private:
     cugl::Vec2 _newpos;
     bool _opening = false;
     bool _closing = false;
-     std::shared_ptr<cugl::scene2::SceneNode> _scenenode;
-     std::shared_ptr<cugl::scene2::PolygonNode> _node;
+    std::shared_ptr<cugl::scene2::PolygonNode> _scenenode;
+    float _drawScale;
  public:
 
  #pragma mark Constructors
@@ -30,32 +31,24 @@ private:
       */
     Door() : cugl::physics2::PolygonObstacle() { }
 
-     void dispose();
-
-     static std::shared_ptr<Door> alloc(cugl::Vec2 pos, cugl::Poly2 p) {
-         std::shared_ptr<Door> result = std::make_shared<Door>();
-         return (result->init(p) ? result : nullptr);
-     }
+    void dispose();
     
+    static std::shared_ptr<Door> alloc(cugl::Vec2 pos, cugl::Poly2 p) {
+        std::shared_ptr<Door> result = std::make_shared<Door>();
+        return (result->init(p) ? result : nullptr);
+    }
+    
+    void update(float dt) override;
+
     void Open();
 
     void Close();
+
+    std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() {
+        return _scenenode;
+    }
     
-     std::shared_ptr<cugl::scene2::PolygonNode> getNode() {
-         return _node;
-     }
-
-     void setNode(std::shared_ptr<cugl::scene2::PolygonNode> n) {
-         _node = n;
-     }
-
-     std::shared_ptr<cugl::scene2::SceneNode> getSceneNode() {
-         return _scenenode;
-     }
-
-     void setSceneNode(std::shared_ptr<cugl::scene2::SceneNode> scene) {
-         _scenenode = scene;
-     }
+    void setTextures(const std::shared_ptr<cugl::Texture>& door);
 
     cugl::Vec2 getOriginalPos() {
         return _origpos;
@@ -89,6 +82,9 @@ private:
         _closing = close;
     }
     
+    void setDrawScale(float value){
+        _drawScale = value;
+    }
  };
 
 

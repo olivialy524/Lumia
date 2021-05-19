@@ -98,6 +98,8 @@ void LumiaApp::onShutdown() {
     _settings.dispose();
     _levelSelect.dispose();
     _mainMenu.dispose();
+    _pause.dispose();
+    _win.dispose();
     _assets = nullptr;
     _batch = nullptr;
     _UIbatch = nullptr;
@@ -176,6 +178,14 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(true);
                 _settings.init(_assets);
                 _settings.setActive(false);
+                _pause.init(_assets);
+                _pause.setActive(false);
+                _win.init(_assets);
+                _win.setActive(false);
+                _gameplay.init(_assets, "json/level1.json");
+                _gameplay.dispose();
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                 _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
                 _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
             }
@@ -199,7 +209,7 @@ void LumiaApp::update(float timestep) {
         }
         case LevelSelect:{
             if (_levelSelect.isActive()){
-                    _levelSelect.update(timestep);
+                _levelSelect.update(timestep);
             }else{
                 _levelSelect.setActive(false);
                 string nextScene = _levelSelect.getNextScene();
@@ -211,7 +221,7 @@ void LumiaApp::update(float timestep) {
                     _gameplay.setActive(true);
                 } else if (nextScene == "settings") {
                     _scene = Settings;
-                    _settings.init(_assets);
+                    _settings.setNextScene("levelselect");
                     _settings.setActive(true);
                     _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
                     _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
@@ -220,31 +230,176 @@ void LumiaApp::update(float timestep) {
             return;
         }
         case Game:{
-            if (!_gameplay.didSwitchLevelSelect()){
+            if (_gameplay.isActive()){
                 _gameplay.update(timestep);
             }else{
-                _gameplay.dispose();
+                _gameplay.setActive(false);
+                string nextScene = _gameplay.getNextScene();
+                if (nextScene == "levelselect") {
+                    _gameplay.dispose();
 
-                _scene = LevelSelect;
-                _levelSelect.setActive(true);
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                } else if (nextScene == "pause") {
+                    _scene = Pause;
+                    string levelFile = _gameplay.getCurrentLevel();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _pause.setLevelNumber(_assets, levelNumber);
+                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _pause.setLevelNumber(_assets, "T" + levelNumber);
+                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
+                    }
+                    _pause.setActive(true);
+                } else if (nextScene == "win") {
+                    _scene = Win;
+                    string levelFile = _gameplay.getCurrentLevel();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _win.setLevelNumber(_assets, levelNumber);
+                        _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
+
+                        _win.setLevelNumber(_assets, "T" + levelNumber);
+                        _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
+                    }
+                    _win.setStars(_assets, _gameplay.getStars());
+                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
+                    _win.setActive(true);
+                }
+            }
+            return;
+        }
+        case Pause: {
+            if (_pause.isActive()) {
+                _pause.update(timestep);
+            } else {
+                _pause.setActive(false);
+                string nextScene = _pause.getNextScene();
+                if (nextScene == "game-continue") {
+                    _scene = Game;
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "game-restart") {
+                    _scene = Game;
+                    _gameplay.reset();
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "levelselect") {
+                    _gameplay.dispose();
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                } else if (nextScene == "settings") {
+                    _scene = Settings;
+                    _settings.setNextScene("pause");
+                    _settings.setActive(true);
+                }
+            }
+            return;
+        }
+        case Win: {
+            if (_win.isActive()) {
+                _win.update(timestep);
+            } else {
+                _win.setActive(false);
+                string nextScene = _win.getNextScene();
+                if (nextScene == "win-continue") {
+                    _scene = Game;
+                    string levelFile = _gameplay.getCurrentLevel();
+                    _gameplay.dispose();
+
+                    if (levelFile.find("level") != string::npos) {
+                        int startIdx = levelFile.find("level") + 5;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
+                        // TODO: update this with eventual number of levels in the game
+                        if (levelNumber == "5") {
+                            _scene = LevelSelect;
+                            _levelSelect.setActive(true);
+                            std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                            AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                        } else {
+                            _gameplay.init(_assets, "json/level" + levelNumber + ".json");
+                        }
+                    } else {
+                        int startIdx = levelFile.find("tutorial") + 8;
+                        int endIdx = levelFile.find(".json");
+                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
+                        // TODO: update this with eventual number of tutorials in the game
+                        if (levelNumber == "4") {
+                            _gameplay.init(_assets, "json/level1.json");
+                        } else {
+                            _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
+                        }
+                    }
+                    _gameplay.setMusicVolume(_settings.getMusicVolume());
+                    _gameplay.setEffectVolume(_settings.getEffectVolume());
+                    _gameplay.setActive(true);
+                } else if (nextScene == "win-replay") {
+                    _scene = Game;
+                    _gameplay.reset();
+                    _gameplay.setPlaying();
+                    _gameplay.setActive(true);
+                } else if (nextScene == "levelselect") {
+                    _gameplay.dispose();
+                    _scene = LevelSelect;
+                    _levelSelect.setActive(true);
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                } else if (nextScene == "settings") {
+                    _scene = Settings;
+                    _settings.setNextScene("win");
+                    _settings.setActive(true);
+                }
             }
             return;
         }
         case Settings:{
             if (_settings.isActive()){
-                    _settings.update(timestep);
+                _settings.update(timestep);
             }else{
                 _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
                 _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
                 _settings.setActive(false);
+                _gameplay.setMusicVolume(_settings.getMusicVolume());
+                _gameplay.setEffectVolume(_settings.getEffectVolume());
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = LevelSelect;
                     _levelSelect.setActive(true);
+                } else if (nextScene == "pause") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                    _scene = Pause;
+                    _pause.setActive(true);
+                } else if (nextScene == "win") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("win");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                    _scene = Win;
+                    _win.setActive(true);
                 }
             }
             return;
-            
         }
     }
 }
@@ -280,7 +435,14 @@ void LumiaApp::draw() {
             _gameplay.render_game(_batch, _UIbatch);
             break;
         }
-        
+        case Pause: {
+            _pause.render(_batch);
+            break;
+        }
+        case Win: {
+            _win.render(_batch);
+            break;
+        }
     }
         
 }

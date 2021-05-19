@@ -16,14 +16,12 @@ using namespace cugl;
 #pragma mark -
 
 
-void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting,  const std::shared_ptr<Texture>& indicator) {
-    
+void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::shared_ptr<Texture>& splitting, const std::shared_ptr<cugl::Texture>& death,
+                             const std::shared_ptr<Texture>& indicator) {
     _sceneNode = LumiaNode::alloc(Size(splitting->getWidth()/5.0f,splitting->getHeight()/4.0f));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode->setLevel(_sizeLevel);
-    _sceneNode->setTextures(idle, splitting, indicator, getRadius(), _drawScale);
-   
-    
+    _sceneNode->setTextures(idle, splitting, death, indicator, getRadius(), _drawScale);
 }
 
 #pragma mark Constructors
@@ -44,12 +42,12 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-struct LumiaModel::LumiaSize size0 = { 0.51f, 0.68f };
+struct LumiaModel::LumiaSize size0 = { 0.55f, 0.52f };
 struct LumiaModel::LumiaSize size1 = { 0.69f, 0.44f };
 struct LumiaModel::LumiaSize size2 = { 0.83f, 0.39f };
 struct LumiaModel::LumiaSize size3 = { 1.0f, 0.30f };
 struct LumiaModel::LumiaSize size4 = { 1.2f, 0.21f };
-struct LumiaModel::LumiaSize size5 = { 1.44f, 0.19f };
+struct LumiaModel::LumiaSize size5 = { 1.40f, 0.19f };
 std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3, size4, size5 };
 
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
@@ -59,16 +57,20 @@ bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
     if (WheelObstacle::init(pos,radius)) {
         // Gameplay attributes
         _isGrounded = false;
+        _isRolling = false;
         _state = Idle;
         _sizeLevel = 2;
         _velocity = Vec2::ZERO;
         _isLaunching = false;
         _removed = false;
         _isOnStickyWall = false;
+        _isOnButton = false;
         _radius = radius;
+        _dying = false;
 
         setDensity(LumiaModel::sizeLevels[_sizeLevel].density);
-        setFriction(0.1f);
+        setFriction(0.2f);
+        setAngularDamping(0.20f);
         // add bounciness to Lumia
         setRestitution(LUMIA_RESTITUTION);
         setFixedRotation(false);
@@ -95,15 +97,26 @@ void LumiaModel::createFixtures() {
     
     WheelObstacle::createFixtures();
     b2FixtureDef sensorDef;
-    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density;
+    sensorDef.density = LumiaModel::sizeLevels[_sizeLevel].density * 0.40f;
     sensorDef.isSensor = true;
 
     b2CircleShape sensorShape;
-    sensorShape.m_radius = _radius * 1.1f;
+    sensorShape.m_radius = _radius + 0.6f;
 
     sensorDef.shape = &sensorShape;
     _sensorFixture = _body->CreateFixture(&sensorDef);
-    _sensorFixture->SetUserData(getSensorName());
+    _sensorFixture->SetUserData(getLaunchSensorName());
+    
+    b2FixtureDef sensorDef2;
+    sensorDef2.density = 0;
+    sensorDef2.isSensor = true;
+
+    b2CircleShape sensorShape2;
+    sensorShape2.m_radius = _radius + 0.08f;
+
+    sensorDef2.shape = &sensorShape2;
+    _sensorFixture2 = _body->CreateFixture(&sensorDef2);
+    _sensorFixture2->SetUserData(getFrictionSensorName());
 }
 
 /**
@@ -132,6 +145,7 @@ void LumiaModel::releaseFixtures() {
 void LumiaModel::dispose() {
     _sceneNode = nullptr;
     _sensorNode = nullptr;
+    _sensorNode2 = nullptr;
 }
 
 /**
@@ -144,24 +158,21 @@ void LumiaModel::applyForce() {
         return;
     }
     
-    if (isOnStickyWall() && !isLaunching()){
+    if ((isOnStickyWall() || isOnButton()) && !isLaunching()){
         setLinearVelocity(Vec2::ZERO);
         setAngularVelocity(0.0f);
         b2Vec2 force(_stickDirection.x, _stickDirection.y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-    } else if (isOnStickyWall() && isLaunching()){
-        setOnStickyWall(false);
+    } else if ((isOnStickyWall() || isOnButton()) && isLaunching()){
+        unStick();
     }
     
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
-        setGravityScale(0.0f);
         b2Vec2 force(getVelocity().x, getVelocity().y);
         _body->ApplyLinearImpulse(force, _body->GetPosition(), true);
-    }else{
-        setGravityScale(1.0f);
     }
-    if (!isLaunching() && isGrounded()) {
+    if (!isLaunching() && isRolling()) {
         // When Lumia is not being launched (i.e. has landed), want to apply friction to slow X velocity
         b2Vec2 forceX(-getDamping() * getVX(), 0);
         _body->ApplyForce(forceX, _body->GetPosition(), true);
@@ -170,7 +181,7 @@ void LumiaModel::applyForce() {
     // put a cap on maximum velocity Lumia can have
     if (getLinearVelocity().lengthSquared() >= pow(getMaxVelocity(), 2)) {
         Vec2 vel = getLinearVelocity().normalize().scale(getMaxVelocity());
-        _body->SetLinearVelocity(b2Vec2(vel.x, vel.y));
+        setLinearVelocity(vel);
     }
 }
 
@@ -185,7 +196,6 @@ void LumiaModel::applyForce() {
 void LumiaModel::update(float dt) {
     _lastPosition = getPosition();
     WheelObstacle::update(dt);
-    
     if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);
         _sceneNode->setAngle(getAngle());
@@ -208,13 +218,20 @@ void LumiaModel::resetDebug() {
     PolyFactory factory;
     factory.setSegments(12);
     factory.setGeometry(Geometry::PATH);
-    Poly2 poly = factory.makeCircle(Vec2::ZERO,1.15f*getRadius());
+    Poly2 poly = factory.makeCircle(Vec2::ZERO,0.6f+getRadius());
 
     _sensorNode = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
-    _sensorNode->setColor(DEBUG_COLOR);
+    _sensorNode->setColor(Color4f::RED);
     auto size = _debug->getContentSize();
     _sensorNode->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
     _debug->addChild(_sensorNode);
+    
+    Poly2 poly2 = factory.makeCircle(Vec2::ZERO,0.08f+getRadius());
+    _sensorNode2 = scene2::WireNode::allocWithTraversal(poly, poly2::Traversal::CLOSED);
+    _sensorNode2->setColor(Color4f::RED);
+    size = _debug->getContentSize();
+    _sensorNode2->setPosition(Vec2(size.width/2.0f, size.height/2.0f));
+    _debug->addChild(_sensorNode2);
 }
 
 

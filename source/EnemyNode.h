@@ -13,25 +13,56 @@
 
 using namespace cugl;
 
-class EnemyNode : public cugl::scene2::AnimationNode {
+class EnemyNode : public cugl::scene2::SceneNode {
 #pragma mark Constants and Enums
+public:
+    enum EnemyAnimState {
+        /** When enemy is still */
+        Idle,
+        /** When enemy is chasing lumia */
+        Chasing,
+        /** When enemy is escaping from lumia */
+        Escaping
+    };
+
+    
 protected:
+    EnemyAnimState _state;
     
     int _frameCount;
+    
+    const int ANIMATION_INTERVAL = 8;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _idleAnimation;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _chasingAnimation;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _escapingAnimation;
 
-    int ANIMATION_INTERVAL = 12;
 public:
     
-    cugl::Color4 _stint;
-    
-    EnemyNode() : _frameCount(0), AnimationNode() {}
+    EnemyNode() : _state(Idle), _frameCount(0), SceneNode() {}
 
     ~EnemyNode() { dispose(); }
     
-    static std::shared_ptr<EnemyNode> alloc(const std::shared_ptr<Texture>& texture,
-                                                int rows, int cols, int size) {
+    void dispose();
+    /**
+     * Init child nodes of Enemy node
+     */
+    bool setTextures(const std::shared_ptr<cugl::Texture> &chasingAnimation,
+              const std::shared_ptr<cugl::Texture> &escapingAnimation,
+              float radius,
+              float drawScale);
+    
+    void setAnimState(EnemyAnimState state);
+    
+    EnemyAnimState getAnimState(){
+        return _state;
+    }
+ 
+    static std::shared_ptr<EnemyNode> alloc(Size size) {
         std::shared_ptr<EnemyNode> node = std::make_shared<EnemyNode>();
-        return (node->initWithFilmstrip(texture,rows,cols,size) ? node : nullptr);
+        return (node->initWithBounds(size) ? node : nullptr);
     }
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,

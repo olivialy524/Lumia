@@ -82,6 +82,7 @@ public:
      */
     virtual void setActive(bool value) override;
 
+    void setNextScene(string value) { _nextScene = value; }
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; }
 

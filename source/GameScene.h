@@ -41,7 +41,7 @@ protected:
     
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
-    InputController _input;
+    std::shared_ptr<InputController> _input;
     
     CollisionController _collisionController;
     
@@ -57,12 +57,16 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _backbuttonNode;
     
     std::shared_ptr<cugl::scene2::SceneNode> _UIscene;
+    std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
-    /** Reference to the win message label */
-    std::shared_ptr<cugl::scene2::Label> _winnode;
+
+    std::shared_ptr<scene2::Label> _progressLabel;
+
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
+    
+    std::shared_ptr<cugl::scene2::AnimationNode> _loseAnimation;
 
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
@@ -81,6 +85,9 @@ protected:
     
     std::list<std::shared_ptr<Button>> _buttonList;
     
+    /** References to the Lumias */
+    std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
+    
     std::list<std::shared_ptr<Door>> _doorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
@@ -90,10 +97,14 @@ protected:
     std::shared_ptr<TrajectoryNode> _trajectoryNode;
     
     std::shared_ptr<scene2::PolygonNode> _avatarIndicatorNode;
+    
+    std::shared_ptr<cugl::scene2::SceneNode> _scrollNode;
+    
+
+
+    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
 
     
-    /** Whether we have completed this "game" */
-    bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
     /** Whether we have failed at this world (and need a reset) */
@@ -105,10 +116,17 @@ protected:
     /** Volume level for sound effects */
     float _effectVolume;
     
+    bool _switched;
+    
     bool _canSplit;
+    
+    int _stars;
 
+    string _currentLevel;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
+    /** Mark set to handle more sophisticated collision callbacks */
+    std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap2;
     
     std::unordered_map<Node, NodeState> _graph;
 
@@ -116,7 +134,8 @@ protected:
     /** Tick of last time a Lumia hit a spike */
     int _lastSpikeCollision;
     
-    bool _didSwitchLevelSelect;
+    string _nextScene;
+    int _remainingSize;
     
 #pragma mark Internal Object Management
     
@@ -132,7 +151,7 @@ protected:
      * with your serialization loader, which would process a level file.
      */
     void populate();
-    
+
     /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
      *
@@ -164,8 +183,23 @@ protected:
     cugl::Size computeActiveSize() const;
     
 public:
-#pragma mark -
+#pragma mark Game state
+    enum GameState {
+        Paused,
+        Playing
+    };
+    
+    GameState _state = GameState::Playing;
+
+    void setPlaying() { _state = GameState::Playing; }
+    
+    void setPaused() { _state = GameState::Paused; }
+
+    GameState getState() { return _state; }
+
+
 #pragma mark Constructors
+
     /**
      * Creates a new game world with the default values.
      *
@@ -242,6 +276,10 @@ public:
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity);
     
     
+    float touchstart;
+    bool setStart;
+    
+    
 #pragma mark -
 #pragma mark State Access
     
@@ -265,24 +303,6 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    bool isComplete() const { return _complete; }
-    
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-	void setComplete(bool value);
 
 	/**
 	* Returns true if the level is failed.
@@ -292,10 +312,10 @@ public:
 	* @return true if the level is failed.
 	*/
 	bool isFailure() const { return _failed; }
-    
-    bool didSwitchLevelSelect(){
-        return _didSwitchLevelSelect;
-    }
+
+    string getNextScene() { return _nextScene; }
+
+    int getRemainingSize() { return _remainingSize; }
 
 	/**
 	* Sets whether the level is failed.
@@ -322,6 +342,8 @@ public:
     
 #pragma mark -
 #pragma mark Collision Handling
+    
+    bool didCollideWithLumiaBody(std::shared_ptr<LumiaModel> lumia, physics2::Obstacle* bd, void* fd);
 	/**
 	* Processes the start of a collision
 	*
@@ -356,9 +378,9 @@ public:
      */
     void update(float timestep);
     
-    void removeAvatarNode();
+    void removeLumiaNode(shared_ptr<LumiaModel> lumia);
 
-    void deactivateAvatarPhysics();
+    void deactivateLumiaPhysics(shared_ptr<LumiaModel> lumia);
     /**
      * Resets the status of the game so that we can play again.
      */
@@ -391,7 +413,25 @@ public:
 
     /** Set player avatar to the nearest Lumia body that is not the parameter lumia */
     void switchToNearestLumia(const std::shared_ptr<LumiaModel> lumia);
+    
+    
+    void updateGame(float dt);
+    
+    void updatePaused(float dt, float startX);
+    
+    int getStars() { return _stars; }
 
+    string getCurrentLevel() { return _currentLevel; }
+
+    string getPlantProgress() { return _progressLabel->getText(); }
+    
+    void playSplitSound();
+    
+    void playDieSound();
+    
+    void playLightSound();
+    
+    void playGrowSound();
     /**
      * Calculates trajectory point one timestep into future
      *
@@ -401,9 +441,11 @@ public:
      * @param dt time in seconds since last update frame
      */
     Vec2 getTrajectoryPoint(Vec2& startingPosition, Vec2& startingVelocity, 
-                            float n, std::shared_ptr<cugl::physics2::ObstacleWorld> _world, float dt);
+                            float n);
 
   };
+
+
 
 
 #endif /* __GAME_SCENE_H__ */

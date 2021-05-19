@@ -75,8 +75,7 @@ protected:
     std::shared_ptr<cugl::scene2::WireNode> _sensorNode;
 
     /** The scene graph node for the enemy. */
-    std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
-    std::shared_ptr<EnemyNode> _node;
+    std::shared_ptr<EnemyNode> _sceneNode;
 
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawScale;
@@ -91,15 +90,6 @@ protected:
     bool _removed;
     
     bool _inCoolDown;
-
-    /**
-    * Redraws the outline of the physics fixtures to the debug node
-    *
-    * The debug node is use to outline the fixtures attached to this object.
-    * This is very useful when the fixtures have a very different shape than
-    * the texture (e.g. a circular shape attached to a square texture).
-    */
-    virtual void resetDebug() override;
 
 public:
     
@@ -198,10 +188,21 @@ public:
      *
      * @param texture      The texture for the enemy filmstrip
      */
-    void setTextures(const std::shared_ptr<cugl::Texture>& texture);
+    void setTextures(const std::shared_ptr<Texture>& chasing, const std::shared_ptr<Texture>& escaping);
 
     void setDrawScale(float scale);
     
+    void setEscaping(){
+        _sceneNode->setAnimState(EnemyNode::EnemyAnimState::Escaping);
+    }
+    
+    void setChasing(){
+        _sceneNode->setAnimState(EnemyNode::EnemyAnimState::Chasing);
+    }
+    
+    void setIdle(){
+        _sceneNode->setAnimState(EnemyNode::EnemyAnimState::Idle);
+    }
 #pragma mark -
 #pragma mark Static Constructors
     /**
@@ -293,33 +294,7 @@ public:
      *
      * @return the scene graph node representing this EnemyModel.
      */
-    const std::shared_ptr<cugl::scene2::SceneNode>& getSceneNode() { return _sceneNode; }
-    
-    
-    const std::shared_ptr<cugl::scene2::SceneNode>& getNode() const { return _node; }
-
-    /**
-     * Sets the scene graph node representing this EnemyModel.
-     *
-     * Note that this method also handles creating the nodes for the body parts
-     * of this EnemyModel. Since the obstacles are decoupled from the scene graph,
-     * initialization (which creates the obstacles) occurs prior to the call to
-     * this method. Therefore, to be drawn to the screen, the nodes of the attached
-     * bodies must be added here.
-     *
-     * The bubbler also uses the world node when adding bubbles to the scene, so
-     * the input node must be added to the world BEFORE this method is called.
-     *
-     * By storing a reference to the scene graph node, the model can update
-     * the node to be in sync with the physics info. It does this via the
-     * {@link Obstacle#update(float)} method.
-     *
-     * @param node  The scene graph node representing this LumiaModel, which has been added to the world node already.
-     */
-    void setSceneNode(const std::shared_ptr<cugl::scene2::SceneNode>& node) {
-        _sceneNode = node;
-        _sceneNode->setPosition(getPosition() * _drawScale);
-    }
+    const std::shared_ptr<EnemyNode>& getSceneNode() { return _sceneNode; }
 
     
 #pragma mark -
@@ -389,41 +364,8 @@ public:
     bool getRemoved(){
         return _removed;
     }
-#pragma mark -
-#pragma mark Physics Methods
-    /**
-     * Creates the physics Body(s) for this object, adding them to the world.
-     *
-     * This method overrides the base method to keep your ship from spinning.
-     *
-     * @param world Box2D world to store body
-     *
-     * @return true if object allocation succeeded
-     */
-    void createFixtures() override;
     
-    /**
-     * Release the fixtures for this body, reseting the shape
-     *
-     * This is the primary method to override for custom physics objects.
-     */
-    void releaseFixtures() override;
-    
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * We use this method to reset cooldowns.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
     void update(float dt) override;
-    
-    /**
-     * Applies the force to the body of this Lumia
-     *
-     * This method should be called after the force attribute is set.
-     */
-    void applyForce();
 };
 
 

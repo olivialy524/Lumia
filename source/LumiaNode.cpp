@@ -13,11 +13,13 @@
 void LumiaNode::dispose(){
     _idleAnimation = nullptr;
     _splittingAnimation = nullptr;
+    _deathAnimation = nullptr;
 }
 
 bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
                      const std::shared_ptr<cugl::Texture> &splittingAnimation,
-                    const std::shared_ptr<cugl::Texture> &indicator,
+                     const std::shared_ptr<cugl::Texture> &deathAnimation,
+                     const std::shared_ptr<cugl::Texture> &indicator,
                      float radius,
                      float drawScale){
     auto scale = radius*2/(idleAnimation->getHeight()/4.0f/drawScale);
@@ -52,6 +54,15 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     _splittingAnimation->setFrame(0);
     addChild(_splittingAnimation);
     
+    _deathAnimation = cugl::scene2::AnimationNode::alloc(deathAnimation, ANIMATION_ROWS, ANIMATION_COLS, ANIMATION_SIZE);
+    _deathAnimation->setAnchor(Vec2::ZERO);
+    _deathAnimation->setPosition(offset/2);
+    float xscale = idleAnimation->getWidth();
+    float xscale2 = deathAnimation->getWidth();
+    _deathAnimation->setScale(xscale/xscale2);
+    _deathAnimation->setFrame(0);
+    addChild(_deathAnimation);
+    
     setAnimState(Idle);
     return true;
 }
@@ -66,6 +77,17 @@ void LumiaNode::setAnimState(LumiaAnimState state){
         case SplitFinished:{
             _splittingAnimation->setVisible(true);
             _idleAnimation->setVisible(false);
+            _deathAnimation->setVisible(false);
+            for (auto node : _indicatorNode){
+                node->setVisible(false);
+            }
+            break;
+        }
+        case Dead:
+        case Dying:{
+            _splittingAnimation->setVisible(false);
+            _idleAnimation->setVisible(false);
+            _deathAnimation->setVisible(true);
             for (auto node : _indicatorNode){
                 node->setVisible(false);
             }
@@ -74,6 +96,7 @@ void LumiaNode::setAnimState(LumiaAnimState state){
         default:{
             _splittingAnimation->setVisible(false);
             _idleAnimation->setVisible(true);
+            _deathAnimation->setVisible(false);
             for (auto node : _indicatorNode){
                 node->setVisible(true);
             }
@@ -109,6 +132,18 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
             }
             break;
         }
+        case Dying:{
+            _frameCount %= DEATH_ANIMATION_INTERVAL;
+            
+            if (_frameCount == 0){
+                int frame = _deathAnimation->getFrame() + 1;
+                _deathAnimation->setFrame(frame);
+                if (frame == ANIMATION_SIZE - 1){
+                    setAnimState(LumiaAnimState::Dead);
+                }
+            }
+            break;
+        }
         default:{
             break;
         }
@@ -116,5 +151,4 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
     _frameCount++;
     
     SceneNode::draw(batch, transform, tint);
-    
 }

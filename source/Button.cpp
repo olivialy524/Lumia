@@ -9,33 +9,37 @@
 #include <stdio.h>
 #include <cugl/physics2/CUBoxObstacle.h>
 #include "Button.h"
+
 void Button::dispose() {
-    _node = nullptr;
     _sceneNode = nullptr;
+    _node = nullptr;
 }
 
-void Button::pushDown(float scale) {
-    if (getHeight() <= getNormHeight()/4) {
+void Button::setTextures(const std::shared_ptr<Texture>& button) {
+    _sceneNode = scene2::SceneNode::allocWithBounds(Size(button->getWidth()/NUM_FRAMES,button->getHeight()));
+    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _node = ButtonNode::alloc(button, 1, 6, 6);
+    auto scale =  getWidth()/(button->getWidth()/NUM_FRAMES/_drawScale);
+    _sceneNode->setScale(scale);
+    _node->setAnchor(Vec2::ZERO);
+    _sceneNode->addChild(_node);
+}
+
+void Button::pushDown() {
+    if (getPushedDown()) {
         return;
     }
-    setHeight(getHeight() - .01);
-    _node->setContentHeight(_node->getContentHeight() - .01*sqrt(scale));
-    setPosition(getPosition().x, getPosition().y-.005);
-    _node->setPosition(_node->getPositionX(), _node->getPositionY()-.005*scale);
-    if (getHeight() <= getNormHeight()/4) {
-        setHeight(getNormHeight()/4);
+    _node->setAnimState(ButtonNode::GoingDown);
+    float height = (NUM_FRAMES - _node->getFrame())/NUM_FRAMES * getNormHeight();
+    setHeight(height);
+}
+
+void Button::pushUp() {
+    if (getPushedUp()) {
+        return;
     }
-}
-void Button::pushUp(float scale) {
-if (getHeight() >= getNormHeight()) {
-    return;
-}
-setHeight(getHeight() + .01);
-_node->setContentHeight(_node->getContentHeight() + .01*sqrt(scale));
-    setPosition(getPosition().x, getPosition().y+.005);
-    _node->setPosition(_node->getPosition().x, _node->getPosition().y+.005*scale);
-if (getHeight() >= getNormHeight()) {
-    setHeight(getNormHeight());
-}
+    _node->setAnimState(ButtonNode::GoingUp);
+    float height = (NUM_FRAMES - _node->getFrame())/NUM_FRAMES * getNormHeight();
+    setHeight(height);
 }
 

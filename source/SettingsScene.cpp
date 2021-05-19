@@ -50,18 +50,17 @@ bool SettingsScene::init(const std::shared_ptr<AssetManager>& assets) {
     _effectSlider = std::dynamic_pointer_cast<scene2::Slider>(assets->get<scene2::SceneNode>("settings_effectslider"));
     
     _musicSlider->addListener([=](const std::string& name, float value) {
-        _musicVolume = value;
+        _musicVolume = value / 100.0f;
     });
 
     _effectSlider->addListener([=](const std::string& name, float value) {
-        _effectVolume = value;
+        _effectVolume = value / 100.0f;
     });
 
 
     _close = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("settings_close"));
     _close->addListener([=](const std::string& name, bool down) {
         this->_active = down;
-        _nextScene = "levelselect";
     });
     
     setActive(_active);

@@ -60,7 +60,9 @@ private:
     std::unordered_set<Uint64> _touchids;
   
     /** Maximum allowed Lumia launch velocity */
-    float MAXIMUM_LAUNCH_VELOCITY = 20.0f;
+    float MAXIMUM_LAUNCH_VELOCITY = 20.5f;
+    
+    static std::shared_ptr<InputController> instance;
     
 protected:
     // INPUT RESULTS
@@ -88,6 +90,7 @@ protected:
     bool _dragged;
     /** The planned launch velocity produced by player input drag */
     cugl::Vec2 _plannedLaunch;
+    float _dragDistance;
   
 public:
 #pragma mark -
@@ -104,6 +107,16 @@ public:
      * Disposes of this input controller, releasing all listeners.
      */
     ~InputController() { dispose(); }
+    
+    
+    static std::shared_ptr<InputController> getInstance() {
+        if (instance == nullptr) {
+            instance = std::shared_ptr<InputController>(new InputController());
+        }
+        return instance;
+    }
+    
+    static void cleanup() { instance = nullptr; }
     
     /**
      * Deactivates this input controller, releasing all listeners.
@@ -150,6 +163,7 @@ public:
      */
     void clear();
     
+    void clearAvatarStates();
 #pragma mark -
 #pragma mark Input Results
     /**
@@ -179,6 +193,8 @@ public:
      * @return whether or not the player is dragging their mouse/finger
      */
     bool isDragging() { return _dragged; }
+    
+    float getCurrentDrag() {return _dragDistance;}
 
     /**
      * Returns the attempted input switch tap/click location.
@@ -238,7 +254,7 @@ public:
     float getMaximumLaunchVelocity(){
         return MAXIMUM_LAUNCH_VELOCITY;
     }
-
+    
 #pragma mark -
 #pragma mark Touch and Mouse Callbacks
     /**
