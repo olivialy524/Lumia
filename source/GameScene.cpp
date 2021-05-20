@@ -338,6 +338,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
+    _world->clear();
     _collisionController.dispose();
     _trajectoryNode->dispose();
     _avatarIndicatorNode->dispose();
@@ -369,11 +370,16 @@ void GameScene::dispose() {
     }
     _energyList.clear();
 
-    for (const std::shared_ptr<SlidingDoor> & d: _doorList) {
+    for (const std::shared_ptr<SlidingDoor> & d: _slidingDoorList) {
         d->dispose();
     }
-    _doorList.clear();
+    _slidingDoorList.clear();
             
+    for (const std::shared_ptr<ShrinkingDoor> & d: _shrinkingDoorList) {
+        d->dispose();
+    }
+    _shrinkingDoorList.clear();
+    
     for (const std::shared_ptr<Button> & b: _buttonList) {
         b->dispose();
     }
@@ -435,10 +441,16 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
-    for (const std::shared_ptr<SlidingDoor> & d: _doorList) {
+
+    for (const std::shared_ptr<SlidingDoor> & d: _slidingDoorList) {
         d->dispose();
     }
-    _doorList.clear();
+    _slidingDoorList.clear();
+            
+    for (const std::shared_ptr<ShrinkingDoor> & d: _shrinkingDoorList) {
+        d->dispose();
+    }
+    _shrinkingDoorList.clear();
     
     for (const std::shared_ptr<Button> & b: _buttonList) {
         b->dispose();
@@ -581,16 +593,25 @@ void GameScene::populate() {
     
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
-    std::vector<std::shared_ptr<SlidingDoor>> doors = _level->getDoors();
     for (int i = 0; i < buttons.size(); i++) {
         std::shared_ptr<Button> b = buttons[i];
-        std::shared_ptr<SlidingDoor> d = doors[i];
-        d->setName("door " + toString(i));
-        image = _assets->get<Texture>(SLIDING_DOOR_NAME);
-        d->setDrawScale(_scale);
-        d->setTextures(image);
-        addObstacle(d,d->getSceneNode(),1);
-        _doorList.push_front(d);
+        if (b->getIsSlidingDoor()){
+            std::shared_ptr<SlidingDoor> d = b->getSlidingDoor();
+            d->setName("door " + toString(i));
+            image = _assets->get<Texture>(SLIDING_DOOR_NAME);
+            d->setDrawScale(_scale);
+            d->setTextures(image);
+            addObstacle(d,d->getSceneNode(),1);
+            _slidingDoorList.push_front(d);
+        }else{
+            std::shared_ptr<ShrinkingDoor> d2 = b->getShrinkingDoor();
+            d2->setName("door " + toString(i));
+            image = _assets->get<Texture>(SHRINKING_DOOR_NAME);
+            d2->setDrawScale(_scale);
+            d2->setTextures(image);
+            addObstacle(d2,d2->getSceneNode(),1, false);
+            _shrinkingDoorList.push_front(d2);
+        }
         b->setName(BUTTON_NAME);
         image = _assets->get<Texture>(BUTTON_NAME);
         b->setDrawScale(_scale);
@@ -843,7 +864,16 @@ void GameScene::updateGame(float dt) {
     }
     _collisionController.clearStates();
     
-    for (auto & door : _doorList) {
+    for (auto & door : _shrinkingDoorList) {
+        if (door->getOpening()) {
+            door->Open();
+        }
+        else if (door->getClosing()) {
+            door->Close();
+        }
+    }
+    
+    for (auto & door : _slidingDoorList) {
         if (door->getOpening()) {
             door->setBodyType(b2_dynamicBody);
             door->Open();

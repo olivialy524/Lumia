@@ -43,7 +43,6 @@ void LevelModel::dispose(){
     _spikes.clear();
     _energies.clear();
     _buttons.clear();
-    _doors.clear();
     _irregular_tiles.clear();
     _tiles.clear();
     _stickyWalls.clear();
@@ -291,7 +290,6 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
                 float ny = door->getFloat("nbly");
                 float angle = door->getFloat("angle");
                 Rect rectangle = Rect(ox,oy,3.0f,0.5f);
-                std::shared_ptr<SlidingDoor> d;
                 Poly2 platform(rectangle,false);
                 SimpleTriangulator triangulator;
                 triangulator.set(platform);
@@ -299,7 +297,7 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
                 platform.setIndices(triangulator.getTriangulation());
                 platform.setGeometry(Geometry::SOLID);
                 cugl::Vec2 orpos = cugl::Vec2(ox,oy);
-                d = SlidingDoor::alloc(orpos, platform);
+                std::shared_ptr<SlidingDoor> d = SlidingDoor::alloc(orpos, platform);
                 d->setAngle(angle);
                 d->setOriginalPos(orpos);
                 d->setNewPos(cugl::Vec2(nx,ny));
@@ -308,12 +306,24 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
                 d->setRestitution(BASIC_RESTITUTION);
                 d->setAnchor(Vec2(0,0));
                 d->setDebugColor(DEBUG_COLOR);
-                _doors.push_back(d);
                 b->setSlidingDoor(d);
                 b->setIsSlidingDoor(true);
                 break;
             }
             case 2:{ // Shrinking door
+                float x = door->getFloat("posx");
+                float y = door->getFloat("posy");
+                float angle = door->getFloat("angle");
+                Size door = Size(3.0f,0.5f);
+                Vec2 pos = Vec2 (x,y);
+                std::shared_ptr<ShrinkingDoor> d2 = ShrinkingDoor::alloc(pos, door, angle);
+//                d2->setDensity(10000);
+//                d2->setGravityScale(0);
+                d2->setRestitution(BASIC_RESTITUTION);
+                d2->setDebugColor(DEBUG_COLOR);
+                b->setShrinkingDoor(d2);
+                b->setIsSlidingDoor(false);
+//                d2->g
                 break;
             }
         }

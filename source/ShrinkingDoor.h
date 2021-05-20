@@ -157,18 +157,18 @@ public:
         return (result->init(pos, size, angle) ? result : nullptr);
     }
 
-//#pragma mark Physics Methods
-//    /**
-//     * Creates the joints for this object.
-//     *
-//     * This method is executed as part of activePhysics. This is the primary method to
-//     * override for custom physics objects.
-//     *
-//     * @param world Box2D world to store joints
-//     *
-//     * @return true if object allocation succeeded
-//     */
-//    bool createJoints(b2World& world) override;
+#pragma mark Physics Methods
+    /**
+     * Creates the joints for this object.
+     *
+     * This method is executed as part of activePhysics. This is the primary method to
+     * override for custom physics objects.
+     *
+     * @param world Box2D world to store joints
+     *
+     * @return true if object allocation succeeded
+     */
+    bool createJoints(b2World& world) override;
 
 
 #pragma mark -

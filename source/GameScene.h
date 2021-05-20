@@ -85,7 +85,8 @@ protected:
     /** References to the Lumias */
     std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
     
-    std::list<std::shared_ptr<SlidingDoor>> _doorList;
+    std::list<std::shared_ptr<SlidingDoor>> _slidingDoorList;
+    std::list<std::shared_ptr<ShrinkingDoor>> _shrinkingDoorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
