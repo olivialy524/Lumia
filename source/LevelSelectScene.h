@@ -43,6 +43,8 @@ protected:
         Vec2(3080, 300),
         Vec2(3500, 720),
         Vec2(4000, 720),
+        Vec2(4400, 300),
+        Vec2(4900, 300),
     };
     
     float _musicVolume = 1.0;

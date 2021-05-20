@@ -58,12 +58,8 @@ void LumiaApp::onStartup() {
     _assets->loadAsync<LevelModel>("json/level7.json", "json/level7.json", nullptr);
     _assets->loadAsync<LevelModel>("json/level8.json", "json/level8.json", nullptr);
     _assets->loadAsync<LevelModel>("json/level9.json", "json/level9.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/level6.json", "json/level4.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/level7.json", "json/level4.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/level8.json", "json/level4.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/tutorial1.json", "json/tutorial1.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/tutorial2.json", "json/tutorial2.json", nullptr);
-//    _assets->loadAsync<LevelModel>("json/tutorial3.json", "json/tutorial3.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level10.json", "json/level10.json", nullptr);
+    _assets->loadAsync<LevelModel>("json/level11.json", "json/level11.json", nullptr);
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
     Application::onStartup(); // YOU MUST END with call to parent

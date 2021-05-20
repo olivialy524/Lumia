@@ -169,7 +169,7 @@ void LevelSelectScene::update(float timestep){
         if (target > 0){
             target = 0;
         }
-        float limit = -1 * _scrollNode->getWidth() -  Application::get()->getDisplaySize().width/2;
+        float limit = -1 * 2000 -  Application::get()->getDisplaySize().width;
         if (target < limit){
             target = limit ;
         }
