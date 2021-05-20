@@ -7,10 +7,10 @@
 //
 
 #include <stdio.h>
-#include "Door.h"
+#include "SlidingDoor.h"
 
 
-void Door::setTextures(const std::shared_ptr<Texture>& image){
+void SlidingDoor::setTextures(const std::shared_ptr<Texture>& image){
     auto platform = getPolygon() * _drawScale;
 
     // calcuate the drawing overlay scale
@@ -22,11 +22,11 @@ void Door::setTextures(const std::shared_ptr<Texture>& image){
     _scenenode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 }
 
-void Door::dispose() {
+void SlidingDoor::dispose() {
     _scenenode = nullptr;
 }
 
-void Door::Close() {
+void SlidingDoor::Close() {
     if (!getClosing() || getPosition() == getOriginalPos()) {
     return;
     }
@@ -41,7 +41,7 @@ void Door::Close() {
     }
 }
 
-void Door::Open() {
+void SlidingDoor::Open() {
     if (!getOpening() || getPosition() == getNewPos()) {
     return;
     }
@@ -56,7 +56,7 @@ void Door::Open() {
     }
 }
 
-void Door::update(float dt) {
+void SlidingDoor::update(float dt) {
     PolygonObstacle::update(dt);
     if (_scenenode != nullptr) {
         _scenenode->setPosition(getPosition()*_drawScale);

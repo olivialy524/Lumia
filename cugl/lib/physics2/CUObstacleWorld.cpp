@@ -259,8 +259,6 @@ bool ObstacleWorld::init(const Rect bounds, const Vec2 gravity) {
  */
 void ObstacleWorld::addObstacle(const std::shared_ptr<Obstacle>& obj) {
     if (!inBounds(obj.get())){
-//        CULog(obj->getPosition());
-//        CULog(_bounds.origin.x);
         std::cout << "pos" << obj->getPosition().x <<"," << obj->getPosition().y <<std::endl;
         std::cout << "bound" << _bounds.origin.x <<"," << _bounds.origin.y <<std::endl;
         std::cout << "bound" << _bounds.size.width <<"," << _bounds.size.height <<std::endl;

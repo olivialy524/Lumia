@@ -168,19 +168,24 @@ void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<Lumia
 }
 
 void CollisionController::processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
-    button->getDoor()->setOpening(true);
-    button->getDoor()->setClosing(false);
     button->setPushingDown(true);
     lumia->setOnButton(true);
     button->setLumia(lumia);
 }
 
 void CollisionController::processButtonLumiaEnding(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
-    button->getDoor()->setOpening(false);
-    button->getDoor()->setClosing(true);
+    if (button -> getIsSlidingDoor()){
+        button->getSlidingDoor()->setOpening(false);
+        button->getSlidingDoor()->setClosing(true);
+    }else{
+        button->getShrinkingDoor()->setOpening(false);
+        button->getShrinkingDoor()->setClosing(true);
+    }
     button->setPushingDown(false);
     button->resetCD();
-    lumia->setOnButton(false);
+    if (lumia == button->getLumia()){
+        lumia->setOnButton(false);
+    }
 }
 
 void CollisionController::processStickyWallLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const StickyWallModel* stickyWall){

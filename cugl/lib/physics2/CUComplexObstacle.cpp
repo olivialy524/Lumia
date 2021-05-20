@@ -143,6 +143,7 @@ void ComplexObstacle::setSensor(bool value) {
             f->SetSensor(value);
         }
     }
+    CULog("sensor %d",_fixture.isSensor);
 }
 
 /**
