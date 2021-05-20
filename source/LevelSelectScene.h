@@ -47,12 +47,10 @@ protected:
         Vec2(4900, 300),
     };
     
-    float _musicVolume = 1.0;
-    
     std::shared_ptr<InputController> _input;
     
-    float touchstart;
-    bool setStart;
+    float _touchStart;
+    bool _setStart;
     
     void addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4);
     
@@ -65,7 +63,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    LevelSelectScene() : _nextScene(""), _selectedLevel("") {}
+    LevelSelectScene() : _nextScene(""), _selectedLevel(""), _touchStart(0.0f), _setStart(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -96,11 +94,11 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile);
     
-    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets) {
+    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile) {
         std::shared_ptr<LevelSelectScene> result = std::make_shared<LevelSelectScene>();
-        return (result->init(assets) ? result : nullptr);
+        return (result->init(assets, saveFile) ? result : nullptr);
     }
     
     /**
@@ -108,13 +106,13 @@ public:
      *
      * @param value whether the scene is currently active
      */
-    virtual void setActive(bool value) override;
+    virtual void setActive(bool value, std::shared_ptr<cugl::JsonValue> saveFile);
 
     /** Returns the string representing the next scene to transition to */
-    string getNextScene() { return _nextScene; };
+    string getNextScene() { return _nextScene; }
 
     /** Returns the string representing the next scene to transition to */
-    string getSelectedLevel() { return _selectedLevel; };
+    string getSelectedLevel() { return _selectedLevel; }
     
     virtual void update(float timestep) override;
     

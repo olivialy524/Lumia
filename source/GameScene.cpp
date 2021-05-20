@@ -343,7 +343,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
-    _world->clear();
+    if (_world != nullptr) {
+        _world->clear();
+    }
     _collisionController.dispose();
     _trajectoryNode->dispose();
     _avatarIndicatorNode->dispose();

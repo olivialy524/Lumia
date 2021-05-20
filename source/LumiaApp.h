@@ -55,6 +55,8 @@ protected:
     WinScene _win;
     /** The current scene of the game*/
     CurrentScene _scene;
+
+    std::shared_ptr<cugl::JsonValue> _saveFile;
     
 public:
 #pragma mark Constructors

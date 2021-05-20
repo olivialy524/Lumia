@@ -84,13 +84,23 @@ public:
 
     void setNextScene(string value) { _nextScene = value; }
     /** Returns the string representing the next scene to transition to */
-    string getNextScene() { return _nextScene; };
+    string getNextScene() { return _nextScene; }
 
-    /** Returns the set music volumd */
-    float getMusicVolume() { return _musicVolume; };
+    /** Returns the set music volume */
+    float getMusicVolume() { return _musicVolume; }
+
+    void setMusicVolume(float value) { 
+        _musicVolume = value;
+        _musicSlider->setValue(value * 100.0f);
+    }
 
     /** Returns the set sound effect volume */
     float getEffectVolume() { return _effectVolume; };
+
+    void setEffectVolume(float value) { 
+        _effectVolume = value;
+        _effectSlider->setValue(value * 100.0f);
+    }
 };
 
 #endif /* __SETTINGS_SCENE_H__ */
