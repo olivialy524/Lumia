@@ -89,12 +89,18 @@ public:
     /** Returns the set music volume */
     float getMusicVolume() { return _musicVolume; }
 
-    void setMusicVolume(float value) { _musicVolume = value; }
+    void setMusicVolume(float value) { 
+        _musicVolume = value;
+        _musicSlider->setValue(value * 100.0f);
+    }
 
     /** Returns the set sound effect volume */
     float getEffectVolume() { return _effectVolume; };
 
-    void setEffectVolume(float value) { _effectVolume = value; }
+    void setEffectVolume(float value) { 
+        _effectVolume = value;
+        _effectSlider->setValue(value * 100.0f);
+    }
 };
 
 #endif /* __SETTINGS_SCENE_H__ */

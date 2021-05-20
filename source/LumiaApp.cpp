@@ -13,7 +13,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
-#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":false,\"completed\":false,\"score\":90,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level4.json\"}],\"musicVolume\":1.0,\"effectVolume\":1.0}"
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Tutorial 1\",\"unlocked\":true,\"completed\":false,\"score\":-1,\"path\":\"json/tutorial1.json\"},{\"name\":\"Tutorial 2\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/tutorial2.json\"},{\"name\":\"Tutorial 3\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/tutorial3.json\"},{\"name\":\"Level 1\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":false,\"completed\":false,\"score\":-1,\"path\":\"json/level4.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -53,19 +53,14 @@ void LumiaApp::onStartup() {
     // load in the tiles json file
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
-    CULog("%s", Application::getSaveDirectory().c_str());
-
     if (!cugl::filetool::file_exists(Application::getSaveDirectory() + "save.json")) {
         // no save file exists yet, so create it
-        std::ofstream file{ Application::getSaveDirectory() + "save.json" };
-        CULog(cugl::filetool::is_readable(Application::getSaveDirectory() + "save.json") ? "true" : "false");
-        std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
         std::shared_ptr<cugl::JsonValue> saveJson = cugl::JsonValue::allocWithJson(DEFAULT_SAVE);
-        writer->writeJson(saveJson);
         _saveFile = saveJson;
+        std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+        writer->writeJson(_saveFile);
     } else {
         // save file already exists, so read from it
-        CULog("save file exist");
         std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
         _saveFile = reader->readJson();
     }
@@ -112,6 +107,8 @@ void LumiaApp::onShutdown() {
 #endif
     
     std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+    _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
     writer->writeJson(_saveFile);
     AudioEngine::stop();
     Application::onShutdown();  // YOU MUST END with call to parent
@@ -130,6 +127,8 @@ void LumiaApp::onShutdown() {
  */
 void LumiaApp::onSuspend() {
     std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+    _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
     writer->writeJson(_saveFile);
     AudioEngine::get()->pause();
 }
@@ -184,10 +183,10 @@ void LumiaApp::update(float timestep) {
                 _win.setActive(false);
                 _gameplay.init(_assets, "json/level1.json");
                 _gameplay.dispose();
-                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
-                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                 _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
                 _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
             }
             return;
         }
