@@ -13,7 +13,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
-#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Tutorial 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/tutorial1.json\"},{\"name\":\"Tutorial 2\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/tutorial2.json\"},{\"name\":\"Tutorial 3\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/tutorial3.json\"},{\"name\":\"Level 1\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 6\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":false,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -346,7 +346,7 @@ void LumiaApp::update(float timestep) {
                         int endIdx = levelFile.find(".json");
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
                         // TODO: update this with eventual number of levels in the game
-                        if (levelNumber == "5") {
+                        if (levelNumber == "12") {
                             _scene = LevelSelect;
                             _levelSelect.setActive(true, _saveFile);
                             std::shared_ptr<Sound> source = _assets->get<Sound>("ui");

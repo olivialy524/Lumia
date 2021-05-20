@@ -23,10 +23,19 @@ void Button::setTextures(const std::shared_ptr<Texture>& button) {
     _sceneNode->setScale(scale);
     _node->setAnchor(Vec2::ZERO);
     _sceneNode->addChild(_node);
+    _sceneNode->setAngle(getAngle());
 }
 
 void Button::pushDown() {
     if (getPushedDown()) {
+        if (isSlidingDoor){
+            _SlidingDoor -> setOpening(true);
+            _SlidingDoor -> setClosing(false);
+        }else{
+            _ShrinkingDoor ->setOpening(true);
+            _ShrinkingDoor -> setClosing(false);
+        }
+        
         return;
     }
     _node->setAnimState(ButtonNode::GoingDown);

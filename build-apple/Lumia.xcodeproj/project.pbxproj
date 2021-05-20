@@ -31,9 +31,9 @@
 		6144346C26194A0D00F597E4 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346B26194A0D00F597E4 /* Button.cpp */; };
 		6144346D26194A0E00F597E4 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346B26194A0D00F597E4 /* Button.cpp */; };
 		6144346E26194A0E00F597E4 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346B26194A0D00F597E4 /* Button.cpp */; };
-		6144347026194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
-		6144347126194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
-		6144347226194A1900F597E4 /* Door.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* Door.cpp */; };
+		6144347026194A1900F597E4 /* SlidingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* SlidingDoor.cpp */; };
+		6144347126194A1900F597E4 /* SlidingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* SlidingDoor.cpp */; };
+		6144347226194A1900F597E4 /* SlidingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6144346F26194A1900F597E4 /* SlidingDoor.cpp */; };
 		C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACAF25F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
 		C70BACB025F8427C00626819 /* LumiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C70BACAC25F8427C00626819 /* LumiaNode.cpp */; };
@@ -55,6 +55,12 @@
 		C729A25C2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
 		C729A25D2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
 		C729A25E2624002500BD1C5A /* CollisionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C729A25B2624002500BD1C5A /* CollisionController.cpp */; };
+		C76C4A432654974E0086332B /* ShrinkingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A422654974E0086332B /* ShrinkingDoor.cpp */; };
+		C76C4A442654974E0086332B /* ShrinkingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A422654974E0086332B /* ShrinkingDoor.cpp */; };
+		C76C4A452654974E0086332B /* ShrinkingDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A422654974E0086332B /* ShrinkingDoor.cpp */; };
+		C76C4A4A2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
+		C76C4A4B2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
+		C76C4A4C2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
 		C794A662262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
 		C794A663262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
 		C794A664262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
@@ -219,9 +225,9 @@
 		613E8D202602A93800900A39 /* EnergyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnergyModel.h; sourceTree = "<group>"; };
 		613E8D242602A94D00900A39 /* EnergyModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyModel.cpp; sourceTree = "<group>"; };
 		6144346626192F2300F597E4 /* Button.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
-		6144346A261930FB00F597E4 /* Door.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Door.h; sourceTree = "<group>"; };
+		6144346A261930FB00F597E4 /* SlidingDoor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlidingDoor.h; sourceTree = "<group>"; };
 		6144346B26194A0D00F597E4 /* Button.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
-		6144346F26194A1900F597E4 /* Door.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Door.cpp; sourceTree = "<group>"; };
+		6144346F26194A1900F597E4 /* SlidingDoor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlidingDoor.cpp; sourceTree = "<group>"; };
 		C70BAC9E25F83F1700626819 /* LumiaNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LumiaNode.h; sourceTree = "<group>"; };
 		C70BACAC25F8427C00626819 /* LumiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LumiaNode.cpp; sourceTree = "<group>"; };
 		C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsScene.cpp; sourceTree = "<group>"; };
@@ -235,6 +241,10 @@
 		C729A1FF2620E26700BD1C5A /* EnergyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnergyNode.cpp; sourceTree = "<group>"; };
 		C729A25B2624002500BD1C5A /* CollisionController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionController.cpp; sourceTree = "<group>"; };
 		C729A2622624019800BD1C5A /* CollisionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollisionController.h; sourceTree = "<group>"; };
+		C76C4A422654974E0086332B /* ShrinkingDoor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShrinkingDoor.cpp; sourceTree = "<group>"; };
+		C76C4A46265497630086332B /* ShrinkingDoor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShrinkingDoor.h; sourceTree = "<group>"; };
+		C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShrinkingDoorNode.cpp; sourceTree = "<group>"; };
+		C76C4A4D2654A8140086332B /* ShrinkingDoorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShrinkingDoorNode.h; sourceTree = "<group>"; };
 		C794A661262F669A0011BE4A /* StickyWallModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StickyWallModel.cpp; sourceTree = "<group>"; };
 		C794A66B262F66AB0011BE4A /* StickyWallModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StickyWallModel.h; sourceTree = "<group>"; };
 		C794A66C262F67840011BE4A /* StickyWallNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StickyWallNode.cpp; sourceTree = "<group>"; };
@@ -428,12 +438,8 @@
 				6144346626192F2300F597E4 /* Button.h */,
 				C7A721462642058D00436C69 /* ButtonNode.cpp */,
 				C7A7214D2642059D00436C69 /* ButtonNode.h */,
-				C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */,
-				C7A7216926467F6D00436C69 /* LevelSelectTile.h */,
 				C729A25B2624002500BD1C5A /* CollisionController.cpp */,
 				C729A2622624019800BD1C5A /* CollisionController.h */,
-				6144346F26194A1900F597E4 /* Door.cpp */,
-				6144346A261930FB00F597E4 /* Door.h */,
 				C79D7E5A261BA3BB007DDD42 /* EnemyModel.cpp */,
 				C79D7E64261BA3CB007DDD42 /* EnemyModel.h */,
 				C79D7E66261BA3EF007DDD42 /* EnemyNode.cpp */,
@@ -451,6 +457,8 @@
 				3A9D6A50260C3DE800898D04 /* LevelModel.h */,
 				C729A1E5261FEB2300BD1C5A /* LevelSelectScene.cpp */,
 				C729A1E4261FEB2300BD1C5A /* LevelSelectScene.h */,
+				C7A7216526467F6D00436C69 /* LevelSelectTile.cpp */,
+				C7A7216926467F6D00436C69 /* LevelSelectTile.h */,
 				EBB4B5502040912400238092 /* LoadingScene.cpp */,
 				EBB4B5542040912400238092 /* LoadingScene.h */,
 				EBB4B5492040912400238092 /* LumiaApp.cpp */,
@@ -464,16 +472,20 @@
 				C729A1D6261FEACC00BD1C5A /* MainMenuScene.h */,
 				C79D7E83261D5453007DDD42 /* PathFindingController.cpp */,
 				C79D7E8D261D546A007DDD42 /* PathFindingController.h */,
+				C7A721712647898E00436C69 /* PauseScene.cpp */,
+				C7A721772647898E00436C69 /* PauseScene.h */,
 				613C1CB625FA90D800B213B8 /* Plant.cpp */,
 				613C1CB225FA90CD00B213B8 /* Plant.h */,
 				3A534AFB25FB256F00CDAE69 /* PlantNode.cpp */,
 				3A534B0225FB258300CDAE69 /* PlantNode.h */,
 				C729A1CA261FEAB300BD1C5A /* SettingsScene.cpp */,
 				C729A1CE261FEAB300BD1C5A /* SettingsScene.h */,
-				C7A721712647898E00436C69 /* PauseScene.cpp */,
-				C7A721772647898E00436C69 /* PauseScene.h */,
-				C7A721752647898E00436C69 /* WinScene.cpp */,
-				C7A721762647898E00436C69 /* WinScene.h */,
+				C76C4A422654974E0086332B /* ShrinkingDoor.cpp */,
+				C76C4A46265497630086332B /* ShrinkingDoor.h */,
+				C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */,
+				C76C4A4D2654A8140086332B /* ShrinkingDoorNode.h */,
+				6144346F26194A1900F597E4 /* SlidingDoor.cpp */,
+				6144346A261930FB00F597E4 /* SlidingDoor.h */,
 				C794A6BC2632582C0011BE4A /* SpikeModel.cpp */,
 				C794A6C12632582C0011BE4A /* SpikeModel.h */,
 				C794A6C02632582C0011BE4A /* SpikeNode.cpp */,
@@ -489,6 +501,8 @@
 				C794A6F52638F2840011BE4A /* TileModel.h */,
 				3AEC4CCE2620FD840013AEB7 /* TrajectoryNode.cpp */,
 				3AEC4CD52620FDB20013AEB7 /* TrajectoryNode.h */,
+				C7A721752647898E00436C69 /* WinScene.cpp */,
+				C7A721762647898E00436C69 /* WinScene.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -756,6 +770,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
+				C76C4A442654974E0086332B /* ShrinkingDoor.cpp in Sources */,
 				EBB4B5622040A2FE00238092 /* InputController.cpp in Sources */,
 				C794A663262F669A0011BE4A /* StickyWallModel.cpp in Sources */,
 				C79D7E68261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
@@ -774,12 +789,13 @@
 				C79D7E5C261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				3AEC4CD02620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A66F262F67840011BE4A /* StickyWallNode.cpp in Sources */,
+				C76C4A4B2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1D0261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
 				C7A7216B26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
-				6144347126194A1900F597E4 /* Door.cpp in Sources */,
+				6144347126194A1900F597E4 /* SlidingDoor.cpp in Sources */,
 				C79D7E85261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EBB4B5602040A2F800238092 /* LoadingScene.cpp in Sources */,
 				613E8D262602A94D00900A39 /* EnergyModel.cpp in Sources */,
@@ -796,6 +812,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB5D20A523FC77C8007D16CD /* main.cpp in Sources */,
+				C76C4A452654974E0086332B /* ShrinkingDoor.cpp in Sources */,
 				EB5D20A923FC77C8007D16CD /* InputController.cpp in Sources */,
 				C794A664262F669A0011BE4A /* StickyWallModel.cpp in Sources */,
 				C79D7E69261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
@@ -814,12 +831,13 @@
 				C79D7E5D261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				3AEC4CD12620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A670262F67840011BE4A /* StickyWallNode.cpp in Sources */,
+				C76C4A4C2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1D1261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
 				C7A7216C26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
-				6144347226194A1900F597E4 /* Door.cpp in Sources */,
+				6144347226194A1900F597E4 /* SlidingDoor.cpp in Sources */,
 				C79D7E86261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				EB5D20A723FC77C8007D16CD /* LoadingScene.cpp in Sources */,
 				613E8D272602A94D00900A39 /* EnergyModel.cpp in Sources */,
@@ -836,6 +854,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBB4B55B2040912400238092 /* LumiaModel.cpp in Sources */,
+				C76C4A432654974E0086332B /* ShrinkingDoor.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
 				C794A662262F669A0011BE4A /* StickyWallModel.cpp in Sources */,
 				C79D7E67261BA3EF007DDD42 /* EnemyNode.cpp in Sources */,
@@ -854,12 +873,13 @@
 				C79D7E5B261BA3BB007DDD42 /* EnemyModel.cpp in Sources */,
 				3AEC4CCF2620FD840013AEB7 /* TrajectoryNode.cpp in Sources */,
 				C794A66E262F67840011BE4A /* StickyWallNode.cpp in Sources */,
+				C76C4A4A2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1CF261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
 				C7A7216A26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
-				6144347026194A1900F597E4 /* Door.cpp in Sources */,
+				6144347026194A1900F597E4 /* SlidingDoor.cpp in Sources */,
 				C79D7E84261D5453007DDD42 /* PathFindingController.cpp in Sources */,
 				3A534AFC25FB256F00CDAE69 /* PlantNode.cpp in Sources */,
 				613E8D252602A94D00900A39 /* EnergyModel.cpp in Sources */,

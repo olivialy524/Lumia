@@ -74,7 +74,9 @@ using namespace cugl;
 
 #define BUTTON_NAME     "button"
 
-#define DOOR_NAME       "door"
+#define SLIDING_DOOR_NAME       "sliding-door"
+
+#define SHRINKING_DOOR_NAME     "shrinking-door"
 /** The name of a platform (for object identification) */
 #define PLATFORM_NAME   "platform"
 
@@ -215,7 +217,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     bkgNode->setPosition(0, 0);
     bkgNode->setScale(dimen.height/bkgTexture->getHeight());
-    
    
     // Create the world and attach the listeners.
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
@@ -342,6 +343,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
+    _world->clear();
     _collisionController.dispose();
     _trajectoryNode->dispose();
     _avatarIndicatorNode->dispose();
@@ -373,11 +375,16 @@ void GameScene::dispose() {
     }
     _energyList.clear();
 
-    for (const std::shared_ptr<Door> & d: _doorList) {
+    for (const std::shared_ptr<SlidingDoor> & d: _slidingDoorList) {
         d->dispose();
     }
-    _doorList.clear();
+    _slidingDoorList.clear();
             
+    for (const std::shared_ptr<ShrinkingDoor> & d: _shrinkingDoorList) {
+        d->dispose();
+    }
+    _shrinkingDoorList.clear();
+    
     for (const std::shared_ptr<Button> & b: _buttonList) {
         b->dispose();
     }
@@ -437,10 +444,16 @@ void GameScene::reset() {
         e->dispose();
     }
     _energyList.clear();
-    for (const std::shared_ptr<Door> & d: _doorList) {
+
+    for (const std::shared_ptr<SlidingDoor> & d: _slidingDoorList) {
         d->dispose();
     }
-    _doorList.clear();
+    _slidingDoorList.clear();
+            
+    for (const std::shared_ptr<ShrinkingDoor> & d: _shrinkingDoorList) {
+        d->dispose();
+    }
+    _shrinkingDoorList.clear();
     
     for (const std::shared_ptr<Button> & b: _buttonList) {
         b->dispose();
@@ -584,16 +597,25 @@ void GameScene::populate() {
     
 #pragma mark : Buttons & Doors
     std::vector<std::shared_ptr<Button>> buttons = _level->getButtons();
-    std::vector<std::shared_ptr<Door>> doors = _level->getDoors();
     for (int i = 0; i < buttons.size(); i++) {
         std::shared_ptr<Button> b = buttons[i];
-        std::shared_ptr<Door> d = doors[i];
-        d->setName("door " + toString(i));
-        image = _assets->get<Texture>(DOOR_NAME);
-        d->setDrawScale(_scale);
-        d->setTextures(image);
-        addObstacle(d,d->getSceneNode(),1);
-        _doorList.push_front(d);
+        if (b->getIsSlidingDoor()){
+            std::shared_ptr<SlidingDoor> d = b->getSlidingDoor();
+            d->setName("door " + toString(i));
+            image = _assets->get<Texture>(SLIDING_DOOR_NAME);
+            d->setDrawScale(_scale);
+            d->setTextures(image);
+            addObstacle(d,d->getSceneNode(),1);
+            _slidingDoorList.push_front(d);
+        }else{
+            std::shared_ptr<ShrinkingDoor> d2 = b->getShrinkingDoor();
+            d2->setName("door " + toString(i));
+            image = _assets->get<Texture>(SHRINKING_DOOR_NAME);
+            d2->setDrawScale(_scale);
+            d2->setTextures(image);
+            addObstacle(d2,d2->getSceneNode(),1, false);
+            _shrinkingDoorList.push_front(d2);
+        }
         b->setName(BUTTON_NAME);
         image = _assets->get<Texture>(BUTTON_NAME);
         b->setDrawScale(_scale);
@@ -846,7 +868,16 @@ void GameScene::updateGame(float dt) {
     }
     _collisionController.clearStates();
     
-    for (auto & door : _doorList) {
+    for (auto & door : _shrinkingDoorList) {
+        if (door->getOpening()) {
+            door->Open();
+        }
+        else if (door->getClosing()) {
+            door->Close();
+        }
+    }
+    
+    for (auto & door : _slidingDoorList) {
         if (door->getOpening()) {
             door->setBodyType(b2_dynamicBody);
             door->Open();
@@ -1096,7 +1127,7 @@ void GameScene::updateGame(float dt) {
                 }
             }
 
-            if (dist < 50.0f) {
+            if (dist < 80.0f) {
                 //set enemy velocity to move away or towards closest Lumia
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
                 if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
@@ -1548,12 +1579,12 @@ void GameScene::beginContact(b2Contact* contact) {
             sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
         }
         // detect if use friction on lumia
-        else if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2))) {
-            lumia->setRolling(true);
-            // Could have more than one ground
-            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
-            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+        else if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1 && bd1 ->getName().substr(0,4)!= "door") ||
+            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2 && bd2 ->getName().substr(0,4)!="door"))) {
+                lumia->setRolling(true);
+                // Could have more than one ground
+                std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
+                sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
         }
     }
 }
@@ -1588,8 +1619,8 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setGrounded(false);
             }
         }
-        if ((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2)) {
+        if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1 && bd1 ->getName().substr(0,4)!= "door") ||
+             (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2 && bd2 ->getName().substr(0,4)!="door"))) {
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
             if (sensorFixtures.empty()) {

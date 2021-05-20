@@ -19,8 +19,11 @@
         "button":{
             "file": "textures/button.png"
         },
-        "door":{
+        "sliding-door":{
             "file": "textures/door.png"
+        },
+        "shrinking-door":{
+            "file": "textures/door2.png"
         },
         "tile1": {
             "file": "textures/tile1.png"
@@ -1057,7 +1060,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T1",
+                            "text": "1",
                             "x_offset": 340,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1069,7 +1072,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T2",
+                            "text": "2",
                             "x_offset": 490,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1081,7 +1084,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T3",
+                            "text": "3",
                             "x_offset": 640,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1093,7 +1096,7 @@
                     "data": {
                     	"key"   : "levelbutton",
                         "variables" : {
-                        	"text": "1",
+                        	"text": "4",
                         	"x_offset": 730,
                         	"y_offset": 60,
                         	"label_x_offset": 0.03,
@@ -1106,9 +1109,7 @@
                     "data": {
                     	"key"   : "levelbutton",
                         "variables" : {
-                        	"text": "2",
-                        	"x_offset": 900,
-                        	"y_offset": 110,
+                        	"text": "5",
                             "texture": "level_complete"
                         }
                     }
@@ -1118,9 +1119,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "3",
-                            "x_offset": 1050,
-                            "y_offset": 110,
+                            "text": "6",
                             "texture": "level_complete"
                         }
                     }
@@ -1130,9 +1129,47 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "4",
-                            "x_offset": 1200,
-                            "y_offset": 110,
+                            "text": "7",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton5"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "8",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton6"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "9",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton7"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "10",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton8"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "11",
                             "texture": "level_complete"
                         }
                     }

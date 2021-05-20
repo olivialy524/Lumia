@@ -107,23 +107,15 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::sh
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[button->getName()] = button;
         
-        if (count <= 3) {
-            button->addListener([=](const std::string& name, bool down) {
-                if (!_input->isDragging()){
-                    this->_active = down;
-                    _nextScene = "game";
-                    _selectedLevel = "json/tutorial" + std::to_string(count) + ".json";
-                }
-            });
-       } else {
+  
            button->addListener([=](const std::string& name, bool down) {
                if (!_input->isDragging()){
                    this->_active = down;
                    _nextScene = "game";
-                   _selectedLevel = "json/level" + std::to_string(count - 3) + ".json";
+                   _selectedLevel = "json/level" + std::to_string(count) + ".json";
                }
            });
-       }
+     
         button->setPosition(buttonPositions[count-1]);
         button->setScale(1.8f);
         button->activate();
@@ -253,7 +245,7 @@ void LevelSelectScene::update(float timestep){
         if (target > 0){
             target = 0;
         }
-        float limit = -1 * _scrollNode->getWidth() -  Application::get()->getDisplaySize().width/2;
+        float limit = -1 * 2000 -  Application::get()->getDisplaySize().width;
         if (target < limit){
             target = limit ;
         }
