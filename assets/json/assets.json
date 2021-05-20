@@ -710,6 +710,7 @@
                                 "x_anchor" : "center",
                                 "y_anchor" : "bottom",
                                 "y_offset": 35,
+                                "x_offset": 1,
                                 "absolute": true
                             }
                         },

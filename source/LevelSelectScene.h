@@ -44,12 +44,10 @@ protected:
 
     };
     
-    float _musicVolume = 1.0;
-
     std::shared_ptr<InputController> _input;
     
-    float touchstart;
-    bool setStart;
+    float _touchStart;
+    bool _setStart;
     
     void addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4);
     
@@ -62,7 +60,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    LevelSelectScene() : _nextScene(""), _selectedLevel("") {}
+    LevelSelectScene() : _nextScene(""), _selectedLevel(""), _touchStart(0.0f), _setStart(false){}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -114,8 +112,6 @@ public:
     string getSelectedLevel() { return _selectedLevel; }
     
     virtual void update(float timestep) override;
-
-    void lockLevels(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile);
     
 };
 

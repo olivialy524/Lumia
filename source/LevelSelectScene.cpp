@@ -130,8 +130,6 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::sh
         count++;
     }
     setActive(_active, saveFile);
-    
-    lockLevels(assets, saveFile);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -155,7 +153,7 @@ void LevelSelectScene::dispose() {
 void LevelSelectScene::setActive(bool value, std::shared_ptr<cugl::JsonValue> saveFile) {
     _active = value;
     if (!value){
-        setStart = false;
+        _setStart = false;
     }
 
     if (!value) {
@@ -183,17 +181,53 @@ void LevelSelectScene::setActive(bool value, std::shared_ptr<cugl::JsonValue> sa
             }
 
             if (level->getBool("unlocked")) {
-                CULog((level->getString("name") + " unlocked").c_str());
                 if (!button->isActive()) {
                     button->activate();
                 }
                 button->setColor(Color4::WHITE);
+
+                int stars = level->getInt("stars");
+                if (stars == 3) {
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1filled"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2filled"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3filled"))->setVisible(true);
+                } else if (stars == 2) {
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1filled"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2filled"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3filled"))->setVisible(false);
+                } else if (stars == 1) {
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1empty"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1filled"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2filled"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3filled"))->setVisible(false);
+                } else {
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3empty"))->setVisible(true);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1filled"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2filled"))->setVisible(false);
+                    std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3filled"))->setVisible(false);
+                }
             } else {
-                CULog((level->getString("name") + " locked").c_str());
                 if (button->isActive()) {
                     button->deactivate();
                 }
                 button->setColor(Color4::RED);
+
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1empty"))->setVisible(false);
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2empty"))->setVisible(false);
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3empty"))->setVisible(false);
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star1filled"))->setVisible(false);
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star2filled"))->setVisible(false);
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up")->getChildByName("star3filled"))->setVisible(false);
             }
         }
     }
@@ -211,11 +245,11 @@ void LevelSelectScene::update(float timestep){
     _input->update(timestep);
     cugl::Scene2::update(timestep);
     if (_input->isDragging()){
-        if (!setStart){
-            touchstart = _scrollNode->getPositionX();
-            setStart = true;
+        if (!_setStart){
+            _touchStart = _scrollNode->getPositionX();
+            _setStart = true;
         }
-        float target = touchstart + _input->getCurrentDrag();
+        float target = _touchStart + _input->getCurrentDrag();
         if (target > 0){
             target = 0;
         }
@@ -226,43 +260,9 @@ void LevelSelectScene::update(float timestep){
         _scrollNode->setPositionX(target);
         
     }else{
-        setStart = false;
+        _setStart = false;
     }
     
-}
-
-void LevelSelectScene::lockLevels(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile) {
-    auto layer = assets->get<scene2::SceneNode>("levelselect");
-    auto levelbuttons = layer->getChildren();
-
-    std::shared_ptr<cugl::JsonValue> levelSaves = saveFile->get("level_saves");
-    // order of levelbuttons in assets.json must be in same order as in save.json
-    for (int i = 0; i < levelbuttons.size(); i++) {
-        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(levelbuttons[i]);
-        std::shared_ptr<cugl::JsonValue> level = levelSaves->get(i);
-
-        if (level->getBool("completed")) {
-            std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(assets->get<Texture>("level_complete"));
-            std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::WHITE);
-        } else {
-            std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(assets->get<Texture>("level_incomplete"));
-            std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::BLACK);
-        }
-
-        if (level->getBool("unlocked")) {
-            CULog((level->getString("name") + " unlocked").c_str());
-            if (!button->isActive()) {
-                button->activate();
-            }
-            button->setColor(Color4::WHITE);
-        } else {
-            CULog((level->getString("name") + " locked").c_str());
-            if (button->isActive()) {
-                button->deactivate();
-            }
-            button->setColor(Color4::RED);
-        }
-    }
 }
 
 void LevelSelectScene::addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4 ){
