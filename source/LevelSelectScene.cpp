@@ -106,26 +106,16 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(*it);
         _buttons[button->getName()] = button;
         
-        if (count <= 3) {
   
-            button->addListener([=](const std::string& name, bool down) {
-                if (!_input->isDragging()){
-                this->_active = down;
-                _nextScene = "game";
-                _selectedLevel = "json/tutorial" + std::to_string(count) + ".json";
-                }
-            });
-            
-       } else {
            button->addListener([=](const std::string& name, bool down) {
                if (!_input->isDragging()){
                this->_active = down;
                _nextScene = "game";
-               _selectedLevel = "json/level" + std::to_string(count -3) + ".json";
+               _selectedLevel = "json/level" + std::to_string(count) + ".json";
                std::cout << _selectedLevel << std::endl;
                }
            });
-       }
+     
         button->setPosition(buttonPositions[count-1]);
         button->setScale(1.8f);
         button->activate();

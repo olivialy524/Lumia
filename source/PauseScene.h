@@ -85,6 +85,11 @@ public:
         std::shared_ptr<cugl::scene2::Label> levelLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("pausescreen_levelicon_label"));
         levelLabel->setText(value);
     }
+
+    void setDetailsLabel(const std::shared_ptr<cugl::AssetManager>& assets, string value) {
+        std::shared_ptr<cugl::scene2::Label> detailsLabel = std::dynamic_pointer_cast<cugl::scene2::Label>(assets->get<cugl::scene2::SceneNode>("pausescreen_details_plantlabel"));
+        detailsLabel->setText(value);
+    }
 };
 
 #endif /* __PAUSE_SCENE_H__ */

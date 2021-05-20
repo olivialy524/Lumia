@@ -23,6 +23,7 @@ void Button::setTextures(const std::shared_ptr<Texture>& button) {
     _sceneNode->setScale(scale);
     _node->setAnchor(Vec2::ZERO);
     _sceneNode->addChild(_node);
+    _sceneNode->setAngle(getAngle());
 }
 
 void Button::pushDown() {

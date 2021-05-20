@@ -277,8 +277,10 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
         std::shared_ptr<Button> b;
         float bx = button->getFloat("posx");
         float by = button->getFloat("posy");
+        float ang = button->getFloat("angle");
         b = Button::alloc(Vec2(bx,by), Size(1,0.6f));
         b->setDensity(BASIC_DENSITY);
+        b->setAngle(ang);
         b->setBodyType(b2_staticBody);
         b->setRestitution(BASIC_RESTITUTION);
         b->setDebugColor(DEBUG_COLOR);
