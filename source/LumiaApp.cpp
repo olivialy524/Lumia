@@ -409,7 +409,7 @@ void LumiaApp::update(float timestep) {
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
                     std::shared_ptr<Sound> source = _assets->get<Sound>("win");
-                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
+                    AudioEngine::get()->getMusicQueue()->play(source, false, _settings.getMusicVolume());
                     _scene = Win;
                     _win.setActive(true);
                 }
