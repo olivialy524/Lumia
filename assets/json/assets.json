@@ -1152,6 +1152,26 @@
                             "texture": "level_complete"
                         }
                     }
+                },
+                "levelbutton7"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "10",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton8"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "11",
+                            "texture": "level_complete"
+                        }
+                    }
                 }
             }
         },

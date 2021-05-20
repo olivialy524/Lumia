@@ -1127,7 +1127,7 @@ void GameScene::updateGame(float dt) {
                 }
             }
 
-            if (dist < 100.0f) {
+            if (dist < 80.0f) {
                 //set enemy velocity to move away or towards closest Lumia
                 Vec2 distance = closestLumia->getPosition() - enemyPos;
                 if (closestLumia->getSizeLevel() > enemy->getSizeLevel()) {
