@@ -21,6 +21,7 @@ private:
     std::shared_ptr<physics2::BoxObstacle> _door;
     float _drawScale;
     float _normHeight;
+    Vec2 _rotatedOffset;
     
 public:
 #pragma mark Constructors

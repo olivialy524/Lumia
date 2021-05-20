@@ -168,13 +168,13 @@ void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<Lumia
 }
 
 void CollisionController::processButtonLumiaCollision(const std::shared_ptr<LumiaModel> lumia, const std::shared_ptr<Button> button) {
-    if (button -> getIsSlidingDoor()){
-        button->getSlidingDoor()->setOpening(true);
-        button->getSlidingDoor()->setClosing(false);
-    }else{
-        button->getShrinkingDoor()->setOpening(true);
-        button->getShrinkingDoor()->setClosing(false);
-    }
+//    if (button -> getIsSlidingDoor()){
+//        button->getSlidingDoor()->setOpening(true);
+//        button->getSlidingDoor()->setClosing(false);
+//    }else{
+//        button->getShrinkingDoor()->setOpening(true);
+//        button->getShrinkingDoor()->setClosing(false);
+//    }
     button->setPushingDown(true);
     lumia->setOnButton(true);
     button->setLumia(lumia);

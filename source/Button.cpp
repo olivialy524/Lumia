@@ -27,6 +27,14 @@ void Button::setTextures(const std::shared_ptr<Texture>& button) {
 
 void Button::pushDown() {
     if (getPushedDown()) {
+        if (isSlidingDoor){
+            _SlidingDoor -> setOpening(true);
+            _SlidingDoor -> setClosing(false);
+        }else{
+            _ShrinkingDoor ->setOpening(true);
+            _ShrinkingDoor -> setClosing(false);
+        }
+        
         return;
     }
     _node->setAnimState(ButtonNode::GoingDown);

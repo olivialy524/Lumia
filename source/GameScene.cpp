@@ -1568,12 +1568,12 @@ void GameScene::beginContact(b2Contact* contact) {
             sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
         }
         // detect if use friction on lumia
-        else if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2))) {
-            lumia->setRolling(true);
-            // Could have more than one ground
-            std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
-            sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
+        else if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1 && bd1 ->getName().substr(0,4)!= "door") ||
+            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2 && bd2 ->getName().substr(0,4)!="door"))) {
+                lumia->setRolling(true);
+                // Could have more than one ground
+                std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
+                sensorFixtures.emplace(lumia.get() == bd1 ? fix2 : fix1);
         }
     }
 }
@@ -1608,8 +1608,8 @@ void GameScene::endContact(b2Contact* contact) {
                 lumia->setGrounded(false);
             }
         }
-        if ((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1) ||
-            (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2)) {
+        if (((lumia->getFrictionSensorName() == fd2 && lumia.get() != bd1 && bd1 ->getName().substr(0,4)!= "door") ||
+             (lumia->getFrictionSensorName() == fd1 && lumia.get() != bd2 && bd2 ->getName().substr(0,4)!="door"))) {
             std::unordered_set<b2Fixture*> & sensorFixtures = _sensorFixtureMap2[lumia.get()];
             sensorFixtures.erase(lumia.get() == bd1 ? fix2 : fix1);
             if (sensorFixtures.empty()) {

@@ -314,16 +314,13 @@ std::vector<std::shared_ptr<Button>> LevelModel::createButtonsAndDoors(const std
                 float x = door->getFloat("posx");
                 float y = door->getFloat("posy");
                 float angle = door->getFloat("angle");
-                Size door = Size(3.0f,0.5f);
+                Size door = Size(3.5f,0.5f);
                 Vec2 pos = Vec2 (x,y);
                 std::shared_ptr<ShrinkingDoor> d2 = ShrinkingDoor::alloc(pos, door, angle);
-//                d2->setDensity(10000);
-//                d2->setGravityScale(0);
                 d2->setRestitution(BASIC_RESTITUTION);
                 d2->setDebugColor(DEBUG_COLOR);
                 b->setShrinkingDoor(d2);
                 b->setIsSlidingDoor(false);
-//                d2->g
                 break;
             }
         }

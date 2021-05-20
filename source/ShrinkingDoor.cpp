@@ -13,15 +13,11 @@
 #define NUM_FRAMES   12
 
 void ShrinkingDoor::setTextures(const std::shared_ptr<Texture>& door){
-//    _sceneNode = scene2::SceneNode::allocWithBounds(Size(door->getWidth()/NUM_FRAMES,door->getHeight()));
-//    _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode = ShrinkingDoorNode::alloc(door, NUM_FRAMES, 1, NUM_FRAMES);
     auto scale =  (_door->getWidth() + 0.4f)/(door->getWidth()/_drawScale);
     _sceneNode->setScale(scale);
     _sceneNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//    lloc(pos,Vec2(0.5f,0.8f));
-    Vec2 offset = Vec2(-0.25f * _drawScale, -0.4f * _drawScale);
-    _sceneNode->setPosition(getPosition()*_drawScale + offset);
+    _sceneNode->setPosition(getPosition()*_drawScale + _rotatedOffset * _drawScale);
     _sceneNode->setAngle(getAngle());
 }
 
@@ -49,8 +45,7 @@ void ShrinkingDoor::Open() {
 void ShrinkingDoor::update(float dt) {
     Obstacle::update(dt);
     if (_sceneNode != nullptr) {
-        Vec2 offset = Vec2(-0.25f * _drawScale, -0.4f * _drawScale);
-        _sceneNode->setPosition(getPosition()*_drawScale + offset);
+        _sceneNode->setPosition(getPosition()*_drawScale + _rotatedOffset * _drawScale);
         _sceneNode->setAngle(getAngle());
     }
 }
@@ -80,18 +75,24 @@ bool ShrinkingDoor::init(const cugl::Vec2 pos, const cugl::Vec2 size, float ang)
     }
     _opening = false;
     _closing = false;
-    _normHeight = size.x;
+    float nx = 0.25f * cos(ang) - 0.5f * sin(ang);
+    float ny = 0.25f * sin(ang) + 0.5f * cos(ang);
+    _rotatedOffset = Vec2(-nx, -ny);
     
     // Create the bottom
-    std::shared_ptr<physics2::Obstacle> body = physics2::BoxObstacle::alloc(pos,Vec2(0.5f,0.8f));
+    std::shared_ptr<physics2::Obstacle> body = physics2::BoxObstacle::alloc(pos,Vec2(0.5f,1.0f));
     body->setName("bottom");
     body->setBodyType(b2_staticBody);
+    body->setAngle(ang);
     _bodies.push_back(body);
-
+    
+    float ox = 1.5f * cos(ang) - 0.0f * sin(ang);
+    float oy = 1.5f * sin(ang) + 0.0f * cos(ang);
     // Create the door
-    _door = physics2::BoxObstacle::alloc(pos + Vec2(1.5f, 0.0f),size);
+    _door = physics2::BoxObstacle::alloc(pos + Vec2(ox, oy),size);
     _door->setName("door");
     _door->setBodyType(b2_staticBody);
+    _door->setAngle(ang);
     _bodies.push_back(_door);
     setBodyType(b2_staticBody);
     setAngle(ang);
@@ -112,8 +113,8 @@ bool ShrinkingDoor::createJoints(b2World& world) {
     b2RevoluteJointDef jointDef;
     jointDef.bodyA = _bodies[0]->getBody();
     jointDef.bodyB = _bodies[1]->getBody();
-    jointDef.localAnchorA.Set(0,0);
-    jointDef.localAnchorB.Set(0,0);
+    jointDef.localAnchorA.Set(0.4,0);
+    jointDef.localAnchorB.Set(-0.75,0);
     b2Joint* joint = world.CreateJoint(&jointDef);
     _joints.push_back(joint);
 
