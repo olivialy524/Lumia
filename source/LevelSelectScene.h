@@ -46,8 +46,6 @@ protected:
     
     float _musicVolume = 1.0;
 
-    std::shared_ptr<cugl::JsonValue> _saveFile;
-    
     std::shared_ptr<InputController> _input;
     
     float touchstart;
@@ -95,11 +93,11 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile);
     
-    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save) {
+    static std::shared_ptr<LevelSelectScene> alloc(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile) {
         std::shared_ptr<LevelSelectScene> result = std::make_shared<LevelSelectScene>();
-        return (result->init(assets, save) ? result : nullptr);
+        return (result->init(assets, saveFile) ? result : nullptr);
     }
     
     /**
@@ -107,17 +105,17 @@ public:
      *
      * @param value whether the scene is currently active
      */
-    virtual void setActive(bool value) override;
+    virtual void setActive(bool value, std::shared_ptr<cugl::JsonValue> saveFile);
 
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; }
 
     /** Returns the string representing the next scene to transition to */
     string getSelectedLevel() { return _selectedLevel; }
-
-    std::shared_ptr<cugl::JsonValue> getSaveFile() { return _saveFile; }
     
     virtual void update(float timestep) override;
+
+    void lockLevels(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile);
     
 };
 

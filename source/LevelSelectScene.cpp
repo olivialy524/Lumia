@@ -26,11 +26,9 @@ using namespace cugl;
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> save) {
+bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile) {
     setName("levelselect");
 
-    _saveFile = save;
-    
     _input = InputController::getInstance();
     _input->init();
     
@@ -110,22 +108,19 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::sh
         _buttons[button->getName()] = button;
         
         if (count <= 3) {
-  
             button->addListener([=](const std::string& name, bool down) {
                 if (!_input->isDragging()){
-                this->_active = down;
-                _nextScene = "game";
-                _selectedLevel = "json/tutorial" + std::to_string(count) + ".json";
+                    this->_active = down;
+                    _nextScene = "game";
+                    _selectedLevel = "json/tutorial" + std::to_string(count) + ".json";
                 }
             });
-            
        } else {
            button->addListener([=](const std::string& name, bool down) {
                if (!_input->isDragging()){
-               this->_active = down;
-               _nextScene = "game";
-               _selectedLevel = "json/level" + std::to_string(count -3) + ".json";
-               std::cout << _selectedLevel << std::endl;
+                   this->_active = down;
+                   _nextScene = "game";
+                   _selectedLevel = "json/level" + std::to_string(count - 3) + ".json";
                }
            });
        }
@@ -134,8 +129,10 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::sh
         button->activate();
         count++;
     }
-    setActive(_active);
+    setActive(_active, saveFile);
     
+    lockLevels(assets, saveFile);
+
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
     return true;
@@ -155,18 +152,58 @@ void LevelSelectScene::dispose() {
  *
  * @param value whether the scene is currently active
  */
-void LevelSelectScene::setActive(bool value) {
+void LevelSelectScene::setActive(bool value, std::shared_ptr<cugl::JsonValue> saveFile) {
     _active = value;
-    if (! value){
+    if (!value){
         setStart = false;
     }
-    for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
+
+    if (!value) {
+        // deactivate all buttons if setActive(false)
+        for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
+            it->second->deactivate();
+        }
+    } else {
+        // only activate unlocked levels if setActive(true)
+        auto layer = _assets->get<scene2::SceneNode>("levelselect");
+        auto levelbuttons = layer->getChildren();
+
+        std::shared_ptr<cugl::JsonValue> levelSaves = saveFile->get("level_saves");
+        // order of levelbuttons in assets.json must be in same order as in save.json
+        for (int i = 0; i < levelbuttons.size(); i++) {
+            std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(levelbuttons[i]);
+            std::shared_ptr<cugl::JsonValue> level = levelSaves->get(i);
+
+            if (level->getBool("completed")) {
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(_assets->get<Texture>("level_complete"));
+                std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::WHITE);
+            } else {
+                std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(_assets->get<Texture>("level_incomplete"));
+                std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::BLACK);
+            }
+
+            if (level->getBool("unlocked")) {
+                CULog((level->getString("name") + " unlocked").c_str());
+                if (!button->isActive()) {
+                    button->activate();
+                }
+                button->setColor(Color4::WHITE);
+            } else {
+                CULog((level->getString("name") + " locked").c_str());
+                if (button->isActive()) {
+                    button->deactivate();
+                }
+                button->setColor(Color4::RED);
+            }
+        }
+    }
+    /*for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
         if (value && !it->second->isActive()) {
             it->second->activate();
         } else {
             it->second->deactivate();
         }
-    }
+    }*/
 }
 
 
@@ -194,6 +231,39 @@ void LevelSelectScene::update(float timestep){
     
 }
 
+void LevelSelectScene::lockLevels(const std::shared_ptr<AssetManager>& assets, std::shared_ptr<cugl::JsonValue> saveFile) {
+    auto layer = assets->get<scene2::SceneNode>("levelselect");
+    auto levelbuttons = layer->getChildren();
+
+    std::shared_ptr<cugl::JsonValue> levelSaves = saveFile->get("level_saves");
+    // order of levelbuttons in assets.json must be in same order as in save.json
+    for (int i = 0; i < levelbuttons.size(); i++) {
+        std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(levelbuttons[i]);
+        std::shared_ptr<cugl::JsonValue> level = levelSaves->get(i);
+
+        if (level->getBool("completed")) {
+            std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(assets->get<Texture>("level_complete"));
+            std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::WHITE);
+        } else {
+            std::dynamic_pointer_cast<scene2::TexturedNode>(button->getChildByName("up"))->setTexture(assets->get<Texture>("level_incomplete"));
+            std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"))->setForeground(Color4::BLACK);
+        }
+
+        if (level->getBool("unlocked")) {
+            CULog((level->getString("name") + " unlocked").c_str());
+            if (!button->isActive()) {
+                button->activate();
+            }
+            button->setColor(Color4::WHITE);
+        } else {
+            CULog((level->getString("name") + " locked").c_str());
+            if (button->isActive()) {
+                button->deactivate();
+            }
+            button->setColor(Color4::RED);
+        }
+    }
+}
 
 void LevelSelectScene::addTileGroup(float offset, std::shared_ptr<Texture> tile3, std::shared_ptr<Texture> tile4 ){
     float scale = 40.0f/tile3->getHeight();

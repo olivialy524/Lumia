@@ -331,7 +331,11 @@ public:
     * 
     * @param value the volume of game music
     */
-    void setMusicVolume(float value) { _musicVolume = value; };
+    void setMusicVolume(float value) {
+        _musicVolume = value;
+        std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+        AudioEngine::get()->getMusicQueue()->play(source, true, value);
+    };
 
     /**
     * Sets the volume of sound effects
