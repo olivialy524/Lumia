@@ -5,7 +5,6 @@
 //  Version: 3/5/21
 
 #include "LumiaApp.h"
-#include <fstream>
 
 using namespace cugl;
 
@@ -68,7 +67,6 @@ void LumiaApp::onStartup() {
     // load level json files
     std::shared_ptr<cugl::JsonValue> levels = _saveFile->get("level_saves");
     for (int i = 0; i < levels->size(); i++) {
-        CULog(levels->get(i)->getString("path").c_str());
         string levelPath = levels->get(i)->getString("path");
         _assets->loadAsync<LevelModel>(levelPath, levelPath, nullptr);
     }

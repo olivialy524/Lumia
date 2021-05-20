@@ -223,13 +223,6 @@ void LevelSelectScene::setActive(bool value, std::shared_ptr<cugl::JsonValue> sa
             }
         }
     }
-    /*for (auto it = _buttons.begin(); it != _buttons.end(); ++it) {
-        if (value && !it->second->isActive()) {
-            it->second->activate();
-        } else {
-            it->second->deactivate();
-        }
-    }*/
 }
 
 
