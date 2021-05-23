@@ -53,6 +53,8 @@ protected:
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
     
+    bool _didLightup;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -142,6 +144,10 @@ public:
     
     std::list<std::shared_ptr<SlidingDoor>> getDoorsToOpen(){
         return _doorsToOpen;
+    }
+    
+    bool didLightup(){
+        return _didLightup;
     }
 };
 

@@ -397,10 +397,10 @@ void GameScene::dispose() {
     }
     _enemyList.clear();
 
-    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
-        t->dispose();
-    }
-    _tutorialList.clear();
+//    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
+//        t->dispose();
+//    }
+//    _tutorialList.clear();
 
     _world = nullptr;
     _worldnode = nullptr;
@@ -638,18 +638,18 @@ void GameScene::populate() {
     }
 
 #pragma mark : Tutorials
-    std::vector<LevelModel::Tutorial> tutorials = _level->getTutorials();
-    for (int i = 0; i < tutorials.size(); i++) {
-        LevelModel::Tutorial t = tutorials[i];
-        image = _assets->get<Texture>(t.texture);
+    _tutorialList = _level->getTutorials();
+    for (int i = 0; i < _tutorialList.size(); i++) {
+        std::shared_ptr<Tutorial> t = _tutorialList[i];
+        image = _assets->get<Texture>(t->_texture);
         std::shared_ptr<scene2::PolygonNode> tutorialNode = scene2::PolygonNode::allocWithTexture(image);
-        Vec2 pos = Vec2(t.posX, t.posY) * _scale;
+        Vec2 pos = t->_drawPos * _scale;
         tutorialNode->setPosition(pos);
         tutorialNode->setScale(0.5);
         tutorialNode->setVisible(false);
+        tutorialNode->setRelativeColor(false);
+        _tutorialList[i]->_textureNode = tutorialNode;
         _worldnode->addChild(tutorialNode);
-
-        _tutorialList.push_back(tutorialNode);
     }
 
 #pragma mark : Lumia
@@ -857,17 +857,49 @@ void GameScene::updateGame(float dt) {
         playGrowSound();
         removeEnergy(energy);
     }
-
-    for (const std::shared_ptr<scene2::PolygonNode>& tutorial : _tutorialList) {
-        Vec2 tutorialPos = tutorial->getPosition();
+    
+    for (std::shared_ptr<Tutorial> t : _tutorialList){
+        cout << t->getDisplayed() << endl;
+        Vec2 tutorialPos = t->_sensorPos * _scale;
         Vec2 avatarPos = _avatar->getPosition() *_scale;
-
-        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150)) {
-            tutorial->setVisible(true);
-        } else {
-            tutorial->setVisible(false);
+//        CULog("t %f", t._drawPos.x);
+        
+        if (!t->_textureNode->isVisible()){
+            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
+            if (inRange && !t->getDisplayed()) {
+                t->_textureNode->setVisible(true);
+                _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                _avatar->getSceneNode()->setRelativeColor(false);
+                t->_textureNode->setRelativeColor(false);
+            }
+        }else {
+            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
+//            bool lightup =
+            bool shouldHide = false;
+            switch(t->_condition){
+                case Tutorial::outOfRange:
+                    shouldHide = !inRange;
+                    break;
+                case Tutorial::lauch:
+                    shouldHide = _input->didLaunch() or !inRange;
+                    break;
+                case Tutorial::light:
+                    shouldHide = !inRange or _collisionController.didLightup();
+                    break;
+                default:
+                    break;
+                    
+              }
+            if (shouldHide){
+                t->setDisplayed(true);
+                t->_textureNode->setVisible(false);
+                _avatar->getSceneNode()->setRelativeColor(true);
+                t->_textureNode->setRelativeColor(true);
+                _scrollNode->setColor(Color4f::WHITE);
+                }
         }
     }
+
     _collisionController.clearStates();
     
     for (auto & door : _shrinkingDoorList) {

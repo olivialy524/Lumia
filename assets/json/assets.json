@@ -177,6 +177,15 @@
         },
         "lampicon": {
             "file": "textures/lampicon.png"
+        },
+        "hand-drag": {
+            "file": "textures/hand-drag.png"
+        },
+        "drag": {
+            "file": "textures/drag.png"
+        },
+        "hit-lamp": {
+            "file": "textures/hit-lamp.png"
         }
     },
     "sounds": {

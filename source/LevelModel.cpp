@@ -225,13 +225,19 @@ std::vector<std::shared_ptr<Tile>> LevelModel::createTiles(const std::shared_ptr
     return _tiles;
 }
 
-std::vector<LevelModel::Tutorial> LevelModel::createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials) {
+std::vector<std::shared_ptr<Tutorial>> LevelModel::createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials) {
     for (int i = 0; i < tutorials->size(); i++) {
         std::shared_ptr<cugl::JsonValue> tutorial = tutorials->get(i);
-        float posX = tutorial->getFloat("posx");
-        float posY = tutorial->getFloat("posy");
+        
+        float drawX = tutorial->getFloat("drawX");
+        float drawY = tutorial->getFloat("drawY");
+        float sensorX = tutorial->getFloat("sensorX");
+        float sensorY = tutorial->getFloat("sensorY");
+        float sensorWidth = tutorial->getFloat("width");
+        float sensorHeight = tutorial->getFloat("height");
         string textureKey = tutorial->getString("texture");
-        _tutorials.push_back(Tutorial{ posX, posY, textureKey });
+        string endCond = tutorial->getString("endCond");
+        _tutorials.push_back(Tutorial::alloc(Vec2(drawX, drawY), Vec2(sensorX, sensorY), sensorWidth, sensorHeight, textureKey, endCond));
     }
 
     return _tutorials;

@@ -29,6 +29,7 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     Vec2 offset = Vec2(splittingAnimation->getWidth()/5.0f - idleAnimation->getWidth()/5.0f ,splittingAnimation->getHeight()/4.0f - idleAnimation->getHeight()/4.0f);
     _idleAnimation->setPosition(offset/2);
     _idleAnimation->setFrame(0);
+    _idleAnimation->setColor(Color4f::WHITE);
     addChild(_idleAnimation);
 
     float angle = 2*3.14f/(_level+1);
@@ -149,6 +150,10 @@ void LumiaNode::draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
         }
     }
     _frameCount++;
-    
-    SceneNode::draw(batch, transform, tint);
+    SceneNode::draw(batch, transform, Color4f::WHITE);
+//    if (useParentTint){
+//    SceneNode::draw(batch, transform, tint);
+//    }else {
+//    SceneNode::draw(batch, transform, Color4::WHITE);
+//    }
 }

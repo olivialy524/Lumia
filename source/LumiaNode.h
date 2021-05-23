@@ -33,6 +33,7 @@ public:
 
     
 protected:
+    bool useParentTint = true;
     LumiaAnimState _state;
     
     int _frameCount;
@@ -68,6 +69,10 @@ public:
     ~LumiaNode() { dispose(); }
     
     void dispose();
+    
+    void setUseParent(bool usetint){
+        useParentTint = usetint;
+    }
     /**
      * Init child nodes of Lumia node
      */

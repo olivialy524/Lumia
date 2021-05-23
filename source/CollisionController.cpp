@@ -19,9 +19,11 @@ void CollisionController::clearStates(){
     _energiesToRemove.clear();
     _lumiasToStick.clear();
     _lumiasToUnstick.clear();
+    _didLightup = false;
 }
 
 void CollisionController::processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
+    _didLightup = true;
     // Lumia body remains if above min size, otherwise kill Lumia body
     if (lumia->getSizeLevel() != newSize) {
         float radiusDiff = LumiaModel::sizeLevels[lumia->getSizeLevel()].radius - LumiaModel::sizeLevels[newSize].radius;
