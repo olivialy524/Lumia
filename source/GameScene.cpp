@@ -915,7 +915,7 @@ void GameScene::updateGame(float dt) {
                     }
                     break;
                 case Tutorial::energy:
-                    shouldHide = !inRange or _collisionController.didAbsorbEnergy();
+                    shouldHide =  _collisionController.didAbsorbEnergy();
                     if (shouldHide){
                         for (std::shared_ptr<EnergyModel> energy : _energyList){
                             energy->getNode()->setRelativeColor(false);
