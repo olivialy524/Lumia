@@ -189,6 +189,9 @@
         },
         "eat-energy": {
             "file": "textures/eat-energy.png"
+        },
+        "panning-frame": {
+            "file": "textures/panning-frame.png"
         }
     },
     "sounds": {

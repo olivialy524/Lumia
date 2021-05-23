@@ -233,7 +233,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Shift to center if a bad fit
     _scale = dimen.height/_level->getYBound();
 //    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-
+    
     _UIscene = assets->get<scene2::SceneNode>("gameUI");
     _UIscene->setContentSize(dimen.width, dimen.height);
     _UIscene->doLayout(); // Repositions the HUD;
@@ -265,9 +265,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
     _pausedUI->setContentSize(dimen.width, dimen.height);
+    std::shared_ptr<Texture> panningFrameTexture = assets->get<Texture>("panning-frame");
     for (auto it : _pausedUI->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "exit"){
+        if (button && button->getName() == "exit"){
             button->addListener([=](const std::string& name, bool down) {
                 if (down && _pausedUI->isVisible()) {
                     _state = GameState::Playing;
@@ -275,10 +276,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                     _pausedUI->setVisible(false);
                 }
             });
-                
+            button->activate();
         }
-        button->activate();
+        
     }
+    
+    std::shared_ptr<scene2::PolygonNode> panningFrame = scene2::PolygonNode::allocWithTexture(panningFrameTexture);
+    float sx = (dimen.width * 0.97)/ panningFrameTexture->getWidth();
+    float sy = (dimen.height * 0.97)/panningFrameTexture->getHeight();
+    panningFrame->setScale(sx, sy);
+    panningFrame->setAnchor(Vec2::ANCHOR_CENTER);
+    panningFrame->setPosition(dimen.width/2, dimen.height/2);
+    _pausedUI->addChild(panningFrame);
+    
     _pausedUI->setVisible(false);
 
     _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
