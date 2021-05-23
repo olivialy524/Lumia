@@ -194,15 +194,34 @@ void LumiaApp::update(float timestep) {
             } else {
                 _mainMenu.setActive(false);
                 _mainMenu.dispose();
-                string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
-                if (nextScene ==  "levelselect"){
+                string nextScene = _mainMenu.getNextScene();
+                // if tutorial is not completed, show cutscene
+                if (!_saveFile->get("level_saves")->get(0)->getBool("completed")) {
+                    _scene = Prologue;
+                    _cutscene.init(_assets, "prologue");
+                    _cutscene.setActive(true);
+                } else if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
                     _levelSelect.init(_assets, _saveFile);
                     _levelSelect.setActive(true, _saveFile);
                 }
             }
             return;
-            
+        }
+        case Prologue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "levelselect") {
+                    _scene = LevelSelect;
+                    _levelSelect.init(_assets, _saveFile);
+                    _levelSelect.setActive(true, _saveFile);
+                }
+            }
+            return;
         }
         case LevelSelect:{
             if (_levelSelect.isActive()){
@@ -454,6 +473,14 @@ void LumiaApp::draw() {
         }
         case Win: {
             _win.render(_batch);
+            break;
+        }
+        case Prologue: {
+            _cutscene.render(_batch);
+            break;
+        }
+        case Epilogue: {
+            _cutscene.render(_batch);
             break;
         }
     }

@@ -177,6 +177,18 @@
         },
         "lampicon": {
             "file": "textures/lampicon.png"
+        },
+        "prologue1": {
+            "file": "textures/prologue1.png"
+        },
+        "prologue2": {
+            "file": "textures/prologue2.png"
+        },
+        "epilogue1": {
+            "file": "textures/epilogue1.png"
+        },
+        "epilogue2": {
+            "file": "textures/epilogue2.png"
         }
     },
     "sounds": {
@@ -322,6 +334,157 @@
 			            "y_anchor" : "bottom",
 			            "y_offset" : 0.2
 			        }
+                }
+            }
+        },
+        "cutscene" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
+                "prologue1": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "prologue1",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "prologue2": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "prologue2",
+                        "anchor":   [0.0,0.5],
+                        "visible": false
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "epilogue1": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "epilogue1",
+                        "anchor":   [0.0,0.5],
+                        "visible": false
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "epilogue2": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "epilogue2",
+                        "anchor":   [0.0,0.5],
+                        "visible": false
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
+                "next": {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [200, 55],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "playpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "playbutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "bottom",
+                        "y_offset" : 0.1,
+                        "x_offset": -0.15
+                    }
+                },
+                "previous": {
+                    "type"   : "Button",
+                    "format" : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "anchor"   : [0.5,0.5],
+                        "upnode"  : "up"
+                    },
+                    "children": {
+                        "up" : {
+                            "type" : "Node",
+                            "format" : {
+                                "type" : "Anchored"
+                            },
+                            "data" : {
+                                "size"     : [200, 55],
+                                "anchor"   : [0.5,0.5]
+                            },
+                            "children"  : {
+                                "playpatch"  : {
+                                    "type"   : "NinePatch",
+                                    "format" : {
+                                        "type" : "Anchored"
+                                    },
+                                    "data"   : {
+                                        "texture"  : "playbutton",
+                                        "anchor"   : [0.5, 0.5]
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "fill",
+                                        "y_anchor" : "fill"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "fill",
+                                "y_anchor" : "fill"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "y_offset" : 0.1,
+                        "x_offset": 0.15
+                    }
                 }
             }
         },

@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\source\Button.h" />
     <ClInclude Include="..\..\source\ButtonNode.h" />
     <ClInclude Include="..\..\source\CollisionController.h" />
+    <ClInclude Include="..\..\source\Cutscene.h" />
     <ClInclude Include="..\..\source\EnemyModel.h" />
     <ClInclude Include="..\..\source\EnemyNode.h" />
     <ClInclude Include="..\..\source\EnergyModel.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="..\..\source\Button.cpp" />
     <ClCompile Include="..\..\source\ButtonNode.cpp" />
     <ClCompile Include="..\..\source\CollisionController.cpp" />
+    <ClCompile Include="..\..\source\Cutscene.cpp" />
     <ClCompile Include="..\..\source\EnemyModel.cpp" />
     <ClCompile Include="..\..\source\EnemyNode.cpp" />
     <ClCompile Include="..\..\source\EnergyModel.cpp" />
