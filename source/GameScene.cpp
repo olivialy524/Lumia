@@ -45,7 +45,7 @@ using namespace cugl;
 /** The restitution for all physics objects */
 #define BASIC_RESTITUTION   0.1f
 /** The number of frame to wait before reinitializing the game */
-#define EXIT_COUNT      200
+#define EXIT_COUNT      120
 /** The size of an energy item */
 #define ENERGY_RADIUS  3.0f
 
@@ -108,7 +108,9 @@ using namespace cugl;
 
 #define LOSE_MUSIC "lose"
 
-#define SPLIT_SOUND "jump"
+#define SPLIT_SOUND1 "jump"
+
+#define SPLIT_SOUND2 "split"
 
 #define LIGHT_SOUND "light"
 
@@ -1220,8 +1222,15 @@ int GameScene::getStars() {
 }
 
 void GameScene::playSplitSound() {
-    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
-    AudioEngine::get()->play(SPLIT_SOUND, source, false, _effectVolume, true);
+    if (_changeSplitSound) {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND2);
+    AudioEngine::get()->play(SPLIT_SOUND2, source, false, _effectVolume, true);
+    }
+    else {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND1);
+        AudioEngine::get()->play(SPLIT_SOUND1, source, false, _effectVolume, true);
+    }
+    _changeSplitSound =  not _changeSplitSound;
 }
 
 void GameScene::playLightSound() {

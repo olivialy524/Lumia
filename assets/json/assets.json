@@ -176,19 +176,24 @@
         },
         "win": {
             "type":     "sample",
-            "file":     "sounds/victorytheme.ogg",
+            "file":     "sounds/levelwin.ogg",
             "stream":   true,
             "volume":   0.3
         },
         "lose": {
             "type":     "sample",
-            "file":     "sounds/gameover.ogg",
+            "file":     "sounds/altlosetheme.ogg",
             "stream":   true,
             "volume":   0.3
         },
         "jump": {
             "type":     "sample",
             "file":     "sounds/launchsound.wav",
+            "volume":   0.2
+        },
+        "split": {
+            "type":     "sample",
+            "file":     "sounds/SplitSounds.wav",
             "volume":   0.2
         },
         "ui": {

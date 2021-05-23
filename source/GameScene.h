@@ -120,6 +120,9 @@ protected:
     int _prevscore;
     
     int _prevstars;
+    
+    bool _changeSplitSound;
+    
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
