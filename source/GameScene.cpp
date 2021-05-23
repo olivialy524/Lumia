@@ -871,6 +871,29 @@ void GameScene::updateGame(float dt) {
                 _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
                 _avatar->getSceneNode()->setRelativeColor(false);
                 t->_textureNode->setRelativeColor(false);
+                switch(t->_condition){
+                    case Tutorial::outOfRange:
+               
+                        break;
+                    case Tutorial::lauch:
+                    
+                        break;
+                    case Tutorial::light:
+                        for (std::shared_ptr<Plant> plant : _plantList){
+                            plant->getNode()->setRelativeColor(false);
+                        }
+                    
+                        break;
+                    case Tutorial::energy:
+                        for (std::shared_ptr<EnergyModel> energy : _energyList){
+                            energy->getNode()->setRelativeColor(false);
+                        }
+                        break;
+        
+                    default:
+                        break;
+                        
+                  }
             }
         }else {
             bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
@@ -885,7 +908,20 @@ void GameScene::updateGame(float dt) {
                     break;
                 case Tutorial::light:
                     shouldHide = !inRange or _collisionController.didLightup();
+                    if (shouldHide){
+                        for (std::shared_ptr<Plant> plant : _plantList){
+                            plant->getNode()->setRelativeColor(false);
+                        }
+                    }
                     break;
+                case Tutorial::energy:
+                    shouldHide = !inRange or _collisionController.didAbsorbEnergy();
+                    if (shouldHide){
+                        for (std::shared_ptr<EnergyModel> energy : _energyList){
+                            energy->getNode()->setRelativeColor(false);
+                        }
+                    }
+    
                 default:
                     break;
                     

@@ -55,6 +55,8 @@ protected:
     
     bool _didLightup;
     
+    bool _didAbsorbEnergy;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -148,6 +150,10 @@ public:
     
     bool didLightup(){
         return _didLightup;
+    }
+    
+    bool didAbsorbEnergy(){
+        return _didAbsorbEnergy;
     }
 };
 

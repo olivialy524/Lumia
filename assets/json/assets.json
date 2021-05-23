@@ -186,6 +186,9 @@
         },
         "hit-lamp": {
             "file": "textures/hit-lamp.png"
+        },
+        "eat-energy": {
+            "file": "textures/eat-energy.png"
         }
     },
     "sounds": {

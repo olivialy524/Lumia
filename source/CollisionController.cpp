@@ -20,6 +20,7 @@ void CollisionController::clearStates(){
     _lumiasToStick.clear();
     _lumiasToUnstick.clear();
     _didLightup = false;
+    _didAbsorbEnergy = false;
 }
 
 void CollisionController::processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
@@ -104,6 +105,7 @@ void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<Enemy
 }
 
 void CollisionController::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
+    _didAbsorbEnergy = true;
     if (lumia->getSizeLevel() < LumiaModel::sizeLevels.size() - 1) {
         _energiesToRemove.push_back(energy);
         energy->setRemoved(true);

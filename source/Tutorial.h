@@ -24,7 +24,7 @@ private:
     bool _hasDisplayed = false;
     
 public:
-    enum TutorialEndCondition {lauch, outOfRange, light, enemy };
+    enum TutorialEndCondition {lauch, outOfRange, light, enemy, energy };
     
     Vec2 _drawPos;
     Vec2 _sensorPos;
@@ -71,7 +71,10 @@ public:
         }
         else if (endCond == "light"){
             result->_condition = TutorialEndCondition::light;
-        } else{
+        } else if (endCond == "energy"){
+            result->_condition = TutorialEndCondition::energy;
+        }
+        else{
             result->_condition = TutorialEndCondition::outOfRange;
         }
         return result? result: nullptr;
