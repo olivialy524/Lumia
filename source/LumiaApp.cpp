@@ -223,6 +223,20 @@ void LumiaApp::update(float timestep) {
             }
             return;
         }
+        case Epilogue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "win") {
+                    _scene = Win;
+                    _win.setActive(true);
+                }
+            }
+            return;
+        }
         case LevelSelect:{
             if (_levelSelect.isActive()){
                 _levelSelect.update(timestep);
@@ -303,6 +317,17 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, levelNumber);
                         _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
+                        _win.setStars(_assets, _gameplay.getStars());
+                        _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
+
+                        // TODO: update this with eventual number of levels in the game
+                        if (levelNumber == "11") {
+                            _scene = Epilogue;
+                            _cutscene.init(_assets, "epilogue");
+                            _cutscene.setActive(true);
+                        } else {
+                            _win.setActive(true);
+                        }
                     } else {
                         int startIdx = levelFile.find("tutorial") + 8;
                         int endIdx = levelFile.find(".json");
@@ -310,10 +335,18 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, "T" + levelNumber);
                         _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
+                        _win.setStars(_assets, _gameplay.getStars());
+                        _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
+
+                        // TODO: update this with eventual number of levels in the game
+                        if (levelNumber == "11") {
+                            _scene = Epilogue;
+                            _cutscene.init(_assets, "epilogue");
+                            _cutscene.setActive(true);
+                        } else {
+                            _win.setActive(true);
+                        }
                     }
-                    _win.setStars(_assets, _gameplay.getStars());
-                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
-                    _win.setActive(true);
                 }
             }
             return;

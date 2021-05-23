@@ -91,7 +91,7 @@ bool Cutscene::init(const std::shared_ptr<AssetManager>& assets, string sceneTyp
             if (!down) {
                 if (_sceneIndex == 2) {
                     this->_active = down;
-                    _nextScene = "levelselect";
+                    _nextScene = "win";
                 } else if (_sceneIndex == 1) {
                     _sceneIndex += 1;
                     std::dynamic_pointer_cast<scene2::TexturedNode>(assets->get<scene2::SceneNode>("cutscene_epilogue1"))->setVisible(false);
