@@ -12,7 +12,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
-#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level5.json\"},{\"name\":\"Level 6\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}, {\"name\":\"Level 12\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level12.json\"}, {\"name\":\"Level 13\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level13.json\"}, {\"name\":\"Level 14\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level14.json\"}, {\"name\":\"Level 15\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}, {\"name\":\"Level 16\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}, {\"name\":\"Level 17\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}],\"musicVolume\":1,\"effectVolume\":1}, "
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level5.json\"},{\"name\":\"Level 6\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"},{\"name\":\"Level 12\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level12.json\"},{\"name\":\"Level 13\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level13.json\"},{\"name\":\"Level 14\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level14.json\"},{\"name\":\"Level 15\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"},{\"name\":\"Level 16\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"},{\"name\":\"Level 17\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -194,7 +194,7 @@ void LumiaApp::update(float timestep) {
             } else {
                 _mainMenu.setActive(false);
                 _mainMenu.dispose();
-                string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
+                string nextScene = _mainMenu.getNextScene();
                 if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
                     _levelSelect.init(_assets, _saveFile);
@@ -243,13 +243,6 @@ void LumiaApp::update(float timestep) {
 
                         _pause.setLevelNumber(_assets, levelNumber);
                         _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
-
-                        _pause.setLevelNumber(_assets, "T" + levelNumber);
-                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
                     }
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
@@ -284,13 +277,6 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, levelNumber);
                         _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
-
-                        _win.setLevelNumber(_assets, "T" + levelNumber);
-                        _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
                     }
                     _win.setStars(_assets, _gameplay.getStars());
                     _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
@@ -344,23 +330,13 @@ void LumiaApp::update(float timestep) {
                         int endIdx = levelFile.find(".json");
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
                         // TODO: update this with eventual number of levels in the game
-                        if (levelNumber == "12") {
+                        if (levelNumber == "18") {
                             _scene = LevelSelect;
                             _levelSelect.setActive(true, _saveFile);
                             std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
                             AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                         } else {
                             _gameplay.init(_assets, "json/level" + levelNumber + ".json");
-                        }
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
-                        // TODO: update this with eventual number of tutorials in the game
-                        if (levelNumber == "4") {
-                            _gameplay.init(_assets, "json/level1.json");
-                        } else {
-                            _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
                         }
                     }
                     _gameplay.setMusicVolume(_settings.getMusicVolume());

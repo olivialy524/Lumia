@@ -913,10 +913,10 @@ void GameScene::updateGame(float dt) {
                     shouldHide = !inRange;
                     break;
                 case Tutorial::lauch:
-                    shouldHide = _input->didLaunch() or !inRange;
+                    shouldHide = _input->didLaunch() || !inRange;
                     break;
                 case Tutorial::light:
-                    shouldHide = !inRange or _collisionController.didLightup();
+                    shouldHide = !inRange || _collisionController.didLightup();
                     if (shouldHide){
                         for (std::shared_ptr<Plant> plant : _plantList){
                             plant->getNode()->setRelativeColor(false);
