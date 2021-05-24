@@ -166,11 +166,32 @@
         "continuebuttontext": {
             "file": "textures/continuebuttontext.png"
         },
-        "winbackground": {
-            "file": "textures/winbackground.png"
-        },
         "levelbanner": {
             "file": "textures/levelbanner.png"
+        },
+        "uibackground": {
+            "file": "textures/uibackground.png"
+        },
+        "windetails": {
+            "file": "textures/windetails.png"
+        },
+        "lampicon": {
+            "file": "textures/lampicon.png"
+        },
+        "hand-drag": {
+            "file": "textures/hand-drag.png"
+        },
+        "drag": {
+            "file": "textures/drag.png"
+        },
+        "hit-lamp": {
+            "file": "textures/hit-lamp.png"
+        },
+        "eat-energy": {
+            "file": "textures/eat-energy.png"
+        },
+        "panning-frame": {
+            "file": "textures/panning-frame.png"
         }
     },
     "sounds": {
@@ -200,11 +221,6 @@
         "pew": {
             "type":     "sample",
             "file":     "sounds/pew.wav",
-            "volume":   0.5
-        },
-        "pop": {
-            "type":     "sample",
-            "file":     "sounds/plop.wav",
             "volume":   0.5
         },
         "ui": {
@@ -238,6 +254,10 @@
 			"file":     "fonts/Orbitron-Regular.ttf",
 			"size":     30
 		},
+        "orbitronlarge": {
+            "file":     "fonts/Orbitron-Regular.ttf",
+            "size":     50
+        },
 		"orbitronblack": {
 			"file":     "fonts/Orbitron-Black.ttf",
 			"size":     30
@@ -326,6 +346,41 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "progress": {
+                    "type"   : "Image",
+                    "data"   : {
+                        "texture"  : "lampicon",
+                        "size": [72, 72]
+                    },
+                    "format"    : {
+                        "type"  : "Anchored"
+                    },
+                    "children": {
+                        "progresslabel" : {
+                            "type"   : "Label",
+                            "data"   : {
+                                "font"       : "orbitronsmall",
+                                "text"       : "0/4",
+                                "foreground" : [255, 255, 255, 255],
+                                "halign"     : "center",
+                                "valign"     : "middle"
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 60
+                            }
+                        }
+                    },
+                    "layout": {
+                        "x_anchor" : "left",
+                        "y_anchor" : "top",
+                        "y_offset" : -0.15,
+                        "x_offset": 0.05
+                    }
+                },
                 "panning"  : {
                     "type": "Widget",
                     "data": {
@@ -352,11 +407,22 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "uibackground",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
                 "pauselabel" : {
                     "type"   : "Label",
                     "data"   : {
-                        "font"       : "orbitron",
-                        "text"       : "Game Paused",
+                        "font"       : "orbitronlarge",
+                        "text"       : "Game paused",
                         "foreground" : [255,255,255,255],
                         "halign"     : "center",
                         "valign"     : "top"
@@ -364,14 +430,14 @@
                     "layout" : {
                         "x_anchor" : "fill",
                         "y_anchor" : "fill",
-                        "y_offset" : 0.07
+                        "y_offset" : 0.1
                     }
                 },
                 "levelicon": {
                     "type"   : "Image",
                     "data"   : {
                         "texture"  : "levelpauseicon",
-                        "size"     : [160, 160]
+                        "size"     : [222, 204]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -399,14 +465,16 @@
                             "layout" : {
                                 "x_anchor" : "fill",
                                 "y_anchor" : "fill",
-                                "x_offset" : 0
+                                "absolute": true,
+                                "x_offset" : 28,
+                                "y_offset": -20
                             }
                         }
                     },
                     "layout": {
                         "x_anchor" : "left",
                         "y_anchor" : "top",
-                        "y_offset" : -0.3,
+                        "y_offset" : -0.4,
                         "x_offset" : 0.05
                     }
                 },
@@ -414,7 +482,7 @@
                     "type"   : "Image",
                     "data"   : {
                         "texture"  : "pausedetails",
-                        "size":[374, 170]
+                        "size": [338, 96]
                     },
                     "format"    : {
                         "type"  : "Anchored"
@@ -440,26 +508,11 @@
                                 "valign"     : "middle"
                             },
                             "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "top",
-                                "x_offset" : -0.4,
-                                "y_offset": -0.4
-                            }
-                        },
-                        "enemylabel" : {
-                            "type"   : "Label",
-                            "data"   : {
-                                "font"       : "orbitronsmall",
-                                "text"       : "1/2",
-                                "foreground" : [255, 255, 255, 255],
-                                "halign"     : "center",
-                                "valign"     : "middle"
-                            },
-                            "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "bottom",
-                                "x_offset" : -0.4,
-                                "y_offset": 0.15
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 40
                             }
                         }
                     },
@@ -630,6 +683,17 @@
                 "type" : "Anchored"
             },
             "children":  {
+                "background": {
+                    "type": "Image",
+                    "data": {
+                        "texture":  "uibackground",
+                        "anchor":   [0.0,0.5]
+                    },
+                    "layout" : {
+                        "x_anchor" : "fill",
+                        "y_anchor" : "fill"
+                    }
+                },
                 "levelbanner": {
                     "type"   : "Image",
                     "data"   : {
@@ -664,6 +728,7 @@
                                 "x_anchor" : "center",
                                 "y_anchor" : "bottom",
                                 "y_offset": 35,
+                                "x_offset": 1,
                                 "absolute": true
                             }
                         },
@@ -771,7 +836,7 @@
                 "winlabel" : {
                     "type"   : "Label",
                     "data"   : {
-                        "font"       : "orbitron",
+                        "font"       : "orbitronlarge",
                         "text"       : "Level 1 completed!",
                         "foreground" : [255,255,255,255],
                         "halign"     : "center",
@@ -786,8 +851,8 @@
                 "details": {
                     "type"   : "Image",
                     "data"   : {
-                        "texture"  : "pausedetails",
-                        "size": [396, 180],
+                        "texture"  : "windetails",
+                        "size": [510, 108],
                         "anchor": [0.5,0.5]
                     },
                     "format"    : {
@@ -808,32 +873,17 @@
                             "type"   : "Label",
                             "data"   : {
                                 "font"       : "orbitronsmall",
-                                "text"       : "3/4",
+                                "text"       : "3",
                                 "foreground" : [255, 255, 255, 255],
                                 "halign"     : "center",
                                 "valign"     : "middle"
                             },
                             "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "top",
-                                "x_offset" : -0.4,
-                                "y_offset": -0.4
-                            }
-                        },
-                        "enemylabel" : {
-                            "type"   : "Label",
-                            "data"   : {
-                                "font"       : "orbitronsmall",
-                                "text"       : "1/2",
-                                "foreground" : [255, 255, 255, 255],
-                                "halign"     : "center",
-                                "valign"     : "middle"
-                            },
-                            "layout" : {
-                                "x_anchor" : "right",
-                                "y_anchor" : "bottom",
-                                "x_offset" : -0.4,
-                                "y_offset": 0.15
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "absolute": true,
+                                "y_offset": -20,
+                                "x_offset": 140
                             }
                         }
                     },
@@ -1025,7 +1075,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T1",
+                            "text": "1",
                             "x_offset": 340,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1037,7 +1087,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T2",
+                            "text": "2",
                             "x_offset": 490,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1049,7 +1099,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "T3",
+                            "text": "3",
                             "x_offset": 640,
                             "y_offset": -130,
                             "texture": "level_complete"
@@ -1061,7 +1111,7 @@
                     "data": {
                     	"key"   : "levelbutton",
                         "variables" : {
-                        	"text": "1",
+                        	"text": "4",
                         	"x_offset": 730,
                         	"y_offset": 60,
                         	"label_x_offset": 0.03,
@@ -1074,9 +1124,7 @@
                     "data": {
                     	"key"   : "levelbutton",
                         "variables" : {
-                        	"text": "2",
-                        	"x_offset": 900,
-                        	"y_offset": 110,
+                        	"text": "5",
                             "texture": "level_complete"
                         }
                     }
@@ -1086,9 +1134,7 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "3",
-                            "x_offset": 1050,
-                            "y_offset": 110,
+                            "text": "6",
                             "texture": "level_complete"
                         }
                     }
@@ -1098,9 +1144,107 @@
                     "data": {
                         "key"   : "levelbutton",
                         "variables" : {
-                            "text": "4",
-                            "x_offset": 1200,
-                            "y_offset": 110,
+                            "text": "7",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton5"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "8",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton6"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "9",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton7"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "10",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton8"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "11",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton9"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "12",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton10"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "13",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton11"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "14",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton12"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "15",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton13"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "16",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton14"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "17",
                             "texture": "level_complete"
                         }
                     }

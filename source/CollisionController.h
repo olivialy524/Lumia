@@ -13,7 +13,7 @@
 #include "Plant.h"
 #include "EnergyModel.h"
 #include "Button.h"
-#include "Door.h"
+#include "SlidingDoor.h"
 #include "StickyWallModel.h"
 
 class CollisionController {
@@ -48,10 +48,14 @@ protected:
     /** List of energy item sto remove in next update step */
     std::list<std::shared_ptr<EnergyModel>> _energiesToRemove;
     
-    std::list<std::shared_ptr<Door>> _doorsToOpen;
+    std::list<std::shared_ptr<SlidingDoor>> _doorsToOpen;
 
     /** List of Lumia bodies to remove in next update step */
     std::list<std::shared_ptr<EnemyModel>> _enemiesToRemove;
+    
+    bool _didLightup;
+    
+    bool _didAbsorbEnergy;
     
 public:
 #pragma mark -
@@ -140,8 +144,16 @@ public:
         return _enemiesToRemove;
     }
     
-    std::list<std::shared_ptr<Door>> getDoorsToOpen(){
+    std::list<std::shared_ptr<SlidingDoor>> getDoorsToOpen(){
         return _doorsToOpen;
+    }
+    
+    bool didLightup(){
+        return _didLightup;
+    }
+    
+    bool didAbsorbEnergy(){
+        return _didAbsorbEnergy;
     }
 };
 

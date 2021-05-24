@@ -158,7 +158,7 @@ void LumiaModel::applyForce() {
         return;
     }
     
-    if ((isOnStickyWall() || isOnButton()) && !isLaunching()){
+    if ((isOnStickyWall() || isOnButton())&& !isLaunching()){
         setLinearVelocity(Vec2::ZERO);
         setAngularVelocity(0.0f);
         b2Vec2 force(_stickDirection.x, _stickDirection.y);
@@ -166,7 +166,6 @@ void LumiaModel::applyForce() {
     } else if ((isOnStickyWall() || isOnButton()) && isLaunching()){
         unStick();
     }
-    
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
         b2Vec2 force(getVelocity().x, getVelocity().y);
@@ -194,7 +193,6 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
-    _lastPosition = getPosition();
     WheelObstacle::update(dt);
     if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);

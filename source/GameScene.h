@@ -16,7 +16,7 @@
 #include "EnergyModel.h"
 #include "LevelModel.h"
 #include "Button.h"
-#include "Door.h"
+#include "SlidingDoor.h"
 #include "GraphNode.h"
 #include "TileDataModel.h"
 #include "TileModel.h"
@@ -60,6 +60,9 @@ protected:
     std::shared_ptr<cugl::scene2::SceneNode> _pausedUI;
     
     std::shared_ptr<cugl::scene2::Button> _backbutton;
+
+    std::shared_ptr<scene2::Label> _progressLabel;
+
     /** Reference to the lose message label */
     std::shared_ptr<cugl::scene2::Label> _losenode;
     
@@ -85,7 +88,8 @@ protected:
     /** References to the Lumias */
     std::queue<std::shared_ptr<LumiaModel>> _dyingLumiaQueue;
     
-    std::list<std::shared_ptr<Door>> _doorList;
+    std::list<std::shared_ptr<SlidingDoor>> _slidingDoorList;
+    std::list<std::shared_ptr<ShrinkingDoor>> _shrinkingDoorList;
     /** References to the Lumia bodies */
     std::list<std::shared_ptr<EnemyModel>> _enemyList;
     /** Reference to the player avatar */
@@ -99,7 +103,7 @@ protected:
     
 
 
-    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
+    std::vector<std::shared_ptr<Tutorial>> _tutorialList;
 
     
     /** Whether or not debug mode is active */
@@ -116,10 +120,10 @@ protected:
     bool _switched;
     
     bool _canSplit;
-
-    int _prevscore;
     
-    int _prevstars;
+    int _stars;
+
+    string _currentLevel;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
     /** Mark set to handle more sophisticated collision callbacks */
@@ -132,6 +136,7 @@ protected:
     int _lastSpikeCollision;
     
     string _nextScene;
+    int _remainingSize;
     
 #pragma mark Internal Object Management
     
@@ -311,6 +316,8 @@ public:
 
     string getNextScene() { return _nextScene; }
 
+    int getRemainingSize() { return _remainingSize; }
+
 	/**
 	* Sets whether the level is failed.
 	*
@@ -325,7 +332,11 @@ public:
     * 
     * @param value the volume of game music
     */
-    void setMusicVolume(float value) { _musicVolume = value; };
+    void setMusicVolume(float value) {
+        _musicVolume = value;
+        std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+        AudioEngine::get()->getMusicQueue()->play(source, true, value);
+    };
 
     /**
     * Sets the volume of sound effects
@@ -413,25 +424,11 @@ public:
     
     void updatePaused(float dt, float startX);
     
-    int calcScore();
-    
-    int getStars();
-    
-    int getPrevScore() {
-        return _prevscore;
-    }
-    
-    void setPrevScore(int s) {
-        _prevscore = s;
-    }
-    
-    int getPrevStars() {
-        return _prevstars;
-    }
-    
-    void setPrevStars(int p) {
-        _prevstars = p;
-    }
+    int getStars() { return _stars; }
+
+    string getCurrentLevel() { return _currentLevel; }
+
+    string getPlantProgress() { return _progressLabel->getText(); }
     
     void playSplitSound();
     

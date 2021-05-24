@@ -12,6 +12,7 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level5.json\"},{\"name\":\"Level 6\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"},{\"name\":\"Level 12\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level12.json\"},{\"name\":\"Level 13\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level13.json\"},{\"name\":\"Level 14\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level14.json\"},{\"name\":\"Level 15\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"},{\"name\":\"Level 16\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"},{\"name\":\"Level 17\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -48,16 +49,28 @@ void LumiaApp::onStartup() {
     // Que up the other assets
     AudioEngine::start();
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    //load in the json file
-    _assets->loadAsync<LevelModel>("json/level1.json", "json/level1.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level2.json", "json/level2.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level3.json", "json/level3.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/level4.json", "json/level4.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/tutorial1.json", "json/tutorial1.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/tutorial2.json", "json/tutorial2.json", nullptr);
-    _assets->loadAsync<LevelModel>("json/tutorial3.json", "json/tutorial3.json", nullptr);
+    // load in the tiles json file
     _assets->loadAsync<TileDataModel>("json/tiles.json", "json/tiles.json", nullptr);
     
+    if (!cugl::filetool::file_exists(Application::getSaveDirectory() + "save.json")) {
+        // no save file exists yet, so create it
+        std::shared_ptr<cugl::JsonValue> saveJson = cugl::JsonValue::allocWithJson(DEFAULT_SAVE);
+        _saveFile = saveJson;
+        std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+        writer->writeJson(_saveFile);
+    } else {
+        // save file already exists, so read from it
+        std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
+        _saveFile = reader->readJson();
+    }
+
+    // load level json files
+    std::shared_ptr<cugl::JsonValue> levels = _saveFile->get("level_saves");
+    for (int i = 0; i < levels->size(); i++) {
+        string levelPath = levels->get(i)->getString("path");
+        _assets->loadAsync<LevelModel>(levelPath, levelPath, nullptr);
+    }
+
     Application::onStartup(); // YOU MUST END with call to parent
 }
 
@@ -91,6 +104,10 @@ void LumiaApp::onShutdown() {
     Input::deactivate<Mouse>();
 #endif
     
+    std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+    _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
+    writer->writeJson(_saveFile);
     AudioEngine::stop();
     Application::onShutdown();  // YOU MUST END with call to parent
 }
@@ -107,6 +124,10 @@ void LumiaApp::onShutdown() {
  * the background.
  */
 void LumiaApp::onSuspend() {
+    std::shared_ptr<cugl::JsonWriter> writer = cugl::JsonWriter::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+    _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
+    writer->writeJson(_saveFile);
     AudioEngine::get()->pause();
 }
 
@@ -121,6 +142,8 @@ void LumiaApp::onSuspend() {
  * paused before app suspension.
  */
 void LumiaApp::onResume() {
+    std::shared_ptr<cugl::JsonReader> reader = cugl::JsonReader::alloc(Application::getSaveDirectory() + "save.json");
+    _saveFile = reader->readJson();
     AudioEngine::get()->resume();
 }
 
@@ -144,7 +167,7 @@ void LumiaApp::update(float timestep) {
         case Loading:{
             if (_loading.isActive()){
                 _loading.update(0.01f);
-            }else{
+            } else {
                 _scene = Main;
                 _loading.setActive(false);
                 _loading.dispose();
@@ -156,20 +179,26 @@ void LumiaApp::update(float timestep) {
                 _pause.setActive(false);
                 _win.init(_assets);
                 _win.setActive(false);
+                _gameplay.init(_assets, "json/level1.json");
+                _gameplay.dispose();
+                _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
+                _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
+                std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
             }
             return;
         }
         case Main:{
             if (_mainMenu.isActive()){
                 _mainMenu.update(timestep);
-            }else{
+            } else {
                 _mainMenu.setActive(false);
                 _mainMenu.dispose();
-                string nextScene = _mainMenu.getNextScene(); // TODO: change this to integer code
+                string nextScene = _mainMenu.getNextScene();
                 if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
-                    _levelSelect.init(_assets);
-                    _levelSelect.setActive(true);
+                    _levelSelect.init(_assets, _saveFile);
+                    _levelSelect.setActive(true, _saveFile);
                 }
             }
             return;
@@ -178,8 +207,8 @@ void LumiaApp::update(float timestep) {
         case LevelSelect:{
             if (_levelSelect.isActive()){
                 _levelSelect.update(timestep);
-            }else{
-                _levelSelect.setActive(false);
+            } else {
+                _levelSelect.setActive(false, _saveFile);
                 string nextScene = _levelSelect.getNextScene();
                 if (nextScene == "game"){
                     _scene = Game;
@@ -191,6 +220,8 @@ void LumiaApp::update(float timestep) {
                     _scene = Settings;
                     _settings.setNextScene("levelselect");
                     _settings.setActive(true);
+                    _settings.setMusicVolume(_saveFile->getFloat("musicVolume"));
+                    _settings.setEffectVolume(_saveFile->getFloat("effectVolume"));
                 }
             }
             return;
@@ -198,17 +229,12 @@ void LumiaApp::update(float timestep) {
         case Game:{
             if (_gameplay.isActive()){
                 _gameplay.update(timestep);
-            }else{
+            } else {
                 _gameplay.setActive(false);
                 string nextScene = _gameplay.getNextScene();
-                if (nextScene == "levelselect") {
-                    _gameplay.dispose();
-
-                    _scene = LevelSelect;
-                    _levelSelect.setActive(true);
-                } else if (nextScene == "pause") {
+                if (nextScene == "pause") {
                     _scene = Pause;
-                    string levelFile = _levelSelect.getSelectedLevel();
+                    string levelFile = _gameplay.getCurrentLevel();
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
@@ -216,17 +242,33 @@ void LumiaApp::update(float timestep) {
                         string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
 
                         _pause.setLevelNumber(_assets, levelNumber);
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
-
-                        _pause.setLevelNumber(_assets, "T" + levelNumber);
+                        _pause.setDetailsLabel(_assets, _gameplay.getPlantProgress());
                     }
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
                     _scene = Win;
-                    string levelFile = _levelSelect.getSelectedLevel();
+                    string levelFile = _gameplay.getCurrentLevel();
+
+                    // update save file after completing a level
+                    std::shared_ptr<cugl::JsonValue> levels = _saveFile->get("level_saves");
+                    for (int i = 0; i < levels->size(); i++) {
+                        std::shared_ptr<cugl::JsonValue> level = levels->get(i);
+                        if (level->getString("path") == levelFile) {
+                            level->get("unlocked")->set(true);
+                            level->get("completed")->set(true);
+                            // only save highscores
+                            if (level->getInt("score") < _gameplay.getRemainingSize()) {
+                                level->get("stars")->set((double)_gameplay.getStars());
+                                level->get("score")->set((double)_gameplay.getRemainingSize());
+                            }
+                            
+                            if (i < levels->size() - 1) {
+                                std::shared_ptr<cugl::JsonValue> nextLevel = levels->get(i + 1);
+                                nextLevel->get("unlocked")->set(true);
+                            }
+                            break;
+                        }
+                    }
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
@@ -235,14 +277,9 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, levelNumber);
                         _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
-
-                        _win.setLevelNumber(_assets, "T" + levelNumber);
-                        _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
                     }
+                    _win.setStars(_assets, _gameplay.getStars());
+                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
                     _win.setActive(true);
                 }
             }
@@ -266,7 +303,7 @@ void LumiaApp::update(float timestep) {
                 } else if (nextScene == "levelselect") {
                     _gameplay.dispose();
                     _scene = LevelSelect;
-                    _levelSelect.setActive(true);
+                    _levelSelect.setActive(true, _saveFile);
                     std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
                     AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                 } else if (nextScene == "settings") {
@@ -285,28 +322,21 @@ void LumiaApp::update(float timestep) {
                 string nextScene = _win.getNextScene();
                 if (nextScene == "win-continue") {
                     _scene = Game;
+                    string levelFile = _gameplay.getCurrentLevel();
                     _gameplay.dispose();
-
-                    string levelFile = _levelSelect.getSelectedLevel();
 
                     if (levelFile.find("level") != string::npos) {
                         int startIdx = levelFile.find("level") + 5;
                         int endIdx = levelFile.find(".json");
                         string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
                         // TODO: update this with eventual number of levels in the game
-                        if (levelNumber == "5") {
-                            levelNumber = "4";
-                        }
-                        _gameplay.init(_assets, "json/level" + levelNumber + ".json");
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = std::to_string(stoi(levelFile.substr(startIdx, endIdx - startIdx)) + 1);
-                        // TODO: update this with eventual number of tutorials in the game
-                        if (levelNumber == "4") {
-                            _gameplay.init(_assets, "json/level1.json");
+                        if (levelNumber == "18") {
+                            _scene = LevelSelect;
+                            _levelSelect.setActive(true, _saveFile);
+                            std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                            AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                         } else {
-                            _gameplay.init(_assets, "json/tutorial" + levelNumber + ".json");
+                            _gameplay.init(_assets, "json/level" + levelNumber + ".json");
                         }
                     }
                     _gameplay.setMusicVolume(_settings.getMusicVolume());
@@ -320,7 +350,7 @@ void LumiaApp::update(float timestep) {
                 } else if (nextScene == "levelselect") {
                     _gameplay.dispose();
                     _scene = LevelSelect;
-                    _levelSelect.setActive(true);
+                    _levelSelect.setActive(true, _saveFile);
                     std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
                     AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                 } else if (nextScene == "settings") {
@@ -334,16 +364,26 @@ void LumiaApp::update(float timestep) {
         case Settings:{
             if (_settings.isActive()){
                 _settings.update(timestep);
-            }else{
+            } else {
+                _saveFile->get("musicVolume")->set(_settings.getMusicVolume());
+                _saveFile->get("effectVolume")->set(_settings.getEffectVolume());
                 _settings.setActive(false);
+                _gameplay.setMusicVolume(_settings.getMusicVolume());
+                _gameplay.setEffectVolume(_settings.getEffectVolume());
                 string nextScene = _settings.getNextScene();
                 if (nextScene == "levelselect") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("ui");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = LevelSelect;
-                    _levelSelect.setActive(true);
+                    _levelSelect.setActive(true, _saveFile);
                 } else if (nextScene == "pause") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("game");
+                    AudioEngine::get()->getMusicQueue()->play(source, true, _settings.getMusicVolume());
                     _scene = Pause;
                     _pause.setActive(true);
                 } else if (nextScene == "win") {
+                    std::shared_ptr<Sound> source = _assets->get<Sound>("win");
+                    AudioEngine::get()->getMusicQueue()->play(source, false, _settings.getMusicVolume());
                     _scene = Win;
                     _win.setActive(true);
                 }
