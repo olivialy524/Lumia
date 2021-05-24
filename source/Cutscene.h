@@ -11,6 +11,18 @@
 #ifndef __CUT_SCENE_H__
 #define __CUT_SCENE_H__
 #include <cugl/cugl.h>
+#include "InputController.h"
+
+#define LINE1 "Far, far away in the distant reaches of space,"
+#define LINE2 "a ball of light flies through the darkness."
+#define LINE3 "This is Lumia,"
+#define LINE4 "and it has at long last found an abandoned planet to call home."
+#define LINE5 "However, little does Lumia know..."
+#define LINE6 "Beneath the lifeless ruins and remains,"
+#define LINE7 "are long forgotten dangers of the past..."
+#define BREAK "................................................................................................"
+#define LINE8 "Lumia's Journey Begins..."
+#define LINE9 "(tap for tutorial)"
 
 /**
  * A scene for demoing a simple button
@@ -20,12 +32,33 @@ protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
 
-    std::shared_ptr<cugl::scene2::Button> _buttonNext;
+    std::shared_ptr<InputController> _input;
 
-    std::shared_ptr<cugl::scene2::Button> _buttonPrev;
+    std::shared_ptr<cugl::scene2::Label> _line1;
+    std::shared_ptr<cugl::scene2::Label> _line2;
+    std::shared_ptr<cugl::scene2::Label> _break1;
+    std::shared_ptr<cugl::scene2::Label> _line3;
+    std::shared_ptr<cugl::scene2::Label> _line4;
+    std::shared_ptr<cugl::scene2::Label> _line5;
+    std::shared_ptr<cugl::scene2::Label> _break2;
+    std::shared_ptr<cugl::scene2::Label> _line6;
+    std::shared_ptr<cugl::scene2::Label> _line7;
+    int _line1Index;
+    int _line2Index;
+    int _break1Index;
+    int _line3Index;
+    int _line4Index;
+    int _line5Index;
+    int _break2Index;
+    int _line6Index;
+    int _line7Index;
+    int _line8Index;
+    int _line9Index;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation;
 
-    int _sceneIndex;
+    int _tapped;
 
+    string _sceneType;
     /** Denotes next scene to switch to after this scene has been deactivated */
     string _nextScene;
     
@@ -38,7 +71,7 @@ public:
      * This constructor does not allocate any objects or start the controller.
      * This allows us to use a controller without a heap pointer.
      */
-    Cutscene() : _nextScene(""), _sceneIndex(1) {}
+    Cutscene() : _nextScene("") {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -81,6 +114,7 @@ public:
     /** Returns the string representing the next scene to transition to */
     string getNextScene() { return _nextScene; };
 
+    virtual void update(float timestep) override;
 };
 
 #endif /* __CUT_SCENE_H__ */
