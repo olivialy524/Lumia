@@ -321,31 +321,14 @@ void LumiaApp::update(float timestep) {
                         _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
 
                         // TODO: update this with eventual number of levels in the game
-                        if (levelNumber == "11") {
+                        /*if (levelNumber == "11") {
                             _scene = Epilogue;
                             _cutscene.init(_assets, "epilogue");
                             _cutscene.setActive(true);
                         } else {
                             _win.setActive(true);
-                        }
-                    } else {
-                        int startIdx = levelFile.find("tutorial") + 8;
-                        int endIdx = levelFile.find(".json");
-                        string levelNumber = levelFile.substr(startIdx, endIdx - startIdx);
-
-                        _win.setLevelNumber(_assets, "T" + levelNumber);
-                        _win.setWinLabel(_assets, "Tutorial " + levelNumber + " completed!");
-                        _win.setStars(_assets, _gameplay.getStars());
-                        _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
-
-                        // TODO: update this with eventual number of levels in the game
-                        if (levelNumber == "11") {
-                            _scene = Epilogue;
-                            _cutscene.init(_assets, "epilogue");
-                            _cutscene.setActive(true);
-                        } else {
-                            _win.setActive(true);
-                        }
+                        }*/
+                        _win.setActive(true);
                     }
                 }
             }
