@@ -1188,6 +1188,66 @@
                             "texture": "level_complete"
                         }
                     }
+                },
+                "levelbutton9"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "12",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton10"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "13",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton11"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "14",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton12"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "15",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton13"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "16",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton14"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "17",
+                            "texture": "level_complete"
+                        }
+                    }
                 }
             }
         },

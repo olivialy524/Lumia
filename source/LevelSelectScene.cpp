@@ -71,7 +71,7 @@ bool LevelSelectScene::init(const std::shared_ptr<AssetManager>& assets, std::sh
     std::shared_ptr<Texture> tile4 = assets->get<Texture>("tile4");
     
     float grpw = 1840.0f;
-    for (int i = 0; i< 3; i++){
+    for (int i = 0; i< 5; i++){
     addTileGroup(i * grpw + 50.0f, tile3, tile4);
     }
 //    _scrollNode->addChild(tileNode);
@@ -238,7 +238,7 @@ void LevelSelectScene::update(float timestep){
         if (target > 0){
             target = 0;
         }
-        float limit = -1 * 2000 -  Application::get()->getDisplaySize().width;
+        float limit = -1 * 3800 -  Application::get()->getDisplaySize().width;
         if (target < limit){
             target = limit ;
         }
