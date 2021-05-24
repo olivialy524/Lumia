@@ -153,7 +153,6 @@ void Cutscene::update(float timestep) {
             _line6->setVisible(false);
             _line7->setVisible(false);
             _prologueAnimation->setVisible(true);
-            CULog("lasdlfaslfjk");
         } else if (_prologueAnimation->isVisible() && _line8Index < string(LINE8).length() && _tapped >= 3) {
             _line3->setVisible(true);
             _line8Index += 1;
