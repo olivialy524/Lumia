@@ -787,7 +787,16 @@ void GameScene::updatePaused(float dt, float startX) {
             touchstart = _scrollNode->getPositionX();
             setStart = true;
         }
-        _scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
+        float target = touchstart + _input->getCurrentDrag();
+        if (target > 0) {
+            target = 0;
+        }
+        float limit = -1 * 1000 - Application::get()->getDisplaySize().width;
+        if (target < limit) {
+            target = limit;
+        }
+        //_scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
+        _scrollNode->setPositionX(target);
     }else{
         setStart = false;
     }
@@ -913,10 +922,10 @@ void GameScene::updateGame(float dt) {
                     shouldHide = !inRange;
                     break;
                 case Tutorial::lauch:
-                    shouldHide = _input->didLaunch() or !inRange;
+                    shouldHide = _input->didLaunch() || !inRange;
                     break;
                 case Tutorial::light:
-                    shouldHide = !inRange or _collisionController.didLightup();
+                    shouldHide = !inRange || _collisionController.didLightup();
                     if (shouldHide){
                         for (std::shared_ptr<Plant> plant : _plantList){
                             plant->getNode()->setRelativeColor(false);
