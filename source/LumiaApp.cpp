@@ -12,7 +12,8 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Application State
 
-#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level5.json\"},{\"name\":\"Level 6\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"}, {\"name\":\"Level 12\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level12.json\"}, {\"name\":\"Level 13\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level13.json\"}, {\"name\":\"Level 14\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level14.json\"}, {\"name\":\"Level 15\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"}, {\"name\":\"Level 16\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level16.json\"}, {\"name\":\"Level 17\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level17.json\"}],\"musicVolume\":1,\"effectVolume\":1}, "
+#define DEFAULT_SAVE "{\"level_saves\":[{\"name\":\"Level 1\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level1.json\"},{\"name\":\"Level 2\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level2.json\"},{\"name\":\"Level 3\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level3.json\"},{\"name\":\"Level 4\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level4.json\"},{\"name\":\"Level 5\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level5.json\"},{\"name\":\"Level 6\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level6.json\"},{\"name\":\"Level 7\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level7.json\"},{\"name\":\"Level 8\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level8.json\"},{\"name\":\"Level 9\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level9.json\"},{\"name\":\"Level 10\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level10.json\"},{\"name\":\"Level 11\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level11.json\"},{\"name\":\"Level 12\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level12.json\"},{\"name\":\"Level 13\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level13.json\"},{\"name\":\"Level 14\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level14.json\"},{\"name\":\"Level 15\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level15.json\"},{\"name\":\"Level 16\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level16.json\"},{\"name\":\"Level 17\",\"unlocked\":true,\"completed\":false,\"stars\":-1,\"score\":-1,\"path\":\"json/level17.json\"}],\"musicVolume\":1,\"effectVolume\":1}"
+
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -195,14 +196,47 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(false);
                 _mainMenu.dispose();
                 string nextScene = _mainMenu.getNextScene();
-                if (nextScene ==  "levelselect"){
+                // if tutorial is not completed, show cutscene
+                if (!_saveFile->get("level_saves")->get(0)->getBool("completed")) {
+                    _scene = Prologue;
+                    _cutscene.init(_assets, "prologue");
+                    _cutscene.setActive(true);
+                } else if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
                     _levelSelect.init(_assets, _saveFile);
                     _levelSelect.setActive(true, _saveFile);
                 }
             }
             return;
-            
+        }
+        case Prologue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "levelselect") {
+                    _scene = LevelSelect;
+                    _levelSelect.init(_assets, _saveFile);
+                    _levelSelect.setActive(true, _saveFile);
+                }
+            }
+            return;
+        }
+        case Epilogue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "win") {
+                    _scene = Win;
+                    _win.setActive(true);
+                }
+            }
+            return;
         }
         case LevelSelect:{
             if (_levelSelect.isActive()){
@@ -277,10 +311,19 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, levelNumber);
                         _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
+                        _win.setStars(_assets, _gameplay.getStars());
+                        _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
+
+                        // TODO: update this with eventual number of levels in the game
+                        /*if (levelNumber == "11") {
+                            _scene = Epilogue;
+                            _cutscene.init(_assets, "epilogue");
+                            _cutscene.setActive(true);
+                        } else {
+                            _win.setActive(true);
+                        }*/
+                        _win.setActive(true);
                     }
-                    _win.setStars(_assets, _gameplay.getStars());
-                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
-                    _win.setActive(true);
                 }
             }
             return;
@@ -430,6 +473,14 @@ void LumiaApp::draw() {
         }
         case Win: {
             _win.render(_batch);
+            break;
+        }
+        case Prologue: {
+            _cutscene.render(_batch);
+            break;
+        }
+        case Epilogue: {
+            _cutscene.render(_batch);
             break;
         }
     }

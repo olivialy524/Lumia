@@ -904,7 +904,8 @@ void GameScene::updateGame(float dt) {
     } else if (_flashRedCooldown > 25) {
         _avatar->getSceneNode()->setColor(Color4::RED);
         _flashRedCooldown -= 1;
-    } else {
+    } else if (_flashRedCooldown >= 0) {
+        _flashRedCooldown -= 1;
         _avatar->getSceneNode()->setColor(Color4::WHITE);
     }
     _input->update(dt);
@@ -1048,7 +1049,9 @@ void GameScene::updateGame(float dt) {
                     break;
                 case Tutorial::split:
                     shouldHide = _input->didSplit();
-                    t->_textureNode->setPositionX(_avatar->getPos().x * _scale);
+                    if (!_avatar->isRemoved()) {
+                        t->_textureNode->setPositionX(_avatar->getPos().x* _scale);
+                    }
                     if (shouldHide){ visible_tutorial --;}
                     break;
                 case Tutorial::merge:

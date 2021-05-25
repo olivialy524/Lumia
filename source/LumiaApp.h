@@ -14,6 +14,7 @@
 #include "SettingsScene.h"
 #include "PauseScene.h"
 #include "WinScene.h"
+#include "Cutscene.h"
 #include "InputController.h"
 
 /**
@@ -28,7 +29,9 @@ protected:
         Settings,
         Game,
         Pause,
-        Win
+        Win,
+        Prologue,
+        Epilogue
     };
     
     /** The global sprite batch for drawing (only want one of these) */
@@ -53,6 +56,8 @@ protected:
     PauseScene _pause;
     /** The controller for the win screen */
     WinScene _win;
+    /** The controller for the prologue and epilogue cutscenes */
+    Cutscene _cutscene;
     /** The current scene of the game*/
     CurrentScene _scene;
 
