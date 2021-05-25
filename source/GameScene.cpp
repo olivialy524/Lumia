@@ -507,41 +507,6 @@ void GameScene::populate() {
     
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
-    
-
-#pragma mark : Platforms
-    std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
-    for (int i = 0; i < platforms.size(); i++) {
-        std::shared_ptr<Tile> tile = platforms[i];
-        Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
-        
-        std::shared_ptr<physics2::PolygonObstacle> platobj;
-        Poly2 platform(rectangle,false);
-        SimpleTriangulator triangulator;
-        triangulator.set(platform);
-        triangulator.calculate();
-        platform.setIndices(triangulator.getTriangulation());
-        platform.setGeometry(Geometry::SOLID);
-
-        platobj = physics2::PolygonObstacle::alloc(platform);
-        // You cannot add constant "".  Must stringify
-        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(i));
-
-        // Set the physics attributes
-        platobj->setBodyType(b2_staticBody);
-        platobj->setDensity(BASIC_DENSITY);
-        platobj->setFriction(BASIC_FRICTION);
-        platobj->setRestitution(BASIC_RESTITUTION);
-        platobj->setDebugColor(DEBUG_COLOR);
-        platform *= _scale;
-        // All walls and platforms share the same texture
-        image = _assets->get<Texture>("tile3");
-        sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-        addObstacle(platobj,sprite,1);
-        
-        // get bounds and world query within the bounds; if there is tile, mark obstacle on the graph, else remain void
-    }
-    
     std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
    
     for (int i=0; i< irregular_tiles.size(); i++){
@@ -562,7 +527,7 @@ void GameScene::populate() {
         platform += Vec2(t->getX(), t->getY());
         std::shared_ptr<TileModel> tileobj = TileModel::alloc(platform);
         tileobj->setAngle(t->getAngle());
-        tileobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        tileobj->setName(PLATFORM_NAME);
         tileobj->setDrawScale(_scale);;
         tileobj->setPosition(t->getX(), t->getY());
         image = _assets->get<Texture>(t->getFile());
@@ -1046,7 +1011,7 @@ void GameScene::updateGame(float dt) {
         button->incCD();
         if (button->getPushingDown()) {
             button->pushDown();
-            if (button->getCD() >= 30) {
+            if (button->getCD() >= 15) {
                 button->resetCD();
             }
             auto lumia = button->getLumia();
@@ -1125,7 +1090,9 @@ void GameScene::updateGame(float dt) {
     
     _avatar->setVelocity(_input->getLaunch());
 	_avatar->setLaunching(_input->didLaunch());
-	_avatar->applyForce();
+    for (auto& lumia:_lumiaList){
+        lumia->applyForce();
+    }
     if(!_avatar->isRemoved()){
         if(_input->didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
@@ -1221,16 +1188,19 @@ void GameScene::updateGame(float dt) {
                 std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
                     b2Body* body = fixture->GetBody();
                     physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
-                    if (bd->getName().substr(0,8) == PLATFORM_NAME) {
+                    if (bd->getName()==PLATFORM_NAME) {
                         if (((TileModel*)bd)->getType() == 3){
                             _canSplit = false;
-                            return true;
+                            return false;
                         }
+                    }else if (bd->getName().substr(0,4) == "door"){
+                        _canSplit = false;
+                        return false;
                     }
-                    return false;
+                    return true;
                 };
-                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-0.1f);
-                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*1.5f,radius);// left bottom x, y, w, h
+                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-radius * 0.5f);
+                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*2.0f,radius*1.1f);// left bottom x, y, w, h
                 _world->queryAABB(cb, aabb);
                 if (!_canSplit){
                     _avatar->setState(LumiaModel::LumiaState::Idle);
