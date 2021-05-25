@@ -897,13 +897,13 @@ void GameScene::updateGame(float dt) {
         _switched = false;
     }
     if (_flashRedCooldown > 75) {
-        _avatar->getSceneNode()->setColor(Color4::RED);
+        _avatar->getSceneNode()->setColor(Color4(143, 26, 26));
         _flashRedCooldown -= 1;
     } else if (_flashRedCooldown > 50) {
         _avatar->getSceneNode()->setColor(Color4::WHITE);
         _flashRedCooldown -= 1;
     } else if (_flashRedCooldown > 25) {
-        _avatar->getSceneNode()->setColor(Color4::RED);
+        _avatar->getSceneNode()->setColor(Color4(143, 26, 26));
         _flashRedCooldown -= 1;
     } else if (_flashRedCooldown >= 0) {
         _flashRedCooldown -= 1;
