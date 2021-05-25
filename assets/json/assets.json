@@ -192,6 +192,21 @@
         },
         "panning-frame": {
             "file": "textures/panning-frame.png"
+        },
+        "tutorial-pan": {
+            "file": "textures/tutorial-pan.png"
+        },
+        "tutorial-tap": {
+            "file": "textures/tutorial-tap.png"
+        },
+        "tutorial-split": {
+            "file": "textures/tutorial-split.png"
+        },
+        "tutorial-merge": {
+            "file": "textures/tutorial-merge.png"
+        },
+        "tutorial-enemy": {
+            "file": "textures/tutorial-enemy.png"
         }
     },
     "sounds": {

@@ -236,49 +236,69 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _UIscene = assets->get<scene2::SceneNode>("gameUI");
     _UIscene->setContentSize(dimen.width, dimen.height);
     _UIscene->doLayout(); // Repositions the HUD;
+    
     for (auto it : _UIscene->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button && button->getName() == "panning"){
-            button->addListener([=](const std::string& name, bool down) {
-                if (down && _UIscene->isVisible()) {
-                    _state = GameState::Paused;
-                    _UIscene->setVisible(false);
-                    _pausedUI->setVisible(true);
-                }
-            });
-                
+            panningButton = button;
         }
         if (button && button->getName() == "pause") {
-            button->addListener([=](const std::string& name, bool down) {
-                if (down && _UIscene->isVisible()) {
-                    _state = GameState::Paused;
-                    setActive(false);
-                    _nextScene = "pause";
-                }
-            });
+            pauseButton = button;
         }
         if (button) {
             button->activate();
         }
     }
-        
+    
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
     _pausedUI->setContentSize(dimen.width, dimen.height);
     std::shared_ptr<Texture> panningFrameTexture = assets->get<Texture>("panning-frame");
     for (auto it : _pausedUI->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button && button->getName() == "exit"){
-            button->addListener([=](const std::string& name, bool down) {
-                if (down && _pausedUI->isVisible()) {
-                    _state = GameState::Playing;
-                    _UIscene->setVisible(true);
-                    _pausedUI->setVisible(false);
-                }
-            });
-            button->activate();
+            exitButton = button;
         }
-        
     }
+    
+    panningButton->addListener([=](const std::string& name, bool down) {
+        if (down && _UIscene->isVisible()) {
+            _state = GameState::Paused;
+            _UIscene->setVisible(false);
+            _pausedUI->setVisible(true);
+            exitButton->activate();
+//            panningButton->deactivate();
+            pauseButton->deactivate();
+            _scrollNode->setColor(Color4f::GRAY);
+            for (int i = 0; i < _tutorialList.size(); i++) {
+                std::shared_ptr<Tutorial> t = _tutorialList[i];
+                if (t->_condition == Tutorial::pan){
+                    t->setDisplayed(true);
+                    t->_textureNode->setVisible(false);
+                }
+            }
+
+        }
+    });
+    
+    pauseButton->addListener([=](const std::string& name, bool down) {
+        if (down && _UIscene->isVisible()) {
+            _state = GameState::Paused;
+            setActive(false);
+            _nextScene = "pause";
+        }
+    });
+    
+        
+
+    exitButton->addListener([=](const std::string& name, bool down) {
+        if (down && _pausedUI->isVisible()) {
+            _state = GameState::Playing;
+            _UIscene->setVisible(true);
+            _pausedUI->setVisible(false);
+            _scrollNode->setColor(Color4f::WHITE);
+            pauseButton->activate();
+        }
+    });
     
     std::shared_ptr<scene2::PolygonNode> panningFrame = scene2::PolygonNode::allocWithTexture(panningFrameTexture);
     float sx = (dimen.width * 0.97)/ panningFrameTexture->getWidth();
@@ -404,6 +424,9 @@ void GameScene::dispose() {
     for (const std::shared_ptr<EnemyModel> &enemy : _enemyList) {
         enemy->dispose();
     }
+    
+    _tutorialList.clear();
+    
     _enemyList.clear();
 
 //    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
@@ -654,11 +677,17 @@ void GameScene::populate() {
         std::shared_ptr<scene2::PolygonNode> tutorialNode = scene2::PolygonNode::allocWithTexture(image);
         Vec2 pos = t->_drawPos * _scale;
         tutorialNode->setPosition(pos);
-        tutorialNode->setScale(0.5);
+        tutorialNode->setScale(0.8);
         tutorialNode->setVisible(false);
         tutorialNode->setRelativeColor(false);
         _tutorialList[i]->_textureNode = tutorialNode;
+        if (t->_condition == Tutorial::pan){
+            tutorialNode->setPosition(Application::get()->getDisplaySize().width* 0.8, Application::get()->getDisplaySize().height * 0.7 );
+            _UIscene->addChild(tutorialNode);
+            
+        }else {
         _worldnode->addChild(tutorialNode);
+        }
     }
 
 #pragma mark : Lumia
@@ -814,6 +843,8 @@ void GameScene::updatePaused(float dt, float startX) {
                 _state = GameState::Playing;
                 _UIscene->setVisible(true);
                 _pausedUI->setVisible(false);
+                pauseButton->activate();
+                _scrollNode->setColor(Color4::WHITE);
             }
         }
 
@@ -876,8 +907,14 @@ void GameScene::updateGame(float dt) {
         removeEnergy(energy);
     }
     
+    int visible_tutorial = 0;
     for (std::shared_ptr<Tutorial> t : _tutorialList){
-        cout << t->getDisplayed() << endl;
+        if (t->_textureNode->isVisible()){
+            visible_tutorial++;
+        }
+    }
+    
+    for (std::shared_ptr<Tutorial> t : _tutorialList){
         Vec2 tutorialPos = t->_sensorPos * _scale;
         Vec2 avatarPos = _avatar->getPosition() *_scale;
 //        CULog("t %f", t._drawPos.x);
@@ -885,9 +922,9 @@ void GameScene::updateGame(float dt) {
         if (!t->_textureNode->isVisible()){
             bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
             if (inRange && !t->getDisplayed()) {
+                visible_tutorial ++;
                 t->_textureNode->setVisible(true);
                 _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
-                _avatar->getSceneNode()->setRelativeColor(false);
                 t->_textureNode->setRelativeColor(false);
                 switch(t->_condition){
                     case Tutorial::outOfRange:
@@ -907,7 +944,7 @@ void GameScene::updateGame(float dt) {
                             energy->getNode()->setRelativeColor(false);
                         }
                         break;
-        
+                    case Tutorial::merge:
                     default:
                         break;
                         
@@ -915,31 +952,39 @@ void GameScene::updateGame(float dt) {
             }
         }else {
             bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
-//            bool lightup =
             bool shouldHide = false;
             switch(t->_condition){
                 case Tutorial::outOfRange:
                     shouldHide = !inRange;
+                    if (shouldHide){ visible_tutorial --;}
                     break;
                 case Tutorial::lauch:
                     shouldHide = _input->didLaunch() || !inRange;
+                    if (shouldHide){ visible_tutorial --;}
                     break;
                 case Tutorial::light:
                     shouldHide = !inRange || _collisionController.didLightup();
                     if (shouldHide){
+                        visible_tutorial --;
                         for (std::shared_ptr<Plant> plant : _plantList){
-                            plant->getNode()->setRelativeColor(false);
+                            plant->getNode()->setRelativeColor(true);
                         }
                     }
                     break;
                 case Tutorial::energy:
                     shouldHide =  _collisionController.didAbsorbEnergy();
                     if (shouldHide){
+                        visible_tutorial --;
                         for (std::shared_ptr<EnergyModel> energy : _energyList){
-                            energy->getNode()->setRelativeColor(false);
+                            energy->getNode()->setRelativeColor(true);
                         }
                     }
-    
+                    break;
+                case Tutorial::split:
+                    shouldHide = _input->didSplit();
+                    t->_textureNode->setPositionX(_avatar->getPos().x * _scale);
+                    if (shouldHide){ visible_tutorial --;}
+                    break;
                 default:
                     break;
                     
@@ -947,9 +992,10 @@ void GameScene::updateGame(float dt) {
             if (shouldHide){
                 t->setDisplayed(true);
                 t->_textureNode->setVisible(false);
-                _avatar->getSceneNode()->setRelativeColor(true);
+                if (visible_tutorial == 0){
                 t->_textureNode->setRelativeColor(true);
                 _scrollNode->setColor(Color4f::WHITE);
+                }
                 }
         }
     }
@@ -1023,6 +1069,13 @@ void GameScene::updateGame(float dt) {
             if (IN_RANGE(tapLocationWorld.x, (lumiaPosition.x - radius) - 8, (lumiaPosition.x + radius) + 8) &&
                 IN_RANGE(tapLocationWorld.y, (lumiaPosition.y - radius) - 8, (lumiaPosition.y + radius) + 8)) {
                 _avatar = lumia;
+                for (const std::shared_ptr<Tutorial> &t : _tutorialList) {
+                    if (t->_textureNode->isVisible() && t->_condition == Tutorial::tap){t->_textureNode->setVisible(false);
+                        _scrollNode->setColor(Color4::WHITE);
+                        t->setDisplayed(true);
+                    }
+                    
+                }
             }
         }
     }

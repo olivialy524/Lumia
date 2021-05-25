@@ -24,7 +24,7 @@ private:
     bool _hasDisplayed = false;
     
 public:
-    enum TutorialEndCondition {lauch, outOfRange, light, enemy, energy };
+    enum TutorialEndCondition {lauch, outOfRange, light, enemy, energy, pan, split, merge, tap };
     
     Vec2 _drawPos;
     Vec2 _sensorPos;
@@ -73,6 +73,16 @@ public:
             result->_condition = TutorialEndCondition::light;
         } else if (endCond == "energy"){
             result->_condition = TutorialEndCondition::energy;
+        }else if (endCond == "merge"){
+            result->_condition = TutorialEndCondition::merge;
+        }else if (endCond == "enemy"){
+            result->_condition = TutorialEndCondition::enemy;
+        }else if (endCond == "split"){
+            result->_condition = TutorialEndCondition::split;
+        }else if (endCond == "pan"){
+            result->_condition = TutorialEndCondition::pan;
+        }else if (endCond == "tap"){
+            result->_condition = TutorialEndCondition::tap;
         }
         else{
             result->_condition = TutorialEndCondition::outOfRange;

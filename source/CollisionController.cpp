@@ -106,6 +106,7 @@ void CollisionController::processEnemyLumiaCollision(const std::shared_ptr<Enemy
 
 void CollisionController::processEnergyLumiaCollision(const std::shared_ptr<EnergyModel> energy, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
     _didAbsorbEnergy = true;
+    CULog("here");
     if (lumia->getSizeLevel() < LumiaModel::sizeLevels.size() - 1) {
         _energiesToRemove.push_back(energy);
         energy->setRemoved(true);

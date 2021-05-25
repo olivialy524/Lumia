@@ -138,6 +138,12 @@ protected:
     string _nextScene;
     int _remainingSize;
     
+    std::shared_ptr<scene2::Button> panningButton;
+    
+    std::shared_ptr<scene2::Button> pauseButton;
+    
+    std::shared_ptr<scene2::Button> exitButton;
+    
 #pragma mark Internal Object Management
     
     /**
