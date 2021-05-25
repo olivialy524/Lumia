@@ -340,6 +340,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scrollNode->setPosition(scrollpos, 0);
 
     _ticks = 0;
+    _flashRedCooldown = 0;
     _lastSpikeCollision = NULL;
     setDebug(false);
     
@@ -863,6 +864,18 @@ void GameScene::updateGame(float dt) {
     if (_ticks % 8 == 0){
         _switched = false;
     }
+    if (_flashRedCooldown > 75) {
+        _avatar->getSceneNode()->setColor(Color4::RED);
+        _flashRedCooldown -= 1;
+    } else if (_flashRedCooldown > 50) {
+        _avatar->getSceneNode()->setColor(Color4::WHITE);
+        _flashRedCooldown -= 1;
+    } else if (_flashRedCooldown > 25) {
+        _avatar->getSceneNode()->setColor(Color4::RED);
+        _flashRedCooldown -= 1;
+    } else {
+        _avatar->getSceneNode()->setColor(Color4::WHITE);
+    }
     _input->update(dt);
 
 	// Process the toggled key commands
@@ -1190,10 +1203,12 @@ void GameScene::updateGame(float dt) {
                     physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
                     if (bd->getName()==PLATFORM_NAME) {
                         if (((TileModel*)bd)->getType() == 3){
+                            _flashRedCooldown = 100;
                             _canSplit = false;
                             return false;
                         }
                     }else if (bd->getName().substr(0,4) == "door"){
+                        _flashRedCooldown = 100;
                         _canSplit = false;
                         return false;
                     }
