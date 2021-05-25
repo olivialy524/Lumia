@@ -21,7 +21,7 @@ using namespace cugl;
 
 void EnemyModel::setTextures(const std::shared_ptr<Texture>& chasing, const std::shared_ptr<Texture>& escaping) {
     
-    _sceneNode = EnemyNode::alloc(Size(chasing->getWidth()/ 18.0f,chasing->getHeight()));
+    _sceneNode = EnemyNode::alloc(Size(chasing->getWidth()/ 12.0f,chasing->getHeight()));
     _sceneNode->setAnchor(Vec2::ANCHOR_CENTER);
     _sceneNode->setTextures(chasing, escaping, getRadius(), _drawScale);
 }
