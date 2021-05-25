@@ -1230,7 +1230,7 @@ void GameScene::playSplitSound() {
         std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND1);
         AudioEngine::get()->play(SPLIT_SOUND1, source, false, _effectVolume, true);
     }
-    _changeSplitSound =  not _changeSplitSound;
+    _changeSplitSound =  !_changeSplitSound;
 }
 
 void GameScene::playLightSound() {
