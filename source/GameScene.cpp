@@ -110,13 +110,17 @@ using namespace cugl;
 
 #define LOSE_MUSIC "lose"
 
-#define SPLIT_SOUND "jump"
+#define SPLIT_SOUND1 "jump"
 
-#define LIGHT_SOUND "pew"
+#define SPLIT_SOUND2 "split"
+
+#define LIGHT_SOUND "light"
 
 #define DIE_SOUND "die"
 
 #define GROW_SOUND "grow"
+
+#define SHRINK_SOUND "shrink"
 
 
 #pragma mark -
@@ -1481,8 +1485,15 @@ void GameScene::checkWin() {
 }
 
 void GameScene::playSplitSound() {
-    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND);
-    AudioEngine::get()->play(SPLIT_SOUND, source, false, _effectVolume, true);
+    if (_changeSplitSound) {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND2);
+    AudioEngine::get()->play(SPLIT_SOUND2, source, false, _effectVolume, true);
+    }
+    else {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_SOUND1);
+        AudioEngine::get()->play(SPLIT_SOUND1, source, false, _effectVolume, true);
+    }
+    _changeSplitSound =  !_changeSplitSound;
 }
 
 void GameScene::playLightSound() {
@@ -1499,6 +1510,12 @@ void GameScene::playGrowSound() {
     std::shared_ptr<Sound> source = _assets->get<Sound>(GROW_SOUND);
     AudioEngine::get()->play(GROW_SOUND, source, false, _effectVolume, true);
 }
+
+void GameScene::playShrinkSound() {
+    std::shared_ptr<Sound> source = _assets->get<Sound>(SHRINK_SOUND);
+    AudioEngine::get()->play(SHRINK_SOUND, source, false, _effectVolume, true);
+}
+
 /**
  * Add a new Lumia to the world.
  */
@@ -1740,6 +1757,9 @@ void GameScene::beginContact(b2Contact* contact) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd1 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
+                    if (lumia->getSizeLevel() <= enemy->getSizeLevel()) {
+                        playShrinkSound();
+                    }
                     break;
                 }
             }
@@ -1747,6 +1767,9 @@ void GameScene::beginContact(b2Contact* contact) {
             for (const std::shared_ptr<EnemyModel>& enemy : _enemyList) {
                 if (enemy.get() == bd2 && !enemy->getRemoved() && !enemy->getInCoolDown()) {
                     _collisionController.processEnemyLumiaCollision(enemy, lumia, lumia == _avatar);
+                    if (lumia->getSizeLevel() <= enemy->getSizeLevel()) {
+                        playShrinkSound();
+                    }
                     break;
                 }
             }
