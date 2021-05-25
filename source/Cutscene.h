@@ -13,16 +13,6 @@
 #include <cugl/cugl.h>
 #include "InputController.h"
 #define ANIMATION_INTERVAL 4
-#define LINE1 "Far, far away in the distant reaches of space,"
-#define LINE2 "a ball of light flies through the darkness."
-#define LINE3 "This is Lumia,"
-#define LINE4 "and it has at long last found an abandoned planet to call home."
-#define LINE5 "However, little does Lumia know..."
-#define LINE6 "Beneath the lifeless ruins and remains,"
-#define LINE7 "are long forgotten dangers of the past..."
-#define BREAK "................................................................................................"
-#define LINE8 "Lumia's Journey Begins..."
-#define LINE9 "(tap for tutorial)"
 
 /**
  * A scene for demoing a simple button
