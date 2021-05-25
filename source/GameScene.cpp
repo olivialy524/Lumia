@@ -1009,6 +1009,10 @@ void GameScene::updateGame(float dt) {
                             t->_textureNode->setVisible(true);
                             _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
                             t->_textureNode->setRelativeColor(false);
+                        for (std::shared_ptr<EnemyModel> enemy : _enemyList){
+                            enemy->getSceneNode()->setRelativeColor(false);
+                        }
+                        
                     default:
                         t->_textureNode->setVisible(true);
                         _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
@@ -1058,6 +1062,12 @@ void GameScene::updateGame(float dt) {
                     shouldHide = _input->didMerge();
                     if (shouldHide){ visible_tutorial --;}
                     break;
+                case Tutorial::enemy:
+                    shouldHide = !inRange;
+                    for (std::shared_ptr<EnemyModel> enemy : _enemyList){
+                        enemy->getSceneNode()->setRelativeColor(true);
+                    }
+                    if (shouldHide){ visible_tutorial --;}
                 default:
                     break;
                     
