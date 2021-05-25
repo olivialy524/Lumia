@@ -21,6 +21,7 @@ void CollisionController::clearStates(){
     _lumiasToUnstick.clear();
     _didLightup = false;
     _didAbsorbEnergy = false;
+    _didmerging = false;
 }
 
 void CollisionController::processPlantLumiaCollision(int newSize, const std::shared_ptr<LumiaModel> lumia, bool isAvatar) {
@@ -150,6 +151,7 @@ void CollisionController::processLumiaLumiaCollision(const std::shared_ptr<Lumia
             };
 
             _lumiasToCreate.push_back(lumiaNew2);
+            _didmerging = true;
         }
 
         float newX = (lumia->getPosition().x + lumia2->getPosition().x) / 2;

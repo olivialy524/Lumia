@@ -961,32 +961,57 @@ void GameScene::updateGame(float dt) {
 //        CULog("t %f", t._drawPos.x);
         
         if (!t->_textureNode->isVisible()){
-            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
+            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - t->_sensorWidth, tutorialPos.x + t->_sensorWidth);
+            bool multiple_lumia = _lumiaList.size() > 1;
             if (inRange && !t->getDisplayed()) {
-                visible_tutorial ++;
-                t->_textureNode->setVisible(true);
-                _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
-                t->_textureNode->setRelativeColor(false);
                 switch(t->_condition){
                     case Tutorial::outOfRange:
-               
+                        visible_tutorial ++;
+                        t->_textureNode->setVisible(true);
+                        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                        t->_textureNode->setRelativeColor(false);
                         break;
                     case Tutorial::lauch:
-                    
+                        visible_tutorial ++;
+                        t->_textureNode->setVisible(true);
+                        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                        t->_textureNode->setRelativeColor(false);
                         break;
                     case Tutorial::light:
+                        visible_tutorial ++;
+                        t->_textureNode->setVisible(true);
+                        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                        t->_textureNode->setRelativeColor(false);
                         for (std::shared_ptr<Plant> plant : _plantList){
                             plant->getNode()->setRelativeColor(false);
                         }
-                    
                         break;
                     case Tutorial::energy:
+                        visible_tutorial ++;
+                        t->_textureNode->setVisible(true);
+                        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                        t->_textureNode->setRelativeColor(false);
                         for (std::shared_ptr<EnergyModel> energy : _energyList){
                             energy->getNode()->setRelativeColor(false);
                         }
                         break;
                     case Tutorial::merge:
+                        if (multiple_lumia){
+                            visible_tutorial ++;
+                            t->_textureNode->setVisible(true);
+                            _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                            t->_textureNode->setRelativeColor(false);
+                        }
+                        break;
+                    case Tutorial::enemy:
+                            visible_tutorial ++;
+                            t->_textureNode->setVisible(true);
+                            _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                            t->_textureNode->setRelativeColor(false);
                     default:
+                        t->_textureNode->setVisible(true);
+                        _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                        t->_textureNode->setRelativeColor(false);
                         break;
                         
                   }
@@ -1024,6 +1049,10 @@ void GameScene::updateGame(float dt) {
                 case Tutorial::split:
                     shouldHide = _input->didSplit();
                     t->_textureNode->setPositionX(_avatar->getPos().x * _scale);
+                    if (shouldHide){ visible_tutorial --;}
+                    break;
+                case Tutorial::merge:
+                    shouldHide = _input->didMerge();
                     if (shouldHide){ visible_tutorial --;}
                     break;
                 default:

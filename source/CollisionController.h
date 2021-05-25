@@ -57,6 +57,8 @@ protected:
     
     bool _didAbsorbEnergy;
     
+    bool _didmerging;
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -154,6 +156,10 @@ public:
     
     bool didAbsorbEnergy(){
         return _didAbsorbEnergy;
+    }
+    
+    bool didmering(){
+        return _didmerging;
     }
 };
 
