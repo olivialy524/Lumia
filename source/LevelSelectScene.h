@@ -49,8 +49,8 @@ protected:
         Vec2(5880, 720),
         Vec2(6280, 300),
         Vec2(6780, 300),
-        Vec2(7310, 720),
-        Vec2(7810, 720)
+        Vec2(7160, 720),
+        Vec2(7660, 720)
     };
     
     std::shared_ptr<InputController> _input;
