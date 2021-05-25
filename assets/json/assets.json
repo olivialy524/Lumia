@@ -250,49 +250,54 @@
             "type":     "sample",
             "file":     "sounds/LevelTheme.ogg",
             "stream":   true,
-            "volume":   0.5
+            "volume":   0.3
         },
         "win": {
             "type":     "sample",
-            "file":     "sounds/DD_Victory.ogg",
+            "file":     "sounds/levelwin.ogg",
             "stream":   true,
-            "volume":   0.5
+            "volume":   0.3
         },
         "lose": {
             "type":     "sample",
-            "file":     "sounds/DD_Failure.ogg",
+            "file":     "sounds/altlosetheme.ogg",
             "stream":   true,
-            "volume":   0.5
+            "volume":   0.3
         },
         "jump": {
             "type":     "sample",
-            "file":     "sounds/jump.wav",
-            "volume":   0.5
+            "file":     "sounds/launchsound.wav",
+            "volume":   0.2
         },
-        "pew": {
+        "split": {
             "type":     "sample",
-            "file":     "sounds/pew.wav",
-            "volume":   0.5
+            "file":     "sounds/SplitSounds.wav",
+            "volume":   0.2
         },
         "ui": {
             "type": "sample",
             "file": "sounds/UITheme.ogg",
             "stream": true,
-            "volume": 0.5
+            "volume": 0.3
         },
         "light": {
             "type":     "sample",
-            "file":     "sounds/magicplantlightup.wav",
-            "volume":   0.2
+            "file":     "sounds/lightsound.wav",
+            "volume":   0.1
         },
         "die": {
             "type":     "sample",
-            "file":     "sounds/lumiabodydying.wav",
+            "file":     "sounds/lumiadie.wav",
             "volume":   0.2
         },
         "grow": {
             "type":     "sample",
             "file":     "sounds/gainsize.wav",
+            "volume":   0.2
+        },
+        "shrink": {
+            "type":     "sample",
+            "file":     "sounds/losesize.wav",
             "volume":   0.2
         }
     },
