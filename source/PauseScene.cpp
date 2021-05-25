@@ -44,7 +44,7 @@ bool PauseScene::init(const std::shared_ptr<AssetManager>& assets) {
     
     _wrapperNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(1200, 700);
     
-    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("background");
+    std::shared_ptr<Texture> bkgTexture = assets->get<Texture>("uibackground");
     std::shared_ptr<BackgroundNode> bkgNode = BackgroundNode::alloc(bkgTexture);
     
     bkgNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);

@@ -25,6 +25,7 @@ bool EnemyNode::setTextures(const std::shared_ptr<cugl::Texture> &chasingAnimati
     _chasingAnimation = cugl::scene2::AnimationNode::alloc(chasingAnimation, 1, 12, 12);
     _chasingAnimation->setAnchor(Vec2::ZERO);
     _chasingAnimation->setFrame(0);
+    _chasingAnimation->setRelativeColor(false);
     addChild(_chasingAnimation);
     
     _escapingAnimation = cugl::scene2::AnimationNode::alloc(escapingAnimation, 1, 12, 12);
@@ -33,6 +34,7 @@ bool EnemyNode::setTextures(const std::shared_ptr<cugl::Texture> &chasingAnimati
     float xscale = chasingAnimation->getWidth() / 12.0f;
     float xscale2 = escapingAnimation->getWidth() / 12.0f;
     _escapingAnimation->setScale( xscale/xscale2);
+    _escapingAnimation->setRelativeColor(false);
     addChild(_escapingAnimation);
     return true;
 }

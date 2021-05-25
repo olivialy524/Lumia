@@ -466,17 +466,6 @@
                 "type" : "Anchored"
             },
             "children":  {
-                "background": {
-                    "type": "Image",
-                    "data": {
-                        "texture":  "uibackground",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
-                    }
-                },
                 "pauselabel" : {
                     "type"   : "Label",
                     "data"   : {
@@ -742,17 +731,6 @@
                 "type" : "Anchored"
             },
             "children":  {
-                "background": {
-                    "type": "Image",
-                    "data": {
-                        "texture":  "uibackground",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
-                    }
-                },
                 "levelbanner": {
                     "type"   : "Image",
                     "data"   : {
