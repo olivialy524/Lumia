@@ -1,92 +1,243 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\source\BackgroundNode.cpp" />
-    <ClCompile Include="..\..\source\Button.cpp" />
-    <ClCompile Include="..\..\source\ButtonNode.cpp" />
-    <ClCompile Include="..\..\source\CollisionController.cpp" />
-    <ClCompile Include="..\..\source\Cutscene.cpp" />
-    <ClCompile Include="..\..\source\EnemyModel.cpp" />
-    <ClCompile Include="..\..\source\EnemyNode.cpp" />
-    <ClCompile Include="..\..\source\EnergyModel.cpp" />
-    <ClCompile Include="..\..\source\EnergyNode.cpp" />
-    <ClCompile Include="..\..\source\GameScene.cpp" />
-    <ClCompile Include="..\..\source\InputController.cpp" />
-    <ClCompile Include="..\..\source\LevelModel.cpp" />
-    <ClCompile Include="..\..\source\LevelSelectScene.cpp" />
-    <ClCompile Include="..\..\source\LevelSelectTile.cpp" />
-    <ClCompile Include="..\..\source\LoadingScene.cpp" />
-    <ClCompile Include="..\..\source\LumiaApp.cpp" />
-    <ClCompile Include="..\..\source\LumiaModel.cpp" />
-    <ClCompile Include="..\..\source\LumiaNode.cpp" />
-    <ClCompile Include="..\..\source\main.cpp" />
-    <ClCompile Include="..\..\source\MainMenuScene.cpp" />
-    <ClCompile Include="..\..\source\PathFindingController.cpp" />
-    <ClCompile Include="..\..\source\PauseScene.cpp" />
-    <ClCompile Include="..\..\source\Plant.cpp" />
-    <ClCompile Include="..\..\source\PlantNode.cpp" />
-    <ClCompile Include="..\..\source\SettingsScene.cpp" />
-    <ClCompile Include="..\..\source\ShrinkingDoor.cpp" />
-    <ClCompile Include="..\..\source\ShrinkingDoorNode.cpp" />
-    <ClCompile Include="..\..\source\SlidingDoor.cpp" />
-    <ClCompile Include="..\..\source\SpikeModel.cpp" />
-    <ClCompile Include="..\..\source\SpikeNode.cpp" />
-    <ClCompile Include="..\..\source\StickyWallModel.cpp" />
-    <ClCompile Include="..\..\source\StickyWallNode.cpp" />
-    <ClCompile Include="..\..\source\TileDataModel.cpp" />
-    <ClCompile Include="..\..\source\TileModel.cpp" />
-    <ClCompile Include="..\..\source\TrajectoryNode.cpp" />
-    <ClCompile Include="..\..\source\WinScene.cpp" />
+    <ClCompile Include="..\..\source\BackgroundNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ButtonNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\CollisionController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Cutscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\EnemyModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\EnemyNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\EnergyModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\EnergyNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\GameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\InputController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LevelModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LevelSelectScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LevelSelectTile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LoadingScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LumiaApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LumiaModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\LumiaNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\MainMenuScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PathFindingController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PauseScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\Plant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PlantNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\SettingsScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ShrinkingDoor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ShrinkingDoorNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\SlidingDoor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\SpikeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\SpikeNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\StickyWallModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\StickyWallNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\TileDataModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\TileModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\TrajectoryNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WinScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\BackgroundNode.h" />
-    <ClInclude Include="..\..\source\Button.h" />
-    <ClInclude Include="..\..\source\ButtonNode.h" />
-    <ClInclude Include="..\..\source\CollisionController.h" />
-    <ClInclude Include="..\..\source\Cutscene.h" />
-    <ClInclude Include="..\..\source\EnemyModel.h" />
-    <ClInclude Include="..\..\source\EnemyNode.h" />
-    <ClInclude Include="..\..\source\EnergyModel.h" />
-    <ClInclude Include="..\..\source\EnergyNode.h" />
-    <ClInclude Include="..\..\source\GameScene.h" />
-    <ClInclude Include="..\..\source\GraphNode.h" />
-    <ClInclude Include="..\..\source\InputController.h" />
-    <ClInclude Include="..\..\source\LevelModel.h" />
-    <ClInclude Include="..\..\source\LevelSelectScene.h" />
-    <ClInclude Include="..\..\source\LevelSelectTile.h" />
-    <ClInclude Include="..\..\source\LoadingScene.h" />
-    <ClInclude Include="..\..\source\LumiaApp.h" />
-    <ClInclude Include="..\..\source\LumiaModel.h" />
-    <ClInclude Include="..\..\source\LumiaNode.h" />
-    <ClInclude Include="..\..\source\MainMenuScene.h" />
-    <ClInclude Include="..\..\source\PathFindingController.h" />
-    <ClInclude Include="..\..\source\PauseScene.h" />
-    <ClInclude Include="..\..\source\Plant.h" />
-    <ClInclude Include="..\..\source\PlantNode.h" />
-    <ClInclude Include="..\..\source\SettingsScene.h" />
-    <ClInclude Include="..\..\source\ShrinkingDoor.h" />
-    <ClInclude Include="..\..\source\ShrinkingDoorNode.h" />
-    <ClInclude Include="..\..\source\SlidingDoor.h" />
-    <ClInclude Include="..\..\source\SpikeModel.h" />
-    <ClInclude Include="..\..\source\SpikeNode.h" />
-    <ClInclude Include="..\..\source\StickyWallModel.h" />
-    <ClInclude Include="..\..\source\StickyWallNode.h" />
-    <ClInclude Include="..\..\source\Tile.h" />
-    <ClInclude Include="..\..\source\TileDataModel.h" />
-    <ClInclude Include="..\..\source\TileModel.h" />
-    <ClInclude Include="..\..\source\TrajectoryNode.h" />
-    <ClInclude Include="..\..\source\Tutorial.h" />
-    <ClInclude Include="..\..\source\WinScene.h" />
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\BackgroundNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Button.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ButtonNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\CollisionController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Cutscene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\EnemyModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\EnemyNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\EnergyModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\EnergyNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\GameScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\GraphNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\InputController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LevelModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LevelSelectScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LevelSelectTile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LoadingScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LumiaApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LumiaModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\LumiaNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\MainMenuScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\PathFindingController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\PauseScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Plant.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\PlantNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\SettingsScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ShrinkingDoor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ShrinkingDoorNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\SlidingDoor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\SpikeModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\SpikeNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\StickyWallModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\StickyWallNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Tile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\TileDataModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\TileModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\TrajectoryNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Tutorial.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WinScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{58ce2fab-220e-41a1-9b4d-6ad5838cb0cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{6c10d799-a371-41a2-8443-71cfc1f659a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{92b7ba99-b593-4325-801d-027e84dff7c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{58ce2fab-220e-41a1-9b4d-6ad5838cb0cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
