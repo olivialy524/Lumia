@@ -1024,7 +1024,9 @@ void GameScene::updateGame(float dt) {
                     break;
                 case Tutorial::split:
                     shouldHide = _input->didSplit();
-                    t->_textureNode->setPositionX(_avatar->getPos().x * _scale);
+                    if (!_avatar->isRemoved()) {
+                        t->_textureNode->setPositionX(_avatar->getPos().x* _scale);
+                    }
                     if (shouldHide){ visible_tutorial --;}
                     break;
                 default:
