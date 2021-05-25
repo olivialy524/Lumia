@@ -64,6 +64,11 @@ public:
         std::shared_ptr<EnemyNode> node = std::make_shared<EnemyNode>();
         return (node->initWithBounds(size) ? node : nullptr);
     }
+    
+    void setRelative(bool r){
+        _chasingAnimation->setRelativeColor(r);
+        _escapingAnimation->setRelativeColor(r);
+    }
 
     void draw(const std::shared_ptr<cugl::SpriteBatch>& batch,
               const cugl::Mat4& transform, cugl::Color4 tint) override;
