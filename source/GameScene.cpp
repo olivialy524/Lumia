@@ -268,7 +268,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             _pausedUI->setVisible(true);
             //exitButton->activate();
 //            panningButton->deactivate();
-            //pauseButton->deactivate();
+            pauseButton->deactivate();
             _scrollNode->setColor(Color4f::GRAY);
             for (int i = 0; i < _tutorialList.size(); i++) {
                 std::shared_ptr<Tutorial> t = _tutorialList[i];
@@ -297,7 +297,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             _UIscene->setVisible(true);
             _pausedUI->setVisible(false);
             _scrollNode->setColor(Color4f::WHITE);
-            //pauseButton->activate();
+            pauseButton->activate();
         }
     });
     
@@ -357,9 +357,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
     if (scrollpos > 0){
         scrollpos = 0;
-    }
-    if (scrollpos < -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9){
-        scrollpos = -1 * _level->getXBound() * _scale  + Application::get()->getDisplaySize().width * 0.9;
     }
     _scrollNode->setPosition(scrollpos, 0);
 
@@ -515,9 +512,6 @@ void GameScene::reset() {
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
     if (scrollpos > 0){
         scrollpos = 0;
-    }
-    if (scrollpos < -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9){
-        scrollpos = -1 * _level->getXBound() * _scale  + Application::get()->getDisplaySize().width * 0.9;
     }
     _scrollNode->setPosition(scrollpos, 0);
     _progressLabel->setText("0/" + to_string(_plantList.size()));
