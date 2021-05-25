@@ -112,6 +112,8 @@ protected:
     bool _failed;
     /** Countdown active for winning or losing */
     int _countdown;
+    /** Countdown for Lumia flashing red when it cannot split */
+    int _flashRedCooldown;
     /** Volume level for game music */
     float _musicVolume;
     /** Volume level for sound effects */

@@ -188,7 +188,7 @@ void CollisionController::processButtonLumiaEnding(const std::shared_ptr<LumiaMo
     }
     button->setPushingDown(false);
     button->resetCD();
-    if (lumia == button->getLumia()){
+    if (lumia.get() == button->getLumia()){
         lumia->setOnButton(false);
     }
 }
