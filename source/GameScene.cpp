@@ -286,6 +286,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     panningFrame->setScale(sx, sy);
     panningFrame->setAnchor(Vec2::ANCHOR_CENTER);
     panningFrame->setPosition(dimen.width/2, dimen.height/2);
+
     _pausedUI->addChild(panningFrame);
     
     _pausedUI->setVisible(false);
@@ -781,6 +782,68 @@ void GameScene::update(float dt) {
  *
  */
 void GameScene::updatePaused(float dt, float startX) {
+    float leftScrollBound = -1 * _scrollNode->getPositionX();
+    float rightScrollBound = -1 * _scrollNode->getPositionX() + Application::get()->getDisplaySize().width;
+    bool hasPlantLeft = false;
+    bool hasLumiaLeft = false;
+    bool hasPlantRight = false;
+    bool hasLumiaRight = false;
+    for (const std::shared_ptr<LumiaModel>& lumia : _lumiaList) {
+        float lumiaPos = lumia->getPosition().x * _scale;
+        if (lumiaPos <= leftScrollBound) {
+            hasLumiaLeft = true;
+        }
+        if (lumiaPos >= rightScrollBound) {
+            hasLumiaRight = true;
+        }
+    }
+    for (const std::shared_ptr<Plant>& plant : _plantList) {
+        float plantPos = plant->getPosition().x * _scale;
+        if (plantPos <= leftScrollBound) {
+            hasPlantLeft = true;
+        }
+        if (plantPos >= rightScrollBound) {
+            hasPlantRight = true;
+        }
+    }
+
+    if (hasPlantLeft && hasLumiaLeft) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-left"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-left"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-left"))->setVisible(false);
+    } else if (hasPlantLeft) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-left"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-left"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-left"))->setVisible(false);
+    } else if (hasLumiaLeft) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-left"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-left"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-left"))->setVisible(false);
+    } else {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-left"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-left"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-left"))->setVisible(false);
+    }
+
+    if (hasPlantRight && hasLumiaRight) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-right"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-right"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-right"))->setVisible(false);
+    } else if (hasPlantRight) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-right"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-right"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-right"))->setVisible(false);
+    } else if (hasLumiaRight) {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-right"))->setVisible(true);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-right"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-right"))->setVisible(false);
+    } else {
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-right"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_plant-right"))->setVisible(false);
+        std::dynamic_pointer_cast<scene2::TexturedNode>(_assets->get<cugl::scene2::SceneNode>("pausedUI_lumia-plant-right"))->setVisible(false);
+    }
+
+
     _input->update(dt);
     if (_input->isDragging()){
         if (!setStart){
