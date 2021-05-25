@@ -222,7 +222,11 @@
     <ClInclude Include="..\..\source\SlidingDoor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\source\Cutscene.h">
+=======
+    <ClInclude Include="..\..\source\Tutorial.h">
+>>>>>>> 4266396aa1de1d1d2bd68052bdab912649d5e4e0
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

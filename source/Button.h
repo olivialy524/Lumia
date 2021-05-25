@@ -23,7 +23,7 @@ protected:
     float _scale;
     std::shared_ptr<SlidingDoor> _SlidingDoor;
     std::shared_ptr<ShrinkingDoor> _ShrinkingDoor;
-    std::shared_ptr<LumiaModel> _lumia;
+    LumiaModel* _lumia;
     std::shared_ptr<cugl::scene2::SceneNode> _sceneNode;
     std::shared_ptr<ButtonNode> _node;
     float _normHeight;
@@ -82,12 +82,12 @@ public:
     void setShrinkingDoor(std::shared_ptr<ShrinkingDoor> d) {
         _ShrinkingDoor = d;
     }
-    std::shared_ptr<LumiaModel> getLumia(){
+    LumiaModel* getLumia(){
         return _lumia;
     }
     
     void setLumia(std::shared_ptr<LumiaModel> lumia){
-        _lumia = lumia;
+        _lumia = lumia.get();
     }
     
     bool getPushingDown() {

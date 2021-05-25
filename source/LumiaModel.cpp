@@ -44,10 +44,10 @@ void LumiaModel::setTextures(const std::shared_ptr<Texture>& idle, const std::sh
  */
 struct LumiaModel::LumiaSize size0 = { 0.55f, 0.52f };
 struct LumiaModel::LumiaSize size1 = { 0.69f, 0.44f };
-struct LumiaModel::LumiaSize size2 = { 0.83f, 0.39f };
-struct LumiaModel::LumiaSize size3 = { 1.0f, 0.30f };
-struct LumiaModel::LumiaSize size4 = { 1.2f, 0.21f };
-struct LumiaModel::LumiaSize size5 = { 1.40f, 0.19f };
+struct LumiaModel::LumiaSize size2 = { 0.83f, 0.37f };
+struct LumiaModel::LumiaSize size3 = { 1.0f, 0.32f };
+struct LumiaModel::LumiaSize size4 = { 1.2f, 0.25f };
+struct LumiaModel::LumiaSize size5 = { 1.40f, 0.22f };
 std::vector<LumiaModel::LumiaSize> LumiaModel::sizeLevels = { size0, size1, size2, size3, size4, size5 };
 
 bool LumiaModel::init(const cugl::Vec2& pos, float radius, float scale) {
@@ -158,7 +158,7 @@ void LumiaModel::applyForce() {
         return;
     }
     
-    if ((isOnStickyWall() || isOnButton()) && !isLaunching()){
+    if ((isOnStickyWall() || isOnButton())&& !isLaunching()){
         setLinearVelocity(Vec2::ZERO);
         setAngularVelocity(0.0f);
         b2Vec2 force(_stickDirection.x, _stickDirection.y);
@@ -166,7 +166,6 @@ void LumiaModel::applyForce() {
     } else if ((isOnStickyWall() || isOnButton()) && isLaunching()){
         unStick();
     }
-    
     // If Lumia is on the ground, and Lumia is being launched, apply velocity impulse to body
     if (isLaunching() && isGrounded()) {
         b2Vec2 force(getVelocity().x, getVelocity().y);
@@ -194,7 +193,6 @@ void LumiaModel::applyForce() {
  * @param delta Number of seconds since last animation frame
  */
 void LumiaModel::update(float dt) {
-    _lastPosition = getPosition();
     WheelObstacle::update(dt);
     if (_sceneNode != nullptr && !isRemoved()) {
         _sceneNode->setPosition(getPosition()*_drawScale);

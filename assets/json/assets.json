@@ -178,11 +178,38 @@
         "lampicon": {
             "file": "textures/lampicon.png"
         },
-        "prologue1": {
-            "file": "textures/prologue1.jpg"
+        "prologue1.1": {
+            "file": "textures/prologue1.1.jpeg"
         },
-        "prologue2": {
-            "file": "textures/prologue2.jpg"
+        "prologue1.2": {
+            "file": "textures/prologue1.2.jpeg"
+        },
+        "prologue1.3": {
+            "file": "textures/prologue1.3.jpeg"
+        },
+        "prologue2.1": {
+            "file": "textures/prologue2.1.jpeg"
+        },
+        "prologue2.2": {
+            "file": "textures/prologue2.2.jpeg"
+        },
+        "prologue2.3": {
+            "file": "textures/prologue2.3.jpeg"
+        },
+        "hand-drag": {
+            "file": "textures/hand-drag.png"
+        },
+        "drag": {
+            "file": "textures/drag.png"
+        },
+        "hit-lamp": {
+            "file": "textures/hit-lamp.png"
+        },
+        "eat-energy": {
+            "file": "textures/eat-energy.png"
+        },
+        "panning-frame": {
+            "file": "textures/panning-frame.png"
         }
     },
     "sounds": {
@@ -337,162 +364,6 @@
                 "type" : "Anchored"
             },
             "children":  {
-                "background": {
-                    "type": "Image",
-                    "data": {
-                        "texture":  "background",
-                        "anchor":   [0.0,0.5]
-                    },
-                    "layout" : {
-                        "x_anchor" : "fill",
-                        "y_anchor" : "fill"
-                    }
-                },
-                "line1" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle",
-                        "anchor": [0.5, 0]
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -50
-                    }
-                },
-                "line2" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -90
-                    }
-                },
-                "break1" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -100
-                    }
-                },
-                "line3" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -130
-                    }
-                },
-                "line4" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -170
-                    }
-                },
-                "line5" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -210
-                    }
-                },
-                "break2" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -220
-                    }
-                },
-                "line6" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -250
-                    }
-                },
-                "line7" : {
-                    "type"   : "Label",
-                    "data"   : {
-                        "font"       : "orbitronsmall",
-                        "text"       : "",
-                        "foreground" : [255, 255, 255, 255],
-                        "halign"     : "center",
-                        "valign"     : "middle"
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "top",
-                        "absolute": true,
-                        "y_offset": -290
-                    }
-                }
             }
         },
         "gameUI" : {
@@ -1340,6 +1211,66 @@
                         "key"   : "levelbutton",
                         "variables" : {
                             "text": "11",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton9"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "12",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton10"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "13",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton11"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "14",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton12"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "15",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton13"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "16",
+                            "texture": "level_complete"
+                        }
+                    }
+                },
+                "levelbutton14"  : {
+                    "type": "Widget",
+                    "data": {
+                        "key"   : "levelbutton",
+                        "variables" : {
+                            "text": "17",
                             "texture": "level_complete"
                         }
                     }

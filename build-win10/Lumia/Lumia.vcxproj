@@ -221,6 +221,7 @@
     <ClInclude Include="..\..\source\TileDataModel.h" />
     <ClInclude Include="..\..\source\TileModel.h" />
     <ClInclude Include="..\..\source\TrajectoryNode.h" />
+    <ClInclude Include="..\..\source\Tutorial.h" />
     <ClInclude Include="..\..\source\WinScene.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

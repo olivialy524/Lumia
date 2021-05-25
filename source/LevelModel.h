@@ -17,15 +17,12 @@
 #include "SlidingDoor.h"
 #include "SpikeModel.h"
 #include "StickyWallModel.h"
+#include "Tutorial.h"
+
 
 
 class LevelModel : public cugl::Asset {
 public:
-    struct Tutorial {
-        float posX;
-        float posY;
-        string texture;
-    };
 
 private:
     std::vector<std::shared_ptr<Plant>> _plants;
@@ -37,8 +34,7 @@ private:
     std::shared_ptr<LumiaModel> _lumia;
     std::vector<std::shared_ptr<Button>> _buttons;
     std::vector<std::shared_ptr<StickyWallModel>> _stickyWalls;
-
-    std::vector<Tutorial> _tutorials;
+    std::vector<std::shared_ptr<Tutorial>> _tutorials;
     
     float _xBound;
     
@@ -66,7 +62,7 @@ private:
     
     std::vector<std::shared_ptr<StickyWallModel>> createStickyWalls(const std::shared_ptr<cugl::JsonValue>& stickyWalls);
 
-    std::vector<Tutorial> createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials);
+    std::vector<std::shared_ptr<Tutorial>> createTutorials(const std::shared_ptr<cugl::JsonValue>& tutorials);
     
     std::shared_ptr<cugl::JsonValue> _levelJson;
     
@@ -156,7 +152,7 @@ public:
         return _stickyWalls;
     }
 
-    std::vector<Tutorial> getTutorials() {
+    std::vector<std::shared_ptr<Tutorial>> getTutorials() {
         return _tutorials;
     }
     

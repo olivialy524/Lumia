@@ -103,7 +103,7 @@ protected:
     
 
 
-    std::list<std::shared_ptr<scene2::PolygonNode>> _tutorialList;
+    std::vector<std::shared_ptr<Tutorial>> _tutorialList;
 
     
     /** Whether or not debug mode is active */

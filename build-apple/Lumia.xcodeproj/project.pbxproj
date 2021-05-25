@@ -214,6 +214,7 @@
 /* Begin PBXFileReference section */
 		3A534AFB25FB256F00CDAE69 /* PlantNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlantNode.cpp; sourceTree = "<group>"; };
 		3A534B0225FB258300CDAE69 /* PlantNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlantNode.h; sourceTree = "<group>"; };
+		3A9D57B5265A3AF300A97CC6 /* Tutorial.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tutorial.h; sourceTree = "<group>"; };
 		3A9D6A1726082E9100898D04 /* BackgroundNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundNode.h; sourceTree = "<group>"; };
 		3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundNode.cpp; sourceTree = "<group>"; };
 		3A9D6A50260C3DE800898D04 /* LevelModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelModel.h; sourceTree = "<group>"; };
@@ -437,6 +438,7 @@
 		EBB1AC281DF8C75400C353B0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3A9D57B5265A3AF300A97CC6 /* Tutorial.h */,
 				3A9D6A1826082EA900898D04 /* BackgroundNode.cpp */,
 				3A9D6A1726082E9100898D04 /* BackgroundNode.h */,
 				6144346B26194A0D00F597E4 /* Button.cpp */,

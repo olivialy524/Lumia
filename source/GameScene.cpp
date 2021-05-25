@@ -154,7 +154,6 @@ GameScene::GameScene() : Scene2(),
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, string level) {
     setName("game");
-
     _currentLevel = level;
     _level = assets->get<LevelModel>(level);
     _tileManager = assets->get<TileDataModel>("json/tiles.json");
@@ -233,7 +232,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Shift to center if a bad fit
     _scale = dimen.height/_level->getYBound();
 //    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-
+    
     _UIscene = assets->get<scene2::SceneNode>("gameUI");
     _UIscene->setContentSize(dimen.width, dimen.height);
     _UIscene->doLayout(); // Repositions the HUD;
@@ -265,9 +264,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         
     _pausedUI = assets->get<scene2::SceneNode>("pausedUI");
     _pausedUI->setContentSize(dimen.width, dimen.height);
+    std::shared_ptr<Texture> panningFrameTexture = assets->get<Texture>("panning-frame");
     for (auto it : _pausedUI->getChildren()) {
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
-        if (button->getName() == "exit"){
+        if (button && button->getName() == "exit"){
             button->addListener([=](const std::string& name, bool down) {
                 if (down && _pausedUI->isVisible()) {
                     _state = GameState::Playing;
@@ -275,10 +275,19 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
                     _pausedUI->setVisible(false);
                 }
             });
-                
+            button->activate();
         }
-        button->activate();
+        
     }
+    
+    std::shared_ptr<scene2::PolygonNode> panningFrame = scene2::PolygonNode::allocWithTexture(panningFrameTexture);
+    float sx = (dimen.width * 0.97)/ panningFrameTexture->getWidth();
+    float sy = (dimen.height * 0.97)/panningFrameTexture->getHeight();
+    panningFrame->setScale(sx, sy);
+    panningFrame->setAnchor(Vec2::ANCHOR_CENTER);
+    panningFrame->setPosition(dimen.width/2, dimen.height/2);
+    _pausedUI->addChild(panningFrame);
+    
     _pausedUI->setVisible(false);
 
     _scrollNode = cugl::scene2::PolygonNode::SceneNode::allocWithBounds(_level->getXBound() * _scale, _level->getYBound() * _scale);
@@ -397,10 +406,10 @@ void GameScene::dispose() {
     }
     _enemyList.clear();
 
-    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
-        t->dispose();
-    }
-    _tutorialList.clear();
+//    for (const std::shared_ptr<scene2::PolygonNode>& t : _tutorialList) {
+//        t->dispose();
+//    }
+//    _tutorialList.clear();
 
     _world = nullptr;
     _worldnode = nullptr;
@@ -497,41 +506,6 @@ void GameScene::populate() {
     
     std::shared_ptr<Texture> image;
     std::shared_ptr<scene2::PolygonNode> sprite;
-    
-
-#pragma mark : Platforms
-    std::vector<std::shared_ptr<Tile>> platforms = _level->getTiles();
-    for (int i = 0; i < platforms.size(); i++) {
-        std::shared_ptr<Tile> tile = platforms[i];
-        Rect rectangle = Rect(tile->getX(),tile->getY(),tile->getWidth(),tile->getHeight());
-        
-        std::shared_ptr<physics2::PolygonObstacle> platobj;
-        Poly2 platform(rectangle,false);
-        SimpleTriangulator triangulator;
-        triangulator.set(platform);
-        triangulator.calculate();
-        platform.setIndices(triangulator.getTriangulation());
-        platform.setGeometry(Geometry::SOLID);
-
-        platobj = physics2::PolygonObstacle::alloc(platform);
-        // You cannot add constant "".  Must stringify
-        platobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(i));
-
-        // Set the physics attributes
-        platobj->setBodyType(b2_staticBody);
-        platobj->setDensity(BASIC_DENSITY);
-        platobj->setFriction(BASIC_FRICTION);
-        platobj->setRestitution(BASIC_RESTITUTION);
-        platobj->setDebugColor(DEBUG_COLOR);
-        platform *= _scale;
-        // All walls and platforms share the same texture
-        image = _assets->get<Texture>("tile3");
-        sprite = scene2::PolygonNode::allocWithTexture(image,platform);
-        addObstacle(platobj,sprite,1);
-        
-        // get bounds and world query within the bounds; if there is tile, mark obstacle on the graph, else remain void
-    }
-    
     std::vector<std::shared_ptr<Tile>> irregular_tiles = _level->getIrregularTile();
    
     for (int i=0; i< irregular_tiles.size(); i++){
@@ -552,7 +526,7 @@ void GameScene::populate() {
         platform += Vec2(t->getX(), t->getY());
         std::shared_ptr<TileModel> tileobj = TileModel::alloc(platform);
         tileobj->setAngle(t->getAngle());
-        tileobj->setName(std::string(PLATFORM_NAME)+cugl::strtool::to_string(10));
+        tileobj->setName(PLATFORM_NAME);
         tileobj->setDrawScale(_scale);;
         tileobj->setPosition(t->getX(), t->getY());
         image = _assets->get<Texture>(t->getFile());
@@ -638,18 +612,18 @@ void GameScene::populate() {
     }
 
 #pragma mark : Tutorials
-    std::vector<LevelModel::Tutorial> tutorials = _level->getTutorials();
-    for (int i = 0; i < tutorials.size(); i++) {
-        LevelModel::Tutorial t = tutorials[i];
-        image = _assets->get<Texture>(t.texture);
+    _tutorialList = _level->getTutorials();
+    for (int i = 0; i < _tutorialList.size(); i++) {
+        std::shared_ptr<Tutorial> t = _tutorialList[i];
+        image = _assets->get<Texture>(t->_texture);
         std::shared_ptr<scene2::PolygonNode> tutorialNode = scene2::PolygonNode::allocWithTexture(image);
-        Vec2 pos = Vec2(t.posX, t.posY) * _scale;
+        Vec2 pos = t->_drawPos * _scale;
         tutorialNode->setPosition(pos);
         tutorialNode->setScale(0.5);
         tutorialNode->setVisible(false);
+        tutorialNode->setRelativeColor(false);
+        _tutorialList[i]->_textureNode = tutorialNode;
         _worldnode->addChild(tutorialNode);
-
-        _tutorialList.push_back(tutorialNode);
     }
 
 #pragma mark : Lumia
@@ -778,7 +752,16 @@ void GameScene::updatePaused(float dt, float startX) {
             touchstart = _scrollNode->getPositionX();
             setStart = true;
         }
-        _scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
+        float target = touchstart + _input->getCurrentDrag();
+        if (target > 0) {
+            target = 0;
+        }
+        float limit = -1 * 1000 - Application::get()->getDisplaySize().width;
+        if (target < limit) {
+            target = limit;
+        }
+        //_scrollNode->setPositionX(touchstart + _input->getCurrentDrag());
+        _scrollNode->setPositionX(target);
     }else{
         setStart = false;
     }
@@ -857,17 +840,85 @@ void GameScene::updateGame(float dt) {
         playGrowSound();
         removeEnergy(energy);
     }
-
-    for (const std::shared_ptr<scene2::PolygonNode>& tutorial : _tutorialList) {
-        Vec2 tutorialPos = tutorial->getPosition();
+    
+    for (std::shared_ptr<Tutorial> t : _tutorialList){
+        cout << t->getDisplayed() << endl;
+        Vec2 tutorialPos = t->_sensorPos * _scale;
         Vec2 avatarPos = _avatar->getPosition() *_scale;
-
-        if (IN_RANGE(avatarPos.x, tutorialPos.x - 150, tutorialPos.x + 150)) {
-            tutorial->setVisible(true);
-        } else {
-            tutorial->setVisible(false);
+//        CULog("t %f", t._drawPos.x);
+        
+        if (!t->_textureNode->isVisible()){
+            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
+            if (inRange && !t->getDisplayed()) {
+                t->_textureNode->setVisible(true);
+                _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
+                _avatar->getSceneNode()->setRelativeColor(false);
+                t->_textureNode->setRelativeColor(false);
+                switch(t->_condition){
+                    case Tutorial::outOfRange:
+               
+                        break;
+                    case Tutorial::lauch:
+                    
+                        break;
+                    case Tutorial::light:
+                        for (std::shared_ptr<Plant> plant : _plantList){
+                            plant->getNode()->setRelativeColor(false);
+                        }
+                    
+                        break;
+                    case Tutorial::energy:
+                        for (std::shared_ptr<EnergyModel> energy : _energyList){
+                            energy->getNode()->setRelativeColor(false);
+                        }
+                        break;
+        
+                    default:
+                        break;
+                        
+                  }
+            }
+        }else {
+            bool inRange = IN_RANGE(avatarPos.x, tutorialPos.x - 100, tutorialPos.x + 100);
+//            bool lightup =
+            bool shouldHide = false;
+            switch(t->_condition){
+                case Tutorial::outOfRange:
+                    shouldHide = !inRange;
+                    break;
+                case Tutorial::lauch:
+                    shouldHide = _input->didLaunch() || !inRange;
+                    break;
+                case Tutorial::light:
+                    shouldHide = !inRange || _collisionController.didLightup();
+                    if (shouldHide){
+                        for (std::shared_ptr<Plant> plant : _plantList){
+                            plant->getNode()->setRelativeColor(false);
+                        }
+                    }
+                    break;
+                case Tutorial::energy:
+                    shouldHide =  _collisionController.didAbsorbEnergy();
+                    if (shouldHide){
+                        for (std::shared_ptr<EnergyModel> energy : _energyList){
+                            energy->getNode()->setRelativeColor(false);
+                        }
+                    }
+    
+                default:
+                    break;
+                    
+              }
+            if (shouldHide){
+                t->setDisplayed(true);
+                t->_textureNode->setVisible(false);
+                _avatar->getSceneNode()->setRelativeColor(true);
+                t->_textureNode->setRelativeColor(true);
+                _scrollNode->setColor(Color4f::WHITE);
+                }
         }
     }
+
     _collisionController.clearStates();
     
     for (auto & door : _shrinkingDoorList) {
@@ -897,7 +948,7 @@ void GameScene::updateGame(float dt) {
         button->incCD();
         if (button->getPushingDown()) {
             button->pushDown();
-            if (button->getCD() >= 30) {
+            if (button->getCD() >= 15) {
                 button->resetCD();
             }
             auto lumia = button->getLumia();
@@ -976,7 +1027,9 @@ void GameScene::updateGame(float dt) {
     
     _avatar->setVelocity(_input->getLaunch());
 	_avatar->setLaunching(_input->didLaunch());
-	_avatar->applyForce();
+    for (auto& lumia:_lumiaList){
+        lumia->applyForce();
+    }
     if(!_avatar->isRemoved()){
         if(_input->didMerge()){
             _avatar->setState(LumiaModel::LumiaState::Merging);
@@ -1072,16 +1125,19 @@ void GameScene::updateGame(float dt) {
                 std::function< bool(b2Fixture *fixture)> cb = [this](b2Fixture *fixture){
                     b2Body* body = fixture->GetBody();
                     physics2::Obstacle* bd = (physics2::Obstacle*)body->GetUserData();
-                    if (bd->getName().substr(0,8) == PLATFORM_NAME) {
+                    if (bd->getName()==PLATFORM_NAME) {
                         if (((TileModel*)bd)->getType() == 3){
                             _canSplit = false;
-                            return true;
+                            return false;
                         }
+                    }else if (bd->getName().substr(0,4) == "door"){
+                        _canSplit = false;
+                        return false;
                     }
-                    return false;
+                    return true;
                 };
-                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-0.1f);
-                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*1.5f,radius);// left bottom x, y, w, h
+                Vec2 leftPos = Vec2(pos.x-offset.x, pos.y-radius * 0.5f);
+                Rect aabb = Rect(leftPos.x,leftPos.y,offset.x*2.0f,radius*1.1f);// left bottom x, y, w, h
                 _world->queryAABB(cb, aabb);
                 if (!_canSplit){
                     _avatar->setState(LumiaModel::LumiaState::Idle);

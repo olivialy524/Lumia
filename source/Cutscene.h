@@ -12,7 +12,7 @@
 #define __CUT_SCENE_H__
 #include <cugl/cugl.h>
 #include "InputController.h"
-
+#define ANIMATION_INTERVAL 4
 #define LINE1 "Far, far away in the distant reaches of space,"
 #define LINE2 "a ball of light flies through the darkness."
 #define LINE3 "This is Lumia,"
@@ -33,11 +33,16 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<InputController> _input;
-
-    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation1;
-    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation2;
-
-    int _tapped;
+    int _curAnim;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation11;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation12;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation13;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation21;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation22;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation23;
+    std::shared_ptr<cugl::scene2::AnimationNode> _animations[6];
+    int _ticks;
+    bool _tapped;
 
     string _sceneType;
     /** Denotes next scene to switch to after this scene has been deactivated */
