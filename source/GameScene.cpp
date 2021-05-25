@@ -358,6 +358,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     if (scrollpos > 0){
         scrollpos = 0;
     }
+    if (scrollpos < -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9){
+        scrollpos = -1 * _level->getXBound() * _scale  + Application::get()->getDisplaySize().width * 0.9;
+    }
     _scrollNode->setPosition(scrollpos, 0);
 
     _ticks = 0;
@@ -512,6 +515,9 @@ void GameScene::reset() {
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
     if (scrollpos > 0){
         scrollpos = 0;
+    }
+    if (scrollpos < -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9){
+        scrollpos = -1 * _level->getXBound() * _scale  + Application::get()->getDisplaySize().width * 0.9;
     }
     _scrollNode->setPosition(scrollpos, 0);
     _progressLabel->setText("0/" + to_string(_plantList.size()));
@@ -850,7 +856,7 @@ void GameScene::updatePaused(float dt, float startX) {
         if (target > 0) {
             target = 0;
         }
-        float limit = -1 * 1000 - Application::get()->getDisplaySize().width;
+        float limit = -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9;
         if (target < limit) {
             target = limit;
         }
@@ -1197,6 +1203,9 @@ void GameScene::updateGame(float dt) {
     float scrollpos = -1 * _avatar->getAvatarPos().x + getCamera()->getViewport().size.width * CAMERA_SHIFT;
     if (scrollpos > 0){
         scrollpos = 0.0;
+    }
+    if (scrollpos < -1 * _level->getXBound() * _scale + Application::get()->getDisplaySize().width * 0.9){
+        scrollpos = -1 * _level->getXBound() * _scale  + Application::get()->getDisplaySize().width * 0.9;
     }
     _scrollNode->setPosition(scrollpos, 0);
     
