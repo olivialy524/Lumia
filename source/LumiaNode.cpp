@@ -31,6 +31,7 @@ bool LumiaNode::setTextures(const std::shared_ptr<cugl::Texture> &idleAnimation,
     _idleAnimation->setFrame(0);
     _idleAnimation->setColor(Color4f::WHITE);
     addChild(_idleAnimation);
+    setRelativeColor(false);
 
     float angle = 2*3.14f/(_level+1);
     Vec2 center = Vec2(splittingAnimation->getWidth()/5.0f/2.0f,splittingAnimation->getHeight()/4.0f/2.0f);
