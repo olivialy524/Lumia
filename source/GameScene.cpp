@@ -257,6 +257,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<scene2::Button> button = std::dynamic_pointer_cast<scene2::Button>(it);
         if (button && button->getName() == "exit"){
             exitButton = button;
+            button->activate();
         }
     }
     
@@ -265,9 +266,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             _state = GameState::Paused;
             _UIscene->setVisible(false);
             _pausedUI->setVisible(true);
-            exitButton->activate();
+            //exitButton->activate();
 //            panningButton->deactivate();
-            pauseButton->deactivate();
+            //pauseButton->deactivate();
             _scrollNode->setColor(Color4f::GRAY);
             for (int i = 0; i < _tutorialList.size(); i++) {
                 std::shared_ptr<Tutorial> t = _tutorialList[i];
@@ -296,7 +297,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
             _UIscene->setVisible(true);
             _pausedUI->setVisible(false);
             _scrollNode->setColor(Color4f::WHITE);
-            pauseButton->activate();
+            //pauseButton->activate();
         }
     });
     
