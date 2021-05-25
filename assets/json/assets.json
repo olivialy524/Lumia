@@ -179,16 +179,10 @@
             "file": "textures/lampicon.png"
         },
         "prologue1": {
-            "file": "textures/prologue1.png"
+            "file": "textures/prologue1.jpg"
         },
         "prologue2": {
-            "file": "textures/prologue2.png"
-        },
-        "epilogue1": {
-            "file": "textures/epilogue1.png"
-        },
-        "epilogue2": {
-            "file": "textures/epilogue2.png"
+            "file": "textures/prologue2.jpg"
         }
     },
     "sounds": {

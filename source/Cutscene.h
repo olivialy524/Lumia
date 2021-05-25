@@ -34,27 +34,8 @@ protected:
 
     std::shared_ptr<InputController> _input;
 
-    std::shared_ptr<cugl::scene2::Label> _line1;
-    std::shared_ptr<cugl::scene2::Label> _line2;
-    std::shared_ptr<cugl::scene2::Label> _break1;
-    std::shared_ptr<cugl::scene2::Label> _line3;
-    std::shared_ptr<cugl::scene2::Label> _line4;
-    std::shared_ptr<cugl::scene2::Label> _line5;
-    std::shared_ptr<cugl::scene2::Label> _break2;
-    std::shared_ptr<cugl::scene2::Label> _line6;
-    std::shared_ptr<cugl::scene2::Label> _line7;
-    int _line1Index;
-    int _line2Index;
-    int _break1Index;
-    int _line3Index;
-    int _line4Index;
-    int _line5Index;
-    int _break2Index;
-    int _line6Index;
-    int _line7Index;
-    int _line8Index;
-    int _line9Index;
-    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation1;
+    std::shared_ptr<cugl::scene2::AnimationNode> _prologueAnimation2;
 
     int _tapped;
 
