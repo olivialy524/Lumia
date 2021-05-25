@@ -178,6 +178,24 @@
         "lampicon": {
             "file": "textures/lampicon.png"
         },
+        "prologue1.1": {
+            "file": "textures/prologue1.1.jpeg"
+        },
+        "prologue1.2": {
+            "file": "textures/prologue1.2.jpeg"
+        },
+        "prologue1.3": {
+            "file": "textures/prologue1.3.jpeg"
+        },
+        "prologue2.1": {
+            "file": "textures/prologue2.1.jpeg"
+        },
+        "prologue2.2": {
+            "file": "textures/prologue2.2.jpeg"
+        },
+        "prologue2.3": {
+            "file": "textures/prologue2.3.jpeg"
+        },
         "hand-drag": {
             "file": "textures/hand-drag.png"
         },
@@ -371,6 +389,14 @@
 			            "y_offset" : 0.2
 			        }
                 }
+            }
+        },
+        "cutscene" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children":  {
             }
         },
         "gameUI" : {

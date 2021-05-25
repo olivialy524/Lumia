@@ -61,6 +61,9 @@
 		C76C4A4A2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
 		C76C4A4B2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
 		C76C4A4C2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */; };
+		C76C4A50265C0E5D0086332B /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A4E265C0E5D0086332B /* Cutscene.cpp */; };
+		C76C4A51265C0E5D0086332B /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A4E265C0E5D0086332B /* Cutscene.cpp */; };
+		C76C4A52265C0E5D0086332B /* Cutscene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C76C4A4E265C0E5D0086332B /* Cutscene.cpp */; };
 		C794A662262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
 		C794A663262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
 		C794A664262F669A0011BE4A /* StickyWallModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C794A661262F669A0011BE4A /* StickyWallModel.cpp */; };
@@ -246,6 +249,8 @@
 		C76C4A46265497630086332B /* ShrinkingDoor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShrinkingDoor.h; sourceTree = "<group>"; };
 		C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShrinkingDoorNode.cpp; sourceTree = "<group>"; };
 		C76C4A4D2654A8140086332B /* ShrinkingDoorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShrinkingDoorNode.h; sourceTree = "<group>"; };
+		C76C4A4E265C0E5D0086332B /* Cutscene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cutscene.cpp; sourceTree = "<group>"; };
+		C76C4A4F265C0E5D0086332B /* Cutscene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cutscene.h; sourceTree = "<group>"; };
 		C794A661262F669A0011BE4A /* StickyWallModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StickyWallModel.cpp; sourceTree = "<group>"; };
 		C794A66B262F66AB0011BE4A /* StickyWallModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StickyWallModel.h; sourceTree = "<group>"; };
 		C794A66C262F67840011BE4A /* StickyWallNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StickyWallNode.cpp; sourceTree = "<group>"; };
@@ -487,6 +492,8 @@
 				C76C4A492654A8030086332B /* ShrinkingDoorNode.cpp */,
 				C76C4A4D2654A8140086332B /* ShrinkingDoorNode.h */,
 				6144346F26194A1900F597E4 /* SlidingDoor.cpp */,
+				C76C4A4E265C0E5D0086332B /* Cutscene.cpp */,
+				C76C4A4F265C0E5D0086332B /* Cutscene.h */,
 				6144346A261930FB00F597E4 /* SlidingDoor.h */,
 				C794A6BC2632582C0011BE4A /* SpikeModel.cpp */,
 				C794A6C12632582C0011BE4A /* SpikeModel.h */,
@@ -794,6 +801,7 @@
 				C76C4A4B2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1D0261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C72632582D0011BE4A /* SpikeNode.cpp in Sources */,
+				C76C4A51265C0E5D0086332B /* Cutscene.cpp in Sources */,
 				EBB4B5632040A30100238092 /* LumiaModel.cpp in Sources */,
 				EBB4B5612040A2FB00238092 /* GameScene.cpp in Sources */,
 				C7A7216B26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
@@ -836,6 +844,7 @@
 				C76C4A4C2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1D1261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C82632582D0011BE4A /* SpikeNode.cpp in Sources */,
+				C76C4A52265C0E5D0086332B /* Cutscene.cpp in Sources */,
 				EB5D20AA23FC77C8007D16CD /* LumiaModel.cpp in Sources */,
 				EB5D20A823FC77C8007D16CD /* GameScene.cpp in Sources */,
 				C7A7216C26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,
@@ -878,6 +887,7 @@
 				C76C4A4A2654A8030086332B /* ShrinkingDoorNode.cpp in Sources */,
 				C729A1CF261FEAB300BD1C5A /* SettingsScene.cpp in Sources */,
 				C794A6C62632582D0011BE4A /* SpikeNode.cpp in Sources */,
+				C76C4A50265C0E5D0086332B /* Cutscene.cpp in Sources */,
 				C70BACAE25F8427C00626819 /* LumiaNode.cpp in Sources */,
 				EBB4B55E2040912400238092 /* GameScene.cpp in Sources */,
 				C7A7216A26467F6D00436C69 /* LevelSelectTile.cpp in Sources */,

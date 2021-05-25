@@ -196,14 +196,47 @@ void LumiaApp::update(float timestep) {
                 _mainMenu.setActive(false);
                 _mainMenu.dispose();
                 string nextScene = _mainMenu.getNextScene();
-                if (nextScene ==  "levelselect"){
+                // if tutorial is not completed, show cutscene
+                if (!_saveFile->get("level_saves")->get(0)->getBool("completed")) {
+                    _scene = Prologue;
+                    _cutscene.init(_assets, "prologue");
+                    _cutscene.setActive(true);
+                } else if (nextScene ==  "levelselect"){
                     _scene = LevelSelect;
                     _levelSelect.init(_assets, _saveFile);
                     _levelSelect.setActive(true, _saveFile);
                 }
             }
             return;
-            
+        }
+        case Prologue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "levelselect") {
+                    _scene = LevelSelect;
+                    _levelSelect.init(_assets, _saveFile);
+                    _levelSelect.setActive(true, _saveFile);
+                }
+            }
+            return;
+        }
+        case Epilogue: {
+            if (_cutscene.isActive()) {
+                _cutscene.update(timestep);
+            } else {
+                _cutscene.setActive(false);
+                _cutscene.dispose();
+                string nextScene = _cutscene.getNextScene();
+                if (nextScene == "win") {
+                    _scene = Win;
+                    _win.setActive(true);
+                }
+            }
+            return;
         }
         case LevelSelect:{
             if (_levelSelect.isActive()){
@@ -278,10 +311,19 @@ void LumiaApp::update(float timestep) {
 
                         _win.setLevelNumber(_assets, levelNumber);
                         _win.setWinLabel(_assets, "Level " + levelNumber + " completed!");
+                        _win.setStars(_assets, _gameplay.getStars());
+                        _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
+
+                        // TODO: update this with eventual number of levels in the game
+                        /*if (levelNumber == "11") {
+                            _scene = Epilogue;
+                            _cutscene.init(_assets, "epilogue");
+                            _cutscene.setActive(true);
+                        } else {
+                            _win.setActive(true);
+                        }*/
+                        _win.setActive(true);
                     }
-                    _win.setStars(_assets, _gameplay.getStars());
-                    _win.setDetailsLabel(_assets, to_string(_gameplay.getRemainingSize()));
-                    _win.setActive(true);
                 }
             }
             return;
@@ -431,6 +473,14 @@ void LumiaApp::draw() {
         }
         case Win: {
             _win.render(_batch);
+            break;
+        }
+        case Prologue: {
+            _cutscene.render(_batch);
+            break;
+        }
+        case Epilogue: {
+            _cutscene.render(_batch);
             break;
         }
     }
