@@ -125,6 +125,7 @@ protected:
     
     int _stars;
 
+    bool _changeSplitSound;
     string _currentLevel;
     /** Mark set to handle more sophisticated collision callbacks */
     std::unordered_map<LumiaModel*, std::unordered_set<b2Fixture*>> _sensorFixtureMap;
@@ -445,6 +446,8 @@ public:
     void playLightSound();
     
     void playGrowSound();
+    
+    void playShrinkSound();
     /**
      * Calculates trajectory point one timestep into future
      *
