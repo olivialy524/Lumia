@@ -1010,8 +1010,10 @@ void GameScene::updateGame(float dt) {
                             _scrollNode->setColor(Color4f(0.35f, 0.35f, 0.35f, 1.0f));
                             t->_textureNode->setRelativeColor(false);
                         for (std::shared_ptr<EnemyModel> enemy : _enemyList){
-                            enemy->getSceneNode()->setRelativeColor(false);
+                            enemy->getSceneNode()->setRelative(false);
+                            enemy->getSceneNode()->setRelative(false);
                         }
+                        break;
                         
                     default:
                         t->_textureNode->setVisible(true);
@@ -1065,9 +1067,10 @@ void GameScene::updateGame(float dt) {
                 case Tutorial::enemy:
                     shouldHide = !inRange;
                     for (std::shared_ptr<EnemyModel> enemy : _enemyList){
-                        enemy->getSceneNode()->setRelativeColor(true);
+                        enemy->getSceneNode()->setRelative(true);
                     }
                     if (shouldHide){ visible_tutorial --;}
+                    break;
                 default:
                     break;
                     
